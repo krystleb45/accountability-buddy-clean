@@ -5,17 +5,29 @@ const aspectRatio = require('@tailwindcss/aspect-ratio');
 const containerQueries = require('@tailwindcss/container-queries');
 
 module.exports = {
-  content: [
-    './src/**/*.{js,ts,jsx,tsx}',
-    './app/**/*.{js,ts,jsx,tsx}',
-    './components/**/*.{js,ts,jsx,tsx}',
-    './pages/**/*.{js,ts,jsx,tsx}',
-    './layouts/**/*.{js,ts,jsx,tsx}',
-    './public/**/*.html',
-    './styles/**/*.css',      // scan all CSS files under styles/
-    './styles/global.css',     // your global overrides
-    './stories/**/*.{js,ts,jsx,tsx}', // Storybook stories
-  ],
+  content: {
+    relative: true, // Important for monorepos!
+    files: [
+      // Next.js App Router structure
+      './src/**/*.{js,ts,jsx,tsx,mdx}',
+      './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+      './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+
+      // If you're also using Pages Router (remove if not)
+      './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+
+      // Remove these lines if you don't have these directories:
+      // './layouts/**/*.{js,ts,jsx,tsx,mdx}',
+      // './stories/**/*.{js,ts,jsx,tsx,mdx}',
+
+      // Don't scan CSS files for classes - this can cause issues
+      // './styles/**/*.css',
+      // './styles/global.css',
+
+      // Only include if you have HTML files with Tailwind classes
+      // './public/**/*.html',
+    ],
+  },
   theme: {
     extend: {
       colors: {
