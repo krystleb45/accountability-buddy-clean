@@ -9,8 +9,8 @@ module.exports = {
     // Enable nesting like Sass
     'postcss-nested': {},
 
-    // Tailwind’s core
-    tailwindcss: {},
+    // Tailwind's core - using the new separate package
+    '@tailwindcss/postcss': {},
 
     // Add vendor prefixes
     autoprefixer: {},
