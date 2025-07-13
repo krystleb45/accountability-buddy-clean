@@ -28,7 +28,7 @@ export default function usePoints(): UsePointsReturn {
   const [error, setError] = useState<string | null>(null);
 
   // Keep a stable ref to avoid re-creating the load fn on every render
-  const loadRef = useRef<() => Promise<void>>();
+const loadRef = useRef<(() => Promise<void>) | undefined>(undefined);
 
   const load = useCallback(async (): Promise<void> => {
     setLoading(true);

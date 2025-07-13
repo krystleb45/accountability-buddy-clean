@@ -5,7 +5,7 @@ import GamificationService from '@/services/gamificationService';
 import BadgeList from '@/components/BadgeSystem/BadgeList';
 import type { Badge } from '@/types/Gamification.types';
 
-export default function ClientBadgePage(): React.JSX.Element {
+export default function ClientBadgePage() {
   const [badges, setBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

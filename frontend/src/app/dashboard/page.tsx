@@ -29,8 +29,7 @@ export const metadata: Metadata = {
 
 // Remove the DashboardClientProps import and generic type since the component doesn't accept props
 const DashboardClient = dynamicImport(
-  () => import('./page.client').then((mod) => mod.default),
-  { ssr: false }
+  () => import('./page.client').then((mod) => mod.default)
 );
 
 export default async function DashboardPage() {

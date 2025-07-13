@@ -69,7 +69,7 @@ interface Group {
   avatar?: string;
 }
 
-export default function AdvancedMessagesClient(): JSX.Element {
+export default function AdvancedMessagesClient() {
   console.log('🚀 MESSAGES COMPONENT RENDERING');
 
   const { data: session } = useSession();

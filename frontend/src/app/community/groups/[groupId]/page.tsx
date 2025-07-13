@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   };
 }
 
-// Dynamically load the client component
-const GroupDetailClient = dynamic(() => import('./client'), { ssr: false });
+// Dynamically load the client component - REMOVED { ssr: false }
+const GroupDetailClient = dynamic(() => import('./client'));
 
 export default async function GroupDetailPage({ params: _params }: Params): Promise<ReactNode> {
   const session = await getServerSession(authOptions);

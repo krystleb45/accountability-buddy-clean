@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 const categories = ['Productivity', 'Fitness', 'Self-Improvement', 'Business', 'Tech'];
 
-export default function CreateBlogPage(): JSX.Element {
+export default function CreateBlogPage() {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState(categories[0]);

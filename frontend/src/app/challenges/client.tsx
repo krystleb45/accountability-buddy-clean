@@ -18,7 +18,7 @@ import { isBefore, addDays } from 'date-fns';
 // 🔍 Filter type
 type FilterType = 'all' | 'weekly' | 'monthly';
 
-export default function ClientChallenges(): JSX.Element {
+export default function ClientChallenges() {
   const { data: session } = useSession();
   const userId = session?.user?.id ?? '';
 

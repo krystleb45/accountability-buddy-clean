@@ -1,4 +1,4 @@
-// src/app/challenge/[id]/client.tsx
+// src/app/challenges/[id]/client.tsx
 'use client';
 
 import React from 'react';
@@ -16,7 +16,7 @@ interface Props {
   challenge: APIChallenge;
 }
 
-export default function ClientChallengeDetail({ challenge }: Props): JSX.Element {
+export default function ClientChallengeDetail({ challenge }: Props) {
   const { data: session } = useSession();
   const userId = session?.user?.id;
 

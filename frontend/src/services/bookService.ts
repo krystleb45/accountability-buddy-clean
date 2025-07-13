@@ -1,4 +1,4 @@
-﻿// src/services/bookService.ts
+// src/services/bookService.ts
 import axios from 'axios';
 import { http } from '@/utils/http';
 
@@ -27,9 +27,9 @@ interface ApiResponse<T> {
 
 const handleError = <T>(fn: string, error: unknown, fallback: T): T => {
   if (axios.isAxiosError(error)) {
-    console.error(`❌ [bookService::${fn}]`, error.response?.data || error.message);
+    console.error(`? [bookService::${fn}]`, error.response?.data || error.message);
   } else {
-    console.error(`❌ [bookService::${fn}]`, error);
+    console.error(`? [bookService::${fn}]`, error);
   }
   return fallback;
 };

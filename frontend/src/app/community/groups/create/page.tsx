@@ -16,9 +16,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Dynamically load the client component
+// Dynamically load the client component - REMOVED kept loading
 const CreateGroupClient = dynamic(() => import('./client'), {
-  ssr: false,
   loading: () => (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
       <div className="text-center">

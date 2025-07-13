@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 // Dynamically import the client component
-const ClientBadgePage = dynamic(() => import('./client'), { ssr: false });
+const ClientBadgePage = dynamic(() => import('./client'));
 
 export default async function BadgePageWrapper(): Promise<ReactNode> {
   const session = await getServerSession(authOptions);

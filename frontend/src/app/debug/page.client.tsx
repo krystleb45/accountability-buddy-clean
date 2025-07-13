@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-export default function DebugClient(): JSX.Element {
+export default function DebugClient() {
   const env = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,

@@ -1,4 +1,4 @@
-// src/app/activity/[id]/client.tsx
+// src/app/activityDetails/[id]/client.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ interface ClientProps {
   id: string;
 }
 
-export default function ClientActivityDetail({ id }: ClientProps): JSX.Element {
+export default function ClientActivityDetail({ id }: ClientProps) {
   const [activity, setActivity] = useState<APIActivity | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

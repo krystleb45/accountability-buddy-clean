@@ -5,7 +5,7 @@ import styles from './ThemeSettings.module.css';
 
 type Theme = 'light' | 'dark';
 
-const ThemeSettings: React.FC = (): JSX.Element => {
+const ThemeSettings: React.FC = () => {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === 'undefined') return 'light'; // SSR-safe
     const stored = localStorage.getItem('theme') as Theme | null;

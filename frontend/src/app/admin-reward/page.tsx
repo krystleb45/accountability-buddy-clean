@@ -25,8 +25,7 @@ export const metadata: Metadata = {
 
 // Dynamically import the client component
 const ClientAdminRewards = dynamic(
-  () => import('./client'),
-  { ssr: false }
+  () => import('./client')
 );
 
 type SessionUser = { id: string; role?: string };

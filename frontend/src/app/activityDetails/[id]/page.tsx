@@ -43,8 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // 2) dynamically import the client component
 const ClientActivityDetail = dynamic(
-  () => import('./client'),
-  { ssr: false }
+  () => import('./client')
 );
 
 // 3) server component to guard auth & render client

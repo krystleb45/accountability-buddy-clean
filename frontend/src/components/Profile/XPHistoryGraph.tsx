@@ -23,7 +23,7 @@ interface XPEntry {
   points: number;
 }
 
-const XPHistoryGraph: React.FC = (): JSX.Element => {
+const XPHistoryGraph: React.FC = () => {
   const [xpHistory, setXpHistory] = useState<XPEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

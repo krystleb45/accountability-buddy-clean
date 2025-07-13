@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   openGraph: { /* … */ },
 };
 
-const LeaderboardClient = dynamic(() => import('./page.client'), { ssr: false });
+const LeaderboardClient = dynamic(() => import('./page.client'));
 
 export default async function LeaderboardPageWrapper() {
   const session = await getServerSession(authOptions);

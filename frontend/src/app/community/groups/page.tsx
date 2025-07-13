@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 // Dynamically load the client component
-const GroupsClient = dynamic(() => import('./page.client'), { ssr: false });
+const GroupsClient = dynamic(() => import('./page.client'));
 
 export default async function GroupsPage(): Promise<ReactNode> {
   const session = await getServerSession(authOptions);

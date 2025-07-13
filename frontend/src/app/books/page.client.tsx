@@ -14,7 +14,7 @@ interface Book {
   purchaseLink?: string;
 }
 
-export default function BookListClient(): JSX.Element {
+export default function BookListClient() {
   const [books, setBooks] = useState<Book[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');

@@ -13,7 +13,7 @@ interface Activity {
   completed: boolean;
 }
 
-export default function ClientActivityList(): React.JSX.Element {
+export default function ClientActivityList() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -15,6 +15,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LoginPage(): JSX.Element {
+export default function LoginPage() {
   return <LoginForm />;
 }

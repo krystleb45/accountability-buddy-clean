@@ -18,7 +18,7 @@ const Notification: React.FC<NotificationProps> = ({
   type = 'info',
   duration = 5000,
   onDismiss,
-}): JSX.Element | null => {
+}) => {
   const [visible, setVisible] = useState<boolean>(true);
 
   useEffect((): (() => void) => {

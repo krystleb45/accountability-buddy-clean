@@ -1,4 +1,4 @@
-﻿// src/services/goalMessageService.ts
+// src/services/goalMessageService.ts
 import axios from 'axios';
 import { http } from '@/utils/http';
 
@@ -18,9 +18,9 @@ interface ApiResponse<T> {
 
 const handleError = <T>(fn: string, error: unknown, fallback: ApiResponse<T>): ApiResponse<T> => {
   if (axios.isAxiosError(error)) {
-    console.error(`❌ [goalMessageService::${fn}]`, error.response?.data || error.message);
+    console.error(`? [goalMessageService::${fn}]`, error.response?.data || error.message);
   } else {
-    console.error(`❌ [goalMessageService::${fn}]`, error);
+    console.error(`? [goalMessageService::${fn}]`, error);
   }
   return fallback;
 };

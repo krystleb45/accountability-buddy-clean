@@ -1,6 +1,9 @@
 // src/components/Sidebar/Sidebar.tsx
+'use client';
+
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './Sidebar.module.css';
 
 interface SidebarProps {
@@ -8,46 +11,50 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
+  const pathname = usePathname();
+
   if (!isVisible) return null;
+
+  const isActive = (path: string) => pathname === path;
 
   return (
     <aside className={styles.sidebar} role="navigation" aria-label="Sidebar Navigation">
       <ul className={styles.list}>
         <li className={styles.item}>
-          <NavLink
-            to="/"
-            className={({ isActive }) => [styles.link, isActive ? styles.active : ''].join(' ')}
+          <Link
+            href="/"
+            className={[styles.link, isActive('/') ? styles.active : ''].join(' ')}
             aria-label="Dashboard"
           >
             Dashboard
-          </NavLink>
+          </Link>
         </li>
         <li className={styles.item}>
-          <NavLink
-            to="/goals"
-            className={({ isActive }) => [styles.link, isActive ? styles.active : ''].join(' ')}
+          <Link
+            href="/goals"
+            className={[styles.link, isActive('/goals') ? styles.active : ''].join(' ')}
             aria-label="Goals"
           >
             Goals
-          </NavLink>
+          </Link>
         </li>
         <li className={styles.item}>
-          <NavLink
-            to="/collaborations"
-            className={({ isActive }) => [styles.link, isActive ? styles.active : ''].join(' ')}
+          <Link
+            href="/collaborations"
+            className={[styles.link, isActive('/collaborations') ? styles.active : ''].join(' ')}
             aria-label="Collaborations"
           >
             Collaborations
-          </NavLink>
+          </Link>
         </li>
         <li className={styles.item}>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) => [styles.link, isActive ? styles.active : ''].join(' ')}
+          <Link
+            href="/profile"
+            className={[styles.link, isActive('/profile') ? styles.active : ''].join(' ')}
             aria-label="Profile"
           >
             Profile
-          </NavLink>
+          </Link>
         </li>
       </ul>
     </aside>

@@ -45,7 +45,7 @@ export default async function BlogPostPage({
   params,
 }: {
   params: { id: string };
-}): Promise<JSX.Element> {
+}) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/${params.id}`);
   if (!res.ok) notFound();
   const blog: BlogPost = await res.json();

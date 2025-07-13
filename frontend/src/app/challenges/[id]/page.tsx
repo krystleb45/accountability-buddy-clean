@@ -40,8 +40,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 // 2) Dynamically load the client component (no SSR)
 const ClientChallengeDetail = dynamic(
-  () => import('./client'),
-  { ssr: false }
+  () => import('./client')
 );
 
 // 3) Server wrapper: fetch data, then render client UI

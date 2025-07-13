@@ -1,4 +1,4 @@
-﻿// src/services/challengeService.ts
+// src/services/challengeService.ts
 import axios from 'axios';
 import { http } from '@/utils/http';
 
@@ -27,9 +27,9 @@ interface ApiResponse<T> {
 
 const handleError = <T>(fn: string, error: unknown, fallback: T): T => {
   if (axios.isAxiosError(error)) {
-    console.error(`❌ [challengeService::${fn}]`, error.response?.data || error.message);
+    console.error(`? [challengeService::${fn}]`, error.response?.data || error.message);
   } else {
-    console.error(`❌ [challengeService::${fn}]`, error);
+    console.error(`? [challengeService::${fn}]`, error);
   }
   return fallback;
 };

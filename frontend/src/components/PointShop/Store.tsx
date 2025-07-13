@@ -6,7 +6,7 @@ import { Reward } from '../../types/Rewards.types'; // Now uses `id`
 import { fetchRewards } from '../../api/reward/rewardApi';
 import RewardCard from './RewardCard';
 
-const Store: React.FC = (): JSX.Element => {
+const Store: React.FC = () => {
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');

@@ -28,8 +28,7 @@ export const metadata: Metadata = {
 
 // dynamically load the client component
 const AnalyticsClient = dynamic(
-  () => import('./page.client'),
-  { ssr: false }
+  () => import('./page.client')
 );
 
 // server wrapper to enforce auth before loading client

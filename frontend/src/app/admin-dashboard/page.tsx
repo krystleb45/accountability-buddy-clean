@@ -35,8 +35,7 @@ type CustomSessionUser = {
 
 // ——— Dynamically load the client UI —————————————————————————————————
 const ClientAdminDashboard = dynamic(
-  () => import('./client'),
-  { ssr: false }
+  () => import('./client')
 );
 
 // ——— Server wrapper with auth guard —————————————————————————————————

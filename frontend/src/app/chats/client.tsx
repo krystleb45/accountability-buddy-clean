@@ -30,7 +30,7 @@ const SearchParamsHandler: React.FC<{
   return null;
 };
 
-export default function ClientChat(): JSX.Element {
+export default function ClientChat() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);

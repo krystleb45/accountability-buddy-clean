@@ -14,8 +14,7 @@ export const metadata: Metadata = {
 };
 
 const AchievementsClient = dynamic<{}>(
-  () => import("./page.client"),
-  { ssr: false }
+  () => import("./page.client")
 );
 
 export default async function AchievementsPage(): Promise<ReactNode> {

@@ -25,8 +25,7 @@ export const metadata: Metadata = {
 
 // 1) dynamically import client UI
 const ClientActivityList = dynamic(
-  () => import('./client'),
-  { ssr: false }
+  () => import('./client')
 );
 
 // 2) server component to guard auth

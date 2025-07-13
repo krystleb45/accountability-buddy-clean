@@ -14,7 +14,7 @@ interface Activity {
 }
 
 // ——— Component —————————————————————————————————————————————————————
-export default function ClientDashboard(): React.JSX.Element {
+export default function ClientDashboard() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

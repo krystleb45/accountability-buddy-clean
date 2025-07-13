@@ -2,7 +2,8 @@
 'use client';
 
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './NavbarItems.module.css';
 
 export interface NavbarItem {
@@ -10,33 +11,38 @@ export interface NavbarItem {
   to: string;
   exact?: boolean;
   icon?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 interface NavbarItemsProps {
   items: NavbarItem[];
 }
 
-const NavbarItems: React.FC<NavbarItemsProps> = ({ items }): JSX.Element => {
+const NavbarItems: React.FC<NavbarItemsProps> = ({ items }) => {
+  const pathname = usePathname();
+
   return (
     <ul className={styles.list} role="menubar">
-      {items.map((item) => (
-        <li key={item.to} className={styles.item} role="none">
-          <NavLink
-            to={item.to}
-            end={Boolean(item.exact)}
-            className={({ isActive }): string =>
-              `${styles.link}${isActive ? ` ${styles.active}` : ''}`
-            }
-            onClick={item.onClick}
-            role="menuitem"
-            aria-label={item.label}
-          >
-            {item.icon && <span className={styles.icon}>{item.icon}</span>}
-            <span className={styles.label}>{item.label}</span>
-          </NavLink>
-        </li>
-      ))}
+      {items.map((item) => {
+        const isActive = item.exact
+          ? pathname === item.to
+          : pathname.startsWith(item.to);
+
+        return (
+          <li key={item.to} className={styles.item} role="none">
+            <Link
+              href={item.to}
+              className={`${styles.link}${isActive ? ` ${styles.active}` : ''}`}
+              role="menuitem"
+              aria-label={item.label}
+              {...(item.onClick && { onClick: item.onClick })}
+            >
+              {item.icon && <span className={styles.icon}>{item.icon}</span>}
+              <span className={styles.label}>{item.label}</span>
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 };

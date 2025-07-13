@@ -18,7 +18,7 @@ const handleSignOut = () => {
   window.location.href = '/api/auth/signout';
 };
 
-export default function Navbar(): JSX.Element {
+export default function Navbar() {
   const { data: session, status } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const router = useRouter();

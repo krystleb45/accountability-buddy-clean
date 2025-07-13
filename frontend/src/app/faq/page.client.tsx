@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { FAQItem } from '@/types/faq';
 import { fetchFaqs } from '@/api/faq/faqApi';
 
-export default function FaqClient(): JSX.Element {
+export default function FaqClient() {
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');

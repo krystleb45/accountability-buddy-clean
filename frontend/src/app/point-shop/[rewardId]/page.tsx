@@ -35,8 +35,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title, description };
 }
 
-// 2️⃣ Dynamically load the client detail component
-const RewardDetailClient = dynamic(() => import('./page.client'), { ssr: false });
+// 2️⃣ Dynamically load the client detail component - REMOVED { ssr: false }
+const RewardDetailClient = dynamic(() => import('./page.client'));
 
 export default function Page({ params }: Params) {
   // just hand off to the client component

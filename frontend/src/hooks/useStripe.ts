@@ -31,8 +31,8 @@ export default function useStripe(): UseStripeReturn {
   const [error, setError] = useState<string | null>(null);
 
   // keep stable refs so you can call them together later
-  const fetchSubRef = useRef<() => Promise<void>>();
-  const fetchHistRef = useRef<() => Promise<void>>();
+  const fetchSubRef = useRef<(() => Promise<void>) | undefined>(undefined);
+  const fetchHistRef = useRef<(() => Promise<void>) | undefined>(undefined);
 
   const fetchSubscriptionDetails = useCallback(async (): Promise<void> => {
     setLoading(true);

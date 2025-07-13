@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import AuthTokenSync from './AuthTokenSync';
 import Navbar from '@/components/Navbar/Navbar';
 
-const Quotes = dynamic(() => import('./Quotes'), { ssr: false });
+const Quotes = dynamic(() => import('./Quotes'));
 
 interface LayoutClientProps {
   children: ReactNode;

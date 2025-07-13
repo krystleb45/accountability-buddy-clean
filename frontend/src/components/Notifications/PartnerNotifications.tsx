@@ -18,7 +18,7 @@ export interface PartnerNotification {
   isRead: boolean;
 }
 
-const PartnerNotifications: React.FC = (): JSX.Element => {
+const PartnerNotifications: React.FC = () => {
   const [notifications, setNotifications] = useState<PartnerNotification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');

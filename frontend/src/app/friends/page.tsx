@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 };
 
 // Dynamically import the client component (no SSR)
-const FriendsClient = dynamic(() => import('./page.client'), { ssr: false });
+const FriendsClient = dynamic(() => import('./page.client'));
 
-export default async function FriendsPage(): Promise<JSX.Element> {
+export default async function FriendsPage() {
   // Protect the route
   const session = await getServerSession(authOptions);
   if (!session) {

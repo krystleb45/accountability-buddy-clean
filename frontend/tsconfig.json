@@ -37,9 +37,7 @@
       "src/@types"
     ],
     "types": [
-      "node",
-      "jest",
-      "@testing-library/jest-dom"
+      "node"
     ],
     "plugins": [
       {
@@ -53,12 +51,8 @@
     "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.test.{ts,tsx}",
     "src/@types/**/*.d.ts",
-    "src/tests/**/*.{ts,tsx}",
-    ".next/types/**/*.ts",
-    ".storybook/**/*.ts",
-    ".storybook/**/*.tsx"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
@@ -67,6 +61,9 @@
     "coverage",
     "cypress",
     "**/*.mjs",
-    "jest.config.cjs"
+    "jest.config.cjs",
+    "src/**/*.test.{ts,tsx}",
+    "src/tests/**/*",
+    ".storybook/**/*"
   ]
 }

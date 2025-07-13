@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ResetPasswordForm(): JSX.Element {
+export default function ResetPasswordForm() {
   const router = useRouter();
   const params = useSearchParams();
   const token = params.get('token');

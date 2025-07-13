@@ -19,8 +19,7 @@ export const metadata: Metadata = {
 
 // Dynamically load the client component
 const RecommendationsClient = dynamic(
-  () => import('./page.client').then((mod) => mod.default),
-  { ssr: false }
+  () => import('./page.client').then((mod) => mod.default)
 );
 
 export default async function RecommendationsPageWrapper() {

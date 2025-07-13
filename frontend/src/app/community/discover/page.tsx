@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Dynamically load the client component
-const DiscoverClient = dynamic(() => import('./client'), { ssr: false });
+// Dynamically load the client component - REMOVED { ssr: false }
+const DiscoverClient = dynamic(() => import('./client'));
 
 export default async function DiscoverPage(): Promise<ReactNode> {
   const session = await getServerSession(authOptions);

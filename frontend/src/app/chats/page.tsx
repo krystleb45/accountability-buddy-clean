@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
 };
 
-// Dynamically import the chat UI (client-side only)
-const ClientChat = dynamic(() => import('./client'), { ssr: false });
+// Dynamically import the chat UI (client-side only) - REMOVED { ssr: false }
+const ClientChat = dynamic(() => import('./client'));
 
 export default async function ChatPageWrapper(): Promise<ReactNode> {
   const session = await getServerSession(authOptions);

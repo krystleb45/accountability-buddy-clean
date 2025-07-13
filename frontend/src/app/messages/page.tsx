@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MessagesPage(): JSX.Element {
+export default function MessagesPage() {
   // delegate all the interactivity to our client component wrapped in Suspense
   return (
     <Suspense fallback={

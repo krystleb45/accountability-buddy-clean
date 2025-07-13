@@ -13,7 +13,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   debounceTime = 300,
 }) => {
   const [query, setQuery] = useState<string>('');
-  const debounceTimer = useRef<number>();
+  const debounceTimer = useRef<number | undefined>(undefined);
 
   // Clean up timer on unmount
   useEffect(() => {

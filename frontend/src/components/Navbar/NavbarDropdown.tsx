@@ -18,7 +18,7 @@ export interface NavbarDropdownProps {
   className?: string; // Added for wrapper styling
 }
 
-export default function NavbarDropdown({ title, items, className = '' }: NavbarDropdownProps): JSX.Element {
+export default function NavbarDropdown({ title, items, className = '' }: NavbarDropdownProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

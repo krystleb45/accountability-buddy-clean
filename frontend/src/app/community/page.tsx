@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 // dynamically load the client list component
-const ClientCommunities = dynamic(() => import('./client'), { ssr: false });
+const ClientCommunities = dynamic(() => import('./client'));
 
 export default async function CommunitiesPage(): Promise<ReactNode> {
   const session = await getServerSession(authOptions);

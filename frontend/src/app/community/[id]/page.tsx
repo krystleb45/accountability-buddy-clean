@@ -40,9 +40,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 // 2) Dynamically load the client detail component (no SSR)
-const ClientCommunityDetail = dynamic(() => import('./client'), {
-  ssr: false,
-});
+const ClientCommunityDetail = dynamic(() => import('./client'));
 
 export default async function CommunityDetailPage({
   params,

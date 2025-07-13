@@ -108,10 +108,10 @@ export default function useSubscription(): UseSubscriptionReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const subRef = useRef<() => Promise<void>>();
-  const histRef = useRef<() => Promise<void>>();
-  const statusRef = useRef<() => Promise<void>>();
-  const limitsRef = useRef<() => Promise<void>>();
+  const subRef = useRef<(() => Promise<void>) | undefined>(undefined);
+  const histRef = useRef<(() => Promise<void>) | undefined>(undefined);
+  const statusRef = useRef<(() => Promise<void>) | undefined>(undefined);
+  const limitsRef = useRef<(() => Promise<void>) | undefined>(undefined);
 
   // ... keep all your existing methods exactly the same ...
   const fetchSubscriptionDetails = useCallback(async (): Promise<void> => {

@@ -50,7 +50,7 @@ function daysLeft(due: unknown): string {
   }
 }
 
-export default function GoalsClient(): JSX.Element {
+export default function GoalsClient() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [goals, setGoals] = useState<Goal[]>([]);

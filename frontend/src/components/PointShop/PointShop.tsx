@@ -8,7 +8,7 @@ import { fetchRewards as apiFetchRewards, redeemReward } from '../../api/reward/
 import type { Reward as ApiReward } from '../../api/reward/rewardApi';
 import type { Reward as UiReward } from '../../types/Rewards.types';
 
-const PointShop: React.FC = (): JSX.Element => {
+const PointShop: React.FC = () => {
   const [userPoints, setUserPoints] = useState<number>(0);
   const [rewards, setRewards] = useState<UiReward[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

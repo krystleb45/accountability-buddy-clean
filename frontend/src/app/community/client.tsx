@@ -17,7 +17,7 @@ interface QuickAction {
   color: string;
 }
 
-export default function CommunityClient(): JSX.Element {
+export default function CommunityClient() {
   const { status } = useSession();
   const [stats, setStats] = useState<CommunityStats>({
     totalFriends: 0,

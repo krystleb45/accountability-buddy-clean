@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BookPage(): JSX.Element {
+export default function BookPage() {
   // delegate all the interactivity to our client component
   return <BookListClient />;
 }

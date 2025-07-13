@@ -13,8 +13,7 @@ export const metadata: Metadata = {
 
 // dynamically load the form UI
 const CreateBlogClient = dynamic(
-  () => import('./page.client'),
-  { ssr: false }
+  () => import('./page.client')
 );
 
 export default async function CreateBlogPageWrapper(): Promise<ReactNode> {

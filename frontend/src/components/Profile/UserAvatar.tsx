@@ -33,7 +33,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   rounded = true,
   alt,
   className,
-}): JSX.Element => {
+}) => {
   const avatarUrl = getAvatarUrl(user);
   const initials = getInitials(user);
 

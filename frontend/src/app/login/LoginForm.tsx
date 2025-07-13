@@ -17,7 +17,7 @@ const messages: AuthErrorMessages = {
   default: '',
 };
 
-export default function LoginForm(): JSX.Element {
+export default function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
 

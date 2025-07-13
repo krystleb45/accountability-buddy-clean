@@ -8,7 +8,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = { /* … same metadata … */ };
 
 // dynamically load the client form UI
-const LoginForm = dynamic(() => import('./LoginForm'), { ssr: false });
+const LoginForm = dynamic(() => import('./LoginForm'));
 
 export default async function LoginPageWrapper() {
   const session = await getServerSession(authOptions);

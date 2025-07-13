@@ -22,8 +22,7 @@ export const metadata: Metadata = {
 
 // Dynamically load the list UI (no SSR)
 const ClientChallenges = dynamic(
-  () => import('./client'),
-  { ssr: false }
+  () => import('./client')
 );
 
 // Server wrapper: simply render the client component

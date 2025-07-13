@@ -9,7 +9,7 @@ interface PostProps {
   timestamp: string; // already formatted, e.g. "9/1/2023, 2:34 PM"
 }
 
-const Post: React.FC<PostProps> = ({ id, title, content, author, timestamp }): JSX.Element => {
+const Post: React.FC<PostProps> = ({ id, title, content, author, timestamp }) => {
   return (
     <div
       id={`post-${id}`}

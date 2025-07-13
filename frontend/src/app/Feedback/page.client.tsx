@@ -10,7 +10,7 @@ import { Textarea } from '@/components/UtilityComponents/textarea';
 import Button from '@/components/Buttons/Button';
 import { submitFeedback } from '@/api/feedback/feedbackApi';
 
-export default function FeedbackClient(): JSX.Element {
+export default function FeedbackClient() {
   const { data: session } = useSession();
 
   const [feedback, setFeedback] = useState<string>('');

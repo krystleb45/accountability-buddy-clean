@@ -10,7 +10,7 @@ import {
   type AnalyticsData,
 } from '@/api/analytics/analyticsApi';
 
-export default function AnalyticsClient(): React.JSX.Element {
+export default function AnalyticsClient() {
   const [trafficData, setTrafficData] = useState<{ totalVisitors: number } | null>(null);
   const [userActivity, setUserActivity] = useState<{ activeUsers: number } | null>(null);
   const [revenueData, setRevenueData] = useState<{ totalRevenue: number } | null>(null);

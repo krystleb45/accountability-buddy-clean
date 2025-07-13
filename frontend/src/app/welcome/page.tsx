@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 // Dynamically import the client‐only welcome UI (disable SSR)
-const WelcomeClient = dynamic(() => import('./page.client'), { ssr: false });
+const WelcomeClient = dynamic(() => import('./page.client'));
 
 export default function WelcomePage() {
   return <WelcomeClient />;
