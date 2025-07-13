@@ -1,5 +1,5 @@
 // src/api/controllers/NewsletterController.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import Newsletter from "../models/Newsletter";
 import { logger } from "../../utils/winstonLogger";
 import catchAsync from "../utils/catchAsync";

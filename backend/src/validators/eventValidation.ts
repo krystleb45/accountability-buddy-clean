@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import type { ValidationChain } from "express-validator";
 import { check, validationResult } from "express-validator";
 

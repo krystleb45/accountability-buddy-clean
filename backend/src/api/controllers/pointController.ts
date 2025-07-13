@@ -1,5 +1,5 @@
 // src/api/controllers/PointController.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import * as PointService from "../services/PointsService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";

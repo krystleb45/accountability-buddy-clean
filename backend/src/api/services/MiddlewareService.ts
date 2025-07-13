@@ -1,5 +1,5 @@
 // src/api/services/MiddlewareService.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import { createError, errorHandler as defaultErrorHandler } from "../middleware/errorHandler";

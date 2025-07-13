@@ -1,5 +1,5 @@
 // src/middleware/errorMiddleware.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { logger } from "../../utils/winstonLogger";
 
 // Export the CustomError interface

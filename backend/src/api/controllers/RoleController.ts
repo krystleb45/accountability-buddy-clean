@@ -1,5 +1,5 @@
 // src/api/controllers/RoleController.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import RoleService from "../services/RoleService";
 import sendResponse from "../utils/sendResponse";
 

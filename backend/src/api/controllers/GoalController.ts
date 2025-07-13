@@ -1,5 +1,5 @@
 // src/api/controllers/goalController.ts - FIXED: TypeScript errors
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";

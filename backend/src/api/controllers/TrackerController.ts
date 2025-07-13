@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import Tracker from "../models/Tracker"; // Database model for tracker
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";

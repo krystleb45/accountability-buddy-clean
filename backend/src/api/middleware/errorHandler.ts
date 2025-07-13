@@ -1,5 +1,5 @@
 // src/api/middleware/errorHandler.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { logger } from "../../utils/winstonLogger";
 
 export class CustomError extends Error {

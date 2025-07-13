@@ -1,6 +1,6 @@
 import rateLimit from "express-rate-limit";
 import { logger } from "../../utils/winstonLogger";
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
 // Load IP whitelist from environment variables or fallback to defaults
 const trustedIps: string[] = (

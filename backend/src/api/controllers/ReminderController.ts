@@ -1,5 +1,5 @@
 // src/api/controllers/ReminderController.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import sanitize from "mongo-sanitize";
 

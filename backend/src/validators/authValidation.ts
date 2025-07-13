@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { validationResult, check } from "express-validator";
 
 interface CustomValidationError {

@@ -1,5 +1,5 @@
 // src/controllers/ProfileController.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";

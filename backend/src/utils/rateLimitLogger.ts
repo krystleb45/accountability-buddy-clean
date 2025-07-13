@@ -1,5 +1,5 @@
 import { logger } from "../utils/winstonLogger";
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 
 /**
  * @desc    Logs details of requests that trigger rate limits.

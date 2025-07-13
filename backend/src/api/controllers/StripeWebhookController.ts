@@ -1,5 +1,5 @@
 // src/api/controllers/StripeWebhookController.ts - Fixed logging import
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import Stripe from "stripe";
 import StripeService from "../services/StripeService";
 import { logger } from "../../utils/winstonLogger"; // Fixed: Use your winston logger

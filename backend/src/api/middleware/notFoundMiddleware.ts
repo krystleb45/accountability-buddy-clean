@@ -1,6 +1,6 @@
 // src/api/middleware/notFoundMiddleware.ts
 
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { logger } from "../../utils/winstonLogger";
 
 /**

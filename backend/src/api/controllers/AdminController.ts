@@ -1,5 +1,5 @@
 // src/api/controllers/AdminController.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { PERMISSIONS } from "../../constants/roles";
 import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
 import catchAsync from "../utils/catchAsync";

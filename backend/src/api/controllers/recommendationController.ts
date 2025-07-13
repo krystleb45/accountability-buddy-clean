@@ -1,6 +1,6 @@
 // src/api/controllers/recommendationController.ts
 
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import RecommendationService from "../services/RecommendationService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";

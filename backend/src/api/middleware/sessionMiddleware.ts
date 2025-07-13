@@ -1,7 +1,7 @@
 // src/api/middleware/sessionMiddleware.ts - COMPLETELY REWRITTEN: No top-level Redis imports
 import type { SessionOptions } from "express-session";
 import session from "express-session";
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { logger } from "../../utils/winstonLogger";
 
 // Check if Redis is disabled BEFORE any Redis imports

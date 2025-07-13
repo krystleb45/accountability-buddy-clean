@@ -1,5 +1,5 @@
 // src/api/controllers/PollController.ts
-import type { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { Types } from "mongoose";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
