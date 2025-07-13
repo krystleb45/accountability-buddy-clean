@@ -55,11 +55,12 @@ export const errorHandler = (
     errorResponse.details = err.details;
   }
 
+  // Get user ID safely with proper typing
+  const userId = req.user?.id || "Guest";
+
   // Log the error with additional context
   logger.error(
-    `Error: ${err.message} | Status: ${statusCode} | URL: ${req.originalUrl} | Method: ${req.method} | IP: ${req.ip} | User: ${
-      req.user ? (req.user as { id: string }).id : "Guest"
-    }`,
+    `Error: ${err.message} | Status: ${statusCode} | URL: ${req.originalUrl} | Method: ${req.method} | IP: ${req.ip} | User: ${userId}`,
   );
 
   // Include stack trace in development environment

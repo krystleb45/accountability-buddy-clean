@@ -27,7 +27,8 @@
     "types": ["node"]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",
@@ -35,5 +36,8 @@
     "**/*.test.ts",
     "**/*.spec.ts",
     "**/node_modules/date-fns/**"
-  ]
+  ],
+  "ts-node": {
+    "files": true
+  }
 }
