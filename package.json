@@ -1,28 +1,22 @@
 {
-  "name": "accountability-buddy",
+  "name": "accountability-buddy-clean",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix=frontend",
+    "build": "npm run build --prefix=frontend",
+    "start": "npm run start --prefix=frontend",
+    "lint": "npm run lint --prefix=frontend",
+    "install:frontend": "npm install --prefix=frontend",
+    "install:backend": "npm install --prefix=backend",
+    "install:all": "npm run install:frontend && npm run install:backend",
+    "dev:frontend": "npm run dev --prefix=frontend",
+    "dev:backend": "npm run dev --prefix=backend",
+    "build:frontend": "npm run build --prefix=frontend",
+    "build:backend": "npm run build --prefix=backend"
+  },
   "workspaces": [
     "frontend",
     "backend"
-  ],
-  "scripts": {
-    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
-    "build": "concurrently \"npm run build --prefix frontend\" \"npm run build --prefix backend\"",
-    "start": "concurrently \"npm start --prefix frontend\" \"npm start --prefix backend\"",
-    "lint": "eslint . --fix",
-    "format": "prettier --write .",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "type-check": "tsc --noEmit"
-  },
-  "devDependencies": {
-    "eslint": "^8.57.1",
-    "eslint-config-prettier": "^10.0.1",
-    "prettier": "^3.4.2",
-    "prettier-plugin-tailwindcss": "^0.6.11",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
-    "concurrently": "^8.2.2"
-  }
+  ]
 }
