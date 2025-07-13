@@ -42,10 +42,6 @@
       ]
     }
   ],
-  "env": {
-    "NEXT_PUBLIC_API_URL": "https://api.example.com",
-    "CUSTOM_ENV_VAR": "value"
-  },
-  "regions": ["iad1", "sfo1", "ams1"],
+  "regions": ["iad1", "sfo1"],
   "cleanUrls": true
 }
