@@ -1,0 +1,30 @@
+// src/app/friends/page.tsx
+import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
+
+// Metadata
+export const metadata: Metadata = {
+  title: 'Friends • Accountability Buddy',
+  description: 'Connect with friends, manage requests, and start chats to stay accountable.',
+  openGraph: {
+    title: 'Friends • Accountability Buddy',
+    description: 'Connect with friends, manage requests, and start chats to stay accountable.',
+    url: `${process.env.NEXT_PUBLIC_BASE_URL}/friends`,
+  },
+};
+
+// Dynamically import the client component (no SSR)
+const FriendsClient = dynamic(() => import('./page.client'), { ssr: false });
+
+export default async function FriendsPage(): Promise<JSX.Element> {
+  // Protect the route
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    redirect('/login');
+  }
+
+  return <FriendsClient />;
+}

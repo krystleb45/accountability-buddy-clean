@@ -1,0 +1,66 @@
+{
+  "404": {
+    "title": "Seite nicht gefunden",
+    "message": "Die von Ihnen gesuchte Seite wurde nicht gefunden."
+  },
+  "500": {
+    "title": "Serverfehler",
+    "message": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+  },
+  "networkError": {
+    "title": "Netzwerkfehler",
+    "message": "Es konnte keine Verbindung zum Server hergestellt werden. Bitte überprüfen Sie Ihre Internetverbindung."
+  },
+  "validationError": {
+    "title": "Validierungsfehler",
+    "message": "Einige Eingaben sind ungültig. Bitte überprüfen Sie die markierten Felder und versuchen Sie es erneut."
+  },
+  "authenticationError": {
+    "title": "Authentifizierungsfehler",
+    "message": "Sie sind nicht berechtigt, auf diese Ressource zuzugreifen. Bitte melden Sie sich erneut an."
+  },
+  "authorizationError": {
+    "title": "Berechtigungsfehler",
+    "message": "Sie haben nicht die erforderlichen Berechtigungen, um diese Aktion auszuführen."
+  },
+  "timeoutError": {
+    "title": "Zeitüberschreitung",
+    "message": "Die Anfrage hat zu lange gedauert. Bitte versuchen Sie es später erneut."
+  },
+  "formSubmissionError": {
+    "title": "Formularübermittlungsfehler",
+    "message": "Beim Senden des Formulars ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "resourceNotFound": {
+    "title": "Ressource nicht gefunden",
+    "message": "Die angeforderte Ressource wurde nicht gefunden."
+  },
+  "passwordMismatch": {
+    "title": "Passwort stimmt nicht überein",
+    "message": "Die eingegebenen Passwörter stimmen nicht überein. Bitte überprüfen Sie sie."
+  },
+  "accountLocked": {
+    "title": "Konto gesperrt",
+    "message": "Ihr Konto wurde gesperrt. Bitte wenden Sie sich an den Support, um Hilfe zu erhalten."
+  },
+  "accountNotActivated": {
+    "title": "Konto nicht aktiviert",
+    "message": "Ihr Konto wurde noch nicht aktiviert. Bitte überprüfen Sie Ihre E-Mail und aktivieren Sie Ihr Konto."
+  },
+  "invalidCredentials": {
+    "title": "Ungültige Anmeldeinformationen",
+    "message": "Die eingegebene E-Mail-Adresse oder das Passwort ist falsch. Bitte versuchen Sie es erneut."
+  },
+  "subscriptionExpired": {
+    "title": "Abonnement abgelaufen",
+    "message": "Ihr Abonnement ist abgelaufen. Bitte erneuern Sie es, um fortzufahren."
+  },
+  "paymentFailed": {
+    "title": "Zahlung fehlgeschlagen",
+    "message": "Die Zahlung konnte nicht abgeschlossen werden. Bitte versuchen Sie es mit einer anderen Zahlungsmethode."
+  },
+  "quotaExceeded": {
+    "title": "Limit überschritten",
+    "message": "Sie haben das für Ihr Konto zulässige Limit überschritten. Bitte aktualisieren Sie Ihr Abonnement."
+  }
+}

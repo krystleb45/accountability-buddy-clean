@@ -1,0 +1,24 @@
+{
+  "user": {
+    "username": "testuser",
+    "email": "testuser@example.com",
+    "password": "password123",
+    "profilePic": "profile-pic.jpg"
+  },
+  "invalidCredentials": {
+    "username": "invaliduser",
+    "email": "invalid@example.com",
+    "password": "wrongpassword"
+  },
+  "friend": {
+    "username": "frienduser"
+  },
+  "analytics": {
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31"
+  },
+  "settings": {
+    "theme": "light",
+    "notifications": true
+  }
+}

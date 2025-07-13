@@ -1,0 +1,54 @@
+/* Footer.module.css */
+
+/* Footer container */
+.footer-container {
+  background-color: #282c34; /* Dark background */
+  color: white; /* White text for contrast */
+  padding: 20px; /* Inner padding */
+  text-align: center; /* Center-align text and content */
+  border-top: 2px solid #444; /* Subtle border for separation */
+}
+
+/* Footer links */
+.footer-links {
+  margin: 10px 0; /* Space between links and other content */
+  list-style: none; /* Remove default list styles */
+  padding: 0;
+  display: flex; /* Flex layout for links */
+  justify-content: center; /* Center links horizontally */
+  gap: 15px; /* Space between links */
+}
+
+.footer-links li {
+  display: inline;
+}
+
+.footer-links a {
+  color: #61dafb; /* Light blue color for links */
+  text-decoration: none; /* Remove underline */
+  font-size: 1rem; /* Standard font size */
+  transition: color 0.3s ease; /* Smooth color transition on hover */
+}
+
+.footer-links a:hover {
+  color: #21a1f1; /* Darker blue on hover */
+}
+
+/* Footer copyright */
+.footer-copyright {
+  margin-top: 15px; /* Space above copyright */
+  font-size: 0.85rem; /* Slightly smaller font size */
+  color: #aaa; /* Muted text color */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .footer-container {
+    padding: 15px;
+  }
+
+  .footer-links {
+    flex-direction: column; /* Stack links vertically */
+    gap: 10px; /* Reduce gap between links */
+  }
+}

@@ -1,0 +1,69 @@
+/* ✅ Military Support Container */
+/* Updated for light theme to match new components */
+.militarySupportContainer {
+  background-color: #f8fafc; /* Light slate background */
+  color: #1e293b !important; /* Dark text */
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 1200px;
+  margin: auto;
+}
+
+.militarySupportHeader {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #059669 !important; /* Emerald green to match */
+  margin-bottom: 1rem;
+}
+
+/* Rest of your styles updated for light theme... */
+
+/* ✅ Fix Chatroom Heading Visibility */
+.militarySupportChatbox h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #28a745 !important; /* ✅ Kelly Green */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ✅ Chatbox Container */
+.militarySupportChatbox {
+  width: 100%;
+  max-width: 800px;
+  background-color: #222 !important; /* ✅ Ensure Dark Chat Background */
+  border-radius: 10px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ✅ Fix for Disappearing Text */
+.militarySupportContainer h1,
+.militarySupportContainer h2,
+.militarySupportContainer p {
+  color: white !important; /* ✅ Ensure visibility */
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ✅ Ensure Chatbox Input and Messages are Visible */
+.militarySupportChatbox input,
+.militarySupportChatbox .messages {
+  color: white !important; /* ✅ Ensure chat input text is visible */
+  background-color: #333 !important;
+  border: 1px solid #444;
+}
+
+/* ✅ Ensure Links Are Visible */
+.militarySupportContainer a {
+  color: #17a2b8 !important; /* ✅ Blue */
+  text-decoration: none;
+}
+
+.militarySupportContainer a:hover {
+  color: #138496 !important; /* ✅ Darker Blue */
+}

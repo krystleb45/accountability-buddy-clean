@@ -1,0 +1,10 @@
+// components/BadgeSystem/index.ts
+export { default as Badge } from './Badge';
+export { default as BadgeItem } from './BadgeItem';
+export { default as BadgeList } from './BadgeList';
+export { default as BadgeDetails } from './BadgeDetails';
+export { default as BadgeSystem } from './BadgeSystem';
+export { default as EarnBadgeNotification } from './EarnBadgeNotification';
+export { default as FavoriteBadges } from './FavoriteBadges';
+export { default as BadgeProgress } from './BadgeProgress';
+export { default as BadgeShowcase } from './BadgeShowcase';

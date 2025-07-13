@@ -1,0 +1,76 @@
+/* src/components/Notifications/PartnerNotifications.module.css */
+
+.container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: sans-serif;
+}
+
+.heading {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.spinnerWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.error {
+  color: #b00020;
+  text-align: center;
+}
+
+.empty {
+  color: #555;
+  text-align: center;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background-color: #f9f9f9;
+}
+
+.read {
+  opacity: 0.6;
+}
+
+.unread {
+  background-color: #eef6ff;
+}
+
+.message {
+  margin: 0 0 0.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.actionButton {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.actionButton:hover {
+  background-color: #0056b3;
+}

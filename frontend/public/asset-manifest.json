@@ -1,0 +1,17 @@
+{
+  "files": {
+    "app.js": "/static/js/app.123456.js",
+    "app.css": "/static/css/app.123456.css",
+    "logo192.png": "/static/media/logo192.123456.png",
+    "logo512.png": "/static/media/logo512.123456.png"
+  },
+  "entrypoints": ["/static/js/app.123456.js", "/static/css/app.123456.css"],
+  "icons": {
+    "192": "/static/media/logo192.123456.png",
+    "512": "/static/media/logo512.123456.png"
+  },
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff"
+}

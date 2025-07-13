@@ -1,0 +1,46 @@
+/* src/components/PointShop/PointShop.module.css */
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: sans-serif;
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.balance {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.points {
+  font-weight: bold;
+  color: #2a9d8f;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.error {
+  color: #b00020;
+  text-align: center;
+}
+
+.empty {
+  color: #555;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}

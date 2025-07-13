@@ -1,0 +1,75 @@
+.favoriteBadgesContainer {
+  padding: 1.5rem;
+  background-color: #1f2937; /* dark gray bg */
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 255, 128, 0.1);
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #10b981; /* green-400 */
+  margin-bottom: 1rem;
+}
+
+.badgesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.badgeCard {
+  background-color: #111827; /* gray-900 */
+  border: 1px solid #374151; /* gray-700 */
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  outline: none;
+}
+
+.badgeCard:hover,
+.badgeCard:focus {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+  background-color: #1f2937;
+}
+
+.badgeIcon {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 50%;
+  background-color: #374151; /* gray-700 */
+  padding: 0.5rem;
+  border: 2px solid #10b981; /* green border */
+  margin-bottom: 0.5rem;
+}
+
+.badgeName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #34d399; /* green-400 */
+  margin-bottom: 0.25rem;
+}
+
+.badgeDescription {
+  font-size: 0.875rem;
+  color: #9ca3af; /* gray-400 */
+}
+
+.favoriteHint {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #facc15; /* yellow-400 */
+}
+
+.statusText {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}

@@ -1,0 +1,105 @@
+/* Overlay for the modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fade-in 0.3s ease;
+  backdrop-filter: blur(5px); /* Adds a subtle blur effect for a modern look */
+}
+
+/* Modal box styles */
+.modal {
+  background: var(--background-light, #ffffff); /* Fallback for custom properties */
+  padding: 2rem;
+  border-radius: var(--border-radius, 8px);
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Enhanced shadow for better depth */
+  outline: none;
+  animation: slide-down 0.3s ease;
+  transform-origin: top center; /* Improves animation effect */
+}
+
+.modal-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--primary-color, #333); /* Dynamic primary color */
+  text-align: center;
+}
+
+.modal-content {
+  font-size: 1rem;
+  color: var(--text-color, #555); /* Customizable text color */
+  margin-top: 1rem;
+  text-align: left;
+  line-height: 1.6;
+}
+
+.close-button {
+  padding: 0.5rem 1rem;
+  margin-top: 1.5rem;
+  background-color: var(--primary-color, #007bff); /* Primary button color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+  display: block;
+  width: 100%; /* Full-width for better UX on smaller screens */
+  max-width: 200px;
+  margin: 1.5rem auto 0; /* Center the button */
+}
+
+.close-button:hover {
+  background-color: var(--hover-color, #0056b3); /* Dynamic hover color */
+  transform: scale(1.05); /* Adds a slight scale effect */
+}
+
+/* Animation for fade-in */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation for sliding down */
+@keyframes slide-down {
+  from {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .modal-header {
+    font-size: 1.25rem;
+  }
+
+  .close-button {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+}

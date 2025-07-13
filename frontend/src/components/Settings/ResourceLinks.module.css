@@ -1,0 +1,41 @@
+/* components/Settings/ResourceLinks.module.css */
+
+.resources {
+  padding: 1rem;
+}
+
+.heading {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--primary-color, #22c55e); /* e.g. Tailwind’s green-400 */
+}
+
+.loading,
+.empty {
+  color: var(--muted-color, #6b7280); /* gray-500 */
+  font-style: italic;
+}
+
+.error {
+  color: var(--error-color, #dc2626); /* red-600 */
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item + .item {
+  margin-top: 0.5rem;
+}
+
+.link {
+  color: var(--primary-color, #22c55e);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

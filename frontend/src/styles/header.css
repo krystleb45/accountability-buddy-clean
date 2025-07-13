@@ -1,0 +1,83 @@
+/* Define CSS variables for theming and reuse */
+:root {
+  --header-bg: #f8f9fa;
+  --header-border-color: rgba(0, 0, 0, 0.1);
+  --brand-color: #555ab9;
+  --text-color: #333;
+  --font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --spacing: 10px;
+}
+
+/* Header container */
+.storybook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--header-border-color);
+  font-family: var(--font-family);
+  background-color: var(--header-bg);
+}
+
+/* Branding section */
+.storybook-header .header-branding {
+  display: flex;
+  align-items: center;
+}
+
+.storybook-header svg {
+  display: inline-block;
+  vertical-align: top;
+  width: 32px;
+  height: 32px;
+}
+
+.storybook-header h1 {
+  margin: 0 0 0 var(--spacing);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+  color: var(--brand-color);
+}
+
+/* Actions section */
+.storybook-header .header-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Add spacing between adjacent buttons */
+.storybook-header .header-actions button + button {
+  margin-left: var(--spacing);
+}
+
+/* Welcome text */
+.storybook-header .welcome {
+  margin-right: var(--spacing);
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+/* Accessibility: Focus state for buttons inside header-actions */
+.storybook-header .header-actions button:focus {
+  outline: 2px solid var(--brand-color);
+  outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .storybook-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .storybook-header .header-actions {
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .storybook-header .header-actions button + button {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+}

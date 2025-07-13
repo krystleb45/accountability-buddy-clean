@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<browserconfig>
+  <msapplication>
+    <tile>
+      <square70x70logo src="/assets/icons/smalltile.png"/> <!-- Small tile logo -->
+      <square150x150logo src="/assets/icons/mediumtile.png"/> <!-- Medium tile logo -->
+      <wide310x150logo src="/assets/icons/widetile.png"/> <!-- Wide tile logo -->
+      <square310x310logo src="/assets/icons/largetile.png"/> <!-- Large tile logo -->
+      <TileColor>#ffffff</TileColor> <!-- Background color for tiles -->
+      <text>App Name</text> <!-- Optional: Text to display on the tile -->
+    </tile>
+  </msapplication>
+</browserconfig>

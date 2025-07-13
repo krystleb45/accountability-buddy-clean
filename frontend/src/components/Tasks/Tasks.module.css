@@ -1,0 +1,201 @@
+/* General Task Manager Styling */
+.task-manager {
+  margin: 2rem auto;
+  max-width: 600px;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-manager-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Task Input Styling */
+.task-input {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.task-input input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.task-input input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.task-input button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.task-input button:hover {
+  background: #0056b3;
+}
+
+.task-input button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Task List Styling */
+.task-list-container {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+}
+
+.task-list-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+  text-align: center;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-list-empty {
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+/* Task Item Styling */
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.task-item.completed {
+  background: #e6ffe6;
+}
+
+.task-details {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.task-title {
+  font-size: 1rem;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.task-title.strikethrough {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.complete-button,
+.delete-button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.complete-button {
+  background: #28a745;
+  color: #fff;
+}
+
+.complete-button:hover {
+  background: #218838;
+}
+
+.complete-button.undo-button {
+  background: #ffc107;
+  color: #333;
+}
+
+.complete-button.undo-button:hover {
+  background: #e0a800;
+}
+
+.delete-button {
+  background: #dc3545;
+  color: #fff;
+}
+
+.delete-button:hover {
+  background: #c82333;
+}
+
+/* Clear Completed Button */
+.clear-completed-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.clear-completed-button:hover {
+  background: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .task-manager {
+    padding: 1rem;
+  }
+
+  .task-input input {
+    font-size: 0.9rem;
+  }
+
+  .task-input button {
+    font-size: 0.9rem;
+  }
+
+  .clear-completed-button {
+    font-size: 0.9rem;
+  }
+}

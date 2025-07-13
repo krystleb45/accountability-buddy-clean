@@ -1,0 +1,17 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /private/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /auth/
+
+# Host
+Host: https://accountabilitybuddys.com
+
+# Sitemaps
+Sitemap: https://accountabilitybuddys.com/sitemap.xml
+Sitemap: https://accountabilitybuddys.com/server-sitemap.xml

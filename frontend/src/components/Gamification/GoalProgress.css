@@ -1,0 +1,103 @@
+/* GoalProgress.css */
+
+/* General container for the goal progress */
+.goal-progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #f5f7fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 600px;
+  width: 90%;
+}
+
+/* Title styling */
+.goal-progress-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Progress bar container */
+.progress-bar-wrapper {
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  margin: 10px 0;
+  height: 30px;
+}
+
+/* Progress bar itself */
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #27ae60, #2ecc71);
+  width: 0%; /* Dynamic width controlled by inline styles */
+  transition: width 0.5s ease;
+}
+
+/* Label displayed above or within the progress bar */
+.progress-bar-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #ffffff;
+  pointer-events: none;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Goal milestone marker */
+.goal-milestone {
+  position: absolute;
+  top: -10px;
+  width: 2px;
+  height: 50px;
+  background-color: #2980b9;
+  border-radius: 1px;
+}
+
+/* Milestone label */
+.milestone-label {
+  position: absolute;
+  top: -25px;
+  font-size: 0.8rem;
+  color: #2980b9;
+  white-space: nowrap;
+}
+
+/* Text description */
+.progress-description {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin-top: 10px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .goal-progress-title {
+    font-size: 1.5rem;
+  }
+
+  .progress-bar-wrapper {
+    height: 25px;
+  }
+
+  .progress-bar-label {
+    font-size: 0.8rem;
+  }
+
+  .progress-description {
+    font-size: 0.9rem;
+  }
+}

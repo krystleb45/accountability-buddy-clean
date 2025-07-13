@@ -1,0 +1,87 @@
+# ========================
+# 🚀 Logs & Debugging
+# ========================
+*.log
+yarn-debug.log*
+npm-debug.log*
+node_modules/
+dist/
+build/
+.next/
+coverage/
+.reports/
+
+# ========================
+# 🌍 Environment Variables
+# ========================
+.env
+!.env.local
+.env.*.local
+!.env.example
+
+
+# ========================
+# 🛠️ TypeScript
+# ========================
+tsconfig.tsbuildinfo
+
+# ========================
+# 📚 Storybook
+# ========================
+*storybook.log
+.storybook/
+
+# ========================
+# 🎭 Testing & Coverage
+# ========================
+/coverage
+/reports/
+cypress/screenshots/
+cypress/videos/
+jest/
+.vitest/
+.nyc_output/
+*.lcov
+
+# ========================
+# 🖼️ Static Files (Public Uploads)
+# ========================
+public/uploads/
+public/temp/
+
+# ========================
+# 🖥️ macOS
+# ========================
+.DS_Store
+
+# ========================
+# 💻 Windows
+# ========================
+Thumbs.db
+
+# ========================
+# 💡 IDEs & Editor Settings
+# ========================
+.idea/
+.vscode/
+*.sublime-workspace
+*.swp
+*.swo
+*.swn
+
+# ========================
+# 🏗️ Package Manager Files
+# ========================
+# ⚠️ Only include one of these if using exclusively yarn or npm
+yarn.lock
+package-lock.json
+
+# ========================
+# 🔄 Node.js & Next.js Build Artifacts
+# ========================
+/.next
+/out
+/.vercel
+/.firebase
+
+.vercel

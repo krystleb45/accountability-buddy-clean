@@ -1,0 +1,33 @@
+.container {
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+}
+.exportButton,
+.deleteButton {
+  display: block;
+  width: 100%;
+  margin: 12px 0;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.exportButton {
+  background: #007bff;
+  color: white;
+}
+.exportButton:hover {
+  background: #0056b3;
+}
+.deleteButton {
+  background: #dc3545;
+  color: white;
+}
+.deleteButton:hover {
+  background: #c82333;
+}

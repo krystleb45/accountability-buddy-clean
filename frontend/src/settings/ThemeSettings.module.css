@@ -1,0 +1,46 @@
+/* src/settings/ThemeSettings.module.css */
+
+:root {
+  /* Default (light) values */
+  --background-light: #f9f9f9;
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --text-color: #000;
+}
+
+[data-theme='dark'] {
+  --background-light: #1e1e1e;
+  --primary-color: #ffcc00;
+  --primary-hover: #e6b800;
+  --text-color: #fff;
+}
+
+.container {
+  padding: 16px;
+  background-color: var(--background-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: var(--text-color);
+}
+
+.themeToggleButton {
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.themeToggleButton:hover {
+  background-color: var(--primary-hover);
+}
+
+.themeToggleButton:focus-visible {
+  outline: 3px solid var(--primary-hover);
+  outline-offset: 2px;
+}

@@ -1,0 +1,39 @@
+.card {
+  @apply bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between shadow-md;
+}
+
+.rank {
+  @apply flex items-center space-x-2;
+}
+.rankNumber {
+  @apply text-lg font-bold text-white;
+}
+.rankIcon {
+  @apply text-xl;
+}
+.silver {
+  color: #c0c0c0;
+}
+.bronze {
+  color: #cd7f32;
+}
+.defaultMedal {
+  color: #888888;
+}
+
+.userInfo {
+  @apply flex items-center space-x-3;
+}
+.avatar {
+  @apply rounded-full border border-white;
+}
+.avatarFallback {
+  @apply w-12 h-12 text-gray-500;
+}
+.username {
+  @apply text-lg font-medium text-white;
+}
+
+.goals {
+  @apply text-lg font-bold text-green-400;
+}

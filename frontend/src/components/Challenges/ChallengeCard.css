@@ -1,0 +1,33 @@
+/* ChallengeCard.css */
+
+.challenge-card {
+    background-color: #1a202c; /* Dark background */
+    color: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .challenge-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .challenge-card-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .challenge-card-body {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  
+  .challenge-card-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+  

@@ -1,0 +1,32 @@
+// src/app/challenge/page.tsx
+import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
+import type { ReactNode } from 'react';
+
+export const metadata: Metadata = {
+  title: 'Challenges • Accountability Buddy',
+  description: 'Browse and join public challenges to stay motivated and achieve your goals.',
+  openGraph: {
+    title: 'Challenges • Accountability Buddy',
+    description: 'Browse and join public challenges to stay motivated and achieve your goals.',
+    url: 'https://your-domain.com/challenge',
+    siteName: 'Accountability Buddy',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Challenges • Accountability Buddy',
+    description: 'Browse and join public challenges to stay motivated and achieve your goals.',
+  },
+};
+
+// Dynamically load the list UI (no SSR)
+const ClientChallenges = dynamic(
+  () => import('./client'),
+  { ssr: false }
+);
+
+// Server wrapper: simply render the client component
+export default function ChallengePage(): ReactNode {
+  return <ClientChallenges />;
+}

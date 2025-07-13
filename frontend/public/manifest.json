@@ -1,0 +1,31 @@
+{
+  "short_name": "Account Buddy",
+  "name": "Accountability Buddy",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "description": "Accountability Buddy helps users track and achieve goals through social accountability.",
+  "lang": "en-US",
+  "scope": "/",
+  "prefer_related_applications": false
+}

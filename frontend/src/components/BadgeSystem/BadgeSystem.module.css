@@ -1,0 +1,165 @@
+.badgeSystemContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.badgeList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.badgeItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.badgeItem:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.badgeImage {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+  border: 2px solid #ccc;
+  transition: border-color 0.3s ease;
+}
+
+/* ✅ Showcase Mode */
+.showcaseBadge {
+  border: 2px solid #ffd700 !important; /* gold border */
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.7); /* glowing gold effect */
+}
+
+.badgeDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.badgeName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.badgeDescription {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.emptyMessage {
+  font-size: 1rem;
+  color: #777;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Optional pin icon for showcased badges */
+.pinnedIcon {
+  font-size: 1.2rem;
+  color: gold;
+  margin-bottom: 0.25rem;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+/* src/components/BadgeSystem/BadgeDetails.module.css */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.container {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  color: #f0f0f0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.title {
+  font-size: 1.75rem;
+  margin: 0;
+  color: #32cd32; /* Kelly Green */
+}
+
+.section {
+  margin-bottom: 1.25rem;
+}
+
+.subtitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: #32cd32;
+}
+
+.description,
+.criteria,
+.date {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #ccc;
+}
+
+.closeButton {
+  display: block;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  background: #32cd32;
+  color: #111;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.closeButton:hover {
+  background: #28a745;
+}

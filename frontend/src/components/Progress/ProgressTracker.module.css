@@ -1,0 +1,66 @@
+/* components/Progress/ProgressTracker.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0;
+  padding: 10px;
+  width: 100%;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.barContainer {
+  width: 100%;
+  max-width: 500px;
+  height: 25px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar {
+  height: 100%;
+  background-color: var(--primary-color, #007bff);
+  transition: width 0.4s ease-in-out;
+}
+
+.label {
+  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+/* Smaller screens */
+@media (max-width: 768px) {
+  .container {
+    padding: 8px;
+  }
+  .barContainer {
+    height: 20px;
+  }
+  .label {
+    font-size: 0.85rem;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .container {
+    background-color: #2c2c2c;
+    color: #f9f9f9;
+  }
+  .barContainer {
+    background-color: #444;
+    border: 1px solid #555;
+  }
+  .label {
+    color: #f9f9f9;
+  }
+}

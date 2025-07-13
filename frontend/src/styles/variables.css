@@ -1,0 +1,31 @@
+/* Variables - Theme Colors and Sizing */
+
+:root {
+  --primary-color: #28a745; /* Kelly Green */
+  --primary-hover-color: #1f7a31; /* Darker Green for hover effects */
+  --secondary-color: #000000; /* Black */
+  --secondary-hover-color: #333333; /* Dark Gray for secondary elements */
+  --accent-color: #f4f4f4; /* Light gray for subtle accents */
+  --text-color: #1e1e1e; /* Default text color */
+  --text-muted-color: #777777; /* Muted text for less emphasis */
+  --background-color: #ffffff; /* Default background color */
+  --background-alt-color: #f4f4f4; /* Alternative background */
+  --error-color: #f44336; /* Color for error messages */
+  --warning-color: #ff9800; /* Color for warnings */
+  --success-color: #28a745; /* Success messages */
+  --info-color: #2196f3; /* Informational messages */
+
+  /* Font Sizes */
+  --font-size-base: 16px;
+  --font-size-small: 14px;
+  --font-size-medium: 18px;
+  --font-size-large: 20px;
+  --font-size-heading: 24px;
+
+  /* Spacing */
+  --spacing-xs: 2px;
+  --spacing-sm: 4px;
+  --spacing-md: 8px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+}

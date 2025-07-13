@@ -1,0 +1,48 @@
+/* ✅ Disclaimer Container */
+.disclaimer {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 16px;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    max-width: 600px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.2);
+  }
+  
+  /* ✅ Heading */
+  .disclaimer h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffcc00;
+    margin-bottom: 10px;
+  }
+  
+  /* ✅ Paragraphs */
+  .disclaimer p {
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  
+  /* ✅ List Styling */
+  .disclaimer ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .disclaimer li {
+    margin-bottom: 5px;
+  }
+  
+  /* ✅ Links */
+  .disclaimer a {
+    color: #4da6ff;
+    text-decoration: underline;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .disclaimer a:hover {
+    color: #3399ff;
+  }
+  

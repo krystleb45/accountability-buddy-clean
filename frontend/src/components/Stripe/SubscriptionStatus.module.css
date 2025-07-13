@@ -1,0 +1,50 @@
+/* SubscriptionStatus.module.css */
+
+.container {
+  padding: 1rem;
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  color: #f9fafb;
+}
+
+.heading {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.statusMessage {
+  min-height: 2rem;
+  margin-bottom: 1rem;
+}
+
+.loading {
+  color: #93c5fd; /* blue-300 */
+}
+
+.error {
+  color: #f87171; /* red-400 */
+}
+
+.success {
+  color: #34d399; /* green-400 */
+}
+
+.refreshButton {
+  padding: 0.5rem 1rem;
+  background-color: #4ade80; /* green-400 */
+  color: #1f2937;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.refreshButton:disabled,
+.refreshButton[aria-disabled='true'] {
+  background-color: #6b7280; /* gray-500 */
+  cursor: not-allowed;
+}
+
+.refreshButton:not(:disabled):hover {
+  background-color: #22c55e; /* green-500 */
+}

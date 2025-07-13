@@ -1,0 +1,65 @@
+/* Card.module.css */
+
+/* General Card Styles */
+.card {
+  background-color: #1e1e1e; /* Dark background */
+  border: 1px solid #444; /* Slight border for depth */
+  border-radius: 8px; /* Smooth edges */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Softer shadow */
+  padding: 16px;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content */
+  align-items: center; /* Center content horizontally */
+  text-align: center; /* Ensure text is centered */
+  min-height: 150px;
+  color: #b3ffb3; /* Kelly green text */
+}
+
+/* Card Hover Effect */
+.card:hover {
+  box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3); /* Subtle green glow */
+  transform: scale(1.03);
+}
+
+/* Elevated Card */
+.card.elevated {
+  box-shadow: 0 6px 12px rgba(0, 255, 0, 0.3); /* More glow */
+}
+
+/* Card Title */
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Container for Cards */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Flexible layout */
+  gap: 16px;
+}
+
+/* Special Style for "Your Goals" */
+.card.goals {
+  background-color: #142e12; /* Dark green background */
+  color: #b3ffb3; /* Light green text */
+  font-size: 1.75rem;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .card {
+    padding: 12px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .card-container {
+    grid-template-columns: 1fr; /* Single column on small screens */
+  }
+}

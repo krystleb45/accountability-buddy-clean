@@ -1,0 +1,82 @@
+/* src/settings/ResourceLinks/ResourceLinks.module.css */
+
+/* ✅ General container styling */
+.container {
+  padding: 16px;
+  background-color: var(--rl-bg);
+  color: var(--rl-text);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  margin: auto;
+  text-align: center;
+}
+
+/* ✅ Resource Header Styling */
+.resourceHeader {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+/* ✅ List styling */
+.resourceList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ✅ Individual resource item */
+.resourceItem {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+/* ✅ Resource link */
+.resourceLink {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--rl-primary);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+}
+
+/* ✅ Hover & focus styles for accessibility */
+.resourceLink:hover,
+.resourceLink:focus {
+  color: var(--rl-primary-hover);
+  text-decoration: underline;
+}
+
+/* ✅ Stronger focus outline */
+.resourceLink:focus {
+  outline: 3px solid var(--rl-focus-outline);
+  outline-offset: 2px;
+}
+
+/* ✅ Resource description */
+.resourceDescription {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  color: var(--rl-muted);
+}
+
+/* ✅ Responsive Improvements */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+
+  .resourceLink {
+    font-size: 1.1rem;
+  }
+
+  .resourceDescription {
+    font-size: 0.85rem;
+  }
+}

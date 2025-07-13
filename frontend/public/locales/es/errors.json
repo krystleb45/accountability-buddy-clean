@@ -1,0 +1,18 @@
+{
+  "networkError": "missingTranslation",
+  "accountLocked": "missingTranslation",
+  "404": "missingTranslation",
+  "formSubmissionError": "missingTranslation",
+  "resourceNotFound": "missingTranslation",
+  "authorizationError": "missingTranslation",
+  "500": "missingTranslation",
+  "invalidCredentials": "missingTranslation",
+  "validationError": "missingTranslation",
+  "accountNotActivated": "missingTranslation",
+  "paymentFailed": "missingTranslation",
+  "authenticationError": "missingTranslation",
+  "passwordMismatch": "missingTranslation",
+  "subscriptionExpired": "missingTranslation",
+  "timeoutError": "missingTranslation",
+  "quotaExceeded": "missingTranslation"
+}

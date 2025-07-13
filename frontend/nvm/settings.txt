@@ -1,0 +1,2 @@
+root: C:\Users\kryst\OneDrive\Desktop\accountability-buddys\accountability-buddy-frontend\nvm
+path: C:\Program Files (x86)\nodej\nodejs

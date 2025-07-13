@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Veterans Crisis Line",
+    "description": "Connect with a qualified Veterans Crisis Line responder.",
+    "url": "https://www.veteranscrisisline.net/",
+    "contact": {
+      "phone": "1-800-273-8255",
+      "text": "838255",
+      "chat": "https://www.veteranscrisisline.net/get-help/chat/"
+    },
+    "availability": "24/7"
+  },
+  {
+    "id": 2,
+    "name": "Military OneSource",
+    "description": "A 24/7 resource providing military members and their families with support and information.",
+    "url": "https://www.militaryonesource.mil/",
+    "contact": {
+      "phone": "1-800-342-9647",
+      "chat": "https://livechat.militaryonesourceconnect.org/chat/"
+    },
+    "availability": "24/7"
+  },
+  {
+    "id": 3,
+    "name": "National Suicide Prevention Lifeline",
+    "description": "Provides free and confidential support for people in distress.",
+    "url": "https://988lifeline.org/",
+    "contact": {
+      "phone": "988",
+      "chat": "https://988lifeline.org/chat/"
+    },
+    "availability": "24/7"
+  },
+  {
+    "id": 4,
+    "name": "Give An Hour",
+    "description": "Provides free mental health care to military members and their families.",
+    "url": "https://giveanhour.org/",
+    "contact": {
+      "email": "info@giveanhour.org"
+    },
+    "availability": "Business hours"
+  },
+  {
+    "id": 5,
+    "name": "Operation Homefront",
+    "description": "Provides financial and housing assistance to military families.",
+    "url": "https://www.operationhomefront.org/",
+    "contact": {
+      "phone": "1-877-264-3968",
+      "email": "info@operationhomefront.org"
+    },
+    "availability": "Business hours"
+  }
+]

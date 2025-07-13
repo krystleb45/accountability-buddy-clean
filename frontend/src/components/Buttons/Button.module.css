@@ -1,0 +1,52 @@
+/* Button Component Styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  cursor: pointer;
+}
+
+.button-primary {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+.button-primary:hover {
+  background-color: #0056b3;
+}
+
+.button-secondary {
+  background-color: #f8f9fa;
+  color: #212529;
+  border: 1px solid #ced4da;
+}
+
+.button-secondary:hover {
+  background-color: #e9ecef;
+}
+/* src/components/Buttons/Button.module.css */
+
+.base {
+  @apply inline-flex items-center justify-center px-3 py-1 font-medium rounded transition-colors focus:outline-none focus:ring-2;
+}
+
+.sm { @apply text-sm; }
+.md { @apply text-base; }
+.lg { @apply text-lg; }
+
+.active {
+  /* pinned state */
+  @apply bg-yellow-300 text-black hover:bg-yellow-400;
+}
+
+.inactive {
+  /* unpinned state */
+  @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+}

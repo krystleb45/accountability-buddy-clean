@@ -1,0 +1,251 @@
+/* ✅ Tailwind Base Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🌟 Global CSS Variables */
+:root {
+  /* — your existing vars — */
+  --primary-color: #28a745; /* Green */
+  --primary-hover-color: #218838; /* Darker Green */
+  --secondary-color: #17a2b8; /* Teal */
+  --secondary-hover-color: #138496; /* Darker Teal */
+  --text-color: #ddd; /* Adjusted for better contrast */
+  --text-color-light: #fff;
+  --heading-color: #fff;
+  --background-color: #1a1a1a; /* Darker background for better contrast */
+  --border-color: #444;
+  --border-radius: 8px;
+  --transition-duration: 0.3s;
+  --animation-ease: ease-in-out;
+  --font-size-small: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-large: 1.25rem;
+  --spacing-small: 8px;
+  --spacing-medium: 16px;
+  --spacing-large: 24px;
+  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --box-shadow-hover: 0 4px 12px rgba(40, 167, 69, 0.5);
+  --focus-outline: rgba(40, 167, 69, 0.4);
+  --link-color: #28a745;
+  --link-hover-color: #20c45a;
+
+  /* — moved from ResourceLinks.module.css — */
+  --rl-bg: #222;
+  --rl-text: #fff;
+  --rl-primary: #17a2b8;
+  --rl-primary-hover: #138496;
+  --rl-muted: #cccccc;
+  --rl-focus-outline: var(--rl-primary-hover);
+}
+
+/* ✅ Apply Tailwind Typography Defaults */
+body {
+  @apply font-sans text-white bg-gray-900 dark:bg-darkBg dark:text-white;
+  line-height: 1.6;
+  padding: 0 16px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ✅ Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--secondary-color);
+  color: white;
+  padding: 12px 24px;
+}
+
+/* ✅ Buttons */
+.button,
+.bg-green-600 {
+  color: white;
+  background-color: var(--primary-color);
+  padding: 10px 18px;
+  border-radius: 8px;
+  box-shadow: var(--box-shadow);
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.button:hover,
+.bg-green-600:hover {
+  background-color: var(--primary-hover-color);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(40, 167, 69, 0.8); /* ✅ Green Glow Effect */
+}
+
+.button:disabled {
+  background-color: var(--secondary-color);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ✅ Red Button Hover */
+.bg-red-600:hover {
+  background-color: #dc3545;
+  box-shadow: 0 0 12px rgba(220, 53, 69, 0.8);
+  transform: scale(1.05);
+}
+
+/* ✅ Improved Cards */
+.card {
+  background-color: #222; /* Darker card background */
+  border-radius: var(--border-radius);
+  padding: var(--spacing-medium);
+  box-shadow: var(--box-shadow);
+  transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: var(--box-shadow-hover);
+  transform: scale(1.02);
+}
+
+/* ✅ Improve Card Titles */
+.card h2 {
+  color: var(--primary-color);
+  font-size: var(--font-size-large);
+  text-align: center;
+}
+
+/* ✅ Card Content */
+.card-content {
+  text-align: center;
+  color: var(--text-color);
+}
+
+/* ✅ Labels and Section Headers */
+.chart-label {
+  color: #fff; /* White for visibility */
+  font-weight: bold;
+  text-transform: uppercase;
+  background: rgba(40, 167, 69, 0.2);
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-block;
+  margin: 8px 0;
+}
+
+/* ✅ Links */
+a {
+  color: var(--link-color);
+  font-weight: 500;
+  transition: all 0.3s ease-in-out;
+}
+
+a:hover {
+  color: var(--link-hover-color);
+  text-decoration: underline;
+}
+
+/* ✅ Footer */
+.footer {
+  background-color: #121212;
+  color: white;
+  text-align: center;
+  padding: 16px;
+}
+
+/* ✅ Responsive Typography */
+@media (max-width: 600px) {
+  body {
+    padding: 8px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 1.2rem;
+  }
+}
+
+/* ✅ Utility Classes */
+.hidden {
+  display: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+/* ✅ Heatmap Calendar Custom Styles */
+.color-empty {
+  fill: #2c2c2c; /* Dark empty square */
+}
+
+.color-scale-1 {
+  fill: #88cc88; /* Light green */
+}
+
+.color-scale-2 {
+  fill: #55aa55; /* Medium green */
+}
+
+.color-scale-3 {
+  fill: #2e8b57; /* Stronger green */
+}
+
+.color-scale-4 {
+  fill: #1e6823; /* Dark streak green */
+}
+
+/* Optional: Smooth transition */
+.react-calendar-heatmap .react-calendar-heatmap-month {
+  fill: #aaa;
+}
+
+.react-calendar-heatmap text {
+  fill: #ccc;
+  font-size: 10px;
+}
+
+.react-calendar-heatmap .color-empty,
+.react-calendar-heatmap .color-scale-1,
+.react-calendar-heatmap .color-scale-2,
+.react-calendar-heatmap .color-scale-3,
+.react-calendar-heatmap .color-scale-4 {
+  transition: fill 0.3s ease;
+  shape-rendering: geometricPrecision;
+  rx: 4px; /* Rounded corners */
+}
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(10deg); }
+  75% { transform: rotate(-10deg); }
+}
+
+.animate-wiggle {
+  display: inline-block;
+  animation: wiggle 1.4s ease-in-out infinite;
+}
+/* global.css */
+html {
+  font-size: 112.5%; /* bumps base from 16px → 18px */
+}
+/* Dark-mode <select> styles (global) */
+select {
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+/* remove IE/Edge arrow */
+select::-ms-expand {
+  display: none;
+}
+
+/* remove Firefox inner focus */
+select::-moz-focus-inner {
+  border: 0;
+}

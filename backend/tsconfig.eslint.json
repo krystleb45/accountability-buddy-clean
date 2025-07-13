@@ -1,0 +1,38 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "jest.setup.ts",
+    "jest.setup.js",
+    "jest.config.js",
+    "src/test/**/*.ts",
+    ".eslintrc.js",
+    ".eslintrc.cjs",
+    ".eslintrc.mjs"
+  ],
+  "compilerOptions": {
+    "types": ["jest"],
+    "allowJs": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@test/*": ["src/tests/*"]
+    },
+    "strict": true
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "build",
+    "@types",
+    "*.d.ts",
+    "**/static/**",
+    "**/public/**",
+    "**/*.min.js",
+    "**/*.bundle.js"
+  ]
+}

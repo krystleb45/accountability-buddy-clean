@@ -1,0 +1,66 @@
+{
+  "404": {
+    "title": "Page Not Found",
+    "message": "The page you're looking for could not be found."
+  },
+  "500": {
+    "title": "Server Error",
+    "message": "An unexpected error occurred. Please try again later."
+  },
+  "networkError": {
+    "title": "Network Error",
+    "message": "Unable to connect to the server. Please check your internet connection."
+  },
+  "validationError": {
+    "title": "Validation Error",
+    "message": "Some inputs are invalid. Please check the highlighted fields and try again."
+  },
+  "authenticationError": {
+    "title": "Authentication Error",
+    "message": "You are not authorized to access this resource. Please log in again."
+  },
+  "authorizationError": {
+    "title": "Authorization Error",
+    "message": "You do not have the necessary permissions to perform this action."
+  },
+  "timeoutError": {
+    "title": "Timeout Error",
+    "message": "The request took too long to process. Please try again later."
+  },
+  "formSubmissionError": {
+    "title": "Form Submission Error",
+    "message": "There was an error submitting the form. Please try again."
+  },
+  "resourceNotFound": {
+    "title": "Resource Not Found",
+    "message": "The requested resource could not be found."
+  },
+  "passwordMismatch": {
+    "title": "Password Mismatch",
+    "message": "The passwords entered do not match. Please check and try again."
+  },
+  "accountLocked": {
+    "title": "Account Locked",
+    "message": "Your account has been locked. Please contact support for assistance."
+  },
+  "accountNotActivated": {
+    "title": "Account Not Activated",
+    "message": "Your account has not been activated yet. Please check your email to activate your account."
+  },
+  "invalidCredentials": {
+    "title": "Invalid Credentials",
+    "message": "The email or password you entered is incorrect. Please try again."
+  },
+  "subscriptionExpired": {
+    "title": "Subscription Expired",
+    "message": "Your subscription has expired. Please renew it to continue."
+  },
+  "paymentFailed": {
+    "title": "Payment Failed",
+    "message": "The payment could not be processed. Please try a different payment method."
+  },
+  "quotaExceeded": {
+    "title": "Quota Exceeded",
+    "message": "You have exceeded the allowed quota for your account. Please upgrade your subscription."
+  }
+}

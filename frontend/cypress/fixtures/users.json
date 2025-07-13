@@ -1,0 +1,87 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "password": "password123",
+    "subscription": "premium",
+    "role": "admin",
+    "profile": {
+      "age": 30,
+      "location": "New York, USA",
+      "preferences": {
+        "theme": "dark",
+        "notifications": true
+      },
+      "avatar": "john-avatar.png"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "email": "janesmith@example.com",
+    "password": "password456",
+    "subscription": "free",
+    "role": "user",
+    "profile": {
+      "age": 28,
+      "location": "Los Angeles, USA",
+      "preferences": {
+        "theme": "light",
+        "notifications": false
+      },
+      "avatar": "jane-avatar.png"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Alice Brown",
+    "email": "alicebrown@example.com",
+    "password": "alice2024",
+    "subscription": "premium",
+    "role": "moderator",
+    "profile": {
+      "age": 35,
+      "location": "London, UK",
+      "preferences": {
+        "theme": "dark",
+        "notifications": true
+      },
+      "avatar": "alice-avatar.png"
+    }
+  },
+  {
+    "id": 4,
+    "name": "Bob Johnson",
+    "email": "bobjohnson@example.com",
+    "password": "bobsecure",
+    "subscription": "trial",
+    "role": "user",
+    "profile": {
+      "age": 40,
+      "location": "Sydney, Australia",
+      "preferences": {
+        "theme": "light",
+        "notifications": true
+      },
+      "avatar": "bob-avatar.png"
+    }
+  },
+  {
+    "id": 5,
+    "name": "Charlie Lee",
+    "email": "charlielee@example.com",
+    "password": "charliepass",
+    "subscription": "expired",
+    "role": "user",
+    "profile": {
+      "age": 25,
+      "location": "Tokyo, Japan",
+      "preferences": {
+        "theme": "dark",
+        "notifications": false
+      },
+      "avatar": "charlie-avatar.png"
+    }
+  }
+]
