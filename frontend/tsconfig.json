@@ -64,6 +64,9 @@
     "jest.config.cjs",
     "src/**/*.test.{ts,tsx}",
     "src/tests/**/*",
-    ".storybook/**/*"
+    ".storybook/**/*",
+    "src/app/not-found.tsx",
+    "src/app/error.tsx",
+    "src/app/500.tsx"
   ]
 }
