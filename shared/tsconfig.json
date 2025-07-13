@@ -1,0 +1,10 @@
+// /ACCOUNTABILITY-BUDDYS/shared/tsconfig.json
+{
+    "extends": "../tsconfig.base.json",
+    "compilerOptions": {
+      "rootDir": ".",
+      "outDir": "dist",
+      "declaration": true
+    },
+    "include": ["types/**/*.ts"]
+  }

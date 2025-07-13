@@ -3,10 +3,23 @@ const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
   plugins: {
+    // Allow you to use `@import '…'` in your CSS
     'postcss-import': {},
+
+    // Enable nesting like Sass
     'postcss-nested': {},
-    '@tailwindcss/postcss': {},  // ← Correct package name
+
+    // Tailwind’s core
+    tailwindcss: {},
+
+    // Add vendor prefixes
     autoprefixer: {},
-    ...(isProd ? { cssnano: { preset: 'default' } } : {}),
+
+    // Minify in production
+    ...(isProd
+      ? {
+          cssnano: { preset: 'default' },
+        }
+      : {}),
   },
 };

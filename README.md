@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📌 Accountability Buddy
 
-## Getting Started
+**Accountability Buddy** is a platform designed to help users achieve their goals through accountability, progress tracking, and collaboration. This platform combines the power of **community support** with **intuitive tools** to keep users on track and motivated.
 
-First, run the development server:
+## 📌 Table of Contents
+- [🚀 Features](#features)
+- [🛠 Tech Stack](#tech-stack)
+- [📂 Project Structure](#project-structure)
+- [📥 Installation](#installation)
+- [⚙️ Environment Variables](#environment-variables)
+- [🏃 Running the Project](#running-the-project)
+- [🛡️ Authentication & Security](#authentication-and-security)
+- [🛠️ API Documentation](#api-documentation)
+- [🧪 Testing](#testing)
+- [🤝 Contributing](#contributing)
+- [📜 License](#license)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Features
+✅ **Goal Tracking** – Set and monitor your goals with real-time progress tracking.  
+✅ **Gamification** – Earn rewards and badges for achieving milestones.  
+✅ **Collaboration** – Connect with accountability partners or groups.  
+✅ **Military Support** – Dedicated features and resources for military members.  
+✅ **Subscription Plans** – Flexible tiered subscription options with a **free trial**.  
+✅ **Real-Time Notifications** – Stay updated with instant alerts.  
+✅ **Responsive Design** – Works seamlessly across desktop, tablet, and mobile.  
+✅ **Analytics Dashboard** – Gain insights through data visualization.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠 Tech Stack
 
-## Learn More
+### **Frontend**
+- **Framework**: [Next.js](https://nextjs.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + custom CSS
+- **State Management**: React Context API
+- **Payments**: [Stripe](https://stripe.com/)
+- **Testing**: Jest & Cypress
 
-To learn more about Next.js, take a look at the following resources:
+### **Backend**
+- **Framework**: [Node.js](https://nodejs.org/) with [Express](https://expressjs.com/)
+- **Database**: MongoDB
+- **Authentication**: JSON Web Tokens (JWT) with OAuth support
+- **Cloud & Deployment**: AWS (EC2, S3, RDS, Lambda)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📂 Project Structure
+```sh
+accountability-buddy/
+│── backend/            # Backend server (Node.js, Express, MongoDB)
+│── frontend/           # Frontend client (Next.js, React, Tailwind CSS)
+│── shared/             # Shared types & utilities
+│── .github/            # GitHub Actions for CI/CD
+│── docs/               # API & feature documentation
+│── tests/              # End-to-end and unit tests
+│── .env.example        # Sample environment variables
+│── README.md           # Documentation
+│── package.json        # Root workspace dependencies
+└── netlify.toml        # Netlify configuration
