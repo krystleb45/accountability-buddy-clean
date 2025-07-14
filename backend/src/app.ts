@@ -136,10 +136,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(compression());
 app.use(helmet());
+// In your backend/src/app.ts, replace the CORS section with this:
+
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(","),
+    origin: [
+      "https://accountability-buddy-clean.vercel.app",
+      "https://accountability-buddy-clean-git-main-krystle-berry-s-projects.vercel.app",
+      "http://localhost:3000", // for local development
+      "http://localhost:3001"  // backup local port
+    ],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
   })
 );
 app.use(mongoSanitize());
