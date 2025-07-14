@@ -4,10 +4,10 @@ import axios from 'axios';
 
 interface RegisterPayload {
   name: string;
-  username: string;  // Added - backend requires this
+  username: string;        // Added - backend requires this
   email: string;
   password: string;
-  confirmPassword: string;  // Added - backend requires this
+  confirmPassword: string; // Added - backend requires this
 }
 
 interface UseRegisterResult {
@@ -51,3 +51,4 @@ export function useRegister(): UseRegisterResult {
   }, []);
 
   return { loading, error, success, register };
+}
