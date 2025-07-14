@@ -196,13 +196,10 @@ app.use("/api/webhooks", webhooksRoutes);
 // 🆕 NEW: Anonymous military chat (PUBLIC - no auth required for crisis support)
 app.use("/api/anonymous-military-chat", anonymousMilitaryChatRoutes);
 
-// ─── PROTECTED routes (AUTHENTICATION REQUIRED) ───────────────
-// Apply protection to all remaining /api/* routes
-app.use("/api/*", protect);
 
 // Now add all protected routes
 app.use("/api/military-support", militarySupportRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/users", protect, userRoutes);
 app.use("/api/support", supportRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/messages", messageRoutes);
