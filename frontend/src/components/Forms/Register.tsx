@@ -9,6 +9,7 @@ import { useRegister } from '@/hooks/useRegister';
 
 interface FormData {
   name: string;
+  username: string;      // Added username field
   email: string;
   password: string;
   confirmPassword: string;
@@ -19,6 +20,7 @@ const Register: React.FC = () => {
   const { loading, error, success, register } = useRegister();
   const [formData, setFormData] = useState<FormData>({
     name: '',
+    username: '',          // Added username to initial state
     email: '',
     password: '',
     confirmPassword: '',
@@ -31,10 +33,10 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword } = formData;
+    const { name, username, email, password, confirmPassword } = formData;
 
     // client‐side checks
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !username || !email || !password || !confirmPassword) {
       return alert('All fields are required.');
     }
     if (!validateEmail(email)) {
@@ -47,8 +49,8 @@ const Register: React.FC = () => {
       return alert('Passwords do not match.');
     }
 
-    // call hook
-    await register({ name, email, password });
+    // call hook with all required fields
+    await register({ name, username, email, password, confirmPassword });
 
     // on success, redirect
     if (!error) {
@@ -72,7 +74,7 @@ const Register: React.FC = () => {
         {/** Name **/}
         <div className="mb-4">
           <label className="mb-1 block text-sm text-gray-300" htmlFor="name">
-            Name
+            Full Name
           </label>
           <input
             id="name"
@@ -80,7 +82,23 @@ const Register: React.FC = () => {
             value={formData.name}
             onChange={handleChange}
             className="w-full rounded bg-gray-700 p-3 text-white"
-            placeholder="Your name"
+            placeholder="Your full name"
+            required
+          />
+        </div>
+
+        {/** Username **/}
+        <div className="mb-4">
+          <label className="mb-1 block text-sm text-gray-300" htmlFor="username">
+            Username
+          </label>
+          <input
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="w-full rounded bg-gray-700 p-3 text-white"
+            placeholder="Choose a username"
             required
           />
         </div>
