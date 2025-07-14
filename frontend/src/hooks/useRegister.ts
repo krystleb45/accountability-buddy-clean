@@ -4,8 +4,10 @@ import axios from 'axios';
 
 interface RegisterPayload {
   name: string;
+  username: string;  // Added - backend requires this
   email: string;
   password: string;
+  confirmPassword: string;  // Added - backend requires this
 }
 
 interface UseRegisterResult {
@@ -20,7 +22,7 @@ export function useRegister(): UseRegisterResult {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const register = useCallback(async ({ name, email, password }: RegisterPayload) => {
+  const register = useCallback(async ({ name, username, email, password, confirmPassword }: RegisterPayload) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -28,7 +30,13 @@ export function useRegister(): UseRegisterResult {
     try {
       const { data } = await axios.post<{ message?: string }>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register`,
-        { name, email, password },
+        {
+          name,
+          username,        // Now sending username
+          email,
+          password,
+          confirmPassword  // Now sending confirmPassword
+        },
       );
       setSuccess(data.message ?? 'Registration successful!');
     } catch (err: unknown) {
@@ -43,4 +51,3 @@ export function useRegister(): UseRegisterResult {
   }, []);
 
   return { loading, error, success, register };
-}
