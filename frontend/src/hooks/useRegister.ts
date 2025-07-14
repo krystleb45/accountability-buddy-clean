@@ -27,7 +27,7 @@ export function useRegister(): UseRegisterResult {
 
     try {
       const { data } = await axios.post<{ message?: string }>(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register`,
         { name, email, password },
       );
       setSuccess(data.message ?? 'Registration successful!');

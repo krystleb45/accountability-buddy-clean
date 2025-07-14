@@ -21,7 +21,7 @@ export function useForgotPassword(): UseForgotPasswordResult {
 
     try {
       const { data } = await axios.post<{ message?: string }>(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/forgot-password`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/forgot-password`,
         { email },
       );
       setSuccess(data.message ?? 'Reset instructions sent. Check your inbox.');
