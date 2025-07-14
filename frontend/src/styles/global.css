@@ -1,19 +1,18 @@
-/* ✅ Tailwind Base Styles */
+/* ✅ Tailwind v3 Imports */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 🌟 Global CSS Variables */
+/* 🌟 Your existing custom styles remain the same */
 :root {
-  /* — your existing vars — */
-  --primary-color: #28a745; /* Green */
-  --primary-hover-color: #218838; /* Darker Green */
-  --secondary-color: #17a2b8; /* Teal */
-  --secondary-hover-color: #138496; /* Darker Teal */
-  --text-color: #ddd; /* Adjusted for better contrast */
+  --primary-color: #28a745;
+  --primary-hover-color: #218838;
+  --secondary-color: #17a2b8;
+  --secondary-hover-color: #138496;
+  --text-color: #ddd;
   --text-color-light: #fff;
   --heading-color: #fff;
-  --background-color: #1a1a1a; /* Darker background for better contrast */
+  --background-color: #1a1a1a;
   --border-color: #444;
   --border-radius: 8px;
   --transition-duration: 0.3s;
@@ -29,8 +28,6 @@
   --focus-outline: rgba(40, 167, 69, 0.4);
   --link-color: #28a745;
   --link-hover-color: #20c45a;
-
-  /* — moved from ResourceLinks.module.css — */
   --rl-bg: #222;
   --rl-text: #fff;
   --rl-primary: #17a2b8;
@@ -39,15 +36,17 @@
   --rl-focus-outline: var(--rl-primary-hover);
 }
 
-/* ✅ Apply Tailwind Typography Defaults */
+/* Rest of your custom styles stay exactly the same */
 body {
   @apply font-sans text-white bg-gray-900 dark:bg-darkBg dark:text-white;
   line-height: 1.6;
   padding: 0 16px;
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* All your other styles remain unchanged... */
+
+/* All your other styles remain unchanged... */
 
 /* ✅ Navbar */
 .navbar {

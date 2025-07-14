@@ -1,9 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-const forms = require('@tailwindcss/forms');
-const typography = require('@tailwindcss/typography');
-const aspectRatio = require('@tailwindcss/aspect-ratio');
-const containerQueries = require('@tailwindcss/container-queries');
-
 module.exports = {
   content: {
     relative: true, // Important for monorepos!
@@ -12,20 +7,8 @@ module.exports = {
       './src/**/*.{js,ts,jsx,tsx,mdx}',
       './src/app/**/*.{js,ts,jsx,tsx,mdx}',
       './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-
-      // If you're also using Pages Router (remove if not)
+      // If you're also using Pages Router
       './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-
-      // Remove these lines if you don't have these directories:
-      // './layouts/**/*.{js,ts,jsx,tsx,mdx}',
-      // './stories/**/*.{js,ts,jsx,tsx,mdx}',
-
-      // Don't scan CSS files for classes - this can cause issues
-      // './styles/**/*.css',
-      // './styles/global.css',
-
-      // Only include if you have HTML files with Tailwind classes
-      // './public/**/*.html',
     ],
   },
   theme: {
@@ -64,9 +47,7 @@ module.exports = {
   },
   darkMode: 'class',
   plugins: [
-    forms,
-    typography,
-    aspectRatio,
-    containerQueries,
+    // Removed plugins to avoid dependency issues
+    // Add back as needed: npm install @tailwindcss/forms @tailwindcss/typography etc.
   ],
 };
