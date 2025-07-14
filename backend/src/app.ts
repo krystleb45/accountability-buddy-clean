@@ -120,6 +120,7 @@ import { errorHandler } from "./api/middleware/errorHandler";
 import setupSwagger from "./config/swaggerConfig";
 
 const app = express();
+app.set("trust proxy", true);
 
 // 🔍 Log Redis status after all imports
 if (process.env.REDIS_DISABLED === "true") {
