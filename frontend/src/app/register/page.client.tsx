@@ -145,16 +145,18 @@ export default function RegisterForm() {
     setError('');
 
     try {
-      // Use your existing API route
-      const response = await fetch('/api/register', {
+      // FIXED: Use correct Railway backend URL and endpoint
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: formData.name,
+          username: formData.name.toLowerCase().replace(/\s+/g, ''), // Generate username from name
           email: formData.email,
           password: formData.password,
+          confirmPassword: formData.confirmPassword, // Add confirmPassword
           selectedPlan,
           billingCycle
         }),
