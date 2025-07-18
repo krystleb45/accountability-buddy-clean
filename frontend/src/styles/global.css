@@ -1,6 +1,5 @@
-/* ✅ Tailwind v3 Imports */
-@tailwind base;
-@tailwind components;
+/* ✅ Tailwind v4 Imports */
+@import "tailwindcss/preflight";
 @tailwind utilities;
 
 /* 🌟 Your existing custom styles remain the same */
