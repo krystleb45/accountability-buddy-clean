@@ -91,7 +91,7 @@ mongosh  # Should connect to mongodb://localhost:27017
 3. Get connection string
 4. Add to your `.env.development`:
    ```bash
-   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/accountability-buddy
+   MONGODB_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@your-cluster.mongodb.net/accountability-buddy
    ```
 
 ### **Option 3: Docker MongoDB**
