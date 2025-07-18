@@ -1,4 +1,4 @@
-// src/api/military-support/moodCheckInApi.ts
+// FIXED: src/api/military-support/moodCheckInApi.ts
 
 import axios from 'axios';
 
@@ -36,8 +36,9 @@ interface MoodApiResponse<T> {
   data: T;
 }
 
+// ✅ FIXED: Remove extra /api/ since NEXT_PUBLIC_API_URL already includes it
 const MOOD_API_BASE = process.env.NEXT_PUBLIC_API_URL
-  ? `${process.env.NEXT_PUBLIC_API_URL}/api/anonymous-military-chat`
+  ? `${process.env.NEXT_PUBLIC_API_URL}/anonymous-military-chat`
   : 'http://localhost:5050/api/anonymous-military-chat';
 
 function logMoodError(fn: string, error: unknown): void {

@@ -1,4 +1,4 @@
-// 2. NEW: src/api/military-support/anonymousMilitaryChatApi.ts (for anonymous users)
+// 2. FIXED: src/api/military-support/anonymousMilitaryChatApi.ts (for anonymous users)
 import axios from 'axios';
 
 export interface AnonymousChatRoom {
@@ -29,13 +29,21 @@ interface AnonymousApiResponse<T> {
   data: T;
 }
 
+// ✅ FIXED: Remove extra /api/ since NEXT_PUBLIC_API_URL already includes it
 const ANONYMOUS_API_BASE = process.env.NEXT_PUBLIC_API_URL
-  ? `${process.env.NEXT_PUBLIC_API_URL}/api/anonymous-military-chat`
+  ? `${process.env.NEXT_PUBLIC_API_URL}/anonymous-military-chat`
   : 'http://localhost:5050/api/anonymous-military-chat';
 
 function logAnonymousErr(fn: string, error: unknown): void {
   if (axios.isAxiosError(error)) {
-    console.error(`❌ [anonymousMilitaryChatApi::${fn}]`, error.response?.data || error.message);
+    console.error(`❌ [anonymousMilitaryChatApi::${fn}] Status: ${error.response?.status}`, {
+      url: error.config?.url,
+      method: error.config?.method,
+      data: error.response?.data,
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText
+    });
   } else {
     console.error(`❌ [anonymousMilitaryChatApi::${fn}]`, error);
   }
@@ -44,9 +52,13 @@ function logAnonymousErr(fn: string, error: unknown): void {
 /** GET /anonymous-military-chat/rooms - Get all available chat rooms */
 export async function getAnonymousRooms(): Promise<AnonymousChatRoom[]> {
   try {
-    const resp = await axios.get<AnonymousApiResponse<{ rooms: AnonymousChatRoom[] }>>(
-      `${ANONYMOUS_API_BASE}/rooms`
-    );
+    const url = `${ANONYMOUS_API_BASE}/rooms`;
+    console.log('🔍 [getAnonymousRooms] Making request to:', url);
+    console.log('🔍 [getAnonymousRooms] ANONYMOUS_API_BASE:', ANONYMOUS_API_BASE);
+    console.log('🔍 [getAnonymousRooms] NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+
+    const resp = await axios.get<AnonymousApiResponse<{ rooms: AnonymousChatRoom[] }>>(url);
+    console.log('✅ [getAnonymousRooms] Success:', resp.status, resp.data);
     return resp.data.data.rooms;
   } catch (err) {
     logAnonymousErr('getAnonymousRooms', err);

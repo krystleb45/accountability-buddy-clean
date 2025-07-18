@@ -1,4 +1,4 @@
-// src/components/MilitarySupport/MilitaryChatRoom.tsx - FIXED: Consistent message ordering
+// src/components/MilitarySupport/MilitaryChatRoom.tsx - FIXED: Safe message mapping
 
 'use client';
 
@@ -65,10 +65,12 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
       try {
         const existingMessages = await anonymousMilitaryChatApi.getAnonymousMessages(roomId);
         console.log('Loaded existing messages:', existingMessages.length);
-        setMessages(existingMessages);
+        // Ensure we have an array
+        setMessages(Array.isArray(existingMessages) ? existingMessages : []);
       } catch (msgError) {
         console.warn('Could not load existing messages:', msgError);
         // Continue without existing messages
+        setMessages([]);
       }
 
       // Try to join room (non-blocking)
@@ -142,10 +144,13 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
 
         // Only add welcome message if we don't have existing messages to prevent duplicates
         setMessages(prev => {
+          // Ensure prev is an array
+          const prevMessages = Array.isArray(prev) ? prev : [];
+
           // Check if we already have a welcome message (safely handle undefined ids)
-          const hasWelcome = prev.some(msg => msg.id && msg.id.startsWith('welcome-'));
+          const hasWelcome = prevMessages.some(msg => msg.id && msg.id.toString().startsWith('welcome-'));
           if (hasWelcome) {
-            return prev; // Don't add another welcome
+            return prevMessages; // Don't add another welcome
           }
 
           const welcomeMessage: AnonymousMessage = {
@@ -154,7 +159,7 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
             message: `Welcome to ${roomDetails.name}! You're chatting as "${user.displayName}". Remember, this is peer support - for crisis help, call 988.`,
             timestamp: new Date()
           };
-          return [...prev, welcomeMessage];
+          return [...prevMessages, welcomeMessage];
         });
       });
 
@@ -186,13 +191,16 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
       // Message events
       newSocket.on('new-message', (message: any) => {
         console.log('📨 New message received:', message);
-        setMessages(prev => [...prev, {
-          id: message.id || Date.now().toString(),
-          displayName: message.displayName,
-          message: message.message,
-          timestamp: new Date(message.timestamp),
-          isFlagged: message.isFlagged || false
-        }]);
+        setMessages(prev => {
+          const prevMessages = Array.isArray(prev) ? prev : [];
+          return [...prevMessages, {
+            id: message.id || Date.now().toString() + Math.random().toString(36).substr(2, 9),
+            displayName: message.displayName,
+            message: message.message,
+            timestamp: new Date(message.timestamp),
+            isFlagged: message.isFlagged || false
+          }];
+        });
       });
 
       // Debounce member count updates to prevent rapid UI changes
@@ -359,6 +367,9 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
     );
   }
 
+  // Ensure messages is always an array
+  const safeMessages = Array.isArray(messages) ? messages : [];
+
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col">
       {/* Header */}
@@ -442,15 +453,25 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
       <div className="flex-1 max-w-6xl mx-auto w-full p-6">
         <div className="bg-gray-800 border-2 border-gray-700 rounded-lg h-96 flex flex-col">
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.length === 0 && (
+            {/* Loading state */}
+            {loading && (
+              <div className="text-center text-gray-500 py-8">
+                <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                <p>Loading messages...</p>
+              </div>
+            )}
+
+            {/* No messages state */}
+            {!loading && safeMessages.length === 0 && (
               <div className="text-center text-gray-500 py-8">
                 <p>No messages yet. Start the conversation!</p>
               </div>
             )}
 
-            {messages.map((message) => (
+            {/* Messages list - FIXED with safe array handling */}
+            {!loading && safeMessages.length > 0 && safeMessages.map((message) => (
               <div
-                key={message.id}
+                key={message.id || `msg-${message.timestamp?.getTime() || Date.now()}-${Math.random()}`}
                 className={`flex ${
                   message.displayName === anonymousUser?.displayName ? 'justify-end' : 'justify-start'
                 }`}
@@ -469,10 +490,10 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
                   )}
                   <div className="text-sm">{message.message}</div>
                   <div className="text-xs opacity-60 mt-1">
-                    {message.timestamp.toLocaleTimeString([], {
+                    {message.timestamp ? message.timestamp.toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit'
-                    })}
+                    }) : 'Now'}
                   </div>
                 </div>
               </div>

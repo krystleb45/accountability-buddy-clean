@@ -10,15 +10,12 @@ interface Params {
   params: { groupId: string };
 }
 
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ groupId: string }> }) {
+  const { groupId } = await params; // ✅ Await params first
   return {
     title: `Group Chat • Accountability Buddy`,
     description: 'Chat with your group members and stay accountable together.',
-    openGraph: {
-      title: `Group Chat • Accountability Buddy`,
-      description: 'Chat with your group members and stay accountable together.',
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/community/groups/${params.groupId}`,
-    },
+    url: `${process.env.NEXT_PUBLIC_BASE_URL}/community/groups/${groupId}`, // ✅
   };
 }
 

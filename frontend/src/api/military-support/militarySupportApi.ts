@@ -1,4 +1,4 @@
-// src/military-support/militarySupportApi.ts
+// FIXED: src/military-support/militarySupportApi.ts
 
 import axios from 'axios';
 import { http } from '@/utils/http';
@@ -55,7 +55,14 @@ interface ApiResponse<T> {
 
 function logErr(fn: string, error: unknown): void {
   if (axios.isAxiosError(error)) {
-    console.error(`❌ [militarySupportApi::${fn}]`, error.response?.data || error.message);
+    console.error(`❌ [militarySupportApi::${fn}] Status: ${error.response?.status}`, {
+      url: error.config?.url,
+      method: error.config?.method,
+      data: error.response?.data,
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText
+    });
   } else {
     console.error(`❌ [militarySupportApi::${fn}]`, error);
   }
@@ -64,10 +71,12 @@ function logErr(fn: string, error: unknown): void {
 /** GET /military-support/resources - FIXED: Now public, no auth required */
 export async function fetchResources(): Promise<SupportResource[]> {
   try {
-    // This endpoint is now public (crisis resources should be accessible to everyone)
-    const resp = await axios.get<ApiResponse<{ resources: SupportResource[] }>>(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050'}/api/military-support/resources`
-    );
+    const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050/api'}/military-support/resources`;
+    console.log('🔍 [fetchResources] Making request to:', url);
+    console.log('🔍 [fetchResources] NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+
+    const resp = await axios.get<ApiResponse<{ resources: SupportResource[] }>>(url);
+    console.log('✅ [fetchResources] Success:', resp.status, resp.data);
     return resp.data.data.resources;
   } catch (err) {
     logErr('fetchResources', err);
@@ -78,9 +87,9 @@ export async function fetchResources(): Promise<SupportResource[]> {
 /** GET /military-support/disclaimer - FIXED: Now public, no auth required */
 export async function fetchDisclaimer(): Promise<Disclaimer | null> {
   try {
-    // This endpoint is now public
+    // ✅ FIXED: Remove extra /api/ since NEXT_PUBLIC_API_URL already includes it
     const resp = await axios.get<ApiResponse<Disclaimer>>(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050'}/api/military-support/disclaimer`
+      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050/api'}/military-support/disclaimer`
     );
     return resp.data.data;
   } catch (err) {
