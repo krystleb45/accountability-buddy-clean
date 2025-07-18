@@ -1,61 +1,337 @@
-# 📌 Accountability Buddy
+# 🎯 Accountability Buddy
 
-**Accountability Buddy** is a platform designed to help users achieve their goals through accountability, progress tracking, and collaboration. This platform combines the power of **community support** with **intuitive tools** to keep users on track and motivated.
+**Accountability Buddy** is a comprehensive web platform designed to help users achieve their goals through community support, progress tracking, and peer accountability. The platform includes specialized military support features with anonymous chat functionality and crisis resources.
 
 ## 📌 Table of Contents
-- [🚀 Features](#features)
-- [🛠 Tech Stack](#tech-stack)
-- [📂 Project Structure](#project-structure)
-- [📥 Installation](#installation)
-- [⚙️ Environment Variables](#environment-variables)
-- [🏃 Running the Project](#running-the-project)
-- [🛡️ Authentication & Security](#authentication-and-security)
-- [🛠️ API Documentation](#api-documentation)
-- [🧪 Testing](#testing)
-- [🤝 Contributing](#contributing)
-- [📜 License](#license)
+- [🚀 Features](#-features)
+- [🛠 Tech Stack](#-tech-stack)
+- [📂 Project Structure](#-project-structure)
+- [📥 Installation](#-installation)
+- [⚙️ Environment Variables](#️-environment-variables)
+- [🏃 Running the Project](#-running-the-project)
+- [🛡️ Authentication & Security](#️-authentication--security)
+- [🛠️ API Documentation](#️-api-documentation)
+- [🚧 Current Status](#-current-status)
+- [🐛 Known Issues](#-known-issues)
+- [🤝 Contributing](#-contributing)
+- [📞 Support](#-support)
 
 ---
 
 ## 🚀 Features
-✅ **Goal Tracking** – Set and monitor your goals with real-time progress tracking.  
-✅ **Gamification** – Earn rewards and badges for achieving milestones.  
-✅ **Collaboration** – Connect with accountability partners or groups.  
-✅ **Military Support** – Dedicated features and resources for military members.  
-✅ **Subscription Plans** – Flexible tiered subscription options with a **free trial**.  
-✅ **Real-Time Notifications** – Stay updated with instant alerts.  
-✅ **Responsive Design** – Works seamlessly across desktop, tablet, and mobile.  
-✅ **Analytics Dashboard** – Gain insights through data visualization.
+
+### **Core Features**
+✅ **Goal Tracking** – Set, monitor, and track progress toward personal and professional goals
+✅ **Community Groups** – Create and join accountability groups for shared goal achievement
+✅ **User Dashboard** – Comprehensive overview of goals, progress, and achievements
+✅ **Gamification** – Earn rewards, badges, and points for achieving milestones
+🔄 **Real-Time Notifications** – Stay updated with instant alerts *(in progress)*
+✅ **Responsive Design** – Works seamlessly across desktop, tablet, and mobile
+
+### **Military Support Features**
+✅ **Anonymous Chat Rooms** – Peer support chat rooms for military members and veterans
+✅ **Crisis Resources** – Integrated access to mental health and crisis support resources
+✅ **Mood Check-in System** – Daily mood tracking with community insights
+✅ **Military-Specific Resources** – Curated resources for VA services, benefits, and support
+
+### **Subscription & Monetization**
+✅ **Tiered Subscription Plans** – Basic, Pro, and Elite plans with free trial period
+✅ **Stripe Integration** – Secure payment processing
+🔄 **Premium Features** – Advanced analytics and exclusive content *(in development)*
 
 ---
 
 ## 🛠 Tech Stack
 
 ### **Frontend**
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + custom CSS
-- **State Management**: React Context API
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 - **Payments**: [Stripe](https://stripe.com/)
-- **Testing**: Jest & Cypress
+- **Real-time**: Socket.IO Client
+- **Deployment**: [Vercel](https://vercel.com/)
 
 ### **Backend**
-- **Framework**: [Node.js](https://nodejs.org/) with [Express](https://expressjs.com/)
-- **Database**: MongoDB
-- **Authentication**: JSON Web Tokens (JWT) with OAuth support
-- **Cloud & Deployment**: AWS (EC2, S3, RDS, Lambda)
+- **Runtime**: [Node.js](https://nodejs.org/)
+- **Framework**: [Express.js](https://expressjs.com/)
+- **Database**: [MongoDB](https://www.mongodb.com/) with Mongoose
+- **Authentication**: JSON Web Tokens (JWT)
+- **Real-time**: [Socket.IO](https://socket.io/)
+- **Deployment**: [Railway](https://railway.app/)
+
+### **Development Tools**
+- **Language**: TypeScript
+- **Code Quality**: ESLint + Prettier
+- **Version Control**: Git + GitHub
+- **Environment**: Local development + cloud deployment
 
 ---
 
 ## 📂 Project Structure
 ```sh
-accountability-buddy/
-│── backend/            # Backend server (Node.js, Express, MongoDB)
-│── frontend/           # Frontend client (Next.js, React, Tailwind CSS)
-│── shared/             # Shared types & utilities
-│── .github/            # GitHub Actions for CI/CD
-│── docs/               # API & feature documentation
-│── tests/              # End-to-end and unit tests
-│── .env.example        # Sample environment variables
-│── README.md           # Documentation
-│── package.json        # Root workspace dependencies
-└── netlify.toml        # Netlify configuration
+accountability-buddy-clean/
+├── backend/                 # Express.js API server
+│   ├── src/
+│   │   ├── api/
+│   │   │   ├── controllers/ # Route handlers
+│   │   │   ├── models/      # MongoDB schemas
+│   │   │   ├── routes/      # Express routes
+│   │   │   ├── middleware/  # Auth, validation, etc.
+│   │   │   └── services/    # Business logic
+│   │   ├── config/          # Database and app configuration
+│   │   └── app.ts           # Express app setup
+│   ├── .env.example         # Environment variables template
+│   └── package.json
+│
+├── frontend/                # Next.js application
+│   ├── src/
+│   │   ├── app/             # Pages and API routes (App Router)
+│   │   ├── components/      # React components
+│   │   ├── api/             # API client functions
+│   │   ├── utils/           # Utility functions
+│   │   └── types/           # TypeScript type definitions
+│   ├── .env.example         # Environment variables template
+│   └── package.json
+│
+├── docs/                    # Project documentation
+│   ├── HANDOFF.md          # Developer handoff guide
+│   ├── ISSUES.md           # Known issues and status
+│   └── SETUP.md            # Detailed setup instructions
+│
+├── public/                  # Static assets
+├── shared/                  # Shared utilities (if any)
+├── .gitignore              # Git ignore rules
+├── README.md               # This file
+└── LICENSE                 # Project license
+```
+
+---
+
+## 📥 Installation
+
+### **Prerequisites**
+- **Node.js** 18+
+- **MongoDB** (local installation or cloud instance)
+- **Git**
+
+### **Quick Start**
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/accountability-buddy-clean.git
+   cd accountability-buddy-clean
+   ```
+
+2. **Install dependencies**
+   ```bash
+   # Backend
+   cd backend
+   npm install
+
+   # Frontend
+   cd ../frontend
+   npm install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   # Frontend
+   cd frontend
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
+
+   # Backend
+   cd ../backend
+   cp .env.example .env.development
+   # Edit .env.development with your configuration
+   ```
+
+4. **Start development servers**
+   ```bash
+   # Terminal 1: Backend
+   cd backend
+   npm run dev
+
+   # Terminal 2: Frontend
+   cd frontend
+   npm run dev
+   ```
+
+5. **Access the application**
+   - **Frontend**: http://localhost:3000
+   - **Backend API**: http://localhost:5050
+   - **API Documentation**: http://localhost:5050/api-docs
+
+---
+
+## ⚙️ Environment Variables
+
+### **Frontend (.env.local)**
+```bash
+# Authentication
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-here
+
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+```
+
+### **Backend (.env.development)**
+```bash
+# Server
+PORT=5050
+NODE_ENV=development
+
+# Database
+MONGODB_URI=mongodb://localhost:27017/accountability-buddy
+
+# Authentication
+JWT_SECRET=your-jwt-secret-here
+```
+
+See `.env.example` files in each directory for complete variable lists.
+
+---
+
+## 🏃 Running the Project
+
+### **Development**
+```bash
+# Start backend (Terminal 1)
+cd backend && npm run dev
+
+# Start frontend (Terminal 2)
+cd frontend && npm run dev
+```
+
+### **Production Build**
+```bash
+# Build backend
+cd backend && npm run build
+
+# Build frontend
+cd frontend && npm run build && npm start
+```
+
+### **Available Scripts**
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run code linting
+
+---
+
+## 🛡️ Authentication & Security
+
+- **NextAuth.js** for frontend authentication
+- **JWT tokens** for API authentication
+- **Secure HTTP-only cookies** for session management
+- **CORS configuration** for cross-origin requests
+- **Rate limiting** on API endpoints
+- **Input validation** and sanitization
+
+---
+
+## 🛠️ API Documentation
+
+- **Swagger UI**: http://localhost:5050/api-docs (when backend is running)
+- **API Base URL**: http://localhost:5050/api
+- **Authentication**: Bearer token required for protected endpoints
+
+### **Key Endpoints**
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/groups` - Get user's groups
+- `POST /api/groups` - Create new group
+- `GET /api/military-support/resources` - Get support resources
+
+---
+
+## 🚧 Current Status
+
+### **✅ Working Features**
+- User registration and authentication
+- Basic dashboard layout
+- Group creation functionality
+- Military support page structure
+- Payment integration setup
+
+### **🔄 In Progress**
+- Groups authentication flow (401 errors after creation)
+- Military support chat rooms
+- WebSocket real-time connections
+- Complete goals tracking system
+
+### **📋 Planned Features**
+- Advanced analytics dashboard
+- Mobile app development
+- Enhanced gamification
+- Social features and sharing
+
+For detailed status and known issues, see [docs/ISSUES.md](./docs/ISSUES.md).
+
+---
+
+## 🐛 Known Issues
+
+- **Groups Authentication**: API calls return 401 after group creation
+- **Chat Rooms**: WebSocket connections not establishing properly
+- **Military Support**: Some endpoints returning 500 errors
+
+See [docs/ISSUES.md](./docs/ISSUES.md) for complete issue tracking and status.
+
+---
+
+## 🤝 Contributing
+
+### **Development Guidelines**
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Follow TypeScript and ESLint rules
+4. Write clear commit messages
+5. Submit a pull request
+
+### **Code Style**
+- **TypeScript** for all new code
+- **Component naming**: PascalCase
+- **File naming**: kebab-case for pages, PascalCase for components
+- **ESLint + Prettier** for code formatting
+
+---
+
+## 📞 Support
+
+### **Development Support**
+- **Issues**: Create a GitHub issue for bugs or feature requests
+- **Documentation**: Check [docs/](./docs/) folder for detailed guides
+- **Setup Help**: See [docs/SETUP.md](./docs/SETUP.md) for troubleshooting
+
+### **Contact**
+- **Email**: [your-email@example.com]
+- **Repository**: [GitHub Issues](https://github.com/your-username/accountability-buddy-clean/issues)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/) and [Express.js](https://expressjs.com/)
+- UI styled with [Tailwind CSS](https://tailwindcss.com/)
+- Real-time features powered by [Socket.IO](https://socket.io/)
+- Authentication via [NextAuth.js](https://next-auth.js.org/)
+- Database by [MongoDB](https://www.mongodb.com/)
+
+---
+
+**Last Updated**: [Current Date]
+**Version**: 1.0.0-dev
+**Status**: In Active Development

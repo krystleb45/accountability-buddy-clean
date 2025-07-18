@@ -15,14 +15,18 @@ coverage/
 # 🌍 Environment Variables
 # ========================
 .env
-!.env.local
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
 .env.*.local
 !.env.example
-
 
 # ========================
 # 🛠️ TypeScript
 # ========================
+*.tsbuildinfo
 tsconfig.tsbuildinfo
 
 # ========================
@@ -72,9 +76,10 @@ Thumbs.db
 # ========================
 # 🏗️ Package Manager Files
 # ========================
-# ⚠️ Only include one of these if using exclusively yarn or npm
+# Include both since you might switch between npm/yarn
 yarn.lock
 package-lock.json
+pnpm-lock.yaml
 
 # ========================
 # 🔄 Node.js & Next.js Build Artifacts
@@ -83,5 +88,11 @@ package-lock.json
 /out
 /.vercel
 /.firebase
-
 .vercel
+.netlify
+
+# ========================
+# 🔧 Development Tools
+# ========================
+.turbo/
+.swc/
