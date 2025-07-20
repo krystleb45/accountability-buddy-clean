@@ -4,8 +4,10 @@ import React, { ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react'; // ← Added this import
 import AuthTokenSync from './AuthTokenSync';
 import Navbar from '@/components/Navbar/Navbar';
+import NewsletterPopup from '@/components/NewsletterPopup'; // ← Added this import
 
 const Quotes = dynamic(() => import('./Quotes'));
 
@@ -15,6 +17,8 @@ interface LayoutClientProps {
 
 export default function LayoutClient({ children }: LayoutClientProps): React.ReactElement {
   const pathname = usePathname() ?? '';
+  const { data: session } = useSession(); // ← Added this hook
+
   // only show the hero on exactly "/"
   const showHero = pathname === '/';
 
@@ -61,6 +65,11 @@ export default function LayoutClient({ children }: LayoutClientProps): React.Rea
       <footer className="w-full bg-black py-6 text-center text-base text-white md:text-lg">
         <p>&copy; {new Date().getFullYear()} Accountability Buddy.</p>
       </footer>
+
+      {/* Newsletter popup - only show for non-authenticated users */}
+      {!session?.user && (
+        <NewsletterPopup showAfterSeconds={45} />
+      )}
     </>
   );
 }
