@@ -63,8 +63,8 @@ class HealthCheckService {
       redisPublicUrl: string;
     };
     status: string;
-    } {
-    const isDisabled = process.env.REDIS_DISABLED === "true";
+  } {
+    const isDisabled = process.env.DISABLE_REDIS === "true";
     const skipInit = process.env.SKIP_REDIS_INIT === "true";
     const disableRedis = process.env.DISABLE_REDIS === "true";
 
@@ -88,7 +88,7 @@ class HealthCheckService {
     platform: string;
     environment: string;
     frontend: string;
-    } {
+  } {
     return {
       platform: "Railway",
       environment: process.env.RAILWAY_ENVIRONMENT_NAME || process.env.NODE_ENV || "development",
@@ -114,7 +114,7 @@ class HealthCheckService {
     };
     timestamp: Date;
     uptime: number;
-    } {
+  } {
     const dbConnected = mongoose.connection.readyState === 1;
     const redisStatus = this.getRedisStatus();
 

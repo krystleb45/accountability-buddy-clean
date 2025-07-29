@@ -6,8 +6,8 @@ import { logger } from "../../utils/winstonLogger";
 
 // Check if Redis is disabled
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
-                       process.env.SKIP_REDIS_INIT === "true" ||
-                       process.env.REDIS_DISABLED === "true";
+  process.env.SKIP_REDIS_INIT === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 /**
  * @desc    Creates a rate limiter with configurable limits, IP-based throttling, and optional Redis-backed storage.

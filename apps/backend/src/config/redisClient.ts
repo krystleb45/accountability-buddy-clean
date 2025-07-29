@@ -5,7 +5,7 @@ import { logger } from "../utils/winstonLogger";
 let redisClient: any;
 
 // Check if Redis is disabled BEFORE importing anything Redis-related
-if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "true" || process.env.REDIS_DISABLED === "true") {
+if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "true" || process.env.DISABLE_REDIS === "true") {
   logger.info("🚫 Redis disabled by environment flags - using comprehensive mock client");
   console.log("🚫 Redis disabled - using mock client");
 
@@ -18,8 +18,8 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
     },
     disconnect: async (): Promise<void> => Promise.resolve(),
     quit: async (): Promise<void> => Promise.resolve(),
-    on: (): void => {},
-    off: (): void => {},
+    on: (): void => { },
+    off: (): void => { },
 
     // Basic Redis commands
     get: async (): Promise<string | null> => Promise.resolve(null),
@@ -169,7 +169,7 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
       set: async (): Promise<string> => Promise.resolve("OK"),
       get: async (): Promise<string | null> => Promise.resolve(null),
       del: async (): Promise<number> => Promise.resolve(0),
-      on: (): void => {},
+      on: (): void => { },
       sendCommand: async (): Promise<any> => Promise.resolve(""),
       isReady: false,
       status: "fallback"

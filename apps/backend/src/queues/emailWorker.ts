@@ -5,8 +5,8 @@ const disableQueue = process.env.DISABLE_EMAIL_QUEUE === "true";
 
 // Also check our Redis disable flags
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
-                       process.env.SKIP_REDIS_INIT === "true" ||
-                       process.env.REDIS_DISABLED === "true";
+  process.env.SKIP_REDIS_INIT === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 if (isProd && !disableQueue && !isRedisDisabled) {
   try {

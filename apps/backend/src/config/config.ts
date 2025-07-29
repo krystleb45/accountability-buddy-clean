@@ -102,7 +102,7 @@ if (!config.STRIPE_SECRET_KEY || config.STRIPE_SECRET_KEY === "sk_test_placehold
 }
 
 // ✅ ADDED: Redis validation with helpful error messages
-if (!process.env.DISABLE_REDIS && !process.env.SKIP_REDIS_INIT && !process.env.REDIS_DISABLED) {
+if (!process.env.DISABLE_REDIS && !process.env.SKIP_REDIS_INIT && !process.env.DISABLE_REDIS) {
   if (!config.REDIS_URL && !config.REDIS_HOST) {
     console.warn("⚠️ WARNING: No Redis configuration found. Make sure to:");
     console.warn("   1. Add a Redis service in Railway");

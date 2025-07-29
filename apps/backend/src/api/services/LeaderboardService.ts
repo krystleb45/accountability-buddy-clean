@@ -6,8 +6,8 @@ import { logger } from "../../utils/winstonLogger";
 
 // Check if Redis is disabled
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
-                       process.env.SKIP_REDIS_INIT === "true" ||
-                       process.env.REDIS_DISABLED === "true";
+  process.env.SKIP_REDIS_INIT === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 // In-memory cache as fallback when Redis is disabled
 const memoryCache = new Map<string, { data: any; expiry: number }>();

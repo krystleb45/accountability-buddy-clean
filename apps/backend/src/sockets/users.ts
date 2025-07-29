@@ -5,8 +5,8 @@ import { logger } from "../utils/winstonLogger";
 
 // Check if Redis is disabled
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
-                       process.env.SKIP_REDIS_INIT === "true" ||
-                       process.env.REDIS_DISABLED === "true";
+  process.env.SKIP_REDIS_INIT === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 // In-memory online users set fallback
 const memoryOnlineUsers = new Set<string>();

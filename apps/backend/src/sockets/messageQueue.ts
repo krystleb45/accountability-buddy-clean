@@ -4,8 +4,8 @@ import { logger } from "../utils/winstonLogger";
 
 // Check if message queue is disabled
 const isMessageQueueDisabled = process.env.DISABLE_MESSAGE_QUEUE === "true" ||
-                              process.env.DISABLE_REDIS === "true" ||
-                              process.env.REDIS_DISABLED === "true";
+  process.env.DISABLE_REDIS === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 // RabbitMQ configuration (can be replaced with Redis if preferred)
 const RABBITMQ_URL = process.env.RABBITMQ_URL || "amqp://localhost";

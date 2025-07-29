@@ -4,8 +4,8 @@ import { logger } from "../utils/winstonLogger";
 
 // Check if Redis is disabled
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
-                       process.env.SKIP_REDIS_INIT === "true" ||
-                       process.env.REDIS_DISABLED === "true";
+  process.env.SKIP_REDIS_INIT === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 // In-memory rate limiter fallback
 const memoryRateLimit = new Map<string, { count: number; expiry: number }>();

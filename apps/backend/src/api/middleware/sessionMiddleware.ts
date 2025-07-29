@@ -6,8 +6,8 @@ import { logger } from "../../utils/winstonLogger";
 
 // Check if Redis is disabled BEFORE any Redis imports
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
-                       process.env.SKIP_REDIS_INIT === "true" ||
-                       process.env.REDIS_DISABLED === "true";
+  process.env.SKIP_REDIS_INIT === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 let sessionMiddleware: any;
 
@@ -44,7 +44,7 @@ if (isRedisDisabled) {
     // Create Redis client
     const redisClient = createClient({
       url: process.env.REDIS_URL ||
-           `redis://${process.env.REDIS_HOST || "localhost"}:${process.env.REDIS_PORT || "6379"}`,
+        `redis://${process.env.REDIS_HOST || "localhost"}:${process.env.REDIS_PORT || "6379"}`,
       password: process.env.REDIS_PASSWORD,
     });
 

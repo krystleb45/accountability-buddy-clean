@@ -1,115 +1,4 @@
-// src/server.ts - EMERGENCY: Block all Redis before anything else
-
-// ═══════════════════════════════════════════════════════════════
-// 🚫 ENHANCED REDIS BLOCKER - PRODUCTION SAFE
-// ═══════════════════════════════════════════════════════════════
-
-console.log("🚨 PRODUCTION: Enhanced Redis connection blocker");
-
-// Force ALL Redis disable flags
-process.env.DISABLE_REDIS = "true";
-process.env.SKIP_REDIS_INIT = "true";
-process.env.REDIS_DISABLED = "true";
-process.env.DISABLE_EMAIL_QUEUE = "true";
-
-// Clear ALL Redis environment variables
-delete process.env.REDIS_URL;
-delete process.env.REDIS_PRIVATE_URL;
-delete process.env.REDIS_PUBLIC_URL;
-delete process.env.REDIS_HOST;
-delete process.env.REDIS_PORT;
-delete process.env.REDIS_PASSWORD;
-delete process.env.REDIS_USERNAME;
-
-// Enhanced module blocking
-const Module = require("module");
-const originalRequire = Module.prototype.require;
-
-Module.prototype.require = function(id: string): any {
-  // Block any Redis-related modules
-  if (id === "ioredis" ||
-      id === "redis" ||
-      id === "@redis/client" ||
-      id.includes("redis") ||
-      id === "bull" ||
-      id === "bullmq" ||
-      id.includes("bull") ||
-      id === "connect-redis" ||
-      id === "rate-limit-redis") {
-
-    console.log(`🚫 PRODUCTION BLOCKED: ${id}`);
-
-    // Return comprehensive mock Redis object
-    return {
-      createClient: (): any => ({
-        on: (): void => {},
-        connect: (): Promise<void> => Promise.resolve(),
-        disconnect: (): Promise<void> => Promise.resolve(),
-        quit: (): Promise<void> => Promise.resolve(),
-        get: (): Promise<null> => Promise.resolve(null),
-        set: (): Promise<string> => Promise.resolve("OK"),
-        del: (): Promise<number> => Promise.resolve(1),
-        sendCommand: (): Promise<string> => Promise.resolve(""),
-        sAdd: (): Promise<number> => Promise.resolve(1),
-        sRem: (): Promise<number> => Promise.resolve(1),
-        sMembers: (): Promise<string[]> => Promise.resolve([]),
-        incr: (): Promise<number> => Promise.resolve(1),
-        expire: (): Promise<number> => Promise.resolve(1),
-        keys: (): Promise<string[]> => Promise.resolve([]),
-        flushDb: (): Promise<string> => Promise.resolve("OK"),
-        setex: (): Promise<string> => Promise.resolve("OK"),
-        ttl: (): Promise<number> => Promise.resolve(-1),
-        exists: (): Promise<number> => Promise.resolve(0)
-      }),
-      default: class MockRedis {
-        constructor() {
-          console.log("🚫 Mock Redis connection created");
-        }
-        on(): this { return this; }
-        connect(): Promise<void> { return Promise.resolve(); }
-        disconnect(): Promise<void> { return Promise.resolve(); }
-        quit(): Promise<void> { return Promise.resolve(); }
-        get(): Promise<null> { return Promise.resolve(null); }
-        set(): Promise<string> { return Promise.resolve("OK"); }
-        del(): Promise<number> { return Promise.resolve(1); }
-        sendCommand(): Promise<string> { return Promise.resolve(""); }
-        setex(): Promise<string> { return Promise.resolve("OK"); }
-        keys(): Promise<string[]> { return Promise.resolve([]); }
-      },
-      Redis: class MockIoRedis {
-        constructor() {
-          console.log("🚫 Mock ioredis connection created");
-        }
-        on(): this { return this; }
-        connect(): Promise<void> { return Promise.resolve(); }
-        disconnect(): Promise<void> { return Promise.resolve(); }
-        quit(): Promise<void> { return Promise.resolve(); }
-        get(): Promise<null> { return Promise.resolve(null); }
-        set(): Promise<string> { return Promise.resolve("OK"); }
-        del(): Promise<number> { return Promise.resolve(1); }
-        setex(): Promise<string> { return Promise.resolve("OK"); }
-        keys(): Promise<string[]> { return Promise.resolve([]); }
-      },
-      Queue: class MockQueue {
-        constructor() {
-          console.log("🚫 Mock Bull Queue created");
-        }
-        add(): Promise<{ id: string }> { return Promise.resolve({ id: "mock" }); }
-        process(): this { return this; }
-        on(): this { return this; }
-        close(): Promise<void> { return Promise.resolve(); }
-      }
-    };
-  }
-
-  return originalRequire.apply(this, arguments);
-};
-
-console.log("✅ PRODUCTION: Enhanced Redis blocker activated - ALL Redis connections blocked");
-
-// ═══════════════════════════════════════════════════════════════
-// NOW CONTINUE WITH YOUR EXISTING SERVER CODE
-// ═══════════════════════════════════════════════════════════════
+// src/server.ts - Backend Server Entry Point
 
 // ─── Crash Guards ───────────────────────────────────────────────
 process.on("uncaughtException", (err) => {
@@ -122,10 +11,9 @@ process.on("unhandledRejection", (reason) => {
 });
 
 // ─── Imports ─────────────────────────────────────────────────────
-import mongoose from "mongoose";
 import dotenvFlow from "dotenv-flow";
 
-// ✅ FIXED: Only load .env files in development, ignore errors in production
+// ✅ FIXED: Only load .env files in development
 try {
   if (process.env.NODE_ENV !== "production") {
     dotenvFlow.config();
@@ -137,9 +25,27 @@ try {
   console.log("ℹ️ No .env files found, using environment variables directly");
 }
 
+// 🚫 REDIS DISABLE: Force disable Redis at startup BEFORE any other imports
+if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "true") {
+  // Clear all Redis-related environment variables
+  delete process.env.REDIS_URL;
+  delete process.env.REDIS_PRIVATE_URL;
+  delete process.env.REDIS_PUBLIC_URL;
+  delete process.env.REDIS_HOST;
+  delete process.env.REDIS_PORT;
+  delete process.env.REDIS_PASSWORD;
+  delete process.env.REDIS_USERNAME;
+
+  // Set disabled flag for other modules to check
+  process.env.DISABLE_REDIS = "true";
+  console.log("✅ Redis forcibly disabled at application startup");
+  console.log("📝 All Redis environment variables cleared");
+}
+
 import { validateEnv } from "./utils/validateEnv";
 validateEnv();
 
+import mongoose from "mongoose";
 import { loadSecretsFromAWS } from "./utils/loadSecrets";
 import { createServer } from "http";
 import { Server } from "socket.io";

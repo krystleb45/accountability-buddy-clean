@@ -1,38 +1,4 @@
 // src/app.ts - FIXED: Proper route ordering and Redis disable
-import dotenvFlow from "dotenv-flow";
-
-// ✅ FIXED: Only load .env files in development
-try {
-  if (process.env.NODE_ENV !== "production") {
-    dotenvFlow.config();
-    console.log("✅ Environment configuration loaded from .env files");
-  } else {
-    console.log("ℹ️ Production mode: Using Railway environment variables directly");
-  }
-} catch {
-  console.log("ℹ️ No .env files found, using environment variables directly");
-}
-
-// 🚫 REDIS DISABLE: Force disable Redis at startup BEFORE any other imports
-if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "true") {
-  // Clear all Redis-related environment variables
-  delete process.env.REDIS_URL;
-  delete process.env.REDIS_PRIVATE_URL;
-  delete process.env.REDIS_PUBLIC_URL;
-  delete process.env.REDIS_HOST;
-  delete process.env.REDIS_PORT;
-  delete process.env.REDIS_PASSWORD;
-  delete process.env.REDIS_USERNAME;
-
-  // Set disabled flag for other modules to check
-  process.env.REDIS_DISABLED = "true";
-  console.log("✅ Redis forcibly disabled at application startup");
-  console.log("📝 All Redis environment variables cleared");
-}
-
-import { validateEnv } from "./utils/validateEnv";
-validateEnv();
-
 import express from "express";
 import path from "path";
 import cors from "cors";
@@ -123,7 +89,7 @@ const app = express();
 app.set("trust proxy", true);
 
 // 🔍 Log Redis status after all imports
-if (process.env.REDIS_DISABLED === "true") {
+if (process.env.DISABLE_REDIS === "true") {
   console.log("🚫 Redis Status: DISABLED");
   console.log("📋 REDIS_URL:", process.env.REDIS_URL || "undefined");
   console.log("📋 REDIS_PRIVATE_URL:", process.env.REDIS_PRIVATE_URL || "undefined");
@@ -175,7 +141,7 @@ app.get("/api", (_req, res) => {
     message: "Backend API is working!",
     timestamp: new Date().toISOString(),
     redis: {
-      disabled: process.env.REDIS_DISABLED === "true",
+      disabled: process.env.DISABLE_REDIS === "true",
       skipInit: process.env.SKIP_REDIS_INIT === "true"
     },
     availableEndpoints: [
@@ -190,14 +156,13 @@ app.get("/api/test", (_req, res) => {
   res.json({
     message: "Test endpoint working!",
     timestamp: new Date().toISOString(),
-    redis: process.env.REDIS_DISABLED === "true" ? "disabled" : "unknown"
+    redis: process.env.DISABLE_REDIS === "true" ? "disabled" : "unknown"
   });
 });
 
 // ─── PUBLIC routes (NO AUTHENTICATION REQUIRED) ───────────────
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/auths", authRoutes);
 app.use("/api/faqs", faqRoutes);
 
 // ⚠️ CRITICAL: Webhooks MUST be before protect middleware

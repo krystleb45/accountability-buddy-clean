@@ -1,8 +1,8 @@
 // src/utils/cacheHelper.ts - FIXED: Conditional Redis usage
 // Check if Redis is disabled
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
-                       process.env.SKIP_REDIS_INIT === "true" ||
-                       process.env.REDIS_DISABLED === "true";
+  process.env.SKIP_REDIS_INIT === "true" ||
+  process.env.DISABLE_REDIS === "true";
 
 // In-memory cache fallback
 const memoryCache = new Map<string, { data: string; expiry: number }>();
