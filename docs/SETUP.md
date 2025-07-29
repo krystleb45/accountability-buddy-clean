@@ -31,7 +31,7 @@ Comprehensive setup instructions for developers to get the Accountability Buddy 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/accountability-buddy-clean.git
+git clone https://github.com/krystleb45/accountability-buddy-clean.git
 cd accountability-buddy-clean
 
 # Install dependencies
@@ -479,6 +479,6 @@ Remember to set all environment variables in your deployment platforms:
 
 ---
 
-**Last Updated**: [Current Date]
+**Last Updated**: July 30, 2025
 **Setup Time**: ~15-30 minutes for experienced developers
 **Difficulty**: Intermediate (requires Node.js and MongoDB knowledge)

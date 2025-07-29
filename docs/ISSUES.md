@@ -1,14 +1,16 @@
 # 🐛 Known Issues & Status
 
-Last Updated: [Current Date]
+Last Updated: July 30, 2025
 
 ## 🚨 Critical Issues (Priority 1)
 
 ### 1. Groups Authentication Flow
+
 **Status**: 🔄 In Progress
 **Description**: Groups can be created successfully, but subsequent API calls for group details, members, and messages return 401 unauthorized errors.
 
 **Symptoms**:
+
 - Group creation works (201 status)
 - Redirect to group detail page fails
 - API calls to `/api/groups/[id]/members`, `/api/groups/[id]/messages` return 401
@@ -16,6 +18,7 @@ Last Updated: [Current Date]
 **Root Cause**: Authentication tokens not being properly forwarded through Next.js proxy routes after environment variable changes.
 
 **Debugging Info**:
+
 ```
 ✅ POST /api/groups 201 (group created)
 ❌ GET /api/groups/[id] 401 (no bearer token)
@@ -24,6 +27,7 @@ Last Updated: [Current Date]
 ```
 
 **Files Involved**:
+
 - `frontend/src/app/api/groups/[groupId]/route.ts`
 - `frontend/src/app/api/groups/[groupId]/members/route.ts`
 - `frontend/src/app/api/groups/[groupId]/messages/route.ts`
@@ -32,10 +36,12 @@ Last Updated: [Current Date]
 ---
 
 ### 2. Military Support Chat Rooms
+
 **Status**: 🔄 In Progress
 **Description**: Anonymous chat rooms failing to load and connect properly.
 
 **Symptoms**:
+
 - "Join Anonymous Chat Rooms" button leads to empty/broken page
 - WebSocket connections failing
 - Chat room components throwing JavaScript errors
@@ -43,12 +49,14 @@ Last Updated: [Current Date]
 **Root Cause**: Missing API proxy routes and WebSocket connection configuration issues.
 
 **Error Messages**:
+
 ```
 ❌ [anonymousMilitaryChatApi::getAnonymousRooms] {}
 ❌ WebSocket connection failed
 ```
 
 **Files Involved**:
+
 - `frontend/src/components/MilitarySupport/MilitaryChatRoom.tsx`
 - `frontend/src/api/military-support/anonymousMilitaryChatApi.ts`
 - `backend/src/api/routes/anonymous-military-chat.ts`
@@ -58,10 +66,12 @@ Last Updated: [Current Date]
 ## ⚠️ Medium Issues (Priority 2)
 
 ### 3. Military Support API Endpoints
+
 **Status**: 🔄 Partially Fixed
 **Description**: Military support resources and disclaimer endpoints returning 500 errors.
 
 **Symptoms**:
+
 - Military support page shows resource cards but no data loads
 - API calls to `/api/military-support/resources` return 500 status
 - Disclaimer text not loading
@@ -69,6 +79,7 @@ Last Updated: [Current Date]
 **Recent Fix**: Added Next.js proxy routes, but backend endpoints may need work.
 
 **Files Involved**:
+
 - `frontend/src/app/api/military-support/resources/route.ts`
 - `frontend/src/app/api/military-support/disclaimer/route.ts`
 - `backend/src/api/controllers/militarySupportController.ts`
@@ -76,32 +87,38 @@ Last Updated: [Current Date]
 ---
 
 ### 4. Dashboard Functionality
+
 **Status**: ❌ Incomplete
 **Description**: User dashboard missing core functionality.
 
 **Missing Features**:
+
 - Goals progress tracking
 - Achievement displays
 - Activity feed
 - Statistics and charts
 
 **Files Involved**:
+
 - `frontend/src/app/dashboard/page.tsx`
 - `frontend/src/components/Dashboard/`
 
 ---
 
 ### 5. Goals Tracking System
+
 **Status**: ❌ Incomplete
 **Description**: Goals creation and tracking system not fully implemented.
 
 **Missing Features**:
+
 - Goal creation form
 - Progress updates
 - Goal completion tracking
 - Goal sharing with groups
 
 **Files Involved**:
+
 - `frontend/src/app/goals/`
 - `backend/src/api/controllers/goalsController.ts`
 - `backend/src/api/models/Goal.js`
@@ -109,16 +126,19 @@ Last Updated: [Current Date]
 ---
 
 ### 6. Admin Dashboard - Needs Implementation
+
 **Status**: ❌ Not Configured
 **Description**: Admin folder exists but lacks proper configuration and functionality.
 
 **Issues**:
+
 - Folder exists: `/src/app/admin-dashboard/`
 - Missing: Role-based authentication, admin middleware, user role system
 - No admin user creation process
 - Should integrate with existing NextAuth setup
 
 **Requirements**:
+
 - Admin role in user schema
 - Admin-specific middleware/guards
 - Admin routes protection
@@ -132,12 +152,14 @@ Last Updated: [Current Date]
 ## 🎨 Enhancement Requests (Priority 3)
 
 ### 7. Profile Section Enhancement
+
 **Status**: 🆕 New Requirement
 **Description**: Current profile section needs significant UX/UI improvements and additional functionality.
 
 **Enhancement Goals**:
 
 #### Profile Information Management
+
 - [ ] **Avatar/Photo Upload**
   - Image upload with preview and crop/resize functionality
   - Default avatar generation (initials or military branch icons)
@@ -157,6 +179,7 @@ Last Updated: [Current Date]
   - Data sharing permissions
 
 #### Military-Specific Features
+
 - [ ] **Military Profile Section**
   - Branch of service dropdown
   - Service status (Active/Veteran/Dependent/Civilian)
@@ -165,6 +188,7 @@ Last Updated: [Current Date]
   - Veteran verification badge system
 
 #### Goal Integration
+
 - [ ] **Goal Dashboard in Profile**
   - Quick stats: Active goals, completed goals, streak count
   - Recent activity timeline
@@ -177,6 +201,7 @@ Last Updated: [Current Date]
   - Progress celebrations and sharing
 
 #### Accountability Features
+
 - [ ] **Buddy Connections**
   - Current accountability partners list
   - Connection history and stats
@@ -184,12 +209,14 @@ Last Updated: [Current Date]
   - Communication preferences with partners
 
 **Implementation Timeline Estimate**:
+
 - **Phase 1** (Week 1): Basic profile enhancements, avatar upload
 - **Phase 2** (Week 2): Military-specific features, privacy settings
 - **Phase 3** (Week 3): Goal integration, achievement system
 - **Phase 4** (Week 4): Advanced features, analytics
 
 **Success Metrics**:
+
 - User profile completion rate >80%
 - Profile photo upload rate >60%
 - Military member engagement increase >25%
@@ -201,16 +228,19 @@ Last Updated: [Current Date]
 ## 🔧 Minor Issues (Priority 4)
 
 ### 8. UI/UX Polish
+
 **Status**: ❌ Needs Work
 **Description**: Various UI improvements needed.
 
 **Issues**:
+
 - Mobile responsiveness
 - Loading states
 - Error message handling
 - Consistent styling
 
 ### 9. Environment Variable Management
+
 **Status**: ✅ Mostly Fixed
 **Description**: Environment variables were pointing to wrong URLs.
 
@@ -221,10 +251,12 @@ Last Updated: [Current Date]
 ## 🧪 Testing Issues
 
 ### 10. No Test Coverage
+
 **Status**: ❌ Not Implemented
 **Description**: No testing framework or tests implemented.
 
 **Needed**:
+
 - Unit tests for components
 - Integration tests for API endpoints
 - E2E tests for critical user flows
@@ -234,6 +266,7 @@ Last Updated: [Current Date]
 ## 📋 Debugging Information
 
 ### Environment Variables Status
+
 ```bash
 # Frontend (.env.local)
 ✅ NEXTAUTH_URL=http://localhost:3000
@@ -248,6 +281,7 @@ Last Updated: [Current Date]
 ```
 
 ### API Proxy Routes Status
+
 ```
 ✅ /api/groups/route.ts (working)
 ✅ /api/groups/[groupId]/route.ts (working)
@@ -260,6 +294,7 @@ Last Updated: [Current Date]
 ```
 
 ### Database Collections Status
+
 ```
 ✅ users (working)
 ✅ groups (working)
@@ -273,12 +308,14 @@ Last Updated: [Current Date]
 ## 🚀 Next Steps for Developer
 
 ### Immediate (Week 1)
+
 1. **Fix groups authentication flow** - Highest priority
 2. **Complete military support chat rooms**
 3. **Add missing API proxy routes**
 4. **Test and fix WebSocket connections**
 
 ### Short-term (Week 2-3)
+
 1. **Complete goals tracking system**
 2. **Implement dashboard functionality**
 3. **Begin profile section enhancements**
@@ -286,6 +323,7 @@ Last Updated: [Current Date]
 5. **Add proper error handling**
 
 ### Long-term (Week 4+)
+
 1. **Complete profile enhancements**
 2. **Implement admin dashboard**
 3. **Add testing framework**
@@ -298,17 +336,20 @@ Last Updated: [Current Date]
 ## 🎯 Project Phases & Budget Allocation
 
 ### Phase 1: Authentication & Core Fixes (40% of budget)
+
 - Fix groups authentication flow
 - Complete military support chat
 - Essential bug fixes
 
 ### Phase 2: Profile Enhancement (35% of budget)
+
 - Avatar upload and profile management
 - Military-specific features
 - Goal integration in profiles
 - Achievement system
 
 ### Phase 3: Feature Completion (25% of budget)
+
 - Complete goals tracking
 - Dashboard functionality
 - Admin system implementation
@@ -319,6 +360,7 @@ Last Updated: [Current Date]
 ## 📞 Getting Help
 
 If you encounter any issues:
+
 1. Check this document for known issues
 2. Review the console logs (both frontend and backend)
 3. Check the Network tab in browser dev tools
@@ -330,18 +372,21 @@ If you encounter any issues:
 ## 📈 Success Metrics & KPIs
 
 ### Technical Metrics
+
 - [ ] Authentication success rate >99%
 - [ ] API response times <500ms
 - [ ] Zero 500 errors in production
 - [ ] Mobile responsiveness score >90%
 
 ### User Experience Metrics
+
 - [ ] Profile completion rate >80%
 - [ ] Military member engagement >25% increase
 - [ ] Goal completion tracking >70% adoption
 - [ ] User session time increase >30%
 
 ### Military Community Metrics
+
 - [ ] Anonymous chat room usage >50 active users/week
 - [ ] Military support resource usage >100 views/week
 - [ ] Veteran verification adoption >60%

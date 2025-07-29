@@ -80,39 +80,77 @@
 
 ```sh
 accountability-buddy-clean/
-├── backend/                 # Express.js API server
-│   ├── src/
-│   │   ├── api/
-│   │   │   ├── controllers/ # Route handlers
-│   │   │   ├── models/      # MongoDB schemas
-│   │   │   ├── routes/      # Express routes
-│   │   │   ├── middleware/  # Auth, validation, etc.
-│   │   │   └── services/    # Business logic
-│   │   ├── config/          # Database and app configuration
-│   │   └── app.ts           # Express app setup
-│   ├── .env.example         # Environment variables template
-│   └── package.json
-│
-├── frontend/                # Next.js application
-│   ├── src/
-│   │   ├── app/             # Pages and API routes (App Router)
-│   │   ├── components/      # React components
-│   │   ├── api/             # API client functions
-│   │   ├── utils/           # Utility functions
-│   │   └── types/           # TypeScript type definitions
-│   ├── .env.example         # Environment variables template
-│   └── package.json
+├── apps/                    # Application workspace
+│   ├── backend/             # Express.js API server
+│   │   ├── src/
+│   │   │   ├── api/         # API layer
+│   │   │   ├── config/      # Database and app configuration
+│   │   │   ├── constants/   # Application constants
+│   │   │   ├── db/          # Database configuration
+│   │   │   ├── jobs/        # Background jobs
+│   │   │   ├── locales/     # Internationalization
+│   │   │   ├── queues/      # Job queues
+│   │   │   ├── scripts/     # Utility scripts
+│   │   │   ├── sockets/     # Socket.IO configuration
+│   │   │   ├── test/        # Test files
+│   │   │   ├── types/       # TypeScript type definitions
+│   │   │   ├── utils/       # Utility functions
+│   │   │   ├── validators/  # Input validation schemas
+│   │   │   ├── app.ts       # Express app setup
+│   │   │   └── server.ts    # Server entry point
+│   │   ├── backup-models/   # Model backups
+│   │   ├── public/          # Static assets
+│   │   ├── uploads/         # File uploads
+│   │   ├── .env.example     # Environment variables template
+│   │   ├── nodemon.json     # Nodemon configuration
+│   │   ├── railway.toml     # Railway deployment config
+│   │   └── package.json
+│   │
+│   └── frontend/            # Next.js application
+│       ├── src/
+│       │   ├── app/         # Next.js App Router pages
+│       │   ├── components/  # React components
+│       │   ├── api/         # API client functions
+│       │   ├── @types/      # TypeScript declarations
+│       │   ├── config/      # Configuration files
+│       │   ├── constants/   # Application constants
+│       │   ├── context/     # React contexts
+│       │   ├── data/        # Static data
+│       │   ├── hooks/       # Custom React hooks
+│       │   ├── providers/   # Context providers
+│       │   ├── services/    # External service integrations
+│       │   ├── settings/    # Application settings
+│       │   ├── styles/      # CSS and styling
+│       │   ├── types/       # TypeScript type definitions
+│       │   ├── utils/       # Utility functions
+│       │   └── env.client.ts # Client environment config
+│       ├── public/          # Static assets
+│       ├── scripts/         # Build and utility scripts
+│       ├── cypress/         # E2E testing
+│       ├── __mocks__/       # Jest mocks
+│       ├── .env.example     # Environment variables template
+│       ├── next.config.js   # Next.js configuration
+│       ├── tailwind.config.js # Tailwind CSS configuration
+│       └── package.json
 │
 ├── docs/                    # Project documentation
 │   ├── HANDOFF.md          # Developer handoff guide
 │   ├── ISSUES.md           # Known issues and status
 │   └── SETUP.md            # Detailed setup instructions
 │
-├── public/                  # Static assets
-├── shared/                  # Shared utilities (if any)
-├── .gitignore              # Git ignore rules
-├── README.md               # This file
-└── LICENSE                 # Project license
+├── shared/                  # Shared utilities and types
+│   ├── types/              # Shared TypeScript types
+│   └── tsconfig.json       # Shared TypeScript config
+│
+├── .husky/                 # Git hooks
+├── .editorconfig           # Editor configuration
+├── .gitignore             # Git ignore rules
+├── .prettierrc            # Prettier configuration
+├── package.json           # Root package.json (workspace)
+├── turbo.json             # Turborepo configuration
+├── vercel.json            # Vercel deployment config
+├── README.md              # This file
+└── LICENSE                # Project license
 ```
 
 ---
@@ -130,7 +168,7 @@ accountability-buddy-clean/
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-username/accountability-buddy-clean.git
+   git clone https://github.com/krystleb45/accountability-buddy-clean.git
    cd accountability-buddy-clean
    ```
 
@@ -214,19 +252,22 @@ turbo dev
 ### **Production Build**
 
 ```bash
-# Build backend
-cd apps/backend && npm run build
+# Build all apps using turbo
+turbo build
 
-# Build frontend
+# Or build individually
+cd apps/backend && npm run build
 cd apps/frontend && npm run build && npm start
 ```
 
 ### **Available Scripts**
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run code linting
+- `turbo dev` - Start all development servers
+- `turbo build` - Build all apps for production
+- `turbo lint` - Run code linting across workspace
+- `turbo test` - Run tests across workspace
+- `npm run dev` - Individual app development (when in app directory)
+- `npm run build` - Individual app build (when in app directory)
 
 ---
 
@@ -325,7 +366,7 @@ See [docs/ISSUES.md](./docs/ISSUES.md) for complete issue tracking and status.
 ### **Contact**
 
 - **Email**: [your-email@example.com]
-- **Repository**: [GitHub Issues](https://github.com/your-username/accountability-buddy-clean/issues)
+- **Repository**: [GitHub Issues](https://github.com/krystleb45/accountability-buddy-clean/issues)
 
 ---
 
@@ -345,6 +386,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Last Updated**: [Current Date]
+**Last Updated**: July 30, 2025
 **Version**: 1.0.0-dev
 **Status**: In Active Development
