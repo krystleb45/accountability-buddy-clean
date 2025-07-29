@@ -72,6 +72,7 @@
 - **Code Quality**: ESLint + Prettier
 - **Version Control**: Git + GitHub
 - **Environment**: Local development + cloud deployment
+- **Workspace Management**: [Turborepo](https://turborepo.com/)
 
 ---
 
@@ -136,6 +137,7 @@ accountability-buddy-clean/
 2. **Install dependencies**
 
    ```bash
+   npm install turbo --global
    npm install # installs packages for both frontend and backend
    ```
 
@@ -156,13 +158,7 @@ accountability-buddy-clean/
 4. **Start development servers**
 
    ```bash
-   # Terminal 1: Backend
-   cd apps/backend
-   npm run dev
-
-   # Terminal 2: Frontend
-   cd apps/frontend
-   npm run dev
+   turbo dev
    ```
 
 5. **Access the application**
@@ -212,11 +208,7 @@ See `.env.example` files in each directory for complete variable lists.
 ### **Development**
 
 ```bash
-# Start backend (Terminal 1)
-cd apps/backend && npm run dev
-
-# Start frontend (Terminal 2)
-cd apps/frontend && npm run dev
+turbo dev
 ```
 
 ### **Production Build**

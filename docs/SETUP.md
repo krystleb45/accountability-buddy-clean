@@ -55,13 +55,7 @@ cp .env.example .env.local
 ### **3. Start Development Servers**
 
 ```bash
-# Terminal 1: Backend
-cd apps/backend
-npm run dev
-
-# Terminal 2: Frontend
-cd apps/frontend
-npm run dev
+turbo dev
 ```
 
 ### **4. Verify Setup**
@@ -213,7 +207,7 @@ cp .env.example .env.development
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 # Start development server
-npm run dev
+turbo dev
 
 # Verify backend is running
 curl http://localhost:5050/api/health
@@ -232,7 +226,7 @@ cp .env.example .env.local
 openssl rand -base64 32
 
 # Start development server
-npm run dev
+turbo dev
 
 # Verify frontend is running
 open http://localhost:3000
@@ -365,7 +359,7 @@ show collections
 # Clear Next.js cache
 cd apps/frontend
 rm -rf .next
-npm run dev
+turbo dev
 
 # Clear node_modules if needed
 rm -rf node_modules

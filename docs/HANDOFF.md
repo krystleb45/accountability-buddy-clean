@@ -110,11 +110,7 @@ accountability-buddy-clean/
 5. Start development servers:
 
    ```bash
-   # Backend
-   cd apps/backend && npm run dev
-
-   # Frontend (new terminal)
-   cd apps/frontend && npm run dev
+   turbo dev
    ```
 
 ### Environment Variables
