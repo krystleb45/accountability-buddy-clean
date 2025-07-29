@@ -79,18 +79,6 @@ const setupSwagger = (app: Application): void => {
     swaggerUi.setup(swaggerSpec, {
       explorer: true,
       customSiteTitle: "Accountability Buddy API Docs",
-      customfavIcon: "/assets/favicon.ico",
-      customCssUrl: "/assets/swagger-theme.css",
-      customCss: `
-        .swagger-ui .topbar { background-color: #0f172a; }
-        .topbar-wrapper img { content: url('/assets/logo.svg'); height: 40px; }
-        .swagger-ui .topbar .download-url-wrapper { display: none; }
-        .swagger-ui .info hgroup.main a {
-          font-weight: 600;
-          font-size: 1.4em;
-          color: #22c55e;
-        }
-      `,
     })
   );
 

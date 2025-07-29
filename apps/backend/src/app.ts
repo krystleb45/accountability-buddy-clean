@@ -240,9 +240,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// ─── Setup Swagger ─────────────────────
+setupSwagger(app);
+
 // ─── 404 & error handlers ─────────────────────────────────────
 app.use(notFoundMiddleware);
 app.use(errorHandler);
-setupSwagger(app);
 
 export default app;
