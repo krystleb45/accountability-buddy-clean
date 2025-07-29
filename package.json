@@ -7,16 +7,28 @@
     "build": "npm run build --prefix=frontend",
     "start": "npm run start --prefix=frontend",
     "lint": "npm run lint --prefix=frontend",
-    "install:frontend": "npm install --prefix=frontend",
-    "install:backend": "npm install --prefix=backend",
-    "install:all": "npm run install:frontend && npm run install:backend",
     "dev:frontend": "npm run dev --prefix=frontend",
     "dev:backend": "npm run dev --prefix=backend",
     "build:frontend": "npm run build --prefix=frontend",
-    "build:backend": "npm run build --prefix=backend"
+    "build:backend": "npm run build --prefix=backend",
+    "prepare": "husky install"
   },
   "workspaces": [
-    "frontend",
-    "backend"
-  ]
+    "apps/*"
+  ],
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.0.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
 }

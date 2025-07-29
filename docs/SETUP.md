@@ -5,16 +5,20 @@ Comprehensive setup instructions for developers to get the Accountability Buddy 
 ## 📋 Prerequisites
 
 ### **Required Software**
+
 - **Node.js**: Version 18.0.0 or higher
+
   ```bash
   node --version  # Should show v18+
   npm --version   # Should show v9+
   ```
+
 - **MongoDB**: Local installation or cloud instance
 - **Git**: For version control
 - **Code Editor**: VS Code recommended
 
 ### **Optional but Recommended**
+
 - **MongoDB Compass**: GUI for MongoDB
 - **Postman**: For API testing
 - **Docker**: For containerized MongoDB (alternative)
@@ -24,24 +28,21 @@ Comprehensive setup instructions for developers to get the Accountability Buddy 
 ## 🚀 Quick Start (5 Minutes)
 
 ### **1. Clone and Install**
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-username/accountability-buddy-clean.git
 cd accountability-buddy-clean
 
-# Install backend dependencies
-cd backend
-npm install
-
-# Install frontend dependencies
-cd ../frontend
+# Install dependencies
 npm install
 ```
 
 ### **2. Environment Setup**
+
 ```bash
 # Backend environment
-cd backend
+cd apps/backend
 cp .env.example .env.development
 # Edit .env.development with your values
 
@@ -52,26 +53,29 @@ cp .env.example .env.local
 ```
 
 ### **3. Start Development Servers**
+
 ```bash
 # Terminal 1: Backend
-cd backend
+cd apps/backend
 npm run dev
 
 # Terminal 2: Frontend
-cd frontend
+cd apps/frontend
 npm run dev
 ```
 
 ### **4. Verify Setup**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5050
-- API Docs: http://localhost:5050/api-docs
+
+- Frontend: <http://localhost:3000>
+- Backend API: <http://localhost:5050>
+- API Docs: <http://localhost:5050/api-docs>
 
 ---
 
 ## 📊 Database Setup
 
 ### **Option 1: Local MongoDB**
+
 ```bash
 # Install MongoDB locally
 # macOS with Homebrew:
@@ -86,15 +90,18 @@ mongosh  # Should connect to mongodb://localhost:27017
 ```
 
 ### **Option 2: MongoDB Atlas (Cloud)**
+
 1. Create free account at [MongoDB Atlas](https://www.mongodb.com/atlas)
 2. Create new cluster
 3. Get connection string
 4. Add to your `.env.development`:
+
    ```bash
    MONGODB_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@your-cluster.mongodb.net/accountability-buddy
    ```
 
 ### **Option 3: Docker MongoDB**
+
 ```bash
 # Run MongoDB in Docker
 docker run -d \
@@ -113,6 +120,7 @@ MONGODB_URI=mongodb://admin:password@localhost:27017/accountability-buddy?authSo
 ## ⚙️ Environment Variables Setup
 
 ### **Backend (.env.development)**
+
 ```bash
 # ======================
 # Server Configuration
@@ -156,6 +164,7 @@ SOCKET_IO_CORS_ORIGIN=http://localhost:3000
 ```
 
 ### **Frontend (.env.local)**
+
 ```bash
 # ======================
 # NextAuth Configuration
@@ -192,11 +201,9 @@ NEXT_PUBLIC_DEBUG=true
 ## 🔧 Detailed Setup Steps
 
 ### **Step 1: Backend Setup**
-```bash
-cd backend
 
-# Install dependencies
-npm install
+```bash
+cd apps/backend
 
 # Setup environment
 cp .env.example .env.development
@@ -213,11 +220,9 @@ curl http://localhost:5050/api/health
 ```
 
 ### **Step 2: Frontend Setup**
-```bash
-cd frontend
 
-# Install dependencies
-npm install
+```bash
+cd apps/frontend
 
 # Setup environment
 cp .env.example .env.local
@@ -234,6 +239,7 @@ open http://localhost:3000
 ```
 
 ### **Step 3: Database Initialization**
+
 ```bash
 # The app will create collections automatically
 # But you can verify connection by checking logs:
@@ -248,6 +254,7 @@ open http://localhost:3000
 ## 🧪 Testing the Setup
 
 ### **1. Backend API Test**
+
 ```bash
 # Health check
 curl http://localhost:5050/api/health
@@ -262,13 +269,15 @@ open http://localhost:5050/api-docs
 ```
 
 ### **2. Frontend Test**
-1. Open http://localhost:3000
+
+1. Open <http://localhost:3000>
 2. Try registration/login
 3. Navigate to dashboard
 4. Create a test group
 5. Check military support section
 
 ### **3. Full Stack Test**
+
 1. Register new user on frontend
 2. Create a goal
 3. Join/create a group
@@ -281,6 +290,7 @@ open http://localhost:5050/api-docs
 ### **Common Issues & Solutions**
 
 #### **Port Already in Use**
+
 ```bash
 # Find process using port 3000 or 5050
 lsof -i :3000
@@ -293,6 +303,7 @@ kill -9 <PID>
 ```
 
 #### **MongoDB Connection Failed**
+
 ```bash
 # Check if MongoDB is running
 brew services list | grep mongodb
@@ -305,6 +316,7 @@ mongosh mongodb://localhost:27017
 ```
 
 #### **Environment Variables Not Loading**
+
 ```bash
 # Ensure file names are correct:
 # backend/.env.development  (NOT .env.dev)
@@ -314,6 +326,7 @@ mongosh mongodb://localhost:27017
 ```
 
 #### **Authentication Issues (401 Errors)**
+
 ```bash
 # Verify NEXT_PUBLIC_API_URL points to Next.js, not Express:
 # ✅ NEXT_PUBLIC_API_URL=http://localhost:3000/api
@@ -324,6 +337,7 @@ mongosh mongodb://localhost:27017
 ```
 
 #### **CORS Errors**
+
 ```bash
 # Ensure CORS_ORIGINS in backend includes frontend URL:
 CORS_ORIGINS=http://localhost:3000
@@ -332,6 +346,7 @@ CORS_ORIGINS=http://localhost:3000
 ```
 
 ### **Database Issues**
+
 ```bash
 # Reset database (development only)
 mongosh
@@ -345,9 +360,10 @@ show collections
 ```
 
 ### **Build Errors**
+
 ```bash
 # Clear Next.js cache
-cd frontend
+cd apps/frontend
 rm -rf .next
 npm run dev
 
@@ -361,6 +377,7 @@ npm install
 ## 🔍 Development Tools
 
 ### **Recommended VS Code Extensions**
+
 - ES7+ React/Redux/React-Native snippets
 - TypeScript Importer
 - Tailwind CSS IntelliSense
@@ -370,11 +387,13 @@ npm install
 - ESLint
 
 ### **Browser Development Tools**
+
 - React Developer Tools
 - Redux DevTools (if using Redux)
 - MongoDB Compass for database management
 
 ### **API Testing**
+
 ```bash
 # Test with curl
 curl -X GET http://localhost:5050/api/health
@@ -388,6 +407,7 @@ curl -X GET http://localhost:5050/api/health
 ## 📱 Mobile Development (Future)
 
 ### **React Native Setup (Planned)**
+
 ```bash
 # For future mobile app development
 npm install -g @react-native-community/cli
@@ -399,6 +419,7 @@ npx react-native init AccountabilityBuddyMobile
 ## ☁️ Deployment Setup
 
 ### **Vercel (Frontend)**
+
 ```bash
 # Install Vercel CLI
 npm i -g vercel
@@ -410,8 +431,10 @@ vercel
 ```
 
 ### **Railway (Backend)**
+
 ```bash
 # Install Railway CLI
+cd apps/backend
 npm install -g @railway/cli
 
 # Login and deploy
@@ -421,7 +444,9 @@ railway up
 ```
 
 ### **Environment Variables for Production**
+
 Remember to set all environment variables in your deployment platforms:
+
 - Vercel: Add all `NEXT_PUBLIC_*` variables
 - Railway: Add all backend environment variables
 - Use production MongoDB URI and API keys
@@ -431,6 +456,7 @@ Remember to set all environment variables in your deployment platforms:
 ## 📞 Getting Help
 
 ### **If Setup Fails**
+
 1. **Check the logs** in both terminal windows
 2. **Verify environment variables** are correct
 3. **Ensure MongoDB is running** and accessible
@@ -438,6 +464,7 @@ Remember to set all environment variables in your deployment platforms:
 5. **Review this troubleshooting section**
 
 ### **Common Log Messages**
+
 ```bash
 # ✅ Good logs to see:
 "🚀 Server listening on port 5050"
@@ -451,6 +478,7 @@ Remember to set all environment variables in your deployment platforms:
 ```
 
 ### **Support Channels**
+
 - **GitHub Issues**: For bugs and feature requests
 - **Documentation**: Check [docs/](../docs/) folder
 - **Code Review**: Submit PRs for improvements

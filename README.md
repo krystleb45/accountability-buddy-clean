@@ -3,6 +3,7 @@
 **Accountability Buddy** is a comprehensive web platform designed to help users achieve their goals through community support, progress tracking, and peer accountability. The platform includes specialized military support features with anonymous chat functionality and crisis resources.
 
 ## 📌 Table of Contents
+
 - [🚀 Features](#-features)
 - [🛠 Tech Stack](#-tech-stack)
 - [📂 Project Structure](#-project-structure)
@@ -21,6 +22,7 @@
 ## 🚀 Features
 
 ### **Core Features**
+
 ✅ **Goal Tracking** – Set, monitor, and track progress toward personal and professional goals
 ✅ **Community Groups** – Create and join accountability groups for shared goal achievement
 ✅ **User Dashboard** – Comprehensive overview of goals, progress, and achievements
@@ -29,12 +31,14 @@
 ✅ **Responsive Design** – Works seamlessly across desktop, tablet, and mobile
 
 ### **Military Support Features**
+
 ✅ **Anonymous Chat Rooms** – Peer support chat rooms for military members and veterans
 ✅ **Crisis Resources** – Integrated access to mental health and crisis support resources
 ✅ **Mood Check-in System** – Daily mood tracking with community insights
 ✅ **Military-Specific Resources** – Curated resources for VA services, benefits, and support
 
 ### **Subscription & Monetization**
+
 ✅ **Tiered Subscription Plans** – Basic, Pro, and Elite plans with free trial period
 ✅ **Stripe Integration** – Secure payment processing
 🔄 **Premium Features** – Advanced analytics and exclusive content *(in development)*
@@ -44,6 +48,7 @@
 ## 🛠 Tech Stack
 
 ### **Frontend**
+
 - **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
 - **Language**: TypeScript
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
@@ -53,6 +58,7 @@
 - **Deployment**: [Vercel](https://vercel.com/)
 
 ### **Backend**
+
 - **Runtime**: [Node.js](https://nodejs.org/)
 - **Framework**: [Express.js](https://expressjs.com/)
 - **Database**: [MongoDB](https://www.mongodb.com/) with Mongoose
@@ -61,6 +67,7 @@
 - **Deployment**: [Railway](https://railway.app/)
 
 ### **Development Tools**
+
 - **Language**: TypeScript
 - **Code Quality**: ESLint + Prettier
 - **Version Control**: Git + GitHub
@@ -69,6 +76,7 @@
 ---
 
 ## 📂 Project Structure
+
 ```sh
 accountability-buddy-clean/
 ├── backend/                 # Express.js API server
@@ -111,32 +119,31 @@ accountability-buddy-clean/
 ## 📥 Installation
 
 ### **Prerequisites**
+
 - **Node.js** 18+
 - **MongoDB** (local installation or cloud instance)
 - **Git**
 
 ### **Quick Start**
+
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-username/accountability-buddy-clean.git
    cd accountability-buddy-clean
    ```
 
 2. **Install dependencies**
-   ```bash
-   # Backend
-   cd backend
-   npm install
 
-   # Frontend
-   cd ../frontend
-   npm install
+   ```bash
+   npm install # installs packages for both frontend and backend
    ```
 
 3. **Configure environment variables**
+
    ```bash
    # Frontend
-   cd frontend
+   cd apps/frontend
    cp .env.example .env.local
    # Edit .env.local with your configuration
 
@@ -147,26 +154,28 @@ accountability-buddy-clean/
    ```
 
 4. **Start development servers**
+
    ```bash
    # Terminal 1: Backend
-   cd backend
+   cd apps/backend
    npm run dev
 
    # Terminal 2: Frontend
-   cd frontend
+   cd apps/frontend
    npm run dev
    ```
 
 5. **Access the application**
-   - **Frontend**: http://localhost:3000
-   - **Backend API**: http://localhost:5050
-   - **API Documentation**: http://localhost:5050/api-docs
+   - **Frontend**: <http://localhost:3000>
+   - **Backend API**: <http://localhost:5050>
+   - **API Documentation**: <http://localhost:5050/api-docs>
 
 ---
 
 ## ⚙️ Environment Variables
 
 ### **Frontend (.env.local)**
+
 ```bash
 # Authentication
 NEXTAUTH_URL=http://localhost:3000
@@ -181,6 +190,7 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 ### **Backend (.env.development)**
+
 ```bash
 # Server
 PORT=5050
@@ -200,24 +210,27 @@ See `.env.example` files in each directory for complete variable lists.
 ## 🏃 Running the Project
 
 ### **Development**
+
 ```bash
 # Start backend (Terminal 1)
-cd backend && npm run dev
+cd apps/backend && npm run dev
 
 # Start frontend (Terminal 2)
-cd frontend && npm run dev
+cd apps/frontend && npm run dev
 ```
 
 ### **Production Build**
+
 ```bash
 # Build backend
-cd backend && npm run build
+cd apps/backend && npm run build
 
 # Build frontend
-cd frontend && npm run build && npm start
+cd apps/frontend && npm run build && npm start
 ```
 
 ### **Available Scripts**
+
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm start` - Start production server
@@ -238,11 +251,12 @@ cd frontend && npm run build && npm start
 
 ## 🛠️ API Documentation
 
-- **Swagger UI**: http://localhost:5050/api-docs (when backend is running)
-- **API Base URL**: http://localhost:5050/api
+- **Swagger UI**: <http://localhost:5050/api-docs> (when backend is running)
+- **API Base URL**: <http://localhost:5050/api>
 - **Authentication**: Bearer token required for protected endpoints
 
 ### **Key Endpoints**
+
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 - `GET /api/groups` - Get user's groups
@@ -254,6 +268,7 @@ cd frontend && npm run build && npm start
 ## 🚧 Current Status
 
 ### **✅ Working Features**
+
 - User registration and authentication
 - Basic dashboard layout
 - Group creation functionality
@@ -261,12 +276,14 @@ cd frontend && npm run build && npm start
 - Payment integration setup
 
 ### **🔄 In Progress**
+
 - Groups authentication flow (401 errors after creation)
 - Military support chat rooms
 - WebSocket real-time connections
 - Complete goals tracking system
 
 ### **📋 Planned Features**
+
 - Advanced analytics dashboard
 - Mobile app development
 - Enhanced gamification
@@ -289,6 +306,7 @@ See [docs/ISSUES.md](./docs/ISSUES.md) for complete issue tracking and status.
 ## 🤝 Contributing
 
 ### **Development Guidelines**
+
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Follow TypeScript and ESLint rules
@@ -296,6 +314,7 @@ See [docs/ISSUES.md](./docs/ISSUES.md) for complete issue tracking and status.
 5. Submit a pull request
 
 ### **Code Style**
+
 - **TypeScript** for all new code
 - **Component naming**: PascalCase
 - **File naming**: kebab-case for pages, PascalCase for components
@@ -306,11 +325,13 @@ See [docs/ISSUES.md](./docs/ISSUES.md) for complete issue tracking and status.
 ## 📞 Support
 
 ### **Development Support**
+
 - **Issues**: Create a GitHub issue for bugs or feature requests
 - **Documentation**: Check [docs/](./docs/) folder for detailed guides
 - **Setup Help**: See [docs/SETUP.md](./docs/SETUP.md) for troubleshooting
 
 ### **Contact**
+
 - **Email**: [your-email@example.com]
 - **Repository**: [GitHub Issues](https://github.com/your-username/accountability-buddy-clean/issues)
 
