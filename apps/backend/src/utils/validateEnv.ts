@@ -8,7 +8,6 @@ const requiredEnvVars: string[] = [
   "REFRESH_TOKEN_SECRET",
   "STRIPE_SECRET_KEY",
   "STRIPE_WEBHOOK_SECRET",
-  // Remove "API_URL" — not needed on the backend
   "ALLOWED_ORIGINS",
   "SESSION_SECRET",
 ];

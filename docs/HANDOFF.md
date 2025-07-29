@@ -129,7 +129,7 @@ BACKEND_URL=http://localhost:5050
 
 ```
 PORT=5050
-MONGODB_URI=[your-mongodb-connection]
+MONGO_URI=[your-mongodb-connection]
 JWT_SECRET=[generate-secret]
 NODE_ENV=development
 ```

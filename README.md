@@ -231,7 +231,7 @@ PORT=5050
 NODE_ENV=development
 
 # Database
-MONGODB_URI=mongodb://localhost:27017/accountability-buddy
+MONGO_URI=mongodb://localhost:27017/accountability-buddy
 
 # Authentication
 JWT_SECRET=your-jwt-secret-here

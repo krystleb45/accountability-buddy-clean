@@ -91,7 +91,7 @@ mongosh  # Should connect to mongodb://localhost:27017
 4. Add to your `.env.development`:
 
    ```bash
-   MONGODB_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@your-cluster.mongodb.net/accountability-buddy
+   MONGO_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@your-cluster.mongodb.net/accountability-buddy
    ```
 
 ### **Option 3: Docker MongoDB**
@@ -106,7 +106,7 @@ docker run -d \
   mongo:latest
 
 # Connection string for Docker setup:
-MONGODB_URI=mongodb://admin:password@localhost:27017/accountability-buddy?authSource=admin
+MONGO_URI=mongodb://admin:password@localhost:27017/accountability-buddy?authSource=admin
 ```
 
 ---
@@ -126,10 +126,10 @@ NODE_ENV=development
 # Database
 # ======================
 # Local MongoDB
-MONGODB_URI=mongodb://localhost:27017/accountability-buddy
+MONGO_URI=mongodb://localhost:27017/accountability-buddy
 
 # OR Atlas (cloud)
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/accountability-buddy
+# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/accountability-buddy
 
 # ======================
 # Authentication

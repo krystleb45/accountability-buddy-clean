@@ -276,7 +276,7 @@ Last Updated: July 30, 2025
 
 # Backend (.env.development)
 ✅ PORT=5050
-✅ MONGODB_URI=[configured]
+✅ MONGO_URI=[configured]
 ✅ JWT_SECRET=[configured]
 ```
 
