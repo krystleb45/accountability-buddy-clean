@@ -28,7 +28,8 @@
     "reset:dev": "npm run seed:all",
     "reset:test": "npm run cleanup:all && npm run seed:test",
     "reset:prod": "npm run cleanup:all && npm run seed:prod",
-    "email-worker": "ts-node src/queues/emailWorker.ts"
+    "email-worker": "ts-node src/queues/emailWorker.ts",
+    "check-types": "tsc --noEmit"
   },
   "keywords": [
     "accountability",
