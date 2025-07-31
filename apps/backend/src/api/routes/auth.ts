@@ -33,7 +33,7 @@ router.post(
   "/register",
   authLimiter,
   [
-    check("email",    "Valid email is required").isEmail(),
+    check("email", "Valid email is required").isEmail(),
     check("username", "Username is required").notEmpty(),
     check("password", "Password must be ≥8 characters").isLength({ min: 8 }),
   ],
@@ -53,7 +53,7 @@ router.post(
   "/login",
   authLimiter,
   [
-    check("email",    "Valid email is required").isEmail(),
+    check("email", "Valid email is required").isEmail(),
     check("password", "Password is required").notEmpty(),
   ],
   wrap(async (req, res, next) => {
@@ -70,7 +70,7 @@ router.post(
 // ─── POST /api/auth/refresh-token ───────────────────────────────────────
 router.post(
   "/refresh-token",
-  [ check("refreshToken", "Refresh token is required").notEmpty() ],
+  [check("refreshToken", "Refresh token is required").notEmpty()],
   wrap(async (req, res, next) => {
     const errs = validationResult(req);
     if (!errs.isEmpty()) {

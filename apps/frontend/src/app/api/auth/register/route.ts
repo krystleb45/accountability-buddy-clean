@@ -1,8 +1,8 @@
-// src/app/api/auth/register/route.ts - Fixed with native fetch
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RegisterRequest {
   name: string;
+  username: string
   email: string;
   password: string;
   selectedPlan?: string;
@@ -28,13 +28,13 @@ export async function POST(
     );
   }
 
-  const name = (body.name ?? '').trim();
+  const username = (body.username ?? '').trim();
   const email = (body.email ?? '').trim();
   const password = (body.password ?? '').trim();
   const selectedPlan = body.selectedPlan || 'free-trial';
   const billingCycle = body.billingCycle || 'monthly';
 
-  if (!name || !email || !password) {
+  if (!username || !email || !password) {
     return NextResponse.json(
       { success: false, message: 'Name, email, and password are all required.' },
       { status: 400 }
@@ -77,7 +77,7 @@ export async function POST(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name,
+        username,
         email,
         password,
         selectedPlan,

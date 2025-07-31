@@ -146,7 +146,7 @@ export default function RegisterForm() {
 
     try {
       // FIXED: Use correct Railway backend URL and endpoint
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
