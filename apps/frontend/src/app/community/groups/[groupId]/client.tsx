@@ -18,6 +18,7 @@ import {
   FaCheck,
   FaExclamationTriangle
 } from 'react-icons/fa';
+import { http } from '@/utils';
 
 interface Group {
   _id: string;
@@ -103,75 +104,52 @@ export default function GroupDetailClient() {
 
       // Load all data in parallel
       const [groupResponse, membersResponse, messagesResponse] = await Promise.all([
-        fetch(`/api/groups/${groupId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        http.get(`/groups/${groupId}`).catch(err => {
+          console.error(`❌ [CLIENT] Failed to load group data:`, err);
+          throw new Error(`Failed to load group data: ${err.message}`);
         }),
-        fetch(`/api/groups/${groupId}/members`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        http.get(`/groups/${groupId}/members`).catch(err => {
+          console.error(`❌ [CLIENT] Failed to load members data:`, err);
+          return null;
         }),
-        fetch(`/api/groups/${groupId}/messages`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
+        http.get(`/groups/${groupId}/messages`).catch(err => {
+          console.error(`❌ [CLIENT] Failed to load messages data:`, err);
+          return null;
+        }),
       ]);
 
-      console.log('📊 [CLIENT] API Response statuses:', {
-        group: groupResponse.status,
-        members: membersResponse.status,
-        messages: messagesResponse.status
-      });
 
       // Handle group details
-      if (groupResponse.ok) {
-        const groupData = await groupResponse.json();
-        console.log('✅ [CLIENT] Group data loaded:', groupData);
+      const groupData = groupResponse.data;
+      console.log('✅ [CLIENT] Group data loaded:', groupData);
 
-        // Try different response formats
-        const group = groupData.data || groupData.group || groupData;
-        console.log('🔍 [CLIENT] Extracted group:', group);
-        setGroup(group);
-      } else {
-        const errorText = await groupResponse.text();
-        console.error(`❌ [CLIENT] Group API error ${groupResponse.status}:`, errorText);
-        throw new Error(`Failed to load group: ${groupResponse.status}`);
-      }
+      // Try different response formats
+      const group = groupData.data || groupData.group || groupData;
+      console.log('🔍 [CLIENT] Extracted group:', group);
+      setGroup(group);
+
 
       // Handle members
-      if (membersResponse.ok) {
-        const membersData = await membersResponse.json();
+      if (membersResponse) {
+        const membersData = membersResponse.data;
         console.log('✅ [CLIENT] Members data loaded:', membersData);
 
         // Try different response formats
         const members = membersData.data || membersData.members || membersData || [];
         console.log('🔍 [CLIENT] Extracted members:', members);
         setMembers(Array.isArray(members) ? members : []);
-      } else {
-        const errorText = await membersResponse.text();
-        console.error(`❌ [CLIENT] Members API error ${membersResponse.status}:`, errorText);
-        // Don't throw error for members, just log it
       }
 
-      // Handle messages
-      if (messagesResponse.ok) {
-        const messagesData = await messagesResponse.json();
+
+      if (messagesResponse) {
+        // Handle messages
+        const messagesData = messagesResponse.data;
         console.log('✅ [CLIENT] Messages data loaded:', messagesData);
 
         // Try different response formats
         const messages = messagesData.data || messagesData.messages || messagesData || [];
         console.log('🔍 [CLIENT] Extracted messages:', messages);
         setMessages(Array.isArray(messages) ? messages : []);
-      } else {
-        const errorText = await messagesResponse.text();
-        console.error(`❌ [CLIENT] Messages API error ${messagesResponse.status}:`, errorText);
-        // Don't throw error for messages, just log it
       }
 
     } catch (err: any) {
