@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const EXPRESS_API_URL = process.env.EXPRESS_API_URL || 'http://localhost:5050';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5050';
 
 export async function GET(_request: NextRequest) {
   try {
@@ -33,12 +33,12 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: 'No access token available' }, { status: 401 });
     }
 
-    const expressUrl = `${EXPRESS_API_URL}/api/groups/my-groups`;
+    const backendUrl = `${BACKEND_URL}/api/groups/my-groups`;
 
-    console.log(`🚀 [MY GROUPS PROXY] GET ${expressUrl}`);
+    console.log(`🚀 [MY GROUPS PROXY] GET ${backendUrl}`);
     console.log('🔑 [MY GROUPS PROXY] Using token:', accessToken.substring(0, 20) + '...');
 
-    const response = await fetch(expressUrl, {
+    const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

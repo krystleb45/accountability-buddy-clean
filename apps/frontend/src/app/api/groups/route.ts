@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const EXPRESS_API_URL = process.env.EXPRESS_API_URL || 'http://localhost:5050';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5050';
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,12 +43,12 @@ export async function GET(request: NextRequest) {
     // Forward query parameters to Express backend
     const { searchParams } = new URL(request.url);
     const queryString = searchParams.toString();
-    const expressUrl = `${EXPRESS_API_URL}/api/groups${queryString ? `?${queryString}` : ''}`;
+    const backendUrl = `${BACKEND_URL}/api/groups${queryString ? `?${queryString}` : ''}`;
 
-    console.log(`🚀 [PROXY] GET ${expressUrl}`);
+    console.log(`🚀 [PROXY] GET ${backendUrl}`);
     console.log('🔑 [PROXY] Using token:', accessToken.substring(0, 20) + '...');
 
-    const response = await fetch(expressUrl, {
+    const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -102,15 +102,15 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const expressUrl = `${EXPRESS_API_URL}/api/groups`;
+    const backendUrl = `${BACKEND_URL}/api/groups`;
 
-    console.log(`🚀 [PROXY] POST ${expressUrl}`, {
+    console.log(`🚀 [PROXY] POST ${backendUrl}`, {
       name: body.name,
       category: body.category
     });
     console.log('🔑 [PROXY] Using token:', accessToken.substring(0, 20) + '...');
 
-    const response = await fetch(expressUrl, {
+    const response = await fetch(backendUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

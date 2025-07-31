@@ -7,7 +7,7 @@ interface Context {
   params: { groupId: string };
 }
 
-const EXPRESS_API_URL = process.env.EXPRESS_API_URL || 'http://localhost:5050';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5050';
 
 export async function POST(_request: NextRequest, { params }: Context) {
   try {
@@ -35,12 +35,12 @@ export async function POST(_request: NextRequest, { params }: Context) {
     }
 
     const { groupId } = params;
-    const expressUrl = `${EXPRESS_API_URL}/api/groups/${groupId}/leave`;
+    const backendUrl = `${BACKEND_URL}/api/groups/${groupId}/leave`;
 
-    console.log(`🚀 [LEAVE PROXY] POST ${expressUrl}`);
+    console.log(`🚀 [LEAVE PROXY] POST ${backendUrl}`);
     console.log('🔑 [LEAVE PROXY] Using token:', accessToken.substring(0, 20) + '...');
 
-    const response = await fetch(expressUrl, {
+    const response = await fetch(backendUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

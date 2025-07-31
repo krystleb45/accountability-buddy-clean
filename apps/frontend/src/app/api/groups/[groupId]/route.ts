@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-const EXPRESS_API_URL = process.env.EXPRESS_API_URL || 'http://localhost:5050';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5050';
 
 export async function GET(_request: NextRequest, { params }: { params: { groupId: string } }) {
   console.log('[PROXY] Group detail route hit for groupId:', params.groupId);
@@ -33,12 +33,12 @@ export async function GET(_request: NextRequest, { params }: { params: { groupId
     }
 
     const { groupId } = params;
-    const expressUrl = `${EXPRESS_API_URL}/api/groups/${groupId}`;
+    const backendUrl = `${BACKEND_URL}/api/groups/${groupId}`;
 
-    console.log(`[PROXY] Fetching from Express: ${expressUrl}`);
+    console.log(`[PROXY] Fetching from Express: ${backendUrl}`);
     console.log('[PROXY] Using token:', accessToken.substring(0, 20) + '...');
 
-    const response = await fetch(expressUrl, {
+    const response = await fetch(backendUrl, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -86,9 +86,9 @@ export async function PUT(request: NextRequest, { params }: { params: { groupId:
 
     const { groupId } = params;
     const body = await request.json();
-    const expressUrl = `${EXPRESS_API_URL}/api/groups/${groupId}`;
+    const backendUrl = `${BACKEND_URL}/api/groups/${groupId}`;
 
-    const response = await fetch(expressUrl, {
+    const response = await fetch(backendUrl, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -131,9 +131,9 @@ export async function DELETE(_request: NextRequest, { params }: { params: { grou
     }
 
     const { groupId } = params;
-    const expressUrl = `${EXPRESS_API_URL}/api/groups/${groupId}`;
+    const backendUrl = `${BACKEND_URL}/api/groups/${groupId}`;
 
-    const response = await fetch(expressUrl, {
+    const response = await fetch(backendUrl, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
