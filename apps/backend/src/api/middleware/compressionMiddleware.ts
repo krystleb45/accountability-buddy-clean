@@ -34,7 +34,7 @@ const compressionMiddleware: (
   threshold: 1024,
 
   // Use Brotli compression if supported, otherwise fallback to Gzip
-  brotli: true, // Brotli support can be toggled here
+  brotli: {}, // Brotli support can be toggled here
   gzip: true,   // Ensure gzip is always enabled as a fallback
 });
 
