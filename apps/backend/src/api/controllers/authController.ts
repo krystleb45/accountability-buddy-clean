@@ -11,7 +11,6 @@ import { logger } from "../../utils/winstonLogger";
 interface RegisterRequestBody {
   email?: string;
   password?: string;
-  name?: string;
   username?: string
   selectedPlan?: string;
   billingCycle?: "monthly" | "yearly";
@@ -24,14 +23,13 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
   const {
     email,
     password,
-    name,
     username,
     selectedPlan = "free-trial",
     billingCycle = "monthly"
   } = req.body as RegisterRequestBody;
 
-  if (!email || !password || !name) {
-    return next(createError("Email, name, and password are all required", 400));
+  if (!email || !password || !username) {
+    return next(createError("Email, username, and password are all required", 400));
   }
 
   const normalizedEmail = email.toLowerCase().trim();
@@ -59,7 +57,7 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
   // Hash password - let the User model handle this in pre-save middleware
   const user = new User({
     email: normalizedEmail,
-    username, // Use name as username
+    username,
     password: password, // Will be hashed by pre-save middleware
     subscriptionTier: selectedPlan as any,
     subscription_status: selectedPlan === "free-trial" ? "trial" : "active",

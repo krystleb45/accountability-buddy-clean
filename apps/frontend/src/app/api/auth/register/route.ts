@@ -78,6 +78,7 @@ export async function POST(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        name,
         username,
         email,
         password,
