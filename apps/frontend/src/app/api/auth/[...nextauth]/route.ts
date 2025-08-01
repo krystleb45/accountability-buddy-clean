@@ -13,15 +13,8 @@ interface ExtendedUser {
   accessToken: string;
 }
 
-if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error('Missing NEXTAUTH_SECRET');
-}
-if (!process.env.BACKEND_URL) {
-  throw new Error('Missing BACKEND_URL');
-}
-
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET!,
   session: { strategy: 'jwt' },
   providers: [
     CredentialsProvider({

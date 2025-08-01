@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       });
 
       console.log('✅ Successfully added subscriber to Mailchimp:', email);
-      console.log('📊 Mailchimp response:', response.id);
+      console.log('📊 Mailchimp response:', response.status);
 
       return NextResponse.json(
         { message: 'Successfully subscribed to newsletter' },
@@ -101,7 +101,7 @@ export async function GET() {
 
     return NextResponse.json({
       status: 'healthy',
-      mailchimp: ping.health_status,
+      mailchimp: ping,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
