@@ -28,13 +28,14 @@ export async function POST(
     );
   }
 
+  const name = (body.name ?? '').trim();
   const username = (body.username ?? '').trim();
   const email = (body.email ?? '').trim();
   const password = (body.password ?? '').trim();
   const selectedPlan = body.selectedPlan || 'free-trial';
   const billingCycle = body.billingCycle || 'monthly';
 
-  if (!username || !email || !password) {
+  if (!name || !email || !password) {
     return NextResponse.json(
       { success: false, message: 'Name, email, and password are all required.' },
       { status: 400 }

@@ -12,6 +12,7 @@ interface RegisterRequestBody {
   email?: string;
   password?: string;
   name?: string;
+  username?: string
   selectedPlan?: string;
   billingCycle?: "monthly" | "yearly";
 }
@@ -24,6 +25,7 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
     email,
     password,
     name,
+    username,
     selectedPlan = "free-trial",
     billingCycle = "monthly"
   } = req.body as RegisterRequestBody;
@@ -33,7 +35,6 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
   }
 
   const normalizedEmail = email.toLowerCase().trim();
-  const trimmedName = name.trim();
 
   // Validate subscription plan
   const validPlans = ["free-trial", "basic", "pro", "elite"];
@@ -49,7 +50,7 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
 
   // Check for existing user
   const existing = await User.findOne({
-    $or: [{ email: normalizedEmail }, { username: trimmedName }],
+    $or: [{ email: normalizedEmail }, { username }],
   });
   if (existing) {
     return next(createError("A user with that email or username already exists", 400));
@@ -58,7 +59,7 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
   // Hash password - let the User model handle this in pre-save middleware
   const user = new User({
     email: normalizedEmail,
-    username: trimmedName, // Use name as username
+    username, // Use name as username
     password: password, // Will be hashed by pre-save middleware
     subscriptionTier: selectedPlan as any,
     subscription_status: selectedPlan === "free-trial" ? "trial" : "active",
