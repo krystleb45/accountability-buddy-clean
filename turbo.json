@@ -1,5 +1,33 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalEnv": [
+    "BACKEND_URL",
+    "NEXTAUTH_SECRET",
+    "MONGO_URI",
+    "JWT_SECRET",
+    "ACCESS_TOKEN_SECRET",
+    "REFRESH_TOKEN_SECRET",
+    "JWT_EXPIRES_IN",
+    "JWT_REFRESH_EXPIRES_IN",
+    "CORS_ORIGINS",
+    "ALLOWED_ORIGINS",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "RATE_LIMIT_WINDOW_MS",
+    "RATE_LIMIT_MAX_REQUESTS",
+    "SESSION_SECRET",
+    "SALT_ROUNDS",
+    "FRONTEND_URL",
+    "DEFAULT_TRIAL_DAYS",
+    "BASIC_MONTHLY_PRICE",
+    "BASIC_YEARLY_PRICE",
+    "PRO_MONTHLY_PRICE",
+    "PRO_YEARLY_PRICE",
+    "ELITE_MONTHLY_PRICE",
+    "ELITE_YEARLY_PRICE",
+    "DISABLE_EMAIL_QUEUE",
+    "DISABLE_REDIS"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [
