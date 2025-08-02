@@ -1,6 +1,0 @@
-# Ignore our utility scripts
-scripts/
-
-# Other ignores…
-cypress.config.ts
-cypress/
