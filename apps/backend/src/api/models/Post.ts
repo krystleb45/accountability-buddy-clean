@@ -1,5 +1,6 @@
 // src/api/models/Post.ts
-import type { Document, Model, Types, Query } from "mongoose";
+import type { Document, Model, Query, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Post Document Interface ---
@@ -19,9 +20,9 @@ export interface IPost extends Document {
 
 // --- Post Model Static Interface ---
 export interface IPostModel extends Model<IPost> {
-  addLike(postId: string, userId: string): Promise<IPost>;
-  removeLike(postId: string, userId: string): Promise<IPost>;
-  softDelete(postId: string): Promise<IPost>;
+  addLike: (postId: string, userId: string) => Promise<IPost>;
+  removeLike: (postId: string, userId: string) => Promise<IPost>;
+  softDelete: (postId: string) => Promise<IPost>;
 }
 
 // --- Schema Definition ---
@@ -100,7 +101,8 @@ PostSchema.statics.addLike = async function (
   userId: string
 ): Promise<IPost> {
   const post = await this.findById(postId);
-  if (!post) throw new Error("Post not found");
+  if (!post) 
+throw new Error("Post not found");
 
   const userObj = new mongoose.Types.ObjectId(userId);
   if (!post.likes.some(l => l.equals(userObj))) {
@@ -116,7 +118,8 @@ PostSchema.statics.removeLike = async function (
   userId: string
 ): Promise<IPost> {
   const post = await this.findById(postId);
-  if (!post) throw new Error("Post not found");
+  if (!post) 
+throw new Error("Post not found");
 
   const userObj = new mongoose.Types.ObjectId(userId);
   post.likes = post.likes.filter(l => !l.equals(userObj));
@@ -129,7 +132,8 @@ PostSchema.statics.softDelete = async function (
   postId: string
 ): Promise<IPost> {
   const post = await this.findById(postId);
-  if (!post) throw new Error("Post not found");
+  if (!post) 
+throw new Error("Post not found");
   post.isDeleted = true;
   await post.save();
   return post;

@@ -1,6 +1,7 @@
-import client from "prom-client";
-import { collectDefaultMetrics } from "prom-client";
-import express, { Request, Response } from "express";
+import type { Request, Response } from "express";
+import type express from "express";
+
+import client, { collectDefaultMetrics } from "prom-client";
 
 // Register the Prometheus client
 setInterval(() => {
@@ -20,7 +21,7 @@ const httpRequestDurationMilliseconds = new client.Histogram({
 // Register custom metrics
 
 // Function to expose metrics for Prometheus scraping
-export const metricsMiddleware = (req: Request, res: Response, next: Function): void => {
+export function metricsMiddleware (req: Request, res: Response, next: Function): void {
   if (req.url === "/metrics") {
     // Expose metrics in a format Prometheus can scrape
     res.set("Content-Type", client.register.contentType);
@@ -28,10 +29,10 @@ export const metricsMiddleware = (req: Request, res: Response, next: Function): 
   } else {
     next();
   }
-};
+}
 
 // Middleware to track HTTP request duration
-export const trackRequestDuration = (req: Request, res: Response, next: Function): void => {
+export function trackRequestDuration (req: Request, res: Response, next: Function): void {
   const end = httpRequestDurationMilliseconds.startTimer();
   
   res.on("finish", () => {
@@ -42,10 +43,10 @@ export const trackRequestDuration = (req: Request, res: Response, next: Function
   });
 
   next();
-};
+}
 
 // Initialize Prometheus metrics tracking
-export const initializePrometheus = (app: express.Application): void => {
+export function initializePrometheus (app: express.Application): void {
   // Use Prometheus middleware to expose the `/metrics` endpoint
   app.use(metricsMiddleware);
 
@@ -53,5 +54,5 @@ export const initializePrometheus = (app: express.Application): void => {
   app.use(trackRequestDuration);
 
   console.warn("Prometheus monitoring initialized");
-};
+}
 

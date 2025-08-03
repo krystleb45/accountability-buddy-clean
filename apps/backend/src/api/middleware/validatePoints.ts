@@ -1,12 +1,13 @@
-import { Request, Response, NextFunction } from "express";
-import { User } from "../models/User";  // Correct path for your User model
+import type { NextFunction, Request, Response } from "express";
+
 import Reward from "../models/Reward";  // Correct path for your Reward model
+import { User } from "../models/User";  // Correct path for your User model
 import sendResponse from "../utils/sendResponse";  // Utility to send standard responses
 
 /**
  * Middleware to validate that the user has enough points to redeem a specific reward
  */
-const validatePoints = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async function validatePoints (req: Request, res: Response, next: NextFunction): Promise<void> {
   const { userId, rewardId } = req.body;
   
   if (!userId || !rewardId) {
@@ -41,6 +42,6 @@ const validatePoints = async (req: Request, res: Response, next: NextFunction): 
     console.error("Error validating points:", error);
     sendResponse(res, 500, false, "Error validating points.");
   }
-};
+}
   
 export default validatePoints;

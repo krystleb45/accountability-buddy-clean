@@ -1,7 +1,8 @@
 // src/api/services/EncouragementService.ts
 import nodemailer from "nodemailer";
-import { User } from "../models/User";
+
 import Goal from "../models/Goal";
+import { User } from "../models/User";
 import LoggingService from "./LoggingService";
 import NotificationService from "./NotificationService";
 
@@ -26,13 +27,13 @@ const encouragementMessages = {
 type MessageType = keyof typeof encouragementMessages;
 
 /** Pick one at random */
-const getRandomMessage = (type: MessageType): string => {
+function getRandomMessage (type: MessageType): string {
   const arr = encouragementMessages[type];
   return arr[Math.floor(Math.random() * arr.length)] ?? "Keep going!";
-};
+}
 
 /** Ensure SMTP env is present */
-const validateEnv = (): void => {
+function validateEnv (): void {
   if (
     !process.env.EMAIL_HOST ||
     !process.env.EMAIL_PORT ||
@@ -43,14 +44,14 @@ const validateEnv = (): void => {
       "EMAIL_HOST, EMAIL_PORT, EMAIL_USER and EMAIL_PASS must be set in env for EncouragementService"
     );
   }
-};
+}
 
 /** Build a fresh transporter */
-const createTransporter = (): nodemailer.Transporter => {
+function createTransporter (): nodemailer.Transporter {
   validateEnv();
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT!, 10),
+    port: Number.parseInt(process.env.EMAIL_PORT!, 10),
     secure: process.env.EMAIL_PORT === "465",
     auth: {
       user: process.env.EMAIL_USER,
@@ -58,14 +59,10 @@ const createTransporter = (): nodemailer.Transporter => {
     },
     tls: { rejectUnauthorized: false },
   });
-};
+}
 
 /** Send a plain‐text email */
-const sendEmail = async (
-  to: string,
-  subject: string,
-  text: string
-): Promise<void> => {
+async function sendEmail (to: string,  subject: string,  text: string): Promise<void> {
   const transporter = createTransporter();
   try {
     await transporter.sendMail({
@@ -83,13 +80,13 @@ const sendEmail = async (
     );
     throw err;
   }
-};
+}
 
 /**
  * Send a pure in‑app notification.
  * We’ll use a placeholder sender ID of "system".
  */
-const sendInApp = async (receiverId: string, message: string): Promise<void> => {
+async function sendInApp (receiverId: string, message: string): Promise<void> {
   try {
     await NotificationService.sendInAppNotification(
       "system",        // senderId
@@ -108,7 +105,7 @@ const sendInApp = async (receiverId: string, message: string): Promise<void> => 
     );
     throw err;
   }
-};
+}
 
 const EncouragementService = {
   /**
@@ -125,7 +122,8 @@ const EncouragementService = {
         User.findById(userId),
         Goal.findById(goalId),
       ]);
-      if (!user || !goal) throw new Error("User or Goal not found");
+      if (!user || !goal) 
+throw new Error("User or Goal not found");
 
       const message = getRandomMessage(type);
       const subject =
@@ -156,7 +154,8 @@ const EncouragementService = {
   async sendMotivationalBoost(userId: string): Promise<void> {
     try {
       const user = await User.findById(userId);
-      if (!user) throw new Error("User not found");
+      if (!user) 
+throw new Error("User not found");
 
       const message = getRandomMessage("motivational");
       const subject = "Your motivational boost!";

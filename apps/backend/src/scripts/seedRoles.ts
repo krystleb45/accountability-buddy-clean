@@ -1,10 +1,11 @@
-//src/scripts/seedRoles.ts
+// src/scripts/seedRoles.ts
 
-import mongoose from "mongoose";
-import Role from "../api/models/Role";
 import dotenv from "dotenv";
-import { logger } from "../utils/winstonLogger";
+import mongoose from "mongoose";
+
+import Role from "../api/models/Role";
 import { loadEnvironment } from "../utils/loadEnv";
+import { logger } from "../utils/winstonLogger";
 
 loadEnvironment();
 
@@ -17,12 +18,12 @@ interface SeedRole {
 }
 
 // Utility to validate environment variables
-const validateEnv = (): void => {
+function validateEnv (): void {
   if (!process.env.MONGO_URI) {
     logger.error("Error: MONGO_URI is not defined in the environment variables.");
     process.exit(1); // Exit with error code
   }
-};
+}
 
 // Define roles to seed
 const roles: SeedRole[] = [
@@ -30,7 +31,7 @@ const roles: SeedRole[] = [
   { roleName: "user", permissions: ["view_content"] },
 ];
 
-const seedRoles = async (): Promise<void> => {
+async function seedRoles (): Promise<void> {
   validateEnv();
 
   const mongoUri = process.env.MONGO_URI;
@@ -70,7 +71,7 @@ const seedRoles = async (): Promise<void> => {
     await mongoose.disconnect();
     logger.info("Disconnected from MongoDB");
   }
-};
+}
 
 
 // Handle process termination gracefully

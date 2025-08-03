@@ -1,4 +1,5 @@
 import type { Server, Socket } from "socket.io";
+
 import { logger } from "../utils/winstonLogger";
 
 interface TypingData {
@@ -10,7 +11,7 @@ interface TypingData {
  * @param   {Server} _io - The socket.io server instance.
  * @param   {Socket} socket - The socket object representing the client's connection.
  */
-const typingIndicatorSocket = (_io: Server, socket: Socket): void => {
+function typingIndicatorSocket (_io: Server, socket: Socket): void {
   const userId = socket.data.user?.id as string; // Correct user ID retrieval
   if (!userId) {
     logger.error("Socket connection attempted without a valid user ID.");
@@ -75,6 +76,6 @@ const typingIndicatorSocket = (_io: Server, socket: Socket): void => {
       logger.error(`Error during user disconnection: ${(error as Error).message}`);
     }
   });
-};
+}
 
 export default typingIndicatorSocket;

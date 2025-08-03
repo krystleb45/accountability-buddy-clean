@@ -1,8 +1,9 @@
 // src/api/routes/tracker.ts
 import { Router } from "express";
 import { check } from "express-validator";
-import { protect } from "../middleware/authMiddleware";
+
 import * as trackerCtrl from "../controllers/TrackerController";
+import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();

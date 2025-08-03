@@ -7,10 +7,7 @@ import { logger } from "../utils/winstonLogger";
  * @returns Promise<T> - Returns the result of the successful asynchronous function or throws an error if all retries fail.
  * @throws Error - Throws an error if the operation fails after the maximum number of retries.
  */
-const retryAsync = async <T>(
-  asyncFn: () => Promise<T>,
-  options: RetryOptions = {},
-): Promise<T> => {
+async function retryAsync <T>(asyncFn: () => Promise<T>,  options: RetryOptions = {}): Promise<T> {
   const {
     maxRetries = 3,
     delay = 1000,
@@ -50,16 +47,16 @@ const retryAsync = async <T>(
   }
 
   throw new Error("Unexpected retry failure");
-};
+}
 
 /**
  * @desc Helper function to delay execution for a given amount of time.
  * @param ms - Time to wait in milliseconds.
  * @returns Promise<void> - Resolves after the specified delay.
  */
-const wait = (ms: number): Promise<void> => {
+function wait (ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
-};
+}
 
 /**
  * @desc Interface for retry options.

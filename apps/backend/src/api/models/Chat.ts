@@ -1,7 +1,9 @@
 // src/api/models/Chat.ts
 import type { Document, Model, Types } from "mongoose";
-import mongoose, { Schema } from "mongoose";
+
 import sanitize from "mongo-sanitize";
+import mongoose, { Schema } from "mongoose";
+
 import { logger } from "../../utils/winstonLogger";
 
 // --- Types & Interfaces ---
@@ -31,17 +33,17 @@ export interface IChat extends Document {
   messageCount: number;
 
   // Instance methods
-  addMessage(messageId: Types.ObjectId): Promise<IChat>;
-  markRead(userId: Types.ObjectId): Promise<IChat>;
-  addTypingUser(userId: Types.ObjectId): Promise<IChat>;
-  removeTypingUser(userId: Types.ObjectId): Promise<IChat>;
-  pin(): Promise<IChat>;
-  unpin(): Promise<IChat>;
+  addMessage: (messageId: Types.ObjectId) => Promise<IChat>;
+  markRead: (userId: Types.ObjectId) => Promise<IChat>;
+  addTypingUser: (userId: Types.ObjectId) => Promise<IChat>;
+  removeTypingUser: (userId: Types.ObjectId) => Promise<IChat>;
+  pin: () => Promise<IChat>;
+  unpin: () => Promise<IChat>;
 }
 
 export interface IChatModel extends Model<IChat> {
-  getUserChats(userId: Types.ObjectId): Promise<IChat[]>;
-  getGroupChats(): Promise<IChat[]>;
+  getUserChats: (userId: Types.ObjectId) => Promise<IChat[]>;
+  getGroupChats: () => Promise<IChat[]>;
 }
 
 // --- Schema Definition ---
@@ -97,7 +99,8 @@ ChatSchema.methods.addMessage = async function (
   this.participants.forEach((userId) => {
     if (!userId.equals(messageId)) {
       const um = this.unreadMessages.find(u => u.userId.equals(userId));
-      if (um) um.count += 1;
+      if (um) 
+um.count += 1;
       else this.unreadMessages.push({ userId, count: 1 });
     }
   });
@@ -110,7 +113,8 @@ ChatSchema.methods.markRead = async function (
   userId: Types.ObjectId
 ): Promise<IChat> {
   const um = this.unreadMessages.find(u => u.userId.equals(userId));
-  if (um) um.count = 0;
+  if (um) 
+um.count = 0;
   await this.save();
   return this;
 };
@@ -119,7 +123,8 @@ ChatSchema.methods.addTypingUser = async function (
   this: IChat,
   userId: Types.ObjectId
 ): Promise<IChat> {
-  if (!this.typingUsers.includes(userId)) this.typingUsers.push(userId);
+  if (!this.typingUsers.includes(userId)) 
+this.typingUsers.push(userId);
   await this.save();
   return this;
 };
@@ -158,11 +163,12 @@ ChatSchema.statics.getGroupChats = function (): Promise<IChat[]> {
 
 // --- Middleware ---
 ChatSchema.pre<IChat>("save", function (this: IChat, next): void {
-  if (this.groupName) this.groupName = sanitize(this.groupName);
+  if (this.groupName) 
+this.groupName = sanitize(this.groupName);
   next();
 });
 
-ChatSchema.post<IChat>("save", function (doc: IChat): void {
+ChatSchema.post<IChat>("save", (doc: IChat): void => {
   logger.info(
     `Chat ${doc._id} (${doc.chatType}) saved with participants [${doc.participants.join(", ")}].`
   );

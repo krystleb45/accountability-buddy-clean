@@ -1,5 +1,6 @@
 // src/api/models/CollaborationGoal.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Subdocument Interface ---
@@ -30,14 +31,14 @@ export interface ICollaborationGoal extends Document {
   completedMilestonesCount: number;
 
   // Instance methods
-  updateProgress(newProgress: number): Promise<ICollaborationGoal>;
-  addParticipant(userId: Types.ObjectId): Promise<ICollaborationGoal>;
-  completeMilestone(index: number): Promise<ICollaborationGoal>;
+  updateProgress: (newProgress: number) => Promise<ICollaborationGoal>;
+  addParticipant: (userId: Types.ObjectId) => Promise<ICollaborationGoal>;
+  completeMilestone: (index: number) => Promise<ICollaborationGoal>;
 }
 
 // --- Model Interface ---
 export interface ICollaborationGoalModel extends Model<ICollaborationGoal> {
-  fetchByVisibility(vis: "public" | "private", limit?: number): Promise<ICollaborationGoal[]>;
+  fetchByVisibility: (vis: "public" | "private", limit?: number) => Promise<ICollaborationGoal[]>;
 }
 
 // --- Schema Definition ---
@@ -134,7 +135,8 @@ CollaborationGoalSchema.methods.completeMilestone = async function (
   index: number
 ): Promise<ICollaborationGoal> {
   const ms = this.milestones[index];
-  if (!ms) throw new Error("Milestone not found");
+  if (!ms) 
+throw new Error("Milestone not found");
   ms.completed = true;
   await this.save();
   return this;

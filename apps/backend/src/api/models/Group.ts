@@ -1,6 +1,7 @@
 // src/api/models/Group.ts - Updated with new fields
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Subdocument for unread message counts ---
@@ -34,15 +35,15 @@ export interface IGroup extends Document {
   typingCount: number;
 
   // Instance methods
-  addMember(userId: Types.ObjectId): Promise<IGroup>;
-  removeMember(userId: Types.ObjectId): Promise<IGroup>;
-  incrementUnread(userId: Types.ObjectId): Promise<IGroup>;
-  clearUnread(userId: Types.ObjectId): Promise<IGroup>;
+  addMember: (userId: Types.ObjectId) => Promise<IGroup>;
+  removeMember: (userId: Types.ObjectId) => Promise<IGroup>;
+  incrementUnread: (userId: Types.ObjectId) => Promise<IGroup>;
+  clearUnread: (userId: Types.ObjectId) => Promise<IGroup>;
 }
 
 // --- Model Interface ---
 export interface IGroupModel extends Model<IGroup> {
-  findPublicGroups(): Promise<IGroup[]>;
+  findPublicGroups: () => Promise<IGroup[]>;
 }
 
 // --- Subschemas ---

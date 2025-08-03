@@ -1,5 +1,6 @@
 // src/sockets/presence.ts - FIXED: Conditional Redis usage
 import type { Server, Socket } from "socket.io";
+
 import { logger } from "../utils/winstonLogger";
 
 // Check if Redis is disabled
@@ -27,7 +28,7 @@ if (!isRedisDisabled) {
 const PRESENCE_KEY_PREFIX = "user_presence:";
 
 // Helper functions for presence management
-const setPresence = async (key: string, status: string, ttlSeconds?: number): Promise<void> => {
+async function setPresence (key: string, status: string, ttlSeconds?: number): Promise<void> {
   try {
     if (redisClient && !isRedisDisabled) {
       if (ttlSeconds) {
@@ -48,9 +49,9 @@ const setPresence = async (key: string, status: string, ttlSeconds?: number): Pr
   } catch (error) {
     logger.error(`Error setting presence for ${key}:`, error);
   }
-};
+}
 
-const deletePresence = async (key: string): Promise<void> => {
+async function deletePresence (key: string): Promise<void> {
   try {
     if (redisClient && !isRedisDisabled) {
       await redisClient.del(key);
@@ -62,10 +63,10 @@ const deletePresence = async (key: string): Promise<void> => {
   } catch (error) {
     logger.error(`Error deleting presence for ${key}:`, error);
   }
-};
+}
 
 // Clean up expired memory presence entries
-const cleanupMemoryPresence = (): void => {
+function cleanupMemoryPresence (): void {
   if (memoryPresence.size > 100) {
     const now = Date.now();
     for (const [key, value] of memoryPresence.entries()) {
@@ -74,9 +75,9 @@ const cleanupMemoryPresence = (): void => {
       }
     }
   }
-};
+}
 
-const presenceSocket = (_io: Server, socket: Socket): void => {
+function presenceSocket (_io: Server, socket: Socket): void {
   const userId = socket.data.user?.id as string; // Ensure userId is retrieved from socket data
   if (!userId) {
     logger.error("Socket connection attempted without a valid user ID.");
@@ -135,7 +136,8 @@ const presenceSocket = (_io: Server, socket: Socket): void => {
       logger.info(`User ${userId} sent activity ping`);
 
       // Reset the inactivity timeout
-      if (activityTimeout) clearTimeout(activityTimeout);
+      if (activityTimeout) 
+clearTimeout(activityTimeout);
       activityTimeout = setTimeout(() => {
         markUserInactive().catch((error) => {
           logger.error(`Error marking user ${userId} as inactive: ${(error as Error).message}`);
@@ -155,8 +157,9 @@ const presenceSocket = (_io: Server, socket: Socket): void => {
     markUserOffline().catch((error) => {
       logger.error(`Error marking user ${userId} as offline on disconnect: ${(error as Error).message}`);
     });
-    if (activityTimeout) clearTimeout(activityTimeout); // Clear timeout on disconnect
+    if (activityTimeout) 
+clearTimeout(activityTimeout); // Clear timeout on disconnect
   });
-};
+}
 
 export default presenceSocket;

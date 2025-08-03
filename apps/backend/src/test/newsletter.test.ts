@@ -6,7 +6,7 @@ describe("newsletter routes", () => {
     expect(true).toBe(true);
   });
   it("GET /api/newsletters ? 200 OK", async () => {
-    const res = await global.authGet("/api/newsletter");
+    const res = await globalThis.authGet("/api/newsletter");
     expect(res.status).toBe(200);
     // TODO: add more assertions here
   });

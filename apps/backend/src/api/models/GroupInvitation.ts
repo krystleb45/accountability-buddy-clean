@@ -1,6 +1,7 @@
 // src/api/models/GroupInvitation.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Document Interface ---
@@ -15,16 +16,16 @@ export interface IGroupInvitation extends Document {
 
 // --- Model Interface ---
 export interface IGroupInvitationModel extends Model<IGroupInvitation> {
-  sendInvitation(
+  sendInvitation: (
     groupId: Types.ObjectId,
     senderId: Types.ObjectId,
     recipientId: Types.ObjectId
-  ): Promise<IGroupInvitation>;
-  respondInvitation(
+  ) => Promise<IGroupInvitation>;
+  respondInvitation: (
     invitationId: Types.ObjectId,
     status: "accepted" | "rejected"
-  ): Promise<IGroupInvitation | null>;
-  getPendingForUser(userId: Types.ObjectId): Promise<IGroupInvitation[]>;
+  ) => Promise<IGroupInvitation | null>;
+  getPendingForUser: (userId: Types.ObjectId) => Promise<IGroupInvitation[]>;
 }
 
 // --- Schema Definition ---
@@ -84,7 +85,8 @@ GroupInvitationSchema.statics.respondInvitation = async function (
   status: "accepted" | "rejected"
 ): Promise<IGroupInvitation | null> {
   const invite = await this.findById(invitationId).exec();
-  if (!invite) return null;
+  if (!invite) 
+return null;
   invite.status = status;
   return invite.save();
 };

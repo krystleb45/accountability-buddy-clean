@@ -1,6 +1,6 @@
 // src/api/types/StreakTypes.ts
 
-import { Document, Types } from "mongoose";
+import type { Document, Types } from "mongoose";
 
 // Type representing the structure of a streak
 export interface IStreak {

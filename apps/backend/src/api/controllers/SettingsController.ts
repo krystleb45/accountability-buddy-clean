@@ -1,9 +1,11 @@
 // src/api/controllers/SettingsController.ts
 import type { Request, Response } from "express";
+
+import sanitize from "mongo-sanitize";
+
+import SettingsService from "../services/SettingsService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import sanitize from "mongo-sanitize";
-import SettingsService from "../services/SettingsService";
 
 export const getUserSettings = catchAsync(
   async (req: Request, res: Response) => {

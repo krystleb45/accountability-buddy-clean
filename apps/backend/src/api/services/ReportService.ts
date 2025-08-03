@@ -1,18 +1,15 @@
 // src/api/services/ReportService.ts
 
-import Report, { IReport } from "../models/Report";
+import type { IReport } from "../models/Report";
+
 import { logger } from "../../utils/winstonLogger";
 import { createError } from "../middleware/errorHandler";
+import Report from "../models/Report";
 
 /**
  * Create a new report.
  */
-export const createReport = async (
-  userId: string,
-  reportedId: string,
-  reportType: "post" | "comment" | "user",
-  reason: string
-): Promise<IReport> => {
+export async function createReport (userId: string,  reportedId: string,  reportType: "post" | "comment" | "user",  reason: string): Promise<IReport> {
   try {
     const report = await Report.create({
       userId,
@@ -26,12 +23,12 @@ export const createReport = async (
     logger.error(`Error creating report: ${(err as Error).message}`);
     throw createError("Failed to create report", 500);
   }
-};
+}
 
 /**
  * Fetch all reports (most recent first).
  */
-export const getAllReports = async (): Promise<IReport[]> => {
+export async function getAllReports (): Promise<IReport[]> {
   try {
     const reports = await Report.find().sort({ createdAt: -1 }).exec();
     logger.info(`Fetched ${reports.length} reports`);
@@ -40,14 +37,12 @@ export const getAllReports = async (): Promise<IReport[]> => {
     logger.error(`Error fetching all reports: ${(err as Error).message}`);
     throw createError("Failed to fetch reports", 500);
   }
-};
+}
 
 /**
  * Fetch a single report by its ID.
  */
-export const getReportById = async (
-  reportId: string
-): Promise<IReport> => {
+export async function getReportById (reportId: string): Promise<IReport> {
   if (!Report.schema.path("_id")) {
     throw createError("Invalid report ID", 400);
   }
@@ -58,15 +53,12 @@ export const getReportById = async (
   }
   logger.info(`Fetched report: ${report.id}`);
   return report;
-};
+}
 
 /**
  * Mark a report as resolved.
  */
-export const resolveReport = async (
-  reportId: string,
-  resolvedBy: string
-): Promise<IReport> => {
+export async function resolveReport (reportId: string,  resolvedBy: string): Promise<IReport> {
   if (!Report.schema.path("_id")) {
     throw createError("Invalid report ID", 400);
   }
@@ -81,14 +73,12 @@ export const resolveReport = async (
   }
   logger.info(`Report resolved: ${report.id} by ${resolvedBy}`);
   return report;
-};
+}
 
 /**
  * Delete a report.
  */
-export const deleteReport = async (
-  reportId: string
-): Promise<IReport> => {
+export async function deleteReport (reportId: string): Promise<IReport> {
   if (!Report.schema.path("_id")) {
     throw createError("Invalid report ID", 400);
   }
@@ -99,7 +89,7 @@ export const deleteReport = async (
   }
   logger.info(`Report deleted: ${report.id}`);
   return report;
-};
+}
 
 export default {
   createReport,

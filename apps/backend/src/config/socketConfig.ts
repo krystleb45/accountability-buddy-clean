@@ -1,12 +1,15 @@
 // src/config/socketConfig.ts
 
-import type http from "http";
-import { Server as SocketIOServer, Socket } from "socket.io";
+import type http from "node:http";
+import type { Socket } from "socket.io";
+
 import mongoose from "mongoose";
-import logger from "./logging";
-import { verifyJWT } from "../api/utils/jwtUtils";
+import { Server as SocketIOServer } from "socket.io";
+
 import Chat from "../api/models/Chat";
 import Message from "../api/models/Message";
+import { verifyJWT } from "../api/utils/jwtUtils";
+import logger from "./logging";
 
 // Define the user shape
 interface UserPayload {
@@ -20,11 +23,11 @@ interface CustomSocket extends Socket {
 }
 
 // Type guard for our JWT payload
-const isUserPayload = (payload: any): payload is UserPayload => {
+function isUserPayload (payload: any): payload is UserPayload {
   return typeof payload.id === "string" && typeof payload.username === "string";
-};
+}
 
-const configureSocketIO = (httpServer: http.Server): SocketIOServer => {
+function configureSocketIO (httpServer: http.Server): SocketIOServer {
   const io = new SocketIOServer(httpServer, {
     cors: {
       origin: process.env.ALLOWED_ORIGINS?.split(",") || ["http://localhost:3000"],
@@ -111,7 +114,8 @@ const configureSocketIO = (httpServer: http.Server): SocketIOServer => {
     socket.on("addReaction", async (data: { messageId: string; reaction: string }) => {
       try {
         const msg = await Message.findById(data.messageId);
-        if (!msg) return;
+        if (!msg) 
+return;
 
         // remove old, then add new, *mutating the DocumentArray in place*
         const filtered = msg.reactions.filter((r) => r.userId.toString() !== user.id);
@@ -157,6 +161,6 @@ const configureSocketIO = (httpServer: http.Server): SocketIOServer => {
   });
 
   return io;
-};
+}
 
 export default configureSocketIO;

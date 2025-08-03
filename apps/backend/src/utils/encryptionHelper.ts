@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 // Number of salt rounds for bcrypt (increase for stronger hashing, but slower performance)
 const SALT_ROUNDS = 12;
@@ -10,12 +10,12 @@ const SALT_ROUNDS = 12;
  * @returns {Promise<string>} - Resolves to the hashed password.
  * @throws {Error} - Throws error if the input is invalid.
  */
-export const hashPassword = async (password: string): Promise<string> => {
+export async function hashPassword (password: string): Promise<string> {
   if (typeof password !== "string" || password.length < 6) {
     throw new Error("Password must be a string with at least 6 characters.");
   }
   return await bcrypt.hash(password, SALT_ROUNDS);
-};
+}
 
 /**
  * @desc Compares a plaintext password with a hashed password.
@@ -23,12 +23,9 @@ export const hashPassword = async (password: string): Promise<string> => {
  * @param {string} hashedPassword - The hashed password to compare against.
  * @returns {Promise<boolean>} - Resolves to true if passwords match, false otherwise.
  */
-export const comparePassword = async (
-  password: string,
-  hashedPassword: string,
-): Promise<boolean> => {
+export async function comparePassword (password: string,  hashedPassword: string): Promise<boolean> {
   return await bcrypt.compare(password, hashedPassword);
-};
+}
 
 /**
  * @desc Encrypts data using AES-256-CBC encryption.
@@ -37,7 +34,7 @@ export const comparePassword = async (
  * @returns {string} - The encrypted data in hex format.
  * @throws {Error} - Throws error if the encryption key is invalid.
  */
-export const encryptData = (text: string, key: string): string => {
+export function encryptData (text: string, key: string): string {
   if (key.length !== 32) {
     throw new Error("Encryption key must be 32 characters long for AES-256.");
   }
@@ -49,7 +46,7 @@ export const encryptData = (text: string, key: string): string => {
 
   // Return the IV and encrypted data in hex format
   return `${iv.toString("hex")}:${encrypted}`;
-};
+}
 
 /**
  * @desc Decrypts data encrypted with AES-256-CBC.
@@ -58,7 +55,7 @@ export const encryptData = (text: string, key: string): string => {
  * @returns {string} - The decrypted plaintext.
  * @throws {Error} - Throws error if the decryption key is invalid or data is malformed.
  */
-export const decryptData = (encryptedData: string, key: string): string => {
+export function decryptData (encryptedData: string, key: string): string {
   if (key.length !== 32) {
     throw new Error("Decryption key must be 32 characters long for AES-256.");
   }
@@ -74,17 +71,15 @@ export const decryptData = (encryptedData: string, key: string): string => {
   decrypted += decipher.final("utf8");
 
   return decrypted;
-};
+}
 
 /**
  * @desc Generates a secure random token.
- * @param {number} [length=32] - The length of the token.
+ * @param {number} [length] - The length of the token.
  * @returns {Promise<string>} - Resolves to a hex-encoded token.
  * @throws {Error} - Throws error if token generation fails.
  */
-export const generateRandomToken = async (
-  length = 32,
-): Promise<string> => {
+export async function generateRandomToken (length = 32): Promise<string> {
   try {
     const buffer = await crypto.randomBytes(length);
     return buffer.toString("hex");
@@ -93,24 +88,24 @@ export const generateRandomToken = async (
       `Failed to generate random token: ${(err as Error).message}`,
     );
   }
-};
+}
 
 /**
  * @desc Encrypts the message with AES-256-CBC and returns the encrypted result.
  * @param {string} message - The message to encrypt.
  * @returns {string} - The encrypted message in hex format.
  */
-export const encryptMessage = (message: string): string => {
+export function encryptMessage (message: string): string {
   const encryptionKey = process.env.ENCRYPTION_KEY || "your-32-character-key"; // Ensure key is securely stored
   return encryptData(message, encryptionKey);
-};
+}
 
 /**
  * @desc Decrypts the encrypted message.
  * @param {string} encryptedMessage - The encrypted message.
  * @returns {string} - The decrypted plaintext message.
  */
-export const decryptMessage = (encryptedMessage: string): string => {
+export function decryptMessage (encryptedMessage: string): string {
   const encryptionKey = process.env.ENCRYPTION_KEY || "your-32-character-key"; // Ensure key is securely stored
   return decryptData(encryptedMessage, encryptionKey);
-};
+}

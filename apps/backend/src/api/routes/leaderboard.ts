@@ -1,15 +1,18 @@
 // src/api/routes/leaderboard.ts
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import { check } from "express-validator";
-import { protect, restrictTo } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+
 import {
   getLeaderboard,
   getUserLeaderboardPosition,
   resetLeaderboard,
   updateLeaderboardForUser,
 } from "../controllers/LeaderboardController";
+import { protect, restrictTo } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import catchAsync from "../utils/catchAsync";
 
 const router = Router();
 

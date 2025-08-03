@@ -1,10 +1,13 @@
 // src/api/services/goalMessageService.ts
 import mongoose from "mongoose";
-import { GoalMessage, IGoalMessage } from "../models/GoalMessage";
-import Goal from "../models/Goal";
-import { createError } from "../middleware/errorHandler";
 
-export type PopulatedMsg = {
+import type { IGoalMessage } from "../models/GoalMessage";
+
+import { createError } from "../middleware/errorHandler";
+import Goal from "../models/Goal";
+import { GoalMessage } from "../models/GoalMessage";
+
+export interface PopulatedMsg {
   _id: string;
   user: {
     _id: string;
@@ -15,7 +18,7 @@ export type PopulatedMsg = {
   message: string;
   createdAt: Date;
   updatedAt: Date;
-};
+}
 
 class GoalMessageService {
   /**

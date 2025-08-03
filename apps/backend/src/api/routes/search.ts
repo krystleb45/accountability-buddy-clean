@@ -1,10 +1,13 @@
 // src/api/routes/search.ts
-import { Router, Request, Response, NextFunction, RequestHandler } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+
+import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { check } from "express-validator";
 import sanitize from "mongo-sanitize";
-import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
+
 import * as searchController from "../controllers/SearchController";
+import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();

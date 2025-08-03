@@ -1,8 +1,10 @@
 // src/api/services/EventService.ts
 import { Types } from "mongoose";
+
 import type { IEvent, IEventParticipant } from "../models/Event";
-import Event from "../models/Event";
+
 import { createError } from "../middleware/errorHandler";
+import Event from "../models/Event";
 import LoggingService from "./LoggingService";
 
 class EventService {

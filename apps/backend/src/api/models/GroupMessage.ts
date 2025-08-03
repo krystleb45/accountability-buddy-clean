@@ -1,5 +1,7 @@
 // src/api/models/GroupMessage.ts
-import mongoose, { Document, Schema } from "mongoose";
+import type { Document} from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 export interface IGroupMessage extends Document {
   _id: mongoose.Types.ObjectId;

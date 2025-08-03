@@ -1,13 +1,12 @@
 // src/utils/catchAsync.ts
-import type { RequestHandler, Response, NextFunction } from "express";
+import type { NextFunction, RequestHandler, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 
 /**
  * Wraps async route handlers so errors bubble to Express.
  */
-const catchAsync = <T = any>(
-  fn: (req: T, res: Response, next: NextFunction) => Promise<void>
-): RequestHandler => {
+function catchAsync <T = any>(fn: (req: T, res: Response, next: NextFunction) => Promise<void>): RequestHandler {
   return async (req, res, next) => {
     try {
       // now returns a Promise<void>
@@ -24,6 +23,6 @@ const catchAsync = <T = any>(
       next(err);
     }
   };
-};
+}
 
 export default catchAsync;

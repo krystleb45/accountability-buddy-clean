@@ -1,8 +1,9 @@
 // src/api/controllers/EventController.ts
 import type { Request, Response } from "express";
+
+import EventService from "../services/EventService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import EventService from "../services/EventService";
 
 /**
  * @desc    Join an event

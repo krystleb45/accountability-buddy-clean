@@ -26,10 +26,7 @@ interface QuerySchema {
 
 type ParsedQuery = Record<string, string | number | boolean | Date | null>;
 
-const parseQuery = (
-  query: Record<string, unknown>,
-  schema: Record<string, QuerySchema>,
-): ParsedQuery => {
+function parseQuery (query: Record<string, unknown>,  schema: Record<string, QuerySchema>): ParsedQuery {
   const parsedQuery: ParsedQuery = {};
 
   for (const key in schema) {
@@ -40,7 +37,8 @@ const parseQuery = (
     switch (type) {
       case "number":
         value = value !== undefined ? Number(value) : defaultValue;
-        if (isNaN(value as number)) value = defaultValue ?? null;
+        if (isNaN(value as number)) 
+value = defaultValue ?? null;
         break;
 
       case "boolean":
@@ -67,16 +65,17 @@ const parseQuery = (
   }
 
   return parsedQuery;
-};
+}
 
 /**
  * @desc Sanitizes a string input by trimming and escaping potentially unsafe characters.
  * @param str - The string to sanitize.
  * @returns Sanitized string.
  */
-const sanitizeString = (str: unknown): string => {
-  if (typeof str !== "string") return "";
+function sanitizeString (str: unknown): string {
+  if (typeof str !== "string") 
+return "";
   return str.trim().replace(/[<>{}]/g, ""); // Remove potentially unsafe characters
-};
+}
 
 export default parseQuery;

@@ -1,6 +1,7 @@
 // src/api/models/Task.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Task Document Interface ---
@@ -15,16 +16,16 @@ export interface ITask extends Document {
   updatedAt: Date;
 
   // Instance methods
-  markComplete(): Promise<ITask>;
-  archive(): Promise<ITask>;
-  postpone(days: number): Promise<ITask>;
+  markComplete: () => Promise<ITask>;
+  archive: () => Promise<ITask>;
+  postpone: (days: number) => Promise<ITask>;
 }
 
 // --- Task Model Static Interface ---
 export interface ITaskModel extends Model<ITask> {
-  getByUser(userId: Types.ObjectId, status?: string): Promise<ITask[]>;
-  getOverdue(): Promise<ITask[]>;
-  getUpcoming(days: number): Promise<ITask[]>;
+  getByUser: (userId: Types.ObjectId, status?: string) => Promise<ITask[]>;
+  getOverdue: () => Promise<ITask[]>;
+  getUpcoming: (days: number) => Promise<ITask[]>;
 }
 
 // --- Schema Definition ---
@@ -94,7 +95,8 @@ TaskSchema.statics.getByUser = function (
   status?: string
 ): Promise<ITask[]> {
   const filter: any = { user: userId };
-  if (status) filter.status = status;
+  if (status) 
+filter.status = status;
   return this.find(filter).sort({ dueDate: 1 }).exec();
 };
 

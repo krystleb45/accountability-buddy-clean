@@ -1,6 +1,7 @@
 // src/api/models/Review.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Review Document Interface ---
@@ -15,15 +16,15 @@ export interface IReview extends Document {
   updatedAt: Date;
 
   // Instance methods
-  sanitizeComment(): IReview;
-  markFlagged(): Promise<IReview>;
+  sanitizeComment: () => IReview;
+  markFlagged: () => Promise<IReview>;
 }
 
 // --- Review Model Static Interface ---
 export interface IReviewModel extends Model<IReview> {
-  getReviewsForUser(userId: Types.ObjectId): Promise<IReview[]>;
-  flagReview(reviewId: string): Promise<IReview | null>;
-  getAverageRating(userId: Types.ObjectId): Promise<number | null>;
+  getReviewsForUser: (userId: Types.ObjectId) => Promise<IReview[]>;
+  flagReview: (reviewId: string) => Promise<IReview | null>;
+  getAverageRating: (userId: Types.ObjectId) => Promise<number | null>;
 }
 
 // --- Schema Definition ---

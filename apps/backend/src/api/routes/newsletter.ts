@@ -1,15 +1,18 @@
 // src/api/routes/newsletter.ts
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { check } from "express-validator";
+
+import {
+  getSubscribers,
+  signupNewsletter,
+  unsubscribeNewsletter,
+} from "../controllers/NewsletterController";
 import { protect, restrictTo } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 import catchAsync from "../utils/catchAsync";
-import {
-  signupNewsletter,
-  unsubscribeNewsletter,
-  getSubscribers,
-} from "../controllers/NewsletterController";
 
 const router = Router();
 

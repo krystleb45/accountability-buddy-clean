@@ -1,9 +1,10 @@
 // src/api/routes/notifications.ts
 import { Router } from "express";
-import { check } from "express-validator";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
+import { check } from "express-validator";
+
 import * as NotificationController from "../controllers/NotificationController";
+import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
@@ -63,7 +64,7 @@ router.patch(
   [
     check("notificationIds", "notificationIds must be an array of IDs")
       .isArray({ min: 1 })
-      .custom((arr: any[]) => arr.every((id) => typeof id === "string" && /^[0-9a-fA-F]{24}$/.test(id)))
+      .custom((arr: any[]) => arr.every((id) => typeof id === "string" && /^[0-9a-f]{24}$/i.test(id)))
       .withMessage("Each notificationId must be a valid Mongo ID"),
   ],
   handleValidationErrors,

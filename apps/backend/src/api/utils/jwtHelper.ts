@@ -1,4 +1,5 @@
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
+
 import jwt from "jsonwebtoken";
 
 // Default expiration times
@@ -19,10 +20,7 @@ interface TokenPayload extends JwtPayload {
  * @returns The signed JWT access token.
  * @throws Error if `JWT_SECRET` is not defined or token generation fails.
  */
-export const generateAccessToken = (
-  payload: TokenPayload,
-  expiresIn: string = DEFAULT_ACCESS_TOKEN_EXPIRY,
-): string => {
+export function generateAccessToken (payload: TokenPayload,  expiresIn: string = DEFAULT_ACCESS_TOKEN_EXPIRY): string {
   const secretKey = process.env.JWT_SECRET;
   if (!secretKey) {
     throw new Error("JWT_SECRET is not defined in environment variables.");
@@ -34,7 +32,7 @@ export const generateAccessToken = (
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Failed to generate access token: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Generates a JWT refresh token.
@@ -43,10 +41,7 @@ export const generateAccessToken = (
  * @returns The signed JWT refresh token.
  * @throws Error if `JWT_REFRESH_SECRET` is not defined or token generation fails.
  */
-export const generateRefreshToken = (
-  payload: TokenPayload,
-  expiresIn: string = DEFAULT_REFRESH_TOKEN_EXPIRY,
-): string => {
+export function generateRefreshToken (payload: TokenPayload,  expiresIn: string = DEFAULT_REFRESH_TOKEN_EXPIRY): string {
   const refreshSecretKey = process.env.JWT_REFRESH_SECRET;
   if (!refreshSecretKey) {
     throw new Error("JWT_REFRESH_SECRET is not defined in environment variables.");
@@ -58,7 +53,7 @@ export const generateRefreshToken = (
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Failed to generate refresh token: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Verifies a JWT access token and returns the decoded payload.
@@ -66,7 +61,7 @@ export const generateRefreshToken = (
  * @returns The decoded token payload.
  * @throws Error if token verification fails.
  */
-export const verifyAccessToken = (token: string): TokenPayload => {
+export function verifyAccessToken (token: string): TokenPayload {
   const secretKey = process.env.JWT_SECRET;
   if (!secretKey) {
     throw new Error("JWT_SECRET is not defined in environment variables.");
@@ -78,7 +73,7 @@ export const verifyAccessToken = (token: string): TokenPayload => {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Failed to verify access token: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Verifies a JWT refresh token and returns the decoded payload.
@@ -86,7 +81,7 @@ export const verifyAccessToken = (token: string): TokenPayload => {
  * @returns The decoded refresh token payload.
  * @throws Error if token verification fails.
  */
-export const verifyRefreshToken = (refreshToken: string): TokenPayload => {
+export function verifyRefreshToken (refreshToken: string): TokenPayload {
   const refreshSecretKey = process.env.JWT_REFRESH_SECRET;
   if (!refreshSecretKey) {
     throw new Error("JWT_REFRESH_SECRET is not defined in environment variables.");
@@ -98,21 +93,21 @@ export const verifyRefreshToken = (refreshToken: string): TokenPayload => {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Failed to verify refresh token: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Decodes a JWT token without verifying its signature.
  * @param token - The JWT token to decode.
  * @returns The decoded token payload or null if decoding fails.
  */
-export const decodeToken = (token: string): TokenPayload | null => {
+export function decodeToken (token: string): TokenPayload | null {
   try {
     return jwt.decode(token) as TokenPayload | null;
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Failed to decode token: ${errorMessage}`);
   }
-};
+}
 
 export default {
   generateAccessToken,

@@ -1,5 +1,6 @@
 // src/api/routes/healthRoutes.ts
 import { Router } from "express";
+
 import * as healthController from "../controllers/HealthCheckController";
 
 const router = Router();

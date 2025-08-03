@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 /**
  * @desc    Utility to generate a random string with configurable options:
@@ -11,11 +11,7 @@ import crypto from "crypto";
  * @returns The generated random string.
  * @throws  Throws error if input parameters are invalid.
  */
-const randomString = (
-  length = 16,
-  charset: "alphanumeric" | "numeric" | "hex" | "alphabetic" | string = "alphanumeric",
-  cryptoSecure = false,
-): string => {
+function randomString (length = 16,  charset: "alphanumeric" | "numeric" | "hex" | "alphabetic" | string = "alphanumeric",  cryptoSecure = false): string {
   // Validate length
   if (typeof length !== "number" || length <= 0 || !Number.isInteger(length)) {
     throw new Error("Length must be a positive integer.");
@@ -51,6 +47,6 @@ const randomString = (
   }
 
   return result;
-};
+}
 
 export default randomString;

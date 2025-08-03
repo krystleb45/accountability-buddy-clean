@@ -1,6 +1,7 @@
 // src/api/controllers/ReviewController.ts
 
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import ReviewService from "../services/ReviewService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";

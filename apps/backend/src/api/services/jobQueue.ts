@@ -1,6 +1,6 @@
 // src/api/services/JobQueueService.ts - FIXED: Proper Railway Redis configuration
-import { sendEmail } from "./emailService";
 import { logger } from "../../utils/winstonLogger";
+import { sendEmail } from "./emailService";
 
 // Check if Redis is disabled
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
@@ -78,7 +78,7 @@ class JobQueueService {
           logger.info("🔴 Using individual Redis environment variables");
           redisConfig = {
             host: process.env.REDIS_HOST,
-            port: parseInt(process.env.REDIS_PORT || "6379", 10),
+            port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
             password: process.env.REDIS_PASSWORD,
             ...(process.env.NODE_ENV === "production" ? { tls: {} } : {}),
           };

@@ -1,6 +1,7 @@
 // src/api/models/Friendship.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interface for a Friendship document ---
@@ -15,15 +16,15 @@ export interface IFriendshipModel extends Model<IFriendship> {
   /**
    * List all friends of a given user.
    */
-  getFriends(userId: Types.ObjectId): Promise<Types.ObjectId[]>;
+  getFriends: (userId: Types.ObjectId) => Promise<Types.ObjectId[]>;
 
   /**
    * Remove the friendship between two users.
    */
-  removeFriendship(
+  removeFriendship: (
     userA: Types.ObjectId,
     userB: Types.ObjectId
-  ): Promise<{ deletedCount?: number }>;
+  ) => Promise<{ deletedCount?: number }>;
 }
 
 // --- Schema Definition ---
@@ -87,7 +88,7 @@ FriendshipSchema.statics.removeFriendship = function (
   userB: Types.ObjectId
 ): Promise<{ deletedCount?: number }> {
   // order the pair consistently
-  let [u1, u2] =
+  const [u1, u2] =
     userA.toString() < userB.toString()
       ? [userA, userB]
       : [userB, userA];

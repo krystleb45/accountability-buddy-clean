@@ -1,21 +1,22 @@
 // src/api/routes/anonymousMilitaryChatRoutes.ts - UPDATED with mood routes
 
 import { Router } from "express";
+
 import {
+  getMessages,
+  getRoomMemberCount,
   getRooms,
   joinRoom,
   leaveRoom,
-  getMessages,
-  sendMessage,
-  getRoomMemberCount
+  sendMessage
 } from "../controllers/anonymousMilitaryChatController";
 import {
-  submitMoodCheckIn,
   getCommunityMoodData,
+  getMoodEncouragement,
+  getMoodStatistics,
   getMoodTrends,
   hasSubmittedToday,
-  getMoodStatistics,
-  getMoodEncouragement
+  submitMoodCheckIn
 } from "../controllers/anonymousMoodController";
 import { anonymousAuth } from "../middleware/anonymousAuth";
 

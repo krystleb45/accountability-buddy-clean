@@ -1,4 +1,6 @@
-import mongoose, { Document, Schema } from "mongoose";
+import type { Document} from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 export interface IFaq extends Document {
   question: string;

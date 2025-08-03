@@ -1,10 +1,15 @@
 // src/api/services/GroupService.ts - Updated with new methods
+import type { Server } from "socket.io";
+
 import mongoose from "mongoose";
-import { Server } from "socket.io";
-import Group, { IGroup } from "../models/Group";
-import GroupMessage, { IGroupMessage } from "../models/GroupMessage";
-import Notification from "../models/Notification";
+
+import type { IGroup } from "../models/Group";
+import type { IGroupMessage } from "../models/GroupMessage";
+
 import { logger } from "../../utils/winstonLogger";
+import Group from "../models/Group";
+import GroupMessage from "../models/GroupMessage";
+import Notification from "../models/Notification";
 
 interface FormattedGroup {
   id: string;
@@ -87,8 +92,8 @@ class GroupService {
   // Updated GroupService.createGroup method - replace the existing one
 
   /**
- * Create a new group with proper parameter handling
- */
+   * Create a new group with proper parameter handling
+   */
   // In your GroupService.ts, update the createGroup method to ensure creator is properly added:
 
   async createGroup(
@@ -176,6 +181,7 @@ class GroupService {
       throw error;
     }
   }
+
   /**
    * Get specific group details
    */
@@ -184,7 +190,8 @@ class GroupService {
       .populate("createdBy", "name")
       .lean();
 
-    if (!group) return null;
+    if (!group) 
+return null;
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
     const isJoined = group.members?.some((memberId: any) => memberId.equals(userObjectId)) || false;
@@ -201,7 +208,7 @@ class GroupService {
       category: group.category || "general",
       memberCount: group.members?.length || 0,
       isPublic: group.isPublic ?? true,
-      isJoined: isJoined,
+      isJoined,
       lastActivity: group.lastActivity?.toISOString() || group.createdAt.toISOString(),
       avatar: group.avatar || null,
       tags: group.tags || [],
@@ -219,7 +226,8 @@ class GroupService {
     io: Server
   ): Promise<void> {
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     // Check if group is private and requires invitation
     if (!group.isPublic && group.inviteOnly) {
@@ -250,7 +258,8 @@ class GroupService {
     io: Server
   ): Promise<void> {
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     const uid = new mongoose.Types.ObjectId(userId);
 
@@ -284,7 +293,8 @@ class GroupService {
     updates: Partial<IGroup>
   ): Promise<FormattedGroup> {
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     // Check if user is admin (creator or has admin role)
     const userObjectId = new mongoose.Types.ObjectId(userId);
@@ -331,7 +341,8 @@ class GroupService {
     isAdmin = false
   ): Promise<void> {
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     if (!isAdmin && group.createdBy.toString() !== requesterId) {
       throw new Error("Not authorized");
@@ -379,7 +390,8 @@ class GroupService {
       .populate("members", "name email profilePicture lastActive")
       .populate("createdBy", "_id");
 
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     // Check if user is a member
     const userObjectId = new mongoose.Types.ObjectId(userId);
@@ -407,7 +419,8 @@ class GroupService {
   ): Promise<IGroupMessage[]> {
     // Check if user is a member
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
     if (!group.members.some(member => member.equals(userObjectId))) {
@@ -434,7 +447,8 @@ class GroupService {
   ): Promise<IGroupMessage> {
     // Check if user is a member
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     const userObjectId = new mongoose.Types.ObjectId(userId);
     if (!group.members.some(member => member.equals(userObjectId))) {
@@ -479,7 +493,8 @@ class GroupService {
     io: Server
   ): Promise<void> {
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     // Check if inviter is a member
     const inviterObjectId = new mongoose.Types.ObjectId(inviterId);
@@ -520,7 +535,8 @@ class GroupService {
     io: Server
   ): Promise<void> {
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     // Check if requester is admin
     const adminObjectId = new mongoose.Types.ObjectId(adminId);
@@ -558,7 +574,8 @@ class GroupService {
     io: Server
   ): Promise<void> {
     const group = await Group.findById(groupId);
-    if (!group) throw new Error("Group not found");
+    if (!group) 
+throw new Error("Group not found");
 
     const notification = await Notification.create({
       user: userId,

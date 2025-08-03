@@ -1,7 +1,9 @@
 // src/api/utils/rateLimiter.ts - FIXED: Conditional Redis usage
-import type { Options, RateLimitRequestHandler } from "express-rate-limit";
-import rateLimit from "express-rate-limit";
 import type { Request, Response } from "express";
+import type { Options, RateLimitRequestHandler } from "express-rate-limit";
+
+import rateLimit from "express-rate-limit";
+
 import { logger } from "../../utils/winstonLogger";
 
 // Check if Redis is disabled
@@ -14,15 +16,10 @@ const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
  * @param   {number} maxRequests - Maximum number of requests allowed during the window.
  * @param   {number} windowMs - Window size in milliseconds during which requests are counted.
  * @param   {string} [message] - Custom message to send when the rate limit is exceeded.
- * @param   {boolean} [useRedis=false] - Whether to use Redis for distributed rate-limiting across multiple servers.
+ * @param   {boolean} [useRedis] - Whether to use Redis for distributed rate-limiting across multiple servers.
  * @returns {RateLimitRequestHandler} Middleware function to apply rate limiting.
  */
-const createRateLimiter = (
-  maxRequests: number,
-  windowMs: number,
-  message = "Too many requests, please try again later.",
-  useRedis = false,
-): RateLimitRequestHandler => {
+function createRateLimiter (maxRequests: number,  windowMs: number,  message = "Too many requests, please try again later.",  useRedis = false): RateLimitRequestHandler {
   const options: Partial<Options> = {
     windowMs,
     max: maxRequests,
@@ -105,7 +102,7 @@ const createRateLimiter = (
   logger.info(`Rate limiter created: ${maxRequests} requests per ${windowMs}ms using ${storeType} store`);
 
   return rateLimit(options);
-};
+}
 
 /**
  * @desc    Global rate limiter across all routes.
@@ -149,14 +146,9 @@ export const sensitiveDataRateLimiter = createRateLimiter(
  * @param   {number} maxRequests - Maximum number of requests allowed.
  * @param   {number} windowMs - Window size in milliseconds.
  * @param   {string} [message] - Custom message for rate limit violations.
- * @param   {boolean} [useRedis=false] - Whether to use Redis for distributed rate limiting.
+ * @param   {boolean} [useRedis] - Whether to use Redis for distributed rate limiting.
  * @returns {RateLimitRequestHandler} Middleware function to apply custom rate limiting.
  */
-export const customRateLimiter = (
-  maxRequests: number,
-  windowMs: number,
-  message: string,
-  useRedis = false,
-): RateLimitRequestHandler => {
+export function customRateLimiter (maxRequests: number,  windowMs: number,  message: string,  useRedis = false): RateLimitRequestHandler {
   return createRateLimiter(maxRequests, windowMs, message, useRedis);
-};
+}

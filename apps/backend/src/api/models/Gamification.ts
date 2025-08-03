@@ -1,10 +1,12 @@
-import mongoose, { Schema, Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 export interface IGamification extends Document {
   userId: Types.ObjectId;
   level: number;
   points: number;
-  addPoints(amount: number): Promise<IGamification>;
+  addPoints: (amount: number) => Promise<IGamification>;
 }
 
 export interface IGamificationModel extends Model<IGamification> {}

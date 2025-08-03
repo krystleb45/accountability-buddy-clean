@@ -1,10 +1,11 @@
 // src/api/routes/goalMessage.ts
 import { Router } from "express";
-import { param, check } from "express-validator";
 import rateLimit from "express-rate-limit";
+import { check, param } from "express-validator";
+
+import goalMessageController from "../controllers/GoalMessageController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import goalMessageController from "../controllers/GoalMessageController";
 
 const router = Router();
 

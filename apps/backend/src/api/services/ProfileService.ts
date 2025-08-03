@@ -1,6 +1,6 @@
 // src/api/services/ProfileService.ts
-import { User } from "../models/User";
 import { createError } from "../middleware/errorHandler";
+import { User } from "../models/User";
 
 
 export interface PublicProfile {
@@ -17,14 +17,16 @@ class ProfileService {
    * Fetch public profile fields for a given user.
    */
   static async getProfile(userId: string): Promise<PublicProfile> {
-    if (!userId) throw createError("Unauthorized", 401);
+    if (!userId) 
+throw createError("Unauthorized", 401);
 
     const user = await User.findById(userId)
       .select("username email bio interests profileImage coverImage")
       .lean<PublicProfile>()
       .exec();
 
-    if (!user) throw createError("User not found", 404);
+    if (!user) 
+throw createError("User not found", 404);
     return user;
   }
 
@@ -35,7 +37,8 @@ class ProfileService {
     userId: string,
     updates: Partial<PublicProfile>
   ): Promise<PublicProfile> {
-    if (!userId) throw createError("Unauthorized", 401);
+    if (!userId) 
+throw createError("Unauthorized", 401);
 
     if (Object.keys(updates).length === 0) {
       throw createError("No updatable fields provided", 400);
@@ -49,7 +52,8 @@ class ProfileService {
       .lean<PublicProfile>()
       .exec();
 
-    if (!updated) throw createError("User not found", 404);
+    if (!updated) 
+throw createError("User not found", 404);
     return updated;
   }
 
@@ -60,8 +64,10 @@ class ProfileService {
     userId: string,
     file: Express.Multer.File   // <— no need to import anything
   ): Promise<PublicProfile> {
-    if (!userId) throw createError("Unauthorized", 401);
-    if (!file) throw createError("No file provided", 400);
+    if (!userId) 
+throw createError("Unauthorized", 401);
+    if (!file) 
+throw createError("No file provided", 400);
 
     const imageUrl = `/uploads/avatars/${file.filename}`;
     const updated = await User.findByIdAndUpdate(
@@ -73,7 +79,8 @@ class ProfileService {
       .lean<PublicProfile>()
       .exec();
 
-    if (!updated) throw createError("User not found", 404);
+    if (!updated) 
+throw createError("User not found", 404);
     return updated;
   }
 
@@ -81,8 +88,10 @@ class ProfileService {
     userId: string,
     file: Express.Multer.File
   ): Promise<PublicProfile> {
-    if (!userId) throw createError("Unauthorized", 401);
-    if (!file) throw createError("No file provided", 400);
+    if (!userId) 
+throw createError("Unauthorized", 401);
+    if (!file) 
+throw createError("No file provided", 400);
 
     const coverUrl = `/uploads/covers/${file.filename}`;
     const updated = await User.findByIdAndUpdate(
@@ -94,7 +103,8 @@ class ProfileService {
       .lean<PublicProfile>()
       .exec();
 
-    if (!updated) throw createError("User not found", 404);
+    if (!updated) 
+throw createError("User not found", 404);
     return updated;
   }
 }

@@ -1,19 +1,20 @@
-import type { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response, Router } from "express";
+
 import express from "express";
+import rateLimit from "express-rate-limit";
 import { check } from "express-validator";
 import sanitize from "mongo-sanitize";
-import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
-import handleValidationErrors from "../middleware/handleValidationErrors";
 
 import {
   createReport,
+  deleteReport,
   getAllReports,
   getReportById,
   resolveReport,
-  deleteReport,
 } from "../controllers/ReportController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
 
 const router: Router = express.Router();
 
@@ -41,15 +42,11 @@ const reportValidation = [
 ];
 
 // ─── sanitizer ──────────────────────────────────────────────────────────────────
-const sanitizeInput = (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-): void => {
+function sanitizeInput (req: Request,  _res: Response,  next: NextFunction): void {
   req.body = sanitize(req.body);
   req.params = sanitize(req.params);
   next();
-};
+}
 
 // ─── Create ─────────────────────────────────────────────────────────────────────
 router.post(

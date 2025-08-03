@@ -1,9 +1,11 @@
 import type { Request, Response } from "express";
-import { Types } from "mongoose";
+
 import sanitize from "mongo-sanitize";
+import { Types } from "mongoose";
+
+import BadgeService from "../services/BadgeService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import BadgeService from "../services/BadgeService";
 
 export const awardBadge = catchAsync(async (req: Request, res: Response): Promise<void> => {
   const { userId, badgeType, level } = sanitize(req.body);
@@ -15,7 +17,7 @@ export const awardBadge = catchAsync(async (req: Request, res: Response): Promis
 
   const badge = await BadgeService.awardBadge(userId, badgeType, level);
   sendResponse(res, 201, true, "Badge awarded", { badge });
-  return;
+  
 });
 
 

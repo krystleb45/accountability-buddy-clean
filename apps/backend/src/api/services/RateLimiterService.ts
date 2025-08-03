@@ -1,6 +1,8 @@
 // src/api/services/RateLimiterService.ts
-import rateLimit, { RateLimitRequestHandler } from "express-rate-limit";
 import type { Request } from "express";
+import type { RateLimitRequestHandler } from "express-rate-limit";
+
+import rateLimit from "express-rate-limit";
 
 export interface RateLimitStatus {
   remaining: string | number | undefined;

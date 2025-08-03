@@ -1,6 +1,7 @@
 // src/api/models/Achievement.ts
 
 import type { Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interfaces ---
@@ -14,12 +15,12 @@ export interface IAchievement extends Document {
   updatedAt: Date; // always set by mongoose
 
   // Instance helper
-  isUnlocked(completed: number): boolean;
+  isUnlocked: (completed: number) => boolean;
 }
 
 // Model interface for statics
 export interface IAchievementModel extends Model<IAchievement> {
-  findByRequirement(min: number): Promise<IAchievement[]>;
+  findByRequirement: (min: number) => Promise<IAchievement[]>;
 }
 
 // --- Schema Definition ---

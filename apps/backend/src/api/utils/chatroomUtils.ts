@@ -8,14 +8,14 @@ import type { IUser } from "../models/User";
  * @param chatroom - The raw chatroom document
  * @returns A simplified and consistent shape for frontend consumption
  */
-export const formatChatroom = (chatroom: IMilitarySupportChatroom): {
+export function formatChatroom (chatroom: IMilitarySupportChatroom): {
   id: string;
   name: string;
   description: string;
   memberCount: number;
   createdAt: Date;
   updatedAt: Date;
-} => {
+} {
   return {
     id: chatroom._id.toString(), // Convert ObjectId to string
     name: chatroom.name,
@@ -24,17 +24,14 @@ export const formatChatroom = (chatroom: IMilitarySupportChatroom): {
     createdAt: chatroom.createdAt,
     updatedAt: chatroom.updatedAt,
   };
-};
+}
 
 /**
  * Enrich chatroom with user info (optional – for admin/moderator usage)
  * @param chatroom - The chatroom document
  * @param users - Array of user objects
  */
-export const populateChatroomMembers = (
-  chatroom: IMilitarySupportChatroom,
-  users: IUser[]
-): {
+export function populateChatroomMembers (chatroom: IMilitarySupportChatroom,  users: IUser[]): {
   id: string;
   name: string;
   description: string;
@@ -47,7 +44,7 @@ export const populateChatroomMembers = (
     email: string;
     avatar: string;
   }[]
-} => {
+} {
   const enrichedMembers = users
     .filter((user) => chatroom.members.includes(user._id))
     .map((user) => ({
@@ -61,4 +58,4 @@ export const populateChatroomMembers = (
     ...formatChatroom(chatroom),
     members: enrichedMembers,
   };
-};
+}

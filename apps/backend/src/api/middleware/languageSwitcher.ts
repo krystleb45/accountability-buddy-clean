@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 
 // ✅ Extend Express Request to Include `lang`
@@ -13,12 +14,12 @@ const availableLanguages = ["en", "de", "es", "fr", "jp"];
  * Middleware to switch language based on user preference.
  * Checks `Accept-Language` header, cookies, or query parameters for language selection.
  */
-const languageSwitcher = (req: RequestWithLang, res: Response, next: NextFunction): void => {
+function languageSwitcher (req: RequestWithLang, res: Response, next: NextFunction): void {
   try {
     let lang: string | undefined =
       req.headers["accept-language"] ||
       req.cookies?.lang ||
-      (req.query["lang"] as string);
+      (req.query.lang as string);
 
     if (lang) {
       lang = lang.split("-")[0].toLowerCase();
@@ -42,6 +43,6 @@ const languageSwitcher = (req: RequestWithLang, res: Response, next: NextFunctio
       message: "An error occurred while setting language preferences",
     });
   }
-};
+}
 
 export default languageSwitcher;

@@ -1,9 +1,10 @@
 // src/api/controllers/ReportController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { createError } from "../middleware/errorHandler";
 import * as ReportService from "../services/ReportService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import { createError } from "../middleware/errorHandler";
 
 /**
  * @desc    Create a new report

@@ -1,5 +1,6 @@
 // src/api/models/Poll.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Option Subdocument Interface ---
@@ -24,15 +25,15 @@ export interface IPoll extends Document {
   totalVotes: number;
 
   // Instance methods
-  vote(optionId: Types.ObjectId, userId: Types.ObjectId): Promise<IPoll>;
-  close(): Promise<IPoll>;
+  vote: (optionId: Types.ObjectId, userId: Types.ObjectId) => Promise<IPoll>;
+  close: () => Promise<IPoll>;
 }
 
 // --- Model Interface for Statics ---
 export interface IPollModel extends Model<IPoll> {
-  getActive(): Promise<IPoll[]>;
-  getExpired(): Promise<IPoll[]>;
-  getByGroup(groupId: Types.ObjectId): Promise<IPoll[]>;
+  getActive: () => Promise<IPoll[]>;
+  getExpired: () => Promise<IPoll[]>;
+  getByGroup: (groupId: Types.ObjectId) => Promise<IPoll[]>;
 }
 
 // --- Schema Definition ---
@@ -103,7 +104,8 @@ PollSchema.methods.vote = async function (
   });
   // Add vote to the selected option
   const opt = this.options.id(optionId);
-  if (!opt) throw new Error("Option not found");
+  if (!opt) 
+throw new Error("Option not found");
   opt.votes.push(userId);
   await this.save();
   return this;

@@ -4,7 +4,7 @@ describe("audit routes", () => {
   });
 
   it("GET /api/audit ? 200 OK", async () => {
-    const res = await global.authGet("/api/audit");
+    const res = await globalThis.authGet("/api/audit");
     expect(res.status).toBe(200);
   });
 });

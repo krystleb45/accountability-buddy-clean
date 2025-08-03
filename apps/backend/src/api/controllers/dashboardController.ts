@@ -1,9 +1,10 @@
 // File: src/api/controllers/dashboardController.ts
 import type { Request, Response } from "express";
+
+import CollaborationService from "../services/CollaborationGoalService";
+import ProgressService from "../services/ProgressService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import ProgressService from "../services/ProgressService";
-import CollaborationService from "../services/CollaborationGoalService";
 // … import any other services you need (e.g. StreakService, BadgeService, etc.)
 
 export const getDashboardStats = catchAsync(async (req: Request, res: Response) => {

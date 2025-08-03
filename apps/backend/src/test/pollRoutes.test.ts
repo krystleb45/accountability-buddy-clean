@@ -6,7 +6,7 @@ describe("pollRoutes routes", () => {
     expect(true).toBe(true);
   });
   it("GET /api/polls ? 200 OK", async () => {
-    const res = await global.authGet("/api/polls");
+    const res = await globalThis.authGet("/api/polls");
     expect(res.status).toBe(200);
     // TODO: add more assertions here
   });

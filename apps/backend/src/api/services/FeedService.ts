@@ -1,6 +1,9 @@
 // src/api/services/feedService.ts
 import mongoose from "mongoose";
-import FeedPost, { IFeedPost } from "../models/FeedPost";
+
+import type { IFeedPost } from "../models/FeedPost";
+
+import FeedPost from "../models/FeedPost";
 
 class FeedService {
   /** Fetch all feed posts (most recent first) */
@@ -37,7 +40,8 @@ class FeedService {
     postId: string
   ): Promise<IFeedPost> {
     const post = await FeedPost.findById(postId);
-    if (!post) throw new Error("Post not found");
+    if (!post) 
+throw new Error("Post not found");
     const uid = new mongoose.Types.ObjectId(userId);
     if (post.likes.some(l => l.equals(uid))) {
       throw new Error("Already liked");
@@ -52,7 +56,8 @@ class FeedService {
     postId: string
   ): Promise<IFeedPost> {
     const post = await FeedPost.findById(postId);
-    if (!post) throw new Error("Post not found");
+    if (!post) 
+throw new Error("Post not found");
     post.likes = post.likes.filter(l => l.toString() !== userId);
     return post.save();
   }
@@ -64,7 +69,8 @@ class FeedService {
     text: string
   ): Promise<IFeedPost> {
     const post = await FeedPost.findById(postId);
-    if (!post) throw new Error("Post not found");
+    if (!post) 
+throw new Error("Post not found");
     const comment = {
       _id: new mongoose.Types.ObjectId(),
       user: new mongoose.Types.ObjectId(userId),
@@ -82,10 +88,12 @@ class FeedService {
     commentId: string
   ): Promise<IFeedPost> {
     const post = await FeedPost.findById(postId);
-    if (!post) throw new Error("Post not found");
+    if (!post) 
+throw new Error("Post not found");
 
     const idx = post.comments.findIndex(c => c._id.toString() === commentId);
-    if (idx === -1) throw new Error("Comment not found");
+    if (idx === -1) 
+throw new Error("Comment not found");
 
     const comment = post.comments[idx];
     if (

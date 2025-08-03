@@ -1,5 +1,6 @@
 // src/api/models/ChallengeParticipation.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interface for Challenge Participation ---
@@ -16,14 +17,14 @@ export interface IChallengeParticipation extends Document {
   progressPercent: number;
 
   // Instance methods
-  updateProgress(amount: number): Promise<IChallengeParticipation>;
-  markComplete(): Promise<IChallengeParticipation>;
-  resetProgress(): Promise<IChallengeParticipation>;
+  updateProgress: (amount: number) => Promise<IChallengeParticipation>;
+  markComplete: () => Promise<IChallengeParticipation>;
+  resetProgress: () => Promise<IChallengeParticipation>;
 }
 
 // --- Model interface with static methods ---
 export interface IChallengeParticipationModel extends Model<IChallengeParticipation> {
-  getUserParticipation(userId: Types.ObjectId): Promise<IChallengeParticipation[]>;
+  getUserParticipation: (userId: Types.ObjectId) => Promise<IChallengeParticipation[]>;
 }
 
 // --- Schema Definition ---

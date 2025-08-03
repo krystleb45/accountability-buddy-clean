@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import type { ValidationChain } from "express-validator";
+
 import { check, validationResult } from "express-validator";
 
 /**
@@ -8,11 +9,7 @@ import { check, validationResult } from "express-validator";
  * @param res - Express response object.
  * @param next - Express next middleware function.
  */
-export const eventValidationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
+export function eventValidationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const formattedErrors = errors.array().map((error) => {
@@ -36,7 +33,7 @@ export const eventValidationMiddleware = (
   }
 
   next();
-};
+}
 
 
 /**

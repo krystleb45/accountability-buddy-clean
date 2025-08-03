@@ -1,6 +1,9 @@
 // src/api/services/CollaborationGoalService.ts
 import { Types } from "mongoose";
-import CollaborationGoal, { ICollaborationGoal } from "../models/CollaborationGoal";
+
+import type { ICollaborationGoal } from "../models/CollaborationGoal";
+
+import CollaborationGoal from "../models/CollaborationGoal";
 
 class CollaborationGoalService {
   /**
@@ -36,12 +39,14 @@ class CollaborationGoalService {
       .populate("participants", "username")
       .exec();
   }
+
   static async countForUser(userId: string): Promise<number> {
     if (!Types.ObjectId.isValid(userId)) {
       throw new Error("Invalid user ID");
     }
     return CollaborationGoal.countDocuments({ participants: new Types.ObjectId(userId) });
   }
+
   /**
    * Delete a collaboration goal, verifying that `userId` is its creator.
    */

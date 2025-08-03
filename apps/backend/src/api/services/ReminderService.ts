@@ -1,13 +1,17 @@
 // src/api/services/ReminderService.ts
 import type { ScheduledTask } from "node-cron";
+
 import cron from "node-cron";
-import { Reminder, IReminder } from "../models/Reminder";
-import NotificationService from "./NotificationService";
+
+import type { IReminder } from "../models/Reminder";
+
+import { Reminder } from "../models/Reminder";
 import { sendEmail } from "./emailService";
 import LoggingService from "./LoggingService";
+import NotificationService from "./NotificationService";
 
 /** Send due reminders now, then delete them */
-export const checkReminders = async (): Promise<void> => {
+export async function checkReminders (): Promise<void> {
   const now = new Date();
   let due: IReminder[];
   try {
@@ -45,9 +49,9 @@ export const checkReminders = async (): Promise<void> => {
       );
     }
   }
-};
+}
 
-const toCronExpr = (date: Date): string => {
+function toCronExpr (date: Date): string {
   return [
     date.getSeconds(),
     date.getMinutes(),
@@ -56,12 +60,10 @@ const toCronExpr = (date: Date): string => {
     date.getMonth() + 1,
     "*",
   ].join(" ");
-};
+}
 
 /** Schedule one cron task for a reminder */
-export const scheduleReminderTask = async (
-  rem: IReminder
-): Promise<ScheduledTask | null> => {
+export async function scheduleReminderTask (rem: IReminder): Promise<ScheduledTask | null> {
   const dt = new Date(rem.remindAt);
   if (isNaN(dt.getTime())) {
     void LoggingService.logError("Invalid remindAt date", new Error());
@@ -110,14 +112,14 @@ export const scheduleReminderTask = async (
     );
     return null;
   }
-};
+}
 
 /** Cancel a scheduled task */
-export const cancelReminderTask = (task: ScheduledTask): void => {
+export function cancelReminderTask (task: ScheduledTask): void {
   try {
     task.stop();
     void LoggingService.logInfo("Canceled scheduled reminder task");
   } catch (err) {
     void LoggingService.logError("Error canceling reminder task", err as Error);
   }
-};
+}

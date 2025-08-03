@@ -1,8 +1,9 @@
 // src/api/controllers/RedemptionController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import RedemptionService from "../services/RedemptionService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import RedemptionService from "../services/RedemptionService";
 
 /**
  * @desc    Redeem an item for the authenticated user

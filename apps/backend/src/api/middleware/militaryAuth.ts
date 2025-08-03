@@ -1,15 +1,13 @@
-import type { Response, NextFunction } from "express";
-import MilitaryUser from "../models/MilitarySupport";
-import { logger } from "../../utils/winstonLogger";import type { MilitaryRequest, IMilitaryUser } from "../../types/CustomRequest"; // Import the required types
+import type { NextFunction, Response } from "express";
+
+import type { IMilitaryUser, MilitaryRequest } from "../../types/CustomRequest"; // Import the required types
+
+import { logger } from "../../utils/winstonLogger";import MilitaryUser from "../models/MilitarySupport";
 
 /**
  * Middleware for verifying military user authentication and access.
  */
-const militaryAuth = async (
-  req: MilitaryRequest,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
+async function militaryAuth (req: MilitaryRequest,  res: Response,  next: NextFunction): Promise<void> {
   try {
     // Extract user ID from request object (validated earlier by other middleware)
     const userId = req.user?.id;
@@ -45,6 +43,6 @@ const militaryAuth = async (
       .status(500)
       .json({ error: "Authorization failed. Please try again later." });
   }
-};
+}
 
 export default militaryAuth;

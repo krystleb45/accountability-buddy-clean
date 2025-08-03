@@ -1,8 +1,11 @@
 // src/api/services/FeedbackService.ts
 
 import { Types } from "mongoose";
-import Feedback, { IFeedback, FeedbackType, FeedbackStatus, FeedbackPriority } from "../models/Feedback";
+
+import type { FeedbackPriority, FeedbackStatus, FeedbackType, IFeedback } from "../models/Feedback";
+
 import { createError } from "../middleware/errorHandler";
+import Feedback from "../models/Feedback";
 import LoggingService from "./LoggingService";
 
 export default class FeedbackService {
@@ -42,7 +45,7 @@ export default class FeedbackService {
       type:           type.trim() as FeedbackType,
       status:         "pending" as FeedbackStatus,     // default
       priority:       "medium" as FeedbackPriority,    // default
-      isAnonymous:    isAnonymous,
+      isAnonymous,
       relatedFeature: relatedFeature?.trim(),
       // createdAt / updatedAt are handled automatically by `timestamps: true`
     });
@@ -69,7 +72,7 @@ export default class FeedbackService {
       throw createError("Invalid user ID", 400);
     }
 
-    const feedbackList = await Feedback.find({ userId: userId })
+    const feedbackList = await Feedback.find({ userId })
       .sort({ createdAt: -1 })
       .lean();
 
@@ -92,7 +95,7 @@ export default class FeedbackService {
     }
 
     // Verify that this feedback exists and belongs to the user
-    const existing = await Feedback.findOne({ _id: feedbackId, userId: userId });
+    const existing = await Feedback.findOne({ _id: feedbackId, userId });
     if (!existing) {
       throw createError("Feedback not found or access denied", 404);
     }

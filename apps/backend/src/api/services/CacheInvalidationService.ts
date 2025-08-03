@@ -8,7 +8,8 @@ export const CacheInvalidationService = {
    */
   async invalidateCacheByKey(key: string): Promise<void> {
     try {
-      if (!key) throw new Error("Cache key is required for invalidation");
+      if (!key) 
+throw new Error("Cache key is required for invalidation");
 
       const result = await redisClient.del(key); // Delete the cache key
       if (result) {
@@ -50,7 +51,8 @@ export const CacheInvalidationService = {
    */
   async invalidateCacheByPattern(pattern: string): Promise<void> {
     try {
-      if (!pattern) throw new Error("Pattern is required for cache invalidation");
+      if (!pattern) 
+throw new Error("Pattern is required for cache invalidation");
 
       const keys = await redisClient.keys(pattern); // Find keys matching the pattern
       if (keys.length > 0) {
@@ -66,7 +68,7 @@ export const CacheInvalidationService = {
   },
 
   /**
-   * @desc    Clears all cache entries (useful for global resets).
+   * @desc    Clears all cache entries (useful for globalThis resets).
    */
   async clearAllCache(): Promise<void> {
     try {
@@ -108,7 +110,8 @@ export const CacheInvalidationService = {
    */
   async invalidateUserCache(userId: string): Promise<void> {
     try {
-      if (!userId) throw new Error("User ID is required for cache invalidation");
+      if (!userId) 
+throw new Error("User ID is required for cache invalidation");
 
       const pattern = `user:${userId}:*`; // Pattern to match user-related keys
       await this.invalidateCacheByPattern(pattern);

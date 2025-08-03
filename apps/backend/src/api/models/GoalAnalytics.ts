@@ -1,6 +1,7 @@
 // src/api/models/GoalAnalytics.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Types & Interfaces ---
@@ -18,15 +19,15 @@ export interface IGoalAnalytics extends Document {
   updatedAt: Date;                         // Auto-set by timestamps
 
   // Instance methods
-  isStreakActive(): boolean;
+  isStreakActive: () => boolean;
 }
 
 export interface IGoalAnalyticsModel extends Model<IGoalAnalytics> {
-  updateStreak(goalId: Types.ObjectId): Promise<IGoalAnalytics>;
-  recordTaskCompletion(
+  updateStreak: (goalId: Types.ObjectId) => Promise<IGoalAnalytics>;
+  recordTaskCompletion: (
     goalId: Types.ObjectId,
     completionTimeHours: number
-  ): Promise<IGoalAnalytics>;
+  ) => Promise<IGoalAnalytics>;
 }
 
 // --- Schema Definition ---
@@ -76,7 +77,8 @@ GoalAnalyticsSchema.statics.updateStreak = async function (
   goalId: Types.ObjectId
 ): Promise<IGoalAnalytics> {
   const analytics = await this.findOne({ goal: goalId });
-  if (!analytics) throw new Error("Goal analytics not found");
+  if (!analytics) 
+throw new Error("Goal analytics not found");
 
   const now = new Date();
   const oneDayMs = 24 * 60 * 60 * 1000;
@@ -102,7 +104,8 @@ GoalAnalyticsSchema.statics.recordTaskCompletion = async function (
   completionTimeHours: number
 ): Promise<IGoalAnalytics> {
   const analytics = await this.findOne({ goal: goalId });
-  if (!analytics) throw new Error("Goal analytics not found");
+  if (!analytics) 
+throw new Error("Goal analytics not found");
 
   analytics.totalTasks += 1;
   analytics.completedTasks += 1;

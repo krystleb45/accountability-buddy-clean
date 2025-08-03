@@ -1,14 +1,15 @@
 // src/api/controllers/GoalMessageController.ts
-import { Request, Response, NextFunction } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { NextFunction, Request, Response } from "express";
+
 import { createError } from "../middleware/errorHandler";
 import GoalMessageService from "../services/GoalMessageService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 // Reusable types
-type ParamsWithGoal = { goalId: string };
-type ParamsWithMessage = { messageId: string };
-type BodyWithMessage = { message: string };
+interface ParamsWithGoal { goalId: string }
+interface ParamsWithMessage { messageId: string }
+interface BodyWithMessage { message: string }
 
 /**
  * @desc Create a new goal message
@@ -22,7 +23,8 @@ export const createGoalMessage = catchAsync(
     next: NextFunction
   ): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) return next(createError("Unauthorized", 401));
+    if (!userId) 
+return next(createError("Unauthorized", 401));
 
     const { goalId } = req.params;
     const { message } = req.body;
@@ -47,7 +49,8 @@ export const getGoalMessages = catchAsync(
     next: NextFunction
   ): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) return next(createError("Unauthorized", 401));
+    if (!userId) 
+return next(createError("Unauthorized", 401));
 
     const { goalId } = req.params;
     const messages = await GoalMessageService.listByGoal(goalId);
@@ -67,7 +70,8 @@ export const updateGoalMessage = catchAsync(
     next: NextFunction
   ): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) return next(createError("Unauthorized", 401));
+    if (!userId) 
+return next(createError("Unauthorized", 401));
 
     const { messageId } = req.params;
     const { message } = req.body;
@@ -92,7 +96,8 @@ export const deleteGoalMessage = catchAsync(
     next: NextFunction
   ): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) return next(createError("Unauthorized", 401));
+    if (!userId) 
+return next(createError("Unauthorized", 401));
 
     const { messageId } = req.params;
     await GoalMessageService.delete(messageId, userId);

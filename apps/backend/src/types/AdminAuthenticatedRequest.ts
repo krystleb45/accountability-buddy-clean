@@ -1,6 +1,6 @@
 // src/types/AdminAuthenticatedRequest.ts
-import { AuthenticatedRequest } from "./AuthenticatedRequest";
-import { IUser } from "../api/models/User";
+import type { IUser } from "../api/models/User";
+import type { AuthenticatedRequest } from "./AuthenticatedRequest";
 
 export type AdminAuthenticatedRequest<
   P = Record<string, string>,

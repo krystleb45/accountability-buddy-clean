@@ -1,5 +1,6 @@
 import { SecretsManager } from "aws-sdk";
 import { config as dotenvConfig } from "dotenv";
+
 import { logger } from "./winstonLogger";  // use your logger, not console
 
 dotenvConfig(); // fallback to .env

@@ -1,11 +1,13 @@
 // src/api/controllers/AdminController.ts
-import { Request, Response, NextFunction } from "express";
-import { PERMISSIONS } from "../../constants/roles";
+import type { NextFunction, Request, Response } from "express";
+
 import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+
+import { PERMISSIONS } from "../../constants/roles";
 import { createError } from "../middleware/errorHandler";
 import AdminService from "../services/AdminService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 // --------------------------
 // User Management Methods
@@ -34,7 +36,7 @@ interface UpdateUserRoleBody {
 
 export const updateUserRole = catchAsync(
   async (
-    req: AdminAuthenticatedRequest<{}, any, UpdateUserRoleBody>,
+    req: AdminAuthenticatedRequest<unknown, any, UpdateUserRoleBody>,
     res: Response
   ): Promise<void> => {
     const { userId, role } = req.body;

@@ -1,5 +1,17 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@test/*": ["src/tests/*"]
+    },
+    "resolveJsonModule": true,
+    "types": ["jest"],
+    "allowJs": true,
+    "strict": true,
+    "noEmit": true
+  },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
@@ -11,18 +23,6 @@
     ".eslintrc.cjs",
     ".eslintrc.mjs"
   ],
-  "compilerOptions": {
-    "types": ["jest"],
-    "allowJs": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "baseUrl": ".",
-    "paths": {
-      "@src/*": ["src/*"],
-      "@test/*": ["src/tests/*"]
-    },
-    "strict": true
-  },
   "exclude": [
     "node_modules",
     "dist",

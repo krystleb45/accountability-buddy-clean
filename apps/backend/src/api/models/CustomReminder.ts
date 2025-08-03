@@ -1,6 +1,7 @@
 // src/api/models/CustomReminder.ts
 
-import type { Document, Model, CallbackError } from "mongoose";
+import type { CallbackError, Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 export interface ICustomReminder extends Document {

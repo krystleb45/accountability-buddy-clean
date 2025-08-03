@@ -2,14 +2,15 @@
 import { Router }    from "express";
 import { check }     from "express-validator";
 import multer        from "multer";
-import { protect }   from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import {
   getProfile,
   updateProfile,
-  uploadProfileImage,
   uploadCoverImage,
+  uploadProfileImage,
 } from "../controllers/ProfileController";
+import { protect }   from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
 

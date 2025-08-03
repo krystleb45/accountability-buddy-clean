@@ -1,13 +1,14 @@
 // src/api/routes/anonymousMoodRoutes.ts
 
 import { Router } from "express";
+
 import {
-  submitMoodCheckIn,
   getCommunityMoodData,
+  getMoodEncouragement,
+  getMoodStatistics,
   getMoodTrends,
   hasSubmittedToday,
-  getMoodStatistics,
-  getMoodEncouragement
+  submitMoodCheckIn
 } from "../controllers/anonymousMoodController";
 import { anonymousAuth } from "../middleware/anonymousAuth";
 

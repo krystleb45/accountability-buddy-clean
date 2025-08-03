@@ -8,11 +8,7 @@ import { User } from "../models/User";
  * @param users - All users with interests and usernames.
  * @returns Recommended friend usernames.
  */
-const friendRecommendationEngine = (
-  currentUserId: string,
-  userInterests: string[],
-  users: any[]
-): string[] => {
+function friendRecommendationEngine (currentUserId: string,  userInterests: string[],  users: any[]): string[] {
   const recommendedFriends: string[] = [];
 
   users.forEach((user) => {
@@ -34,15 +30,13 @@ const friendRecommendationEngine = (
   return recommendedFriends.length > 0
     ? recommendedFriends
     : ["No suitable friends found, try broadening your interests!"];
-};
+}
 
 /**
  * Fetches AI-generated friend recommendations for a given user.
  * @param userId - ID of the user to fetch recommendations for.
  */
-export const getAIRecommendedFriends = async (
-  userId: string
-): Promise<string[]> => {
+export async function getAIRecommendedFriends (userId: string): Promise<string[]> {
   try {
     const user = await User.findById(userId).select("interests username");
 
@@ -71,15 +65,13 @@ export const getAIRecommendedFriends = async (
       "Sorry, we couldn't find recommendations at the moment. Please try again later.",
     ];
   }
-};
+}
 
 /**
  * AI-based chat group recommendation engine for a user.
  * @param userId - ID of the user to recommend chat groups to.
  */
-export const getRecommendedGroupsBasedOnAI = async (
-  userId: string
-): Promise<string[]> => {
+export async function getRecommendedGroupsBasedOnAI (userId: string): Promise<string[]> {
   try {
     const user = await User.findById(userId).select("interests username");
 
@@ -122,4 +114,4 @@ export const getRecommendedGroupsBasedOnAI = async (
       "Sorry, we couldn't find recommendations at the moment. Please try again later.",
     ];
   }
-};
+}

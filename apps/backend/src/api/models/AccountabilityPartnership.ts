@@ -1,5 +1,7 @@
 // src/api/models/AccountabilityPartnership.ts
-import mongoose, { Document, Model, Schema } from "mongoose";
+import type { Document, Model} from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 export interface IAccountabilityPartnership extends Document {
   user1: mongoose.Types.ObjectId;
@@ -10,10 +12,10 @@ export interface IAccountabilityPartnership extends Document {
 
 interface IAccountabilityPartnershipModel
   extends Model<IAccountabilityPartnership> {
-  findBetweenUsers(
+  findBetweenUsers: (
     u1: string,
     u2: string
-  ): Promise<IAccountabilityPartnership | null>;
+  ) => Promise<IAccountabilityPartnership | null>;
 }
 
 const AccountabilityPartnershipSchema = new Schema<

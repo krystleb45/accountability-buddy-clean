@@ -1,6 +1,7 @@
 // src/api/models/Room.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Room Document Interface ---
@@ -14,16 +15,16 @@ export interface IRoom extends Document {
   updatedAt: Date;                  // Auto-added
 
   // Instance methods
-  addMember(userId: Types.ObjectId): Promise<IRoom>;
-  removeMember(userId: Types.ObjectId): Promise<IRoom>;
-  hasMember(userId: Types.ObjectId): boolean;
+  addMember: (userId: Types.ObjectId) => Promise<IRoom>;
+  removeMember: (userId: Types.ObjectId) => Promise<IRoom>;
+  hasMember: (userId: Types.ObjectId) => boolean;
 }
 
 // --- Room Model Static Interface ---
 export interface IRoomModel extends Model<IRoom> {
-  findByName(name: string): Promise<IRoom | null>;
-  findPublic(): Promise<IRoom[]>;
-  findByUser(userId: Types.ObjectId): Promise<IRoom[]>;
+  findByName: (name: string) => Promise<IRoom | null>;
+  findPublic: () => Promise<IRoom[]>;
+  findByUser: (userId: Types.ObjectId) => Promise<IRoom[]>;
 }
 
 // --- Room Schema Definition ---

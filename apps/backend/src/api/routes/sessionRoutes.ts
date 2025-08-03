@@ -1,17 +1,18 @@
 import { Router } from "express";
 import { check, param } from "express-validator";
+
+import {
+  deleteAllSessions,
+  deleteSession,
+  getSession,
+  getUserSessions,
+  login,
+  logout,
+  refreshSession,
+} from "../controllers/SessionController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 import catchAsync from "../utils/catchAsync";
-import {
-  login,
-  logout,
-  deleteAllSessions,
-  refreshSession,
-  getSession,
-  getUserSessions,
-  deleteSession,
-} from "../controllers/SessionController";
 
 const router = Router();
 

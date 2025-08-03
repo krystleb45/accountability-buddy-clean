@@ -1,15 +1,16 @@
 // src/api/services/RecommendationService.ts
 
 import type { Request } from "express";
+
+import type { IBlogPost } from "../models/BlogPost";
 import type { IBook } from "../models/Book";
 import type { IGoal } from "../models/Goal";
-import type { IBlogPost } from "../models/BlogPost";
 import type { IUser } from "../models/User";
 
-import BookService from "./bookRecommendationService";
-import GoalService from "./GoalManagementService";
 import BlogService from "./blogService";
+import BookService from "./bookRecommendationService";
 import FriendshipService from "./FriendService";
+import GoalService from "./GoalManagementService";
 
 export interface RecommendationResult<T> {
   items: T[];

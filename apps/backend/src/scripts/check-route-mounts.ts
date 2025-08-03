@@ -1,6 +1,6 @@
 // src/scripts/check-route-mounts.ts
-import * as fs   from "fs";
-import * as path from "path";
+import * as fs   from "node:fs";
+import * as path from "node:path";
 
 // 1) Read your app.ts mounts
 const appTs = fs.readFileSync(path.resolve(__dirname, "../app.ts"), "utf8");
@@ -27,8 +27,8 @@ function toSlash(s: string): string {
 }
 function plural(s: string): string {
   return s.endsWith("y")
-    ? s.slice(0, -1) + "ies"
-    : s + "s";
+    ? `${s.slice(0, -1)  }ies`
+    : `${s  }s`;
 }
 
 // 4) Build a set of “mounted” variations so we can match hyphens too:

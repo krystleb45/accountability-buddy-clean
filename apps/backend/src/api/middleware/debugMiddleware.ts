@@ -1,10 +1,11 @@
-import type { Request, Response, NextFunction } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core";
+
 import { logger } from "../../utils/winstonLogger";
 /**
  * Debug Middleware
  * Logs detailed information about incoming requests, outgoing responses, and execution time.
  */
-const debugMiddleware = (enabled: boolean = process.env.DEBUG_MODE === "true") => {
+function debugMiddleware (enabled: boolean = process.env.DEBUG_MODE === "true") {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!enabled) {
       return next();
@@ -26,6 +27,6 @@ const debugMiddleware = (enabled: boolean = process.env.DEBUG_MODE === "true") =
       throw error; // Re-throw after logging
     }
   };
-};
+}
 
 export default debugMiddleware;

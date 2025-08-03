@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
 import { format } from "date-fns";
+import fs from "node:fs";
+import path from "node:path";
 
 // Define log levels
 type LogLevel = "INFO" | "WARN" | "ERROR" | "DEBUG";
@@ -23,11 +23,7 @@ if (!fs.existsSync(LOG_DIRECTORY)) {
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-const log = (
-  level: LogLevel,
-  message: string,
-  meta?: Record<string, any>,
-): void => {
+function log (level: LogLevel,  message: string,  meta?: Record<string, any>): void {
   const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss");
   const logEntry = `${timestamp} [${level}] ${message} ${
     meta ? JSON.stringify(meta) : ""
@@ -51,42 +47,42 @@ const log = (
     
       break;
   }
-};
+}
 
 /**
  * Logs an info-level message.
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-const info = (message: string, meta?: Record<string, any>): void => {
+function info (message: string, meta?: Record<string, any>): void {
   log("INFO", message, meta);
-};
+}
 
 /**
  * Logs a warning-level message.
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-const warn = (message: string, meta?: Record<string, any>): void => {
+function warn (message: string, meta?: Record<string, any>): void {
   log("WARN", message, meta);
-};
+}
 
 /**
  * Logs an error-level message.
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-const error = (message: string, meta?: Record<string, any>): void => {
+function error (message: string, meta?: Record<string, any>): void {
   log("ERROR", message, meta);
-};
+}
 
 /**
  * Logs a debug-level message.
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-const debug = (message: string, meta?: Record<string, any>): void => {
+function debug (message: string, meta?: Record<string, any>): void {
   log("DEBUG", message, meta);
-};
+}
 
-export { info, warn, error, debug };
+export { debug, error, info, warn };

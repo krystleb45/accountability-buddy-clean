@@ -1,8 +1,9 @@
 // src/api/controllers/partnerController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import PartnerService from "../services/PartnerService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import PartnerService from "../services/PartnerService";
 
 export const notifyPartner = catchAsync(
   async (
@@ -39,8 +40,8 @@ export const getPartnerNotifications = catchAsync(
     _next: NextFunction
   ): Promise<void> => {
     const userId = req.user!.id;
-    const page = Math.max(1, parseInt(req.query.page || "1", 10));
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit || "10", 10)));
+    const page = Math.max(1, Number.parseInt(req.query.page || "1", 10));
+    const limit = Math.min(100, Math.max(1, Number.parseInt(req.query.limit || "10", 10)));
 
     const { notifications, total } = await PartnerService.listNotifications(
       userId,

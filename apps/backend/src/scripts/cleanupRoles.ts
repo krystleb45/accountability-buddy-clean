@@ -1,10 +1,11 @@
 // src/scripts/cleanupRoles.ts
 
-import mongoose from "mongoose";
-import Role from "../api/models/Role"; // Adjust path if needed
 import dotenv from "dotenv";
-import { logger } from "../utils/winstonLogger";
+import mongoose from "mongoose";
+
+import Role from "../api/models/Role"; // Adjust path if needed
 import { loadEnvironment } from "../utils/loadEnv";
+import { logger } from "../utils/winstonLogger";
 
 loadEnvironment();
 dotenv.config();

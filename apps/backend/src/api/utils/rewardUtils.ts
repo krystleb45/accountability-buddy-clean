@@ -1,27 +1,29 @@
-import { User } from "../models/User";
-import Badge from "../models/Badge";
 import type { IChallenge } from "../models/Challenge";
+
+import Badge from "../models/Badge";
+import { User } from "../models/User";
 
 /**
  * Award XP to a user by incrementing their points.
  * @param userId - The ID of the user to award points to.
  * @param xp - The amount of XP to add.
  */
-export const awardXpToUser = async (userId: string, xp: number): Promise<void> => {
+export async function awardXpToUser (userId: string, xp: number): Promise<void> {
   const user = await User.findById(userId);
   if (user) {
     user.points = (user.points || 0) + xp;
     await user.save();
   }
-};
+}
 
 /**
  * Reward users when a challenge is completed.
  * Grants XP and milestone_achiever badge progress.
  * @param challenge - The completed challenge object
  */
-export const rewardChallengeCompletion = async (challenge: IChallenge): Promise<void> => {
-  if (!challenge.participants || challenge.participants.length === 0) return;
+export async function rewardChallengeCompletion (challenge: IChallenge): Promise<void> {
+  if (!challenge.participants || challenge.participants.length === 0) 
+return;
 
   for (const participant of challenge.participants) {
     const userId = participant.user.toString();
@@ -40,8 +42,10 @@ export const rewardChallengeCompletion = async (challenge: IChallenge): Promise<
 
       // Optional: auto-upgrade badge level based on progress
       if (existingBadge.progress >= existingBadge.goal) {
-        if (existingBadge.level === "Bronze") existingBadge.level = "Silver";
-        else if (existingBadge.level === "Silver") existingBadge.level = "Gold";
+        if (existingBadge.level === "Bronze") 
+existingBadge.level = "Silver";
+        else if (existingBadge.level === "Silver") 
+existingBadge.level = "Gold";
         // Gold stays Gold
       }
 
@@ -61,4 +65,4 @@ export const rewardChallengeCompletion = async (challenge: IChallenge): Promise<
       await newBadge.save();
     }
   }
-};
+}

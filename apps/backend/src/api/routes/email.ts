@@ -1,10 +1,11 @@
 // src/api/routes/email.ts
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
 import { check } from "express-validator";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import * as emailController from "../controllers/emailController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
 

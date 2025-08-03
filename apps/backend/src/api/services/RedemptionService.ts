@@ -1,7 +1,10 @@
 // src/api/services/RedemptionService.ts
 import { Types } from "mongoose";
-import Redemption, { IRedemption } from "../models/Redemption";
+
+import type { IRedemption } from "../models/Redemption";
+
 import { createError } from "../middleware/errorHandler";
+import Redemption from "../models/Redemption";
 
 class RedemptionService {
   /** Redeem an item for a user, record the points spent. */

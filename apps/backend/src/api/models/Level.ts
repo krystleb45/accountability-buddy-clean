@@ -1,5 +1,6 @@
 // src/api/models/Level.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Reward Subdocument ---
@@ -24,16 +25,16 @@ export interface ILevel extends Document {
   totalRewards: number;
 
   // Instance methods
-  addReward(
+  addReward: (
     rewardType: IReward["rewardType"],
     rewardValue: string
-  ): Promise<ILevel>;
+  ) => Promise<ILevel>;
 }
 
 // --- Level Model Interface ---
 export interface ILevelModel extends Model<ILevel> {
-  addPoints(userId: Types.ObjectId, points: number): Promise<ILevel>;
-  getTopLevels(limit: number): Promise<ILevel[]>;
+  addPoints: (userId: Types.ObjectId, points: number) => Promise<ILevel>;
+  getTopLevels: (limit: number) => Promise<ILevel[]>;
 }
 
 // --- Sub-schemas ---

@@ -1,9 +1,11 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+
 import { MongoClient } from "mongodb";
+
 import { logger } from "../../utils/winstonLogger";
 
 // Database connection check (you can adjust this to match your actual DB configuration)
-const checkDatabaseConnection = async (): Promise<boolean> => {
+async function checkDatabaseConnection (): Promise<boolean> {
   const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017"; // Adjust your MongoDB URI
   
   try {
@@ -22,10 +24,10 @@ const checkDatabaseConnection = async (): Promise<boolean> => {
     }
     return false;
   }
-};
+}
 
 // Health check route
-export const healthCheck = async (_req: Request, res: Response): Promise<void> => {
+export async function healthCheck (_req: Request, res: Response): Promise<void> {
   try {
     // Check for database connectivity
     const dbStatus = await checkDatabaseConnection();
@@ -73,4 +75,4 @@ export const healthCheck = async (_req: Request, res: Response): Promise<void> =
       });
     }
   }
-};
+}

@@ -16,42 +16,42 @@ interface SocketError extends Error {
  * @param _error - The error object
  * @param context - Context about where the error occurred
  */
-const logError = (_error: Error, _p0: string): void => {
+function logError (_error: Error, _p0: string): void {
   
   // Optional: Add external logging service integration here (e.g., Sentry)
-};
+}
 
 /**
  * Sends a generic error message to the client
  * @param socket - The client socket
  * @param error - The error object
  */
-const sendErrorToClient = (socket: Socket, error: SocketError): void => {
+function sendErrorToClient (socket: Socket, error: SocketError): void {
   const clientMessage = error.clientMessage || "An unexpected error occurred.";
   socket.emit("error", { message: clientMessage });
-};
+}
 
 /**
  * Middleware to wrap socket events with error handling
  * @param handler - The socket event handler
  * @returns A wrapped handler with error handling
  */
-const withErrorHandler =
-  (handler: (socket: Socket, ...args: any[]) => Promise<void>) =>
-    async (socket: Socket, ...args: any[]): Promise<void> => {
+function withErrorHandler (handler: (socket: Socket, ...args: any[]) => Promise<void>) {
+  return async (socket: Socket, ...args: any[]): Promise<void> => {
       try {
         await handler(socket, ...args);
       } catch (error) {
         logError(error as Error, "Event Handler");
         sendErrorToClient(socket, error as SocketError);
       }
-    };
+    }
+}
 
 /**
- * Attaches a global error listener to the server
+ * Attaches a globalThis error listener to the server
  * @param io - The Socket.IO server instance
  */
-const attachGlobalErrorHandler = (io: Server): void => {
+function attachGlobalErrorHandler (io: Server): void {
   io.on("connection", (socket: Socket) => {
     // Global error handling for the socket
     socket.on("error", (error: Error) => {
@@ -67,11 +67,11 @@ const attachGlobalErrorHandler = (io: Server): void => {
       
     });
   });
-};
+}
 
 export {
+  attachGlobalErrorHandler,
   logError,
   sendErrorToClient,
   withErrorHandler,
-  attachGlobalErrorHandler,
 };

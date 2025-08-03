@@ -1,7 +1,9 @@
 // src/api/models/AuditLog.ts
-import type { Document, Model, CallbackError, Types } from "mongoose";
+import type { CallbackError, Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
+
 import { logger } from "../../utils/winstonLogger";
 
 // --- Types & Interfaces ---
@@ -20,7 +22,7 @@ export interface IAuditTrail extends Document {
 }
 
 export interface IAuditTrailModel extends Model<IAuditTrail> {
-  logEvent(
+  logEvent: (
     userId: Types.ObjectId | null,
     entityType: EntityType,
     entityId: Types.ObjectId,
@@ -28,7 +30,7 @@ export interface IAuditTrailModel extends Model<IAuditTrail> {
     description?: string,
     ipAddress?: string,
     userAgent?: string
-  ): Promise<IAuditTrail>;
+  ) => Promise<IAuditTrail>;
 }
 
 // --- Schema Definition ---
@@ -102,6 +104,7 @@ AuditTrailSchema.post<IAuditTrail>(
 
 AuditTrailSchema.post<IAuditTrail>(
   "save",
+  // eslint-disable-next-line prefer-arrow-callback
   function (
     this: IAuditTrail,
     error: CallbackError,

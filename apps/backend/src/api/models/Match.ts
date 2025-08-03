@@ -1,5 +1,6 @@
 // src/api/models/Match.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interface for Match Document ---
@@ -11,12 +12,12 @@ export interface IMatch extends Document {
   updatedAt: Date;
 
   // Instance methods
-  updateStatus(status: IMatch["status"]): Promise<IMatch>;
+  updateStatus: (status: IMatch["status"]) => Promise<IMatch>;
 }
 
 // --- Model Interface for Statics ---
 export interface IMatchModel extends Model<IMatch> {
-  findMatchesForUser(userId: Types.ObjectId): Promise<IMatch[]>;
+  findMatchesForUser: (userId: Types.ObjectId) => Promise<IMatch[]>;
 }
 
 // --- Schema Definition ---

@@ -1,14 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { check, validationResult } from "express-validator";
 
 /**
  * Middleware to handle validation results and send structured errors.
  */
-export const validationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
+export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -36,7 +33,7 @@ export const validationMiddleware = (
   }
 
   next(); // Proceed to the next middleware
-};
+}
 
 /**
  * Validation for creating a role.
@@ -48,7 +45,7 @@ export const createRoleValidation = [
     .trim()
     .isLength({ min: 3, max: 50 })
     .withMessage("Role name must be between 3 and 50 characters.")
-    .matches(/^[a-zA-Z\s]+$/)
+    .matches(/^[a-z\s]+$/i)
     .withMessage("Role name must only contain letters and spaces.")
     .escape(), // Sanitize to prevent XSS
 
@@ -78,7 +75,7 @@ export const updateRoleValidation = [
     .trim()
     .isLength({ min: 3, max: 50 })
     .withMessage("Role name must be between 3 and 50 characters.")
-    .matches(/^[a-zA-Z\s]+$/)
+    .matches(/^[a-z\s]+$/i)
     .withMessage("Role name must only contain letters and spaces.")
     .escape(), // Sanitize to prevent XSS
 

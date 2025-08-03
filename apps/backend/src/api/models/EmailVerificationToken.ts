@@ -1,8 +1,9 @@
 // src/api/models/EmailVerificationToken.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 // --- Interface for a single token document ---
 export interface IEmailVerificationToken extends Document {
@@ -13,7 +14,7 @@ export interface IEmailVerificationToken extends Document {
   updatedAt: Date;
 
   // Instance method to check expiration
-  isExpired(): boolean;
+  isExpired: () => boolean;
 }
 
 // --- Model interface for our statics ---
@@ -22,15 +23,15 @@ export interface IEmailVerificationTokenModel
   /**
    * Create a new token for `userId`, valid for `expiresInHours` (default 24h).
    */
-  generate(
+  generate: (
     userId: Types.ObjectId,
     expiresInHours?: number
-  ): Promise<IEmailVerificationToken>;
+  ) => Promise<IEmailVerificationToken>;
 
   /**
    * Look up a token string and ensure it's not expired.
    */
-  findValid(token: string): Promise<IEmailVerificationToken | null>;
+  findValid: (token: string) => Promise<IEmailVerificationToken | null>;
 }
 
 // --- Schema definition ---
@@ -100,7 +101,8 @@ EmailVerificationTokenSchema.statics.findValid = async function (
   token: string
 ): Promise<IEmailVerificationToken | null> {
   const doc = await this.findOne({ token });
-  if (!doc || doc.isExpired()) return null;
+  if (!doc || doc.isExpired()) 
+return null;
   return doc;
 };
 

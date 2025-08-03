@@ -1,18 +1,19 @@
 // src/api/routes/groupRoute.ts - WITH GROUP MIDDLEWARE
 import { Router } from "express";
-import { check } from "express-validator";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
+import { check } from "express-validator";
+
 import * as groupController from "../controllers/groupController";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import { protect } from "../middleware/authMiddleware";
 import {
-  checkGroupExists,
-  checkGroupMembership,
-  checkGroupAdmin,
-  checkGroupAccess,
   checkCanJoinGroup,
   checkCanLeaveGroup,
+  checkGroupAccess,
+  checkGroupAdmin,
+  checkGroupExists,
+  checkGroupMembership,
 } from "../middleware/groupMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
 const groupLimiter = rateLimit({

@@ -1,7 +1,16 @@
 {
-  "name": "accountability-buddy-backend",
+  "name": "@ab/backend",
   "version": "1.0.0",
   "description": "Backend for the Accountability Buddy platform",
+  "author": "Your Name or Team",
+  "license": "ISC",
+  "keywords": [
+    "accountability",
+    "backend",
+    "typescript",
+    "goal-tracking",
+    "real-time"
+  ],
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development NODE_OPTIONS='--max-old-space-size=4096 --no-deprecation' nodemon src/server.ts",
@@ -10,8 +19,8 @@
     "build:railway": "tsc --project tsconfig.railway.json",
     "build:js": "tsc --allowJs --checkJs false --noEmit false src/**/*.ts --outDir dist",
     "start": "cross-env NODE_ENV=production node dist/server.js",
-    "lint": "eslint \"src/**/*.{ts,js}\"",
-    "lint:fix": "eslint \"src/**/*.{ts,js}\" --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
     "seed:users": "ts-node src/scripts/seedUsers.ts",
     "seed:roles": "ts-node src/scripts/seedRoles.ts",
@@ -31,15 +40,6 @@
     "email-worker": "ts-node src/queues/emailWorker.ts",
     "check-types": "tsc --noEmit"
   },
-  "keywords": [
-    "accountability",
-    "backend",
-    "typescript",
-    "goal-tracking",
-    "real-time"
-  ],
-  "author": "Your Name or Team",
-  "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
     "@aws-sdk/s3-request-presigner": "^3.758.0",
@@ -103,6 +103,7 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
+    "@ab/eslint-config": "*",
     "@types/amqplib": "^0.10.6",
     "@types/aws-sdk": "^0.0.42",
     "@types/bcryptjs": "^2.4.6",
@@ -139,17 +140,12 @@
     "@types/validator": "^13.12.2",
     "@types/web-push": "^3.6.4",
     "@types/winston": "^2.4.4",
-    "@typescript-eslint/eslint-plugin": "^8.20.0",
-    "@typescript-eslint/parser": "^8.20.0",
     "cross-env": "^7.0.3",
-    "eslint": "^9.18.0",
-    "eslint-plugin-prettier": "^5.2.1",
     "express": "^4.21.2",
     "ioredis-mock": "^8.9.0",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.1.4",
     "nodemon": "^3.1.9",
-    "prettier": "^3.4.2",
     "supertest": "^6.3.4",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",

@@ -1,5 +1,6 @@
 // src/middleware/errorMiddleware.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 
 // Export the CustomError interface
@@ -8,12 +9,7 @@ export interface CustomError extends Error {
   details?: any;
 }
 
-const errorMiddleware = (
-  error: CustomError,
-  req: Request,
-  res: Response,
-  _next: NextFunction
-): void => {
+function errorMiddleware (error: CustomError,  req: Request,  res: Response,  _next: NextFunction): void {
   // Log the error details
   logger.error(
     `Error: ${error.message}, Status: ${error.statusCode || 500}, Path: ${
@@ -27,6 +23,6 @@ const errorMiddleware = (
     message: error.message || "Internal Server Error",
     ...(process.env.NODE_ENV === "development" && { details: error.details }), // Show details only in development
   });
-};
+}
 
 export default errorMiddleware;

@@ -1,8 +1,10 @@
 // src/api/services/AdminService.ts
-import type { IUser } from "../models/User";
-import { User } from "../models/User";
-import Report from "../models/Report";
 import type { Document } from "mongoose";
+
+import type { IUser } from "../models/User";
+
+import Report from "../models/Report";
+import { User } from "../models/User";
 
 export interface DashboardTotals {
   totalUsers: number;

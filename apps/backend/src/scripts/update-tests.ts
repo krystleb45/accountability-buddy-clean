@@ -1,7 +1,7 @@
 // src/scripts/update‑tests.ts
 import glob from "glob";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 const TEST_GLOB = "src/test/**/*.ts";
 
@@ -17,29 +17,29 @@ files.forEach((file: string) => {
     .replace(/import\s+request.*supertest;?\r?\n?/g, "")
     .replace(/import\s+app.*src\/app;?\r?\n?/g, "");
 
-  // 2) Rewrite request(app).METHOD(...) → global.authMETHOD(...)
+  // 2) Rewrite request(app).METHOD(...) → globalThis.authMETHOD(...)
   text = text
     // GET
     .replace(
       /request\(app\)\.get\((['"`])(.+?)\1\)/g,
-      (_match: string, _q: string, p1: string) => `global.authGet('${p1}')`
+      (_match: string, _q: string, p1: string) => `globalThis.authGet('${p1}')`
     )
     // POST
     .replace(
       /request\(app\)\.post\((['"`])(.+?)\1\)\.send\(([^)]+)\)/g,
       (_match: string, _q: string, p1: string, body: string) =>
-        `global.authPost('${p1}', ${body})`
+        `globalThis.authPost('${p1}', ${body})`
     )
     // PUT
     .replace(
       /request\(app\)\.put\((['"`])(.+?)\1\)\.send\(([^)]+)\)/g,
       (_match: string, _q: string, p1: string, body: string) =>
-        `global.authPut('${p1}', ${body})`
+        `globalThis.authPut('${p1}', ${body})`
     )
     // DELETE
     .replace(
       /request\(app\)\.delete\((['"`])(.+?)\1\)/g,
-      (_match: string, _q: string, p1: string) => `global.authDelete('${p1}')`
+      (_match: string, _q: string, p1: string) => `globalThis.authDelete('${p1}')`
     );
 
   // Overwrite the file

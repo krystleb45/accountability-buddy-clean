@@ -1,8 +1,9 @@
 // src/api/routes/goalRoutes.ts - Updated with subscription restrictions
 import { Router } from "express";
-import { protect } from "../middleware/authJwt";
-import { validateSubscription, validateGoalLimit, trialPrompt } from "../middleware/subscriptionValidation";
+
 import * as goalController from "../controllers/GoalController";
+import { protect } from "../middleware/authJwt";
+import { trialPrompt, validateGoalLimit, validateSubscription } from "../middleware/subscriptionValidation";
 
 const router = Router();
 

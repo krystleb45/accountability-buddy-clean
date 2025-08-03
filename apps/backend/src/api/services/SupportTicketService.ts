@@ -1,7 +1,10 @@
 // src/api/services/SupportTicketService.ts
 import { Types } from "mongoose";
-import SupportTicketModel, { ISupportTicket } from "../models/SupportTicket";
+
+import type { ISupportTicket } from "../models/SupportTicket";
+
 import { createError } from "../middleware/errorHandler";
+import SupportTicketModel from "../models/SupportTicket";
 
 export interface CreateTicketDTO {
   name: string;

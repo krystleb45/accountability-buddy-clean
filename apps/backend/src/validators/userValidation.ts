@@ -1,4 +1,5 @@
 import type { ValidationChain } from "express-validator";
+
 import { check } from "express-validator";
 
 /**
@@ -11,7 +12,7 @@ export const registerUserValidation: ValidationChain[] = [
     .trim()
     .isLength({ min: 3, max: 30 })
     .withMessage("Username must be between 3 and 30 characters.")
-    .matches(/^[a-zA-Z0-9_-]+$/)
+    .matches(/^[\w-]+$/)
     .withMessage("Username can only contain letters, numbers, underscores, and dashes.")
     .escape(),
 
@@ -44,7 +45,7 @@ export const updateUserProfileValidation: ValidationChain[] = [
     .trim()
     .isLength({ min: 3, max: 30 })
     .withMessage("Username must be between 3 and 30 characters.")
-    .matches(/^[a-zA-Z0-9_-]+$/)
+    .matches(/^[\w-]+$/)
     .withMessage("Username can only contain letters, numbers, underscores, and dashes.")
     .escape(),
 

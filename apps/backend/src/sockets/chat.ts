@@ -1,5 +1,6 @@
 // src/sockets/chat.ts
 import type { Server, Socket } from "socket.io";
+
 import Chat from "../api/models/Chat";
 import Group from "../api/models/Group";      // ← fixed import
 import { User } from "../api/models/User";
@@ -25,7 +26,7 @@ interface FetchChatHistoryData {
   roomId: string;
 }
 
-const chatSocket = (io: Server, socket: Socket): void => {
+function chatSocket (io: Server, socket: Socket): void {
   socket.on("joinRoom", async (data: JoinRoomData) => {
     const { roomId, userId } = data;
     if (!roomId || !userId) {
@@ -136,6 +137,6 @@ const chatSocket = (io: Server, socket: Socket): void => {
   socket.on("disconnect", () => {
     logger.info("A user disconnected.");
   });
-};
+}
 
 export default chatSocket;

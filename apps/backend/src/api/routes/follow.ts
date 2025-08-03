@@ -1,10 +1,13 @@
 // src/api/routes/follow.ts
-import { Router, Request, Response, NextFunction } from "express";
-import { protect } from "../middleware/authMiddleware";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import { param } from "express-validator";
+
+import FollowController from "../controllers/FollowController";
+import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 import catchAsync from "../utils/catchAsync";
-import FollowController from "../controllers/FollowController";
 
 const router = Router();
 

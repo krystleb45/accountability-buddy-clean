@@ -1,5 +1,5 @@
+import https from "node:https";
 import Stripe from "stripe";
-import https from "https";
 
 // Validate the presence of the secret key
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;

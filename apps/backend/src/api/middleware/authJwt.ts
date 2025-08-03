@@ -1,12 +1,15 @@
 // src/api/middleware/authJwt.ts - FIXED VERSION
 
-import { RequestHandler } from "express";
+import type { RequestHandler } from "express";
+
 import jwt from "jsonwebtoken";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import { logger } from "../../utils/winstonLogger";
+import { User } from "../models/User";
 import catchAsync from "../utils/catchAsync";
 import { createError } from "./errorHandler";
-import { User } from "../models/User";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
-import { logger } from "../../utils/winstonLogger";
 
 interface JwtPayload {
   userId: string;

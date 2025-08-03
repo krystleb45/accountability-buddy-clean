@@ -1,6 +1,7 @@
 // src/api/services/AnonymousMilitarySocketService.ts - FIXED: Added return types
 
-import { Server as SocketIOServer } from "socket.io";
+import type { Server as SocketIOServer } from "socket.io";
+
 import { AnonymousSession } from "../models/AnonymousMilitaryChat";
 
 export class AnonymousMilitarySocketService {
@@ -15,7 +16,7 @@ export class AnonymousMilitarySocketService {
     const militaryNamespace = this.io.of("/anonymous-military-chat");
 
     militaryNamespace.on("connection", (socket) => {
-      console.log("Anonymous military chat user connected:", socket.id);
+      // console.log("Anonymous military chat user connected:", socket.id);
 
       socket.on("join-room", async (data: { room: string, sessionId: string, displayName: string }) => {
         await this.handleSocketJoin(socket, data);

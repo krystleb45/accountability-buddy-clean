@@ -1,10 +1,13 @@
 // src/api/routes/militarySupportRoutes.ts 
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import { check } from "express-validator";
-import { protect, militaryAuth } from "../middleware/authMiddleware";
+
+import * as militarySupportController from "../controllers/militarySupportController";
+import { militaryAuth, protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 import catchAsync from "../utils/catchAsync";
-import * as militarySupportController from "../controllers/militarySupportController";
 
 const router = Router();
 

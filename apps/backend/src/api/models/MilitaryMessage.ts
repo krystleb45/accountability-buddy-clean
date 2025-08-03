@@ -1,5 +1,6 @@
 // src/api/models/MilitaryMessage.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interface for MilitaryMessage Document ---
@@ -17,20 +18,20 @@ export interface IMilitaryMessage extends Document {
   attachmentCount: number;
 
   // Instance methods
-  softDelete(): Promise<IMilitaryMessage>;
-  addAttachment(url: string): Promise<IMilitaryMessage>;
+  softDelete: () => Promise<IMilitaryMessage>;
+  addAttachment: (url: string) => Promise<IMilitaryMessage>;
 }
 
 // --- Model Interface for Statics ---
 export interface IMilitaryMessageModel extends Model<IMilitaryMessage> {
-  getByChatroom(
+  getByChatroom: (
     chatroomId: Types.ObjectId,
     limit?: number
-  ): Promise<IMilitaryMessage[]>;
-  searchText(
+  ) => Promise<IMilitaryMessage[]>;
+  searchText: (
     query: string,
     chatroomId?: Types.ObjectId
-  ): Promise<IMilitaryMessage[]>;
+  ) => Promise<IMilitaryMessage[]>;
 }
 
 // --- Schema Definition ---
@@ -110,7 +111,8 @@ MilitaryMessageSchema.statics.searchText = function (
   chatroomId?: Types.ObjectId
 ): Promise<IMilitaryMessage[]> {
   const filter: Record<string, any> = { $text: { $search: query }, isDeleted: false };
-  if (chatroomId) filter.chatroom = chatroomId;
+  if (chatroomId) 
+filter.chatroom = chatroomId;
 
   return this.find(filter, { score: { $meta: "textScore" } })
     .sort({ score: { $meta: "textScore" } })

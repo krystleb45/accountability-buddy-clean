@@ -1,9 +1,10 @@
 // src/api/controllers/ActivityController.ts
-import { Request, Response, NextFunction } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { NextFunction, Request, Response } from "express";
+
 import { createError } from "../middleware/errorHandler";
 import ActivityService from "../services/ActivityService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 interface QueryParams {
   type?: string;
@@ -29,12 +30,14 @@ interface UpdateBody {
  * @access  Private
  */
 export const logActivity = catchAsync(
-  async (req: Request<{}, any, CreateBody>, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request<unknown, any, CreateBody>, res: Response, next: NextFunction): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) return next(createError("Unauthorized", 401));
+    if (!userId) 
+return next(createError("Unauthorized", 401));
 
     const { title, description, metadata } = req.body;
-    if (!title) return next(createError("Title is required", 400));
+    if (!title) 
+return next(createError("Title is required", 400));
 
     const activity = await ActivityService.logActivity(userId, title, description, metadata);
     sendResponse(res, 201, true, "Activity logged successfully", { activity });
@@ -47,12 +50,14 @@ export const logActivity = catchAsync(
  * @access  Private
  */
 export const createActivity = catchAsync(
-  async (req: Request<{}, any, CreateBody>, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request<unknown, any, CreateBody>, res: Response, next: NextFunction): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) return next(createError("Unauthorized", 401));
+    if (!userId) 
+return next(createError("Unauthorized", 401));
 
     const { title, description, metadata } = req.body;
-    if (!title) return next(createError("Title is required", 400));
+    if (!title) 
+return next(createError("Title is required", 400));
 
     const activity = await ActivityService.createActivity(userId, title, description, metadata);
     sendResponse(res, 201, true, "Activity created successfully", { activity });
@@ -65,12 +70,13 @@ export const createActivity = catchAsync(
  * @access  Private
  */
 export const getUserActivities = catchAsync(
-  async (req: Request<{}, any, any, QueryParams>, res: Response, next: NextFunction): Promise<void> => {
+  async (req: Request<unknown, any, any, QueryParams>, res: Response, next: NextFunction): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) return next(createError("Unauthorized", 401));
+    if (!userId) 
+return next(createError("Unauthorized", 401));
 
-    const page = parseInt(req.query.page ?? "1", 10);
-    const limit = parseInt(req.query.limit ?? "10", 10);
+    const page = Number.parseInt(req.query.page ?? "1", 10);
+    const limit = Number.parseInt(req.query.limit ?? "10", 10);
     const type = req.query.type;
 
     const { activities, total } = await ActivityService.getUserActivities(userId, { type, page, limit });

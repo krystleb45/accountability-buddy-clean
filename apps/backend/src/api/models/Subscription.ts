@@ -1,6 +1,7 @@
 // src/api/models/Subscription.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Subscription Document Interface ---
@@ -34,15 +35,15 @@ export interface ISubscription extends Document {
   durationDays?: number;
 
   // Instance methods
-  cancel(): Promise<ISubscription>;
-  renew(periodEnd: Date): Promise<ISubscription>;
-  isTrialActive(): boolean;
+  cancel: () => Promise<ISubscription>;
+  renew: (periodEnd: Date) => Promise<ISubscription>;
+  isTrialActive: () => boolean;
 }
 
 // --- Subscription Model Static Interface ---
 export interface ISubscriptionModel extends Model<ISubscription> {
-  findByUser(userId: Types.ObjectId): Promise<ISubscription[]>;
-  expireSubscriptions(): Promise<void>;
+  findByUser: (userId: Types.ObjectId) => Promise<ISubscription[]>;
+  expireSubscriptions: () => Promise<void>;
 }
 
 // --- Schema Definition ---
@@ -135,7 +136,8 @@ SubscriptionSchema.methods.renew = async function (
   this.currentPeriodEnd = periodEnd;
   this.status = "active";
   this.isActive = true;
-  if (!this.subscriptionStart) this.subscriptionStart = new Date();
+  if (!this.subscriptionStart) 
+this.subscriptionStart = new Date();
   return this.save();
 };
 

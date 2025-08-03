@@ -1,14 +1,16 @@
 // src/api/controllers/dashboardController.ts - Updated with subscription awareness
 import type { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import { logger } from "../../utils/winstonLogger";
 import { createError } from "../middleware/errorHandler";
 import { User } from "../models/User";
-import ProgressService from "../services/ProgressService";
 import CollaborationService from "../services/CollaborationGoalService";
 import GoalManagementService from "../services/GoalManagementService";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
-import { logger } from "../../utils/winstonLogger";
+import ProgressService from "../services/ProgressService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 /**
  * GET /api/dashboard/stats

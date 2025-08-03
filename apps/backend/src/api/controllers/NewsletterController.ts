@@ -1,7 +1,8 @@
 // src/api/controllers/NewsletterController.ts
-import { Request, Response, NextFunction } from "express";
-import Newsletter from "../models/Newsletter";
+import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
+import Newsletter from "../models/Newsletter";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
 
@@ -19,7 +20,7 @@ export const signupNewsletter = catchAsync(
     }
 
     // find or create subscriber
-    let subscriber = await Newsletter.findOrCreate(email.trim().toLowerCase());
+    const subscriber = await Newsletter.findOrCreate(email.trim().toLowerCase());
 
     if (subscriber.status === "subscribed") {
       sendResponse(res, 400, false, "Email is already subscribed.");

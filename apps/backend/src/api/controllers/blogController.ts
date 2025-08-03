@@ -1,6 +1,8 @@
 // src/api/controllers/blogController.ts
 import type { Request, Response } from "express";
+
 import mongoose from "mongoose";
+
 import * as blogService from "../services/blogService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
@@ -8,8 +10,9 @@ import sendResponse from "../utils/sendResponse";
 //
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 //
-const validateObjectId = (id: string): boolean =>
-  mongoose.Types.ObjectId.isValid(id);
+function validateObjectId (id: string): boolean {
+  return mongoose.Types.ObjectId.isValid(id)
+}
 
 /**
  * @desc Create a new blog post
@@ -67,7 +70,7 @@ export const toggleLikeBlogPost = catchAsync(
  */
 export const addComment = catchAsync(
   async (
-    req: Request<{ id: string }, {}, { text: string }>,
+    req: Request<{ id: string }, unknown, { text: string }>,
     res: Response
   ): Promise<void> => {
     if (!req.user) {
@@ -115,11 +118,11 @@ export const removeComment = catchAsync(
  */
 export const getAllBlogPosts = catchAsync(
   async (
-    req: Request<{}, {}, {}, { limit?: string; page?: string }>,
+    req: Request<unknown, unknown, unknown, { limit?: string; page?: string }>,
     res: Response
   ): Promise<void> => {
-    const limit = parseInt(req.query.limit || "10", 10);
-    const page = parseInt(req.query.page || "1", 10);
+    const limit = Number.parseInt(req.query.limit || "10", 10);
+    const page = Number.parseInt(req.query.page || "1", 10);
     const posts = await blogService.getAllBlogPostsService(limit, page);
     sendResponse(res, 200, true, "Blog posts retrieved", { posts });
   }

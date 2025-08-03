@@ -1,8 +1,9 @@
 // src/api/controllers/XpHistoryController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import XpHistoryService from "../services/XpHistoryService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import XpHistoryService from "../services/XpHistoryService";
 
 /**
  * @desc    Record a new XP entry for a user

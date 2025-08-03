@@ -1,13 +1,16 @@
 // src/api/controllers/emailController.ts
 import type { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+
 import sanitize from "mongo-sanitize";
+
 import { logger } from "../../utils/winstonLogger";
 import JobQueueService from "../services/jobQueue";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
-const isValidEmail = (email: string): boolean =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function isValidEmail (email: string): boolean {
+  return /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email)
+}
 
 /**
  * @desc    Enqueue a single email to be sent

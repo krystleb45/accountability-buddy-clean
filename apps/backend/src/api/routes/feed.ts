@@ -1,10 +1,11 @@
 // src/api/routes/feed.ts
 import { Router } from "express";
-import { check, param } from "express-validator";
 import rateLimit from "express-rate-limit";
+import { check, param } from "express-validator";
+
+import * as feedController from "../controllers/feedController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import * as feedController from "../controllers/feedController";
 
 const router = Router();
 

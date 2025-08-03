@@ -1,4 +1,5 @@
-import { parse, format } from "date-fns";
+import { format, parse } from "date-fns";
+
 import { logger } from "../../utils/winstonLogger";
 
 export const DataProcessingService = {
@@ -138,8 +139,10 @@ export const DataProcessingService = {
     return data.sort((a, b) => {
       const aValue = a[key];
       const bValue = b[key];
-      if (aValue < bValue) return order === "asc" ? -1 : 1;
-      if (aValue > bValue) return order === "asc" ? 1 : -1;
+      if (aValue < bValue) 
+return order === "asc" ? -1 : 1;
+      if (aValue > bValue) 
+return order === "asc" ? 1 : -1;
       return 0;
     });
   },

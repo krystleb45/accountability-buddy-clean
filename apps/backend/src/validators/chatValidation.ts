@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import type { ValidationError, ValidationChain } from "express-validator";
+import type { NextFunction, Request, Response } from "express";
+import type { ValidationChain, ValidationError } from "express-validator";
+
 import { check, validationResult } from "express-validator";
 
 /**
@@ -8,11 +9,7 @@ import { check, validationResult } from "express-validator";
  * @param res - Express response object.
  * @param next - Express next function.
  */
-export const chatValidationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
+export function chatValidationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const formattedErrors = errors.array().map((error: ValidationError) => ({
@@ -28,20 +25,22 @@ export const chatValidationMiddleware = (
   }
 
   next();
-};
+}
 
 /**
  * Generates a common validation rule for Mongo ID fields.
  * @param field - The field name to validate.
  * @returns Array of validation chains for the specified field.
  */
-const mongoIdRule = (field: string): ValidationChain[] => [
+function mongoIdRule (field: string): ValidationChain[] {
+  return [
   check(field)
     .notEmpty()
     .withMessage(`${field} is required`)
     .isMongoId()
     .withMessage(`Invalid ${field}`),
-];
+]
+}
 
 /**
  * Validation rules for sending a message.

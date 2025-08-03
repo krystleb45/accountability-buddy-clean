@@ -1,6 +1,8 @@
+import type { NextFunction, Request, Response } from "express";
+
 import rateLimit from "express-rate-limit";
+
 import { logger } from "../../utils/winstonLogger";
-import { Request, Response, NextFunction } from "express";
 
 // Load IP whitelist from environment variables or fallback to defaults
 const trustedIps: string[] = (
@@ -14,7 +16,7 @@ const trustedIps: string[] = (
  */
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes window
-  max: parseInt(process.env.RATE_LIMIT_MAX || "100", 10), // Default to 100 requests
+  max: Number.parseInt(process.env.RATE_LIMIT_MAX || "100", 10), // Default to 100 requests
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req: Request): boolean => trustedIps.includes(req.ip ?? ""), // Skip for trusted IPs
@@ -40,16 +42,12 @@ const limiter = rateLimit({
 /**
  * Middleware to log rate-limit checks (optional debugging feature)
  */
-export const rateLimitLogger = (
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-): void => {
+export function rateLimitLogger (req: Request,  _res: Response,  next: NextFunction): void {
   logger.info(`[Rate Limit Check] ${req.method} ${req.originalUrl}`, {
     ip: req.ip ?? "unknown",
     user: (req as any).user?.id || "Guest",
   });
   next();
-};
+}
 
 export default limiter;

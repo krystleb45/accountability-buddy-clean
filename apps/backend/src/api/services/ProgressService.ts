@@ -1,15 +1,17 @@
 // src/api/services/ProgressService.ts
 import { Types } from "mongoose";
-import Goal, { IGoal } from "../models/Goal";
-import AccountabilityPartnership, {
+
+import type {
   IAccountabilityPartnership,
 } from "../models/AccountabilityPartnership";
+import type { IGoal } from "../models/Goal";
+
 import { createError } from "../middleware/errorHandler";
+import AccountabilityPartnership from "../models/AccountabilityPartnership";
+import Goal from "../models/Goal";
 
 export interface ProgressDashboard {
-  goals: Pick<IGoal,
-    "title" | "description" | "dueDate" | "status" | "milestones" | "progress"
-  >[];
+  goals: Pick<IGoal,    "title" | "description" | "dueDate" | "status" | "milestones" | "progress"  >[];
   partnerships: (IAccountabilityPartnership & {
     user1: { _id: string; username: string; profilePicture?: string };
     user2: { _id: string; username: string; profilePicture?: string };

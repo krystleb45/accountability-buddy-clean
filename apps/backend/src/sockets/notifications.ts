@@ -1,11 +1,14 @@
-import type { Server as HttpServer } from "http";
+import type { Server as HttpServer } from "node:http";
 import type { Socket } from "socket.io";
+
 import { Server } from "socket.io";
-import chatSocket from "./chat"; // Chat event handlers
+
 import type { INotification } from "../api/models/Notification";
+
 import Notification from "../api/models/Notification";
 import AuthService from "../api/services/AuthService"; // for verifyToken
 import { logger } from "../utils/winstonLogger";
+import chatSocket from "./chat"; // Chat event handlers
 
 interface DecodedToken {
   user: {
@@ -14,7 +17,7 @@ interface DecodedToken {
   };
 }
 
-const notificationSocket = (server: HttpServer): Server => {
+function notificationSocket (server: HttpServer): Server {
   const io = new Server(server, {
     cors: {
       origin: process.env.ALLOWED_ORIGINS || "*",
@@ -29,7 +32,7 @@ const notificationSocket = (server: HttpServer): Server => {
       // grab either query token or Authorization header
       const raw =
         socket.handshake.query.token ||
-        socket.handshake.headers["authorization"];
+        socket.handshake.headers.authorization;
       if (!raw) {
         logger.warn("Socket auth failed: no token");
         return next(new Error("Authentication error: No token provided."));
@@ -111,6 +114,6 @@ const notificationSocket = (server: HttpServer): Server => {
   });
 
   return io;
-};
+}
 
 export default notificationSocket;

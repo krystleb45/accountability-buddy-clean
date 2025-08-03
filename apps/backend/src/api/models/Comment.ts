@@ -1,5 +1,6 @@
 // src/api/models/Comment.ts
-import type { Document, Model, Types, CallbackError } from "mongoose";
+import type { CallbackError, Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 export type CommentableType =
@@ -23,18 +24,18 @@ export interface IComment extends Document {
   likeCount: number;
 
   // Instance methods
-  addLike(userId: Types.ObjectId): Promise<IComment>;
-  removeLike(userId: Types.ObjectId): Promise<IComment>;
+  addLike: (userId: Types.ObjectId) => Promise<IComment>;
+  removeLike: (userId: Types.ObjectId) => Promise<IComment>;
 }
 
 export interface ICommentModel extends Model<IComment> {
-  getByEntity(
+  getByEntity: (
     entityType: CommentableType,
     entityId: Types.ObjectId,
     page?: number,
     pageSize?: number
-  ): Promise<IComment[]>;
-  getReplies(parentId: Types.ObjectId): Promise<IComment[]>;
+  ) => Promise<IComment[]>;
+  getReplies: (parentId: Types.ObjectId) => Promise<IComment[]>;
 }
 
 const CommentSchema = new Schema<IComment, ICommentModel>(

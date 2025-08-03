@@ -1,14 +1,16 @@
 // src/api/controllers/LeaderboardController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import LeaderboardService from "../services/LeaderboardService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import LeaderboardService from "../services/LeaderboardService";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
 
 export const getLeaderboard = catchAsync(
   async (req: Request<{}, {}, {}, { limit?: string; page?: string }>, res: Response) => {
-    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit || "10", 10)));
-    const page = Math.max(1, parseInt(req.query.page || "1", 10));
+    const limit = Math.max(1, Math.min(100, Number.parseInt(req.query.limit || "10", 10)));
+    const page = Math.max(1, Number.parseInt(req.query.page || "1", 10));
     const { data, pagination } = await LeaderboardService.fetchPage(limit, page);
 
     sendResponse(res, 200, true, "Leaderboard fetched successfully", {

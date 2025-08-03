@@ -4,7 +4,7 @@ describe("leaderboard routes", () => {
   });
 
   it("GET /api/leaderboard ? 200 OK", async () => {
-    const res = await global.authGet("/api/leaderboard");
+    const res = await globalThis.authGet("/api/leaderboard");
     expect(res.status).toBe(200);
     // TODO: add more assertions here
   });

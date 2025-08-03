@@ -1,8 +1,9 @@
 // src/api/models/Feedback.ts
 
 import type { Document, Model, Types } from "mongoose";
-import mongoose, { Schema } from "mongoose";
+
 import sanitize from "mongo-sanitize";
+import mongoose, { Schema } from "mongoose";
 
 // --- Types & Interfaces ---
 export type FeedbackType = "bug" | "feature-request" | "other";
@@ -21,11 +22,11 @@ export interface IFeedback extends Document {
   updatedAt: Date;
 
   // Instance methods
-  markAsReviewed(): Promise<IFeedback>;
+  markAsReviewed: () => Promise<IFeedback>;
 }
 
 export interface IFeedbackModel extends Model<IFeedback> {
-  getFeedbackByType(feedbackType: FeedbackType): Promise<IFeedback[]>;
+  getFeedbackByType: (feedbackType: FeedbackType) => Promise<IFeedback[]>;
 }
 
 // --- Schema Definition ---

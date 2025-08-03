@@ -1,5 +1,7 @@
-import type { Request, Response, NextFunction } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core";
+
 import webPush from "web-push";
+
 import { logger } from "../../utils/winstonLogger";
 // Validate and configure VAPID keys
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
@@ -17,11 +19,7 @@ webPush.setVapidDetails(`mailto:${EMAIL}`, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
  * Middleware for handling Web Push notifications
  * @returns {Promise<void>} Resolves after processing the request
  */
-export const sendNotification = async (
-  req: Request,
-  res: Response,
-  _next: NextFunction, // Renamed 'next' to '_next' to avoid the unused variable warning
-): Promise<void> => {
+export async function sendNotification (req: Request,  res: Response,  _next: NextFunction): Promise<void> {
   try {
     const { subscription, payload } = req.body;
 
@@ -38,4 +36,4 @@ export const sendNotification = async (
     logger.error(`Failed to send Web Push notification: ${errorMessage}`);
     res.status(500).json({ message: "Failed to send notification.", error: errorMessage });
   }
-};
+}

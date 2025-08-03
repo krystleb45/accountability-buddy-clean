@@ -1,6 +1,7 @@
 // scripts/check-test-routes.js
-const fs   = require("fs");
 const glob = require("glob");
+const fs   = require("node:fs");
+
 const appTs = fs.readFileSync("src/app.ts", "utf8");
 
 // 1) Extract all mounted /api/… prefixes from app.ts
@@ -22,7 +23,8 @@ tests.forEach((file: string) => {
   while (c = callRe.exec(src)) {
     const path = c[1];
     if (path.startsWith("/api/") && !mounted.has(path)) {
-      if (!missing.has(file)) missing.set(file, []);
+      if (!missing.has(file)) 
+missing.set(file, []);
       missing.get(file).push(path);
     }
   }

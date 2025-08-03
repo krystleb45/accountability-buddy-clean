@@ -1,5 +1,6 @@
 // src/api/models/Point.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Redemption Subdocument Interface ---
@@ -19,15 +20,15 @@ export interface IPoint extends Document {
   updatedAt: Date;                      // Auto-generated
 
   // Instance methods
-  addPoints(pointsToAdd: number): Promise<IPoint>;
-  subtractPoints(pointsToSubtract: number): Promise<IPoint>;
-  recordRedemption(reward: string, pointsSpent: number): Promise<IPoint>;
+  addPoints: (pointsToAdd: number) => Promise<IPoint>;
+  subtractPoints: (pointsToSubtract: number) => Promise<IPoint>;
+  recordRedemption: (reward: string, pointsSpent: number) => Promise<IPoint>;
 }
 
 // --- Model Interface for Statics ---
 export interface IPointModel extends Model<IPoint> {
-  findByUser(userId: Types.ObjectId): Promise<IPoint>;
-  getTotalPoints(userId: Types.ObjectId): Promise<number>;
+  findByUser: (userId: Types.ObjectId) => Promise<IPoint>;
+  getTotalPoints: (userId: Types.ObjectId) => Promise<number>;
 }
 
 // --- Redemption Schema ---
@@ -83,7 +84,8 @@ PointSchema.methods.subtractPoints = async function (
   this: IPoint,
   pointsToSubtract: number
 ): Promise<IPoint> {
-  if (this.points < pointsToSubtract) throw new Error("Insufficient points.");
+  if (this.points < pointsToSubtract) 
+throw new Error("Insufficient points.");
   this.points -= pointsToSubtract;
   await this.save();
   return this;
@@ -94,7 +96,8 @@ PointSchema.methods.recordRedemption = async function (
   reward: string,
   pointsSpent: number
 ): Promise<IPoint> {
-  if (this.points < pointsSpent) throw new Error("Insufficient points for redemption.");
+  if (this.points < pointsSpent) 
+throw new Error("Insufficient points for redemption.");
   this.points -= pointsSpent;
   this.redemptions.push({ reward, pointsSpent, redemptionDate: new Date() } as any);
   await this.save();

@@ -1,9 +1,12 @@
 // src/api/services/AuthService.ts
-import jwt, { SignOptions, JwtPayload } from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import Role from "../models/Role";
-import { logger } from "../../utils/winstonLogger";
+import type { JwtPayload, SignOptions } from "jsonwebtoken";
 import type { StringValue } from "ms";
+
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+import { logger } from "../../utils/winstonLogger";
+import Role from "../models/Role";
 
 interface TokenPayload {
   userId: string;
@@ -26,7 +29,7 @@ const AuthService = {
     if (password.length < 6) {
       throw new Error("Password must be at least 6 characters.");
     }
-    const rounds = parseInt(SALT_ROUNDS, 10);
+    const rounds = Number.parseInt(SALT_ROUNDS, 10);
     return bcrypt.hash(password, rounds);
   },
 

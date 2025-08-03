@@ -1,6 +1,8 @@
 // src/api/middleware/FileAccessControlMiddleware.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { Types } from "mongoose";
+
 import FileUpload from "../models/FileUpload";
 import { User } from "../models/User";
 import sendResponse from "../utils/sendResponse";

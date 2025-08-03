@@ -1,13 +1,13 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import fs from "node:fs";
+import path from "node:path";
 
 // ✅ Ensure the `uploads` directory exists
-const ensureUploadsFolder = (folderPath: string):void => {
+function ensureUploadsFolder (folderPath: string):void {
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
   }
-};
+}
 
 // ✅ Define Storage Configuration for Profile & Cover Images
 const storage = multer.diskStorage({
@@ -29,13 +29,13 @@ const storage = multer.diskStorage({
 });
 
 // ✅ File Type & Size Validation
-const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback): void => {
+function fileFilter (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback): void {
   const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
   if (!allowedTypes.includes(file.mimetype)) {
     return cb(new Error("Only JPEG, PNG, and WEBP files are allowed!"));
   }
   cb(null, true);
-};
+}
 
 // ✅ Max File Size: 2MB
 const upload = multer({

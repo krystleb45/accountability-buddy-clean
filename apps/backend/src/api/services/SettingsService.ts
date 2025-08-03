@@ -1,7 +1,10 @@
 // src/api/services/SettingsService.ts
 import bcrypt from "bcryptjs";
-import { User, IUser } from "../models/User";
+
+import type { IUser } from "../models/User";
+
 import { createError } from "../middleware/errorHandler";
+import { User } from "../models/User";
 
 export interface NotificationPrefs {
   email: boolean;
@@ -30,7 +33,8 @@ class SettingsService {
     const user = await User.findById(userId)
       .select("email username settings")
       .lean();
-    if (!user) throw createError("User not found", 404);
+    if (!user) 
+throw createError("User not found", 404);
     return user as any;
   }
 
@@ -47,7 +51,8 @@ class SettingsService {
       runValidators: true,
       context: "query",
     }).select("-password");
-    if (!user) throw createError("User not found", 404);
+    if (!user) 
+throw createError("User not found", 404);
     return user;
   }
 
@@ -60,10 +65,12 @@ class SettingsService {
     newPassword: string
   ): Promise<void> {
     const user = await User.findById(userId).select("+password");
-    if (!user) throw createError("User not found", 404);
+    if (!user) 
+throw createError("User not found", 404);
 
     const match = await bcrypt.compare(currentPassword, user.password);
-    if (!match) throw createError("Incorrect current password", 400);
+    if (!match) 
+throw createError("Incorrect current password", 400);
 
     user.password = await bcrypt.hash(newPassword, 12);
     await user.save();
@@ -78,7 +85,8 @@ class SettingsService {
     prefsInput: NotificationPrefsInput
   ): Promise<NotificationPrefs> {
     const user = await User.findById(userId);
-    if (!user) throw createError("User not found", 404);
+    if (!user) 
+throw createError("User not found", 404);
 
     // Extract only the three flags, with defaults
     const existingEmail = user.settings?.notifications?.email ?? true;
@@ -110,10 +118,12 @@ class SettingsService {
     newEmail: string
   ): Promise<string> {
     const conflict = await User.findOne({ email: newEmail });
-    if (conflict) throw createError("Email already in use", 400);
+    if (conflict) 
+throw createError("Email already in use", 400);
 
     const user = await User.findById(userId);
-    if (!user) throw createError("User not found", 404);
+    if (!user) 
+throw createError("User not found", 404);
 
     user.email = newEmail;
     await user.save();
@@ -125,7 +135,8 @@ class SettingsService {
    */
   static async deactivateAccount(userId: string): Promise<void> {
     const deleted = await User.findByIdAndDelete(userId);
-    if (!deleted) throw createError("User not found", 404);
+    if (!deleted) 
+throw createError("User not found", 404);
   }
 }
 

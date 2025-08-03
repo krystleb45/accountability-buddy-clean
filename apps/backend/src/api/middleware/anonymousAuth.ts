@@ -1,6 +1,6 @@
 // src/api/middleware/anonymousAuth.ts
 
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 interface AnonymousUser {
   sessionId: string;
@@ -13,7 +13,7 @@ interface AnonymousRequest extends Request {
   anonymousUser?: AnonymousUser;
 }
 
-export const anonymousAuth = (req: AnonymousRequest, res: Response, next: NextFunction): void => {
+export function anonymousAuth (req: AnonymousRequest, res: Response, next: NextFunction): void {
   const sessionId = req.headers["x-anonymous-session"] as string;
   const displayName = req.headers["x-anonymous-name"] as string;
 
@@ -42,5 +42,5 @@ export const anonymousAuth = (req: AnonymousRequest, res: Response, next: NextFu
   };
 
   next();
-  return; // Add explicit return (optional but good practice)
-};
+   // Add explicit return (optional but good practice)
+}

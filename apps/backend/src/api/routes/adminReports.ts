@@ -1,8 +1,9 @@
 // src/api/routes/adminReports.ts
 import { Router } from "express";
+
+import * as ReportController from "../controllers/ReportController";
 import { protect } from "../middleware/authMiddleware";
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
-import * as ReportController from "../controllers/ReportController";
 
 const router = Router();
 const isAdmin = roleBasedAccessControl(["admin"]);

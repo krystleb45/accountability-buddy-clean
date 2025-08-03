@@ -1,9 +1,11 @@
 // src/api/controllers/userController.ts
 import type { Response } from "express";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import UserService from "../services/UserService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import UserService from "../services/UserService";
 
 export const getUserProfile = catchAsync(async (req: AuthenticatedRequest, res: Response) => {
   const user = await UserService.getUserById(req.user!.id);
@@ -101,8 +103,10 @@ export const getUserStatistics = catchAsync(async (req: AuthenticatedRequest, re
  */
 export const updateUserProfile = catchAsync(async (req: AuthenticatedRequest, res: Response) => {
   const updates: Partial<{ email: string; username: string }> = {};
-  if (typeof req.body.email === "string") updates.email = req.body.email;
-  if (typeof req.body.username === "string") updates.username = req.body.username;
+  if (typeof req.body.email === "string") 
+updates.email = req.body.email;
+  if (typeof req.body.username === "string") 
+updates.username = req.body.username;
   const user = await UserService.updateProfile(req.user!.id, updates);
   sendResponse(res, 200, true, "Profile updated successfully", { user });
 });

@@ -1,9 +1,11 @@
-import fs from "fs";
-import path from "path";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import MilitaryResource from "../api/models/MilitaryResource";
+import mongoose from "mongoose";
+import fs from "node:fs";
+import path from "node:path";
+
 import type { IExternalSupportResource } from "../api/models/MilitaryResource";
+
+import MilitaryResource from "../api/models/MilitaryResource";
 import LoggingService from "../api/services/LoggingService";
 
 dotenv.config();
@@ -14,9 +16,7 @@ const defaultSeedPath = path.join(__dirname, "../seed/military_resources.json");
  * Load and seed external military resources from a JSON file
  * @param {string} [jsonPath] - Optional path to the JSON file
  */
-export const seedMilitaryResources = async (
-  jsonPath?: string
-): Promise<void> => {
+export async function seedMilitaryResources (jsonPath?: string): Promise<void> {
   try {
     const filePath = jsonPath || defaultSeedPath;
 
@@ -28,7 +28,7 @@ export const seedMilitaryResources = async (
     const resources: IExternalSupportResource[] = JSON.parse(fileContent);
 
     if (!Array.isArray(resources)) {
-      throw new Error("Invalid JSON format: expected an array of resources.");
+      throw new TypeError("Invalid JSON format: expected an array of resources.");
     }
 
     let insertedCount = 0;
@@ -54,7 +54,7 @@ export const seedMilitaryResources = async (
       error as Error
     );
   }
-};
+}
 
 /**
  * Direct command-line execution

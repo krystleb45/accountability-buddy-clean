@@ -15,10 +15,10 @@ export interface StreakRewardResult {
   }
   
 /**
-   * ✅ Check if the current streak qualifies for a milestone reward.
-   */
-export const checkStreakMilestone = (streakCount: number): StreakRewardResult => {
+ * ✅ Check if the current streak qualifies for a milestone reward.
+ */
+export function checkStreakMilestone (streakCount: number): StreakRewardResult {
   const reward = STREAK_MILESTONES[streakCount];
   return reward ? { badgeId: reward.badgeId, bonusXP: reward.bonusXP } : { bonusXP: 0 };
-};
+}
   

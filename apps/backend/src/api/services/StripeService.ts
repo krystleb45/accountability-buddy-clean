@@ -1,7 +1,10 @@
 // src/api/services/StripeService.ts - FIXED: Updates User model directly
 import Stripe from "stripe";
-import { User, SubscriptionTier } from "../models/User";
+
+import type { SubscriptionTier } from "../models/User";
+
 import { logger } from "../../utils/winstonLogger";
+import { User } from "../models/User";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-02-24.acacia",
@@ -184,7 +187,8 @@ export async function handleCheckoutCompleted(
   session: Stripe.Checkout.Session
 ): Promise<void> {
   try {
-    if (session.mode !== "subscription") return;
+    if (session.mode !== "subscription") 
+return;
 
     const customerId = session.customer as string;
     const user = await User.findOne({ stripeCustomerId: customerId });

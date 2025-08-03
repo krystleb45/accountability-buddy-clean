@@ -1,10 +1,12 @@
 // src/api/services/SearchService.ts
 import type { Document, Model } from "mongoose";
+
 import sanitize from "mongo-sanitize";
-import { User } from "../models/User";
-import Group from "../models/Group";
+
 import Goal from "../models/Goal";
+import Group from "../models/Group";
 import { Post } from "../models/Post";
+import { User } from "../models/User";
 
 interface PaginationMeta {
   totalCount: number;
@@ -47,8 +49,8 @@ class SearchService {
     rawLimit?: string
   ): Promise<PaginatedResult<typeof User.prototype>> {
     const q = sanitize(rawQuery || "");
-    const page = Math.max(1, parseInt(sanitize(rawPage || "1"), 10));
-    let limit = parseInt(sanitize(rawLimit || "10"), 10);
+    const page = Math.max(1, Number.parseInt(sanitize(rawPage || "1"), 10));
+    let limit = Number.parseInt(sanitize(rawLimit || "10"), 10);
     limit = Math.min(limit, MAX_LIMIT);
 
     const regex = new RegExp(q, "i");
@@ -65,8 +67,8 @@ class SearchService {
     rawLimit?: string
   ): Promise<PaginatedResult<typeof Group.prototype>> {
     const q = sanitize(rawQuery || "");
-    const page = Math.max(1, parseInt(sanitize(rawPage || "1"), 10));
-    let limit = parseInt(sanitize(rawLimit || "10"), 10);
+    const page = Math.max(1, Number.parseInt(sanitize(rawPage || "1"), 10));
+    let limit = Number.parseInt(sanitize(rawLimit || "10"), 10);
     limit = Math.min(limit, MAX_LIMIT);
 
     const regex = new RegExp(q, "i");
@@ -81,8 +83,8 @@ class SearchService {
     rawLimit?: string
   ): Promise<PaginatedResult<typeof Goal.prototype>> {
     const q = sanitize(rawQuery || "");
-    const page = Math.max(1, parseInt(sanitize(rawPage || "1"), 10));
-    let limit = parseInt(sanitize(rawLimit || "10"), 10);
+    const page = Math.max(1, Number.parseInt(sanitize(rawPage || "1"), 10));
+    let limit = Number.parseInt(sanitize(rawLimit || "10"), 10);
     limit = Math.min(limit, MAX_LIMIT);
 
     const regex = new RegExp(q, "i");
@@ -97,8 +99,8 @@ class SearchService {
     rawLimit?: string
   ): Promise<PaginatedResult<typeof Post.prototype>> {
     const q = sanitize(rawQuery || "");
-    const page = Math.max(1, parseInt(sanitize(rawPage || "1"), 10));
-    let limit = parseInt(sanitize(rawLimit || "10"), 10);
+    const page = Math.max(1, Number.parseInt(sanitize(rawPage || "1"), 10));
+    let limit = Number.parseInt(sanitize(rawLimit || "10"), 10);
     limit = Math.min(limit, MAX_LIMIT);
 
     const regex = new RegExp(q, "i");

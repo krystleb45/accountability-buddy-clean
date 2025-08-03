@@ -1,18 +1,21 @@
 // src/api/services/ValidationService.ts
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+
 import Joi from "joi";
-import type { Request, Response, NextFunction, RequestHandler } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 
 const ValidationService = {
   validateEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
     const isValid = emailRegex.test(email);
-    if (!isValid) logger.warn(`Invalid email format: ${email}`);
+    if (!isValid) 
+logger.warn(`Invalid email format: ${email}`);
     return isValid;
   },
 
   validatePassword(password: string): boolean {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Z\d@$!%*?&]{8,}$/i;
     const isValid = passwordRegex.test(password);
     if (!isValid) {
       logger.warn(
@@ -23,7 +26,7 @@ const ValidationService = {
   },
 
   validateUsername(username: string): boolean {
-    const usernameRegex = /^[a-zA-Z0-9_.-]{3,30}$/;
+    const usernameRegex = /^[\w.-]{3,30}$/;
     const isValid = usernameRegex.test(username);
     if (!isValid) {
       logger.warn(
@@ -75,7 +78,7 @@ export const exampleSchemas = {
     email: Joi.string().email().required(),
     password: Joi.string()
       .pattern(
-        new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)
+        new RegExp(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Z\d@$!%*?&]{8,}$/i)
       )
       .required(),
   }),

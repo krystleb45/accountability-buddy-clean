@@ -10,15 +10,7 @@ import type { Response } from "express";
  * @param   errors - Optional error details (can be an array or an object).
  * @param   meta - Optional metadata for additional response info (e.g., pagination).
  */
-const sendResponse = <T>(
-  res: Response,
-  statusCode: number,
-  success: boolean,
-  message = "No message provided",
-  data: T | null = null,
-  errors: Record<string, unknown>[] | Record<string, unknown> | null = null,
-  meta: Record<string, unknown> | null = null,
-): Response => {
+function sendResponse <T>(res: Response,  statusCode: number,  success: boolean,  message = "No message provided",  data: T | null = null,  errors: Record<string, unknown>[] | Record<string, unknown> | null = null,  meta: Record<string, unknown> | null = null): Response {
   const response: Record<string, unknown> = {
     success, // Directly accept success as a parameter
     message,
@@ -42,6 +34,6 @@ const sendResponse = <T>(
 
   // Send the JSON response
   return res.status(statusCode).json(response);
-};
+}
 
 export default sendResponse;

@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
 import multer from "multer";
+import fs from "node:fs";
+import path from "node:path";
 
 // Allowed file types for upload (e.g., images, PDFs)
 const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"];
@@ -9,11 +9,11 @@ const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"];
  * @desc    Ensures a directory exists, creates it if it doesn't.
  * @param   {string} dirPath - The path of the directory to ensure.
  */
-export const ensureDirectoryExists = (dirPath: string): void => {
+export function ensureDirectoryExists (dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
-};
+}
 
 /**
  * @desc    Multer setup for file uploads with validation, file size limit, and destination folder.
@@ -53,36 +53,36 @@ export const upload = multer({
  * @param   {string} filePath - The path of the file to delete.
  * @returns {Promise<void>} - Resolves if the file is deleted, rejects if an error occurs.
  */
-export const deleteFile = async (filePath: string): Promise<void> => {
+export async function deleteFile (filePath: string): Promise<void> {
   try {
     await fs.promises.unlink(filePath);
   } catch (err) {
     throw new Error(`Failed to delete file: ${(err as Error).message}`);
   }
-};
+}
 
 /**
  * @desc    Validates a file extension.
  * @param   {string} filename - The name of the file to validate.
  * @returns {boolean} - Returns true if the file has a valid extension, false otherwise.
  */
-export const validateFileExtension = (filename: string): boolean => {
+export function validateFileExtension (filename: string): boolean {
   const ext = path.extname(filename).toLowerCase();
   return [".jpeg", ".jpg", ".png", ".pdf"].includes(ext);
-};
+}
 
 /**
  * @desc    Reads a file from the file system.
  * @param   {string} filePath - The path of the file to read.
  * @returns {Promise<string>} - Resolves with the file content, rejects if an error occurs.
  */
-export const readFile = async (filePath: string): Promise<string> => {
+export async function readFile (filePath: string): Promise<string> {
   try {
     return await fs.promises.readFile(filePath, "utf8");
   } catch (err) {
     throw new Error(`Failed to read file: ${(err as Error).message}`);
   }
-};
+}
 
 /**
  * @desc    Writes data to a file in the file system.
@@ -90,16 +90,13 @@ export const readFile = async (filePath: string): Promise<string> => {
  * @param   {string} data - The data to write to the file.
  * @returns {Promise<void>} - Resolves if the file is written, rejects if an error occurs.
  */
-export const writeFile = async (
-  filePath: string,
-  data: string,
-): Promise<void> => {
+export async function writeFile (filePath: string,  data: string): Promise<void> {
   try {
     await fs.promises.writeFile(filePath, data, "utf8");
   } catch (err) {
     throw new Error(`Failed to write file: ${(err as Error).message}`);
   }
-};
+}
 
 export default {
   upload,

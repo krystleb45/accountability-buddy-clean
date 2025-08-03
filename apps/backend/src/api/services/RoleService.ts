@@ -1,7 +1,9 @@
 // src/api/services/RoleService.ts
-import Role, { IRole } from "../models/Role";
-import { createError } from "../middleware/errorHandler";
+import type { IRole } from "../models/Role";
+
 import { logger } from "../../utils/winstonLogger";
+import { createError } from "../middleware/errorHandler";
+import Role from "../models/Role";
 
 interface PredefinedRole {
   roleName: string;

@@ -1,18 +1,20 @@
 // src/api/routes/reminder.ts
-import type { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response, Router } from "express";
+
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
-import checkSubscription from "../middleware/checkSubscription";
+
+import { logger } from "../../utils/winstonLogger";
 import { validateReminder } from "../../validators/reminderValidation";
 import {
   createCustomReminder,
+  deleteCustomReminder,
+  disableCustomReminder,
   getCustomReminders,
   updateCustomReminder,
-  disableCustomReminder,
-  deleteCustomReminder,
 } from "../controllers/ReminderController";
-import { logger } from "../../utils/winstonLogger";
+import { protect } from "../middleware/authMiddleware";
+import checkSubscription from "../middleware/checkSubscription";
 
 const router: Router = express.Router();
 

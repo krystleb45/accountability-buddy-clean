@@ -1,11 +1,12 @@
 // src/api/controllers/AuditController.ts
-import { Request, Response, NextFunction } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
-import { createError } from "../middleware/errorHandler";
+import type { NextFunction, Request, Response } from "express";
+
 import sanitize from "mongo-sanitize";
 
+import { createError } from "../middleware/errorHandler";
 import AuditService from "../services/AuditService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 interface LogBody {
   action: string;

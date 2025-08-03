@@ -1,6 +1,7 @@
 // src/api/models/Reminder.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Recurrence and ReminderType ---
@@ -27,19 +28,19 @@ export interface IReminder extends Document {
   isRecurring: boolean;
 
   // Instance methods
-  deactivate(): Promise<IReminder>;
-  markAsSent(): Promise<IReminder>;
+  deactivate: () => Promise<IReminder>;
+  markAsSent: () => Promise<IReminder>;
 }
 
 // --- Reminder Model Static Interface ---
 export interface IReminderModel extends Model<IReminder> {
-  getUpcomingRemindersForUser(userId: Types.ObjectId): Promise<IReminder[]>;
-  getUpcomingRemindersInRange(start: Date, end: Date): Promise<IReminder[]>;
-  getUserReminders(
+  getUpcomingRemindersForUser: (userId: Types.ObjectId) => Promise<IReminder[]>;
+  getUpcomingRemindersInRange: (start: Date, end: Date) => Promise<IReminder[]>;
+  getUserReminders: (
     userId: Types.ObjectId,
     filters?: Partial<IReminder>
-  ): Promise<IReminder[]>;
-  markAsSent(reminderId: string): Promise<IReminder | null>;
+  ) => Promise<IReminder[]>;
+  markAsSent: (reminderId: string) => Promise<IReminder | null>;
 }
 
 // --- Schema Definition ---
@@ -73,7 +74,7 @@ const ReminderSchema = new Schema<IReminder, IReminderModel>(
       trim: true,
       validate: {
         validator: (v: string): boolean =>
-          !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+          !v || /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(v),
         message: "Invalid email address",
       },
     },
@@ -174,7 +175,8 @@ ReminderSchema.statics.markAsSent = async function (
   reminderId: string
 ): Promise<IReminder | null> {
   const rem = await this.findById(reminderId).exec();
-  if (!rem) return null;
+  if (!rem) 
+return null;
   rem.isSent = true;
   rem.lastSent = new Date();
   return rem.save();

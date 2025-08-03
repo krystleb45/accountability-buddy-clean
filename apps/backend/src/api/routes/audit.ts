@@ -1,8 +1,11 @@
 // src/api/routes/audit.ts
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
+
 import * as AuditController from "../controllers/AuditController";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 

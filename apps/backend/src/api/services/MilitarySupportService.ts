@@ -1,16 +1,21 @@
 // src/api/services/MilitarySupportService.ts - FIXED: Corrected import path
 
-import { createError } from "../middleware/errorHandler";
-import LoggingService from "./LoggingService";
-import {
-  ExternalSupportResource,
+import type { IMilitaryMessage } from "../models/MilitaryMessage";
+import type {
   IExternalSupportResource,
-  ResourceCategory,
-} from "../models/MilitaryResource"; // FIXED: Changed from MilitaryResource
-import MilitarySupportChatroom, {
+  ResourceCategory
+} from "../models/MilitaryResource";
+import type {
   IMilitarySupportChatroom,
 } from "../models/MilitarySupportChatroom";
-import MilitaryMessage, { IMilitaryMessage } from "../models/MilitaryMessage";
+
+import { createError } from "../middleware/errorHandler";
+import MilitaryMessage from "../models/MilitaryMessage";
+import {
+  ExternalSupportResource
+} from "../models/MilitaryResource"; // FIXED: Changed from MilitaryResource
+import MilitarySupportChatroom from "../models/MilitarySupportChatroom";
+import LoggingService from "./LoggingService";
 
 const DISCLAIMER_TEXT = `
   Disclaimer: The information provided in this platform is for support purposes only
@@ -70,7 +75,8 @@ class MilitarySupportService {
     active: boolean
   ): Promise<IExternalSupportResource> {
     const resrc = await ExternalSupportResource.findById(id);
-    if (!resrc) throw createError("Resource not found", 404);
+    if (!resrc) 
+throw createError("Resource not found", 404);
     const updated = active ? await resrc.activate() : await resrc.deactivate();
     void LoggingService.logInfo(
       `Resource ${id} marked ${active ? "active" : "inactive"}`
@@ -127,7 +133,8 @@ class MilitarySupportService {
       _id: chatroomId,
       isActive: true
     });
-    if (!room) throw createError("Chatroom not found or inactive", 404);
+    if (!room) 
+throw createError("Chatroom not found or inactive", 404);
 
     // Check if user is a member of the room
     if (!room.members.includes(userId as any)) {
@@ -183,7 +190,8 @@ class MilitarySupportService {
       _id: chatroomId,
       isActive: true
     });
-    if (!room) throw createError("Chatroom not found", 404);
+    if (!room) 
+throw createError("Chatroom not found", 404);
 
     // Add user if not already a member
     const updatedRoom = await room.addMember(userId as any);

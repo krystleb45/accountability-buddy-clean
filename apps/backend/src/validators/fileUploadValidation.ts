@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import multer, { MulterError } from "multer";
+import type { NextFunction, Request, Response } from "express";
 import type { ValidationChain, ValidationError } from "express-validator";
+
 import { check, validationResult } from "express-validator";
+import multer, { MulterError } from "multer";
 
 
 
@@ -26,7 +27,7 @@ const upload = multer({
 /**
  * Middleware to handle file upload validation using Multer.
  */
-export const multerMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+export function multerMiddleware (req: Request, res: Response, next: NextFunction): void {
   void upload(req, res, (err) => {
     if (err) {
       if (err instanceof MulterError) {
@@ -71,7 +72,7 @@ export const multerMiddleware = (req: Request, res: Response, next: NextFunction
 
     next(); // Proceed to the next middleware if no errors
   });
-};
+}
 
 
 
@@ -90,18 +91,14 @@ export const fileFieldValidation: ValidationChain[] = [
 /**
  * Type guard to check if an error is a ValidationError with a `param` property.
  */
-const isValidationErrorWithParam = (error: ValidationError): error is ValidationError & { param: string } => {
+function isValidationErrorWithParam (error: ValidationError): error is ValidationError & { param: string } {
   return "param" in error && typeof error.param === "string";
-};
+}
 
 /**
  * Reusable validation middleware to handle validation results and send structured errors.
  */
-export const validationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
+export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -128,4 +125,4 @@ export const validationMiddleware = (
   }
 
   next(); // Proceed to the next middleware if no errors
-};
+}

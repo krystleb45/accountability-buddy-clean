@@ -1,6 +1,7 @@
 // src/api/models/UserActivity.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Document Interface ---
@@ -11,7 +12,7 @@ export interface IUserActivity extends Document {
   createdAt: Date;                 // When it happened
 
   // Instance methods
-  summary(): string;
+  summary: () => string;
 }
 
 // --- Model Interface ---
@@ -19,27 +20,27 @@ export interface IUserActivityModel extends Model<IUserActivity> {
   /**
    * Log a new activity for a user.
    */
-  logActivity(
+  logActivity: (
     userId: Types.ObjectId,
     activityType: string,
     details: string
-  ): Promise<IUserActivity>;
+  ) => Promise<IUserActivity>;
 
   /**
    * Fetch recent activities for a specific user.
    * @param userId  the user's _id
    * @param limit   max number of records to return (default: 50)
    */
-  getActivitiesForUser(
+  getActivitiesForUser: (
     userId: Types.ObjectId,
     limit?: number
-  ): Promise<IUserActivity[]>;
+  ) => Promise<IUserActivity[]>;
 
   /**
    * Fetch the most recent activities across all users.
    * @param limit   max number of records to return (default: 100)
    */
-  getRecent(limit?: number): Promise<IUserActivity[]>;
+  getRecent: (limit?: number) => Promise<IUserActivity[]>;
 }
 
 // --- Schema Definition ---

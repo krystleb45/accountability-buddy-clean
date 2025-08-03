@@ -1,7 +1,8 @@
 // src/api/routes/recommendations.ts
 import { Router } from "express";
-import { protect } from "../middleware/authMiddleware";
+
 import * as recCtrl from "../controllers/recommendationController";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 

@@ -1,5 +1,6 @@
 // src/types/CustomRequest.ts
 import type { Request } from "express";
+
 import type { IUser } from "../api/models/User";  // adjust the path as needed
 
 /**
@@ -18,7 +19,7 @@ export interface IMilitaryUser {
 
 /**
  * Custom request for military routes.
- * - `user` comes from your global augmentation and is always an `IUser`
+ * - `user` comes from your globalThis augmentation and is always an `IUser`
  * - `militaryUser` is an extra optional payload
  */
 export interface MilitaryRequest extends Request {

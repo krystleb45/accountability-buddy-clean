@@ -1,13 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import Poll from "../models/Poll"; // Poll model to validate poll existence
+import type { NextFunction, Request, Response } from "express";
+
 import { Types } from "mongoose";
 
+import Poll from "../models/Poll"; // Poll model to validate poll existence
+
 // Middleware to validate poll creation
-const validatePollCreation = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+async function validatePollCreation (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   const { groupId, question, options, expirationDate } = req.body;
 
   // Validate required fields
@@ -39,14 +37,10 @@ const validatePollCreation = async (
 
   // If validation passes, proceed to the next middleware/controller
   next();
-};
+}
 
 // Middleware to validate poll voting
-const validatePollVote = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+async function validatePollVote (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   const { pollId, optionId, userId } = req.body;
 
   // Validate required fields
@@ -82,7 +76,7 @@ const validatePollVote = async (
 
   // If validation passes, proceed to the next middleware/controller
   next();
-};
+}
 
 export default {
   validatePollCreation,

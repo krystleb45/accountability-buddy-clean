@@ -2,9 +2,10 @@
 
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
-import * as TriggerController from "../controllers/notificationsTriggersController";
 import { check } from "express-validator";
+
+import * as TriggerController from "../controllers/notificationsTriggersController";
+import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();

@@ -1,5 +1,6 @@
 // src/api/models/PrivateMessage.ts
 import type { Document, Model, Query, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Private Message Document Interface ---
@@ -18,8 +19,8 @@ export interface IPrivateMessage extends Document {
 
 // --- Private Message Model Static Interface ---
 export interface IPrivateMessageModel extends Model<IPrivateMessage> {
-  markAsRead(messageId: string): Promise<IPrivateMessage>;
-  softDelete(messageId: string): Promise<IPrivateMessage>;
+  markAsRead: (messageId: string) => Promise<IPrivateMessage>;
+  softDelete: (messageId: string) => Promise<IPrivateMessage>;
 }
 
 // --- Schema Definition ---
@@ -96,7 +97,8 @@ PrivateMessageSchema.statics.markAsRead = async function (
   messageId: string
 ): Promise<IPrivateMessage> {
   const message = await this.findById(messageId);
-  if (!message) throw new Error("Message not found");
+  if (!message) 
+throw new Error("Message not found");
   if (!message.isRead) {
     message.isRead = true;
     await message.save();
@@ -109,7 +111,8 @@ PrivateMessageSchema.statics.softDelete = async function (
   messageId: string
 ): Promise<IPrivateMessage> {
   const message = await this.findById(messageId);
-  if (!message) throw new Error("Message not found");
+  if (!message) 
+throw new Error("Message not found");
   message.isDeleted = true;
   await message.save();
   return message;

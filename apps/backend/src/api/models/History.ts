@@ -1,6 +1,7 @@
 // src/api/models/History.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interface for History Document ---
@@ -13,18 +14,18 @@ export interface IHistory extends Document {
   updatedAt: Date;        // Auto-generated
 
   // Instance methods
-  toSummary(): string;
+  toSummary: () => string;
 }
 
 // --- Model Interface for Statics ---
 export interface IHistoryModel extends Model<IHistory> {
-  record(
+  record: (
     entity: string,
     action: string,
     details?: string,
     userId?: Types.ObjectId
-  ): Promise<IHistory>;
-  getForEntity(entity: string, limit?: number): Promise<IHistory[]>;
+  ) => Promise<IHistory>;
+  getForEntity: (entity: string, limit?: number) => Promise<IHistory[]>;
 }
 
 // --- Schema Definition ---

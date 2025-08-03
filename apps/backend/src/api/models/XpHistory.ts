@@ -1,6 +1,7 @@
 // src/api/models/XpHistory.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Document Interface ---
@@ -14,7 +15,7 @@ export interface IXpHistory extends Document {
   updatedAt: Date;          // Auto-added by timestamps
 
   /** Human-readable summary */
-  summary(): string;
+  summary: () => string;
 }
 
 // --- Model Interface ---
@@ -22,25 +23,25 @@ export interface IXpHistoryModel extends Model<IXpHistory> {
   /**
    * Log a new XP entry.
    */
-  logXp(
+  logXp: (
     userId: Types.ObjectId,
     xp: number,
     reason: string,
     date?: Date
-  ): Promise<IXpHistory>;
+  ) => Promise<IXpHistory>;
 
   /**
    * Fetch recent XP entries for a user.
    */
-  getForUser(
+  getForUser: (
     userId: Types.ObjectId,
     limit?: number
-  ): Promise<IXpHistory[]>;
+  ) => Promise<IXpHistory[]>;
 
   /**
    * Compute total XP for a user.
    */
-  getTotalXp(userId: Types.ObjectId): Promise<number>;
+  getTotalXp: (userId: Types.ObjectId) => Promise<number>;
 }
 
 // --- Schema Definition ---

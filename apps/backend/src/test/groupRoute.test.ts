@@ -3,7 +3,7 @@ describe("groupRoute routes", () => {
     expect(true).toBe(true);
   });
   it("GET /api/groups ? 200 OK", async () => {
-    const res = await global.authGet("/api/groups");
+    const res = await globalThis.authGet("/api/groups");
     expect(res.status).toBe(200);
     // TODO: add more assertions here
   });

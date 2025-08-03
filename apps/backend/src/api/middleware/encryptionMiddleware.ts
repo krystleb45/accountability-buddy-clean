@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { encryptMessage, decryptMessage } from "../../utils/encryption"; // Import encryption utilities
+import type { NextFunction, Request, Response } from "express";
+
+import { decryptMessage, encryptMessage } from "../../utils/encryption"; // Import encryption utilities
 import { logger } from "../../utils/winstonLogger"; // Logger for monitoring and debugging
 
 // A static encryption key for this example (replace with a secure solution in production)
@@ -8,7 +9,7 @@ const encryptionKey = Buffer.from(process.env.ENCRYPTION_KEY || "your-default-en
 /**
  * Middleware to encrypt sensitive data before saving to the database
  */
-export const encryptData = (req: Request, res: Response, next: NextFunction): void => {
+export function encryptData (req: Request, res: Response, next: NextFunction): void {
   try {
     // Encrypt the message if it exists in the request body
     if (req.body.message) {
@@ -30,12 +31,12 @@ export const encryptData = (req: Request, res: Response, next: NextFunction): vo
     logger.error("Error in encryptData middleware: ", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-};
+}
 
 /**
  * Middleware to decrypt sensitive data before sending it to the client
  */
-export const decryptData = (req: Request, res: Response, next: NextFunction): void => {
+export function decryptData (req: Request, res: Response, next: NextFunction): void {
   try {
     // Decrypt the message if it exists in the request body
     if (req.body.message) {
@@ -52,4 +53,4 @@ export const decryptData = (req: Request, res: Response, next: NextFunction): vo
     logger.error("Error in decryptData middleware: ", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
-};
+}

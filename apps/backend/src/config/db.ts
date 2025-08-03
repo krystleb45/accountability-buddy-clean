@@ -1,5 +1,8 @@
-import mongoose, { ConnectOptions } from "mongoose";
+import type { ConnectOptions } from "mongoose";
+
 import dotenv from "dotenv";
+import mongoose from "mongoose";
+
 import { logger } from "../utils/winstonLogger"; // ✅ Correct import for logger
 
 dotenv.config();
@@ -7,7 +10,7 @@ dotenv.config();
 /**
  * ✅ Connect to MongoDB with enhanced error handling and logging.
  */
-const connectDB = async (): Promise<void> => {
+async function connectDB (): Promise<void> {
   const mongoURI = process.env.MONGO_URI;
 
   if (!mongoURI) {
@@ -50,12 +53,12 @@ const connectDB = async (): Promise<void> => {
   mongoose.connection.on("error", (err: Error) => {
     logger.error(`❌ MongoDB Error: ${err.message}`);
   });
-};
+}
 
 /**
  * ✅ Graceful shutdown for MongoDB connection
  */
-const handleShutdown = async (): Promise<void> => {
+async function handleShutdown (): Promise<void> {
   try {
     await mongoose.connection.close();
     logger.info("🛑 MongoDB connection closed due to application shutdown.");
@@ -64,7 +67,7 @@ const handleShutdown = async (): Promise<void> => {
     logger.error(`❌ Error during MongoDB shutdown: ${(error as Error).message}`);
     process.exit(1);
   }
-};
+}
 
 // ✅ Handle process termination gracefully
 process.on("SIGINT", handleShutdown);

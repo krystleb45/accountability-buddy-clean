@@ -1,4 +1,4 @@
 // AuthenticatedUser.ts
-import { IUser } from "./UserTypes";
+import type { IUser } from "./UserTypes";
 
 export type { IUser };

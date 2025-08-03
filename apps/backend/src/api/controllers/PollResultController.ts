@@ -1,8 +1,9 @@
 // src/api/controllers/PollResultController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import PollResultService from "../services/PollResultService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import PollResultService from "../services/PollResultService";
 
 /** POST /api/polls/:pollId/vote */
 export const voteOnPoll = catchAsync(

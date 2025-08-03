@@ -1,10 +1,12 @@
-import express, { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import express from "express";
 
 /**
  * Middleware to handle raw body parsing for Stripe webhook requests.
  * Stripe requires the raw body to validate the event signature.
  */
-export const stripeRawBodyParser = (req: Request, res: Response, next: NextFunction): void => {
+export function stripeRawBodyParser (req: Request, res: Response, next: NextFunction): void {
   if (req.originalUrl === "/api/payments/webhook") {
     express.raw({ type: "application/json" })(req, res, (err) => {
       if (err) {
@@ -18,4 +20,4 @@ export const stripeRawBodyParser = (req: Request, res: Response, next: NextFunct
   } else {
     express.json()(req, res, next);
   }
-};
+}

@@ -1,5 +1,7 @@
 // src/api/models/CheckIn.ts
-import mongoose, { Document, Model } from "mongoose";
+import type { Document, Model } from "mongoose";
+
+import mongoose from "mongoose";
 
 export interface CheckInDocument extends Document {
   user: mongoose.Types.ObjectId;

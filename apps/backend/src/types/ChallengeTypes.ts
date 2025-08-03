@@ -1,4 +1,4 @@
-import { Document, Types } from "mongoose";
+import type { Document, Types } from "mongoose";
 
 // Define the type for Challenge participants
 export interface IParticipant {

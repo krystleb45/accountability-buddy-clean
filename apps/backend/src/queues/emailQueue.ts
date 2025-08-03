@@ -26,7 +26,7 @@ export const emailQueue = (() => {
     const { Queue } = require("bullmq");
 
     const host = process.env.REDIS_HOST!;
-    const port = parseInt(process.env.REDIS_PORT || "", 10);
+    const port = Number.parseInt(process.env.REDIS_PORT || "", 10);
     if (!host || isNaN(port)) {
       throw new Error("Missing or invalid REDIS_HOST/REDIS_PORT");
     }

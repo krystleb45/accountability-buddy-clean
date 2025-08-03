@@ -1,9 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Types } from "mongoose";
+
+import Redemption from "../models/Redemption";
+import RewardService from "../services/rewardService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import RewardService from "../services/rewardService";
-import Redemption from "../models/Redemption";
-import { Types } from "mongoose";
 
 /**
  * @desc    List all rewards (optionally filter by maxPoints query)
@@ -17,9 +19,12 @@ export const listRewards = catchAsync(
   ): Promise<void> => {
     const { maxPoints, page, limit } = req.query;
     const opts: any = {};
-    if (!isNaN(Number(page))) opts.page = Number(page);
-    if (!isNaN(Number(limit))) opts.limit = Number(limit);
-    if (!isNaN(Number(maxPoints))) opts.maxPoints = Number(maxPoints);
+    if (!isNaN(Number(page))) 
+opts.page = Number(page);
+    if (!isNaN(Number(limit))) 
+opts.limit = Number(limit);
+    if (!isNaN(Number(maxPoints))) 
+opts.maxPoints = Number(maxPoints);
 
     const { items, total } = await RewardService.listRewards(opts);
     sendResponse(res, 200, true, "Rewards fetched successfully", {

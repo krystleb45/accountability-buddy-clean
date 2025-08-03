@@ -1,6 +1,8 @@
 // src/api/services/ThirdPartyAPIService.ts
 import type { AxiosResponse } from "axios";
+
 import axios, { AxiosError } from "axios";
+
 import LoggingService from "./LoggingService";
 
 class ThirdPartyAPIService {

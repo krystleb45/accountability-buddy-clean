@@ -1,9 +1,12 @@
 // src/api/controllers/SupportController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import type { CreateTicketDTO, UpdateTicketDTO } from "../services/SupportTicketService";
+
+import { logger } from "../../utils/winstonLogger";
+import SupportTicketService from "../services/SupportTicketService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import { logger } from "../../utils/winstonLogger";
-import SupportTicketService, { CreateTicketDTO, UpdateTicketDTO } from "../services/SupportTicketService";
 
 /**
  * @desc    Contact support (create a new ticket)

@@ -104,7 +104,7 @@ const appConfig: AppConfig = {
 
   // File Upload Configuration
   uploads: {
-    maxFileSize: parseInt(process.env.MAX_FILE_SIZE || "10485760", 10), // Default to 10MB
+    maxFileSize: Number.parseInt(process.env.MAX_FILE_SIZE || "10485760", 10), // Default to 10MB
     allowedFileTypes: process.env.ALLOWED_FILE_TYPES
       ? process.env.ALLOWED_FILE_TYPES.split(",")
       : ["image/jpeg", "image/png", "application/pdf"], // Default file types
@@ -123,7 +123,7 @@ const appConfig: AppConfig = {
       ? process.env.ALLOWED_ORIGINS.split(",")
       : ["http://localhost:3000"], // Default CORS origins
     passwordPolicy: {
-      minLength: parseInt(process.env.PASSWORD_MIN_LENGTH || "8", 10),
+      minLength: Number.parseInt(process.env.PASSWORD_MIN_LENGTH || "8", 10),
       requireNumbers: process.env.PASSWORD_REQUIRE_NUMBERS === "true",
       requireSpecialChars:
         process.env.PASSWORD_REQUIRE_SPECIAL_CHARS === "true",

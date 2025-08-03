@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import type { Document } from "mongoose";
 
 // Define the type for Reward model
 export interface IReward extends Document {

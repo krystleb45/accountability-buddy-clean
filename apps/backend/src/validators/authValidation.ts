@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from "express";
-import { validationResult, check } from "express-validator";
+import type { NextFunction, Request, Response } from "express";
+
+import { check, validationResult } from "express-validator";
 
 interface CustomValidationError {
   field: string;
@@ -12,11 +13,7 @@ interface CustomValidationError {
  * @param {Response} res - The outgoing response object.
  * @param {NextFunction} next - The next middleware function.
  */
-export const authValidationMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
+export function authValidationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const formattedErrors: CustomValidationError[] = errors.array().map((error) => {
@@ -40,7 +37,7 @@ export const authValidationMiddleware = (
   }
 
   next();
-};
+}
 
 // Common password validation rule for reuse
 const passwordRule = [
@@ -61,7 +58,7 @@ export const registerValidation = [
     .withMessage("Username is required")
     .isLength({ min: 3, max: 20 })
     .withMessage("Username must be between 3 and 20 characters")
-    .matches(/^[a-zA-Z0-9_-]+$/)
+    .matches(/^[\w-]+$/)
     .withMessage(
       "Username can only contain letters, numbers, underscores, and dashes",
     ),

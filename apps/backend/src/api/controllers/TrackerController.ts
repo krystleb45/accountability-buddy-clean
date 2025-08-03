@@ -1,8 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import sanitize from "mongo-sanitize"; // Input sanitization
+
 import Tracker from "../models/Tracker"; // Database model for tracker
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import sanitize from "mongo-sanitize"; // Input sanitization
 
 /**
  * @desc Fetch all trackers
@@ -155,7 +157,7 @@ export const getTrackingData = catchAsync(
     }
 
     // Always return a resolved Promise to conform to the expected return type
-    return;
+    
   },
 );
 
@@ -194,7 +196,7 @@ export const addTrackingData = catchAsync(
     });
 
     // Explicitly return to ensure the function conforms to Promise<void>
-    return;
+    
   },
 );
 

@@ -1,6 +1,7 @@
 // src/api/models/Follow.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Document Interface ---
@@ -13,12 +14,12 @@ export interface IFollow extends Document {
 
 // --- Static Model Interface ---
 export interface IFollowModel extends Model<IFollow> {
-  getFollowers(userId: Types.ObjectId): Promise<IFollow[]>;
-  getFollowings(userId: Types.ObjectId): Promise<IFollow[]>;
-  unfollow(
+  getFollowers: (userId: Types.ObjectId) => Promise<IFollow[]>;
+  getFollowings: (userId: Types.ObjectId) => Promise<IFollow[]>;
+  unfollow: (
     followerId: Types.ObjectId,
     followingId: Types.ObjectId
-  ): Promise<{ deletedCount?: number }>;
+  ) => Promise<{ deletedCount?: number }>;
 }
 
 // --- Schema Definition ---

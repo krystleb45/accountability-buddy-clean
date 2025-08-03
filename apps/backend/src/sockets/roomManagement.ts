@@ -1,4 +1,5 @@
 import type { Server, Socket } from "socket.io";
+
 import Room from "../api/models/Room"; // Room model for database operations
 import { logger } from "../utils/winstonLogger";
 
@@ -14,7 +15,7 @@ interface RoomData {
  * @param   io - The socket.io server instance.
  * @param   socket - The socket object representing the client's connection.
  */
-const roomManagementSocket = (io: Server, socket: Socket): void => {
+function roomManagementSocket (io: Server, socket: Socket): void {
   const userId = socket.data.user?.id as string; // Ensure user ID is retrieved properly
   if (!userId) {
     logger.error("User ID is missing. Disconnecting the socket.");
@@ -48,11 +49,11 @@ const roomManagementSocket = (io: Server, socket: Socket): void => {
   
       logger.info(`Room created: ${newRoom.name} by user ${userId}`);
       io.emit("roomCreated", newRoom); // Broadcast the new room to all connected clients
-      return; // Explicitly return after successful execution
+       // Explicitly return after successful execution
     } catch (error) {
       logger.error(`Error creating room: ${(error as Error).message}`);
       socket.emit("error", { msg: "Failed to create room." });
-      return; // Explicitly return in case of an error
+       // Explicitly return in case of an error
     }
   });
   
@@ -81,11 +82,11 @@ const roomManagementSocket = (io: Server, socket: Socket): void => {
       socket.to(roomId).emit("userJoinedRoom", { userId, roomId });
   
       socket.emit("roomJoined", { roomId, roomName: room.name });
-      return; // Explicitly return after successful execution
+       // Explicitly return after successful execution
     } catch (error) {
       logger.error(`Error joining room: ${(error as Error).message}`);
       socket.emit("error", { msg: "Failed to join room." });
-      return; // Explicitly return in case of an error
+       // Explicitly return in case of an error
     }
   });
   
@@ -107,11 +108,11 @@ const roomManagementSocket = (io: Server, socket: Socket): void => {
       socket.to(roomId).emit("userLeftRoom", { userId, roomId });
   
       socket.emit("roomLeft", { roomId });
-      return; // Explicitly return after successful execution
+       // Explicitly return after successful execution
     } catch (error) {
       logger.error(`Error leaving room: ${(error as Error).message}`);
       socket.emit("error", { msg: "Failed to leave room." });
-      return; // Explicitly return in case of an error
+       // Explicitly return in case of an error
     }
   });
   
@@ -143,11 +144,11 @@ const roomManagementSocket = (io: Server, socket: Socket): void => {
       await Room.deleteOne({ _id: roomId }); // Use deleteOne instead of remove
       logger.info(`Room ${roomId} deleted by user ${userId}`);
       io.emit("roomDeleted", { roomId }); // Broadcast room deletion to all users
-      return; // Explicitly return after successful deletion
+       // Explicitly return after successful deletion
     } catch (error) {
       logger.error(`Error deleting room: ${(error as Error).message}`);
       socket.emit("error", { msg: "Failed to delete room." });
-      return; // Explicitly return in case of an error
+       // Explicitly return in case of an error
     }
   });
   
@@ -174,6 +175,6 @@ const roomManagementSocket = (io: Server, socket: Socket): void => {
   socket.on("disconnect", () => {
     logger.info(`User ${userId} disconnected from room management`);
   });
-};
+}
 
 export default roomManagementSocket;

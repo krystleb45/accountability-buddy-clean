@@ -1,10 +1,13 @@
 // src/api/services/ReviewService.ts
 
 import { Types } from "mongoose";
-import Review, { IReview } from "../models/Review";
-import { User } from "../models/User";
-import { createError } from "../middleware/errorHandler";
+
+import type { IReview } from "../models/Review";
+
 import { logger } from "../../utils/winstonLogger";
+import { createError } from "../middleware/errorHandler";
+import Review from "../models/Review";
+import { User } from "../models/User";
 
 class ReviewService {
   /**

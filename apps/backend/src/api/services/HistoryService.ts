@@ -1,7 +1,10 @@
 // src/api/services/historyService.ts
 import mongoose from "mongoose";
-import History, { IHistory } from "../models/History";
+
+import type { IHistory } from "../models/History";
+
 import { createError } from "../middleware/errorHandler";
+import History from "../models/History";
 
 class HistoryService {
   /** Fetch all history records for a user */

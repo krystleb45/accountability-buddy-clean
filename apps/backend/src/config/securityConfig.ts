@@ -1,19 +1,21 @@
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
-import xssClean from "xss-clean";
+import type { CorsOptions } from "cors";
+import type { Application, NextFunction, Request, Response} from "express";
+
 import cors from "cors";
 import * as express from "express";
-import type { Application, Request, Response, NextFunction} from "express";
-import { logger } from "../utils/winstonLogger";
-import type { CorsOptions } from "cors";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import xssClean from "xss-clean";
 
-const parseAllowedOrigins = (): string[] => {
+import { logger } from "../utils/winstonLogger";
+
+function parseAllowedOrigins (): string[] {
   const origins = process.env.ALLOWED_ORIGINS || "http://localhost:3000";
   return origins.split(",").map((origin) => origin.trim());
-};
+}
 
 // ✅ Dynamic CORS logic
-const configureCORS = (): CorsOptions => {
+function configureCORS (): CorsOptions {
   const allowedOrigins = parseAllowedOrigins();
 
   return {
@@ -27,9 +29,9 @@ const configureCORS = (): CorsOptions => {
     credentials: true,
     optionsSuccessStatus: 200,
   };
-};
+}
 
-export const applySecurityMiddlewares = (app: Application): void => {
+export function applySecurityMiddlewares (app: Application): void {
   // ✅ Helmet with optional CSP for production
   app.use(
     helmet({
@@ -52,7 +54,7 @@ export const applySecurityMiddlewares = (app: Application): void => {
   app.use(
     rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: parseInt(process.env.RATE_LIMIT_MAX || "100", 10),
+      max: Number.parseInt(process.env.RATE_LIMIT_MAX || "100", 10),
       message: "Too many requests, please try again later.",
       standardHeaders: true,
       legacyHeaders: false,
@@ -76,4 +78,4 @@ export const applySecurityMiddlewares = (app: Application): void => {
   });
 
   logger.info("✅ Security middlewares applied.");
-};
+}

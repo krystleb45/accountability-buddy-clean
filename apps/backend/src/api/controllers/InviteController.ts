@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+
+import InviteService from "../services/InviteService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import InviteService from "../services/InviteService";
 
 export const sendGroupInvitation = catchAsync(
   async (req: Request<{ groupId: string }, {}, { recipientId: string }>, res: Response) => {

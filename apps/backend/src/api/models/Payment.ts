@@ -1,5 +1,6 @@
 // src/api/models/Payment.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Payment Status & Method Types ---
@@ -25,15 +26,15 @@ export interface IPayment extends Document {
   isExpired: boolean;
 
   // Instance methods
-  markAsCompleted(): Promise<void>;
-  markAsFailed(reason: string): Promise<void>;
+  markAsCompleted: () => Promise<void>;
+  markAsFailed: (reason: string) => Promise<void>;
 }
 
 // --- Model Interface for Statics ---
 export interface IPaymentModel extends Model<IPayment> {
-  findByUser(userId: Types.ObjectId): Promise<IPayment[]>;
-  getTotalPaymentsForUser(userId: Types.ObjectId): Promise<number>;
-  refundPayment(paymentId: string): Promise<void>;
+  findByUser: (userId: Types.ObjectId) => Promise<IPayment[]>;
+  getTotalPaymentsForUser: (userId: Types.ObjectId) => Promise<number>;
+  refundPayment: (paymentId: string) => Promise<void>;
 }
 
 // --- Schema Definition ---
@@ -53,7 +54,7 @@ const PaymentSchema = new Schema<IPayment, IPaymentModel>(
       type: Number,
       required: true,
       validate: {
-        validator: function (value: number): boolean {
+        validator (value: number): boolean {
           return value > 0;
         },
         message: "Payment amount must be greater than zero.",

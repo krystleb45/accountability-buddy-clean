@@ -1,8 +1,11 @@
 // src/api/services/MessageService.ts
 import { Types } from "mongoose";
-import { Message, IMessage, MessageType } from "../models/Message";
-import { User } from "../models/User";
+
+import type { IMessage, MessageType } from "../models/Message";
+
 import { createError } from "../middleware/errorHandler";
+import { Message } from "../models/Message";
+import { User } from "../models/User";
 
 export interface MessagePage {
   messages: IMessage[];

@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/node";
+
 import { logger } from "../../utils/winstonLogger"; // Assuming you have a logger utility
 
 // Initialize Sentry
@@ -9,7 +10,7 @@ Sentry.init({ dsn: process.env.SENTRY_DSN || "your-sentry-dsn-here" });
  * @param {Error} error - The error object to log.
  * @param {string} [message] - Optional custom message for logging.
  */
-export const logError = (error: Error, message?: string): void => {
+export function logError (error: Error, message?: string): void {
   // Log error to Sentry
   Sentry.captureException(error);
 
@@ -19,14 +20,14 @@ export const logError = (error: Error, message?: string): void => {
     stack: error.stack,
     name: error.name,
   });
-};
+}
 
 /**
  * @desc Capture and log custom error messages to Sentry.
  * @param {string} message - Custom message to log.
  * @param {Record<string, any>} [extraData] - Optional extra data for custom context.
  */
-export const captureError = (message: string, extraData?: Record<string, any>): void => {
+export function captureError (message: string, extraData?: Record<string, any>): void {
   Sentry.captureMessage(message, {
     level: "error",
     extra: extraData || {},
@@ -34,4 +35,4 @@ export const captureError = (message: string, extraData?: Record<string, any>): 
 
   // Log to your local logger (Winston)
   logger.error(message, extraData);
-};
+}

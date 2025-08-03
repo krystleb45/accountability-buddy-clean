@@ -1,8 +1,9 @@
 // src/api/models/FeedPost.ts
 
 import type { Document, Model, Types } from "mongoose";
-import mongoose, { Schema } from "mongoose";
+
 import sanitize from "mongo-sanitize";
+import mongoose, { Schema } from "mongoose";
 
 // --- Comment Subdocument Interface ---
 export interface IFeedComment extends Document {
@@ -35,16 +36,16 @@ export interface IFeedPost extends Document {
   commentCount: number;
 
   // Instance methods
-  addLike(userId: Types.ObjectId): Promise<IFeedPost>;
-  removeLike(userId: Types.ObjectId): Promise<IFeedPost>;
-  addComment(userId: Types.ObjectId, text: string): Promise<IFeedComment>;
-  removeComment(commentId: Types.ObjectId): Promise<boolean>;
+  addLike: (userId: Types.ObjectId) => Promise<IFeedPost>;
+  removeLike: (userId: Types.ObjectId) => Promise<IFeedPost>;
+  addComment: (userId: Types.ObjectId, text: string) => Promise<IFeedComment>;
+  removeComment: (commentId: Types.ObjectId) => Promise<boolean>;
 }
 
 // --- Model Interface ---
 export interface IFeedPostModel extends Model<IFeedPost> {
-  findByUser(userId: Types.ObjectId, limit?: number): Promise<IFeedPost[]>;
-  findRecent(limit?: number): Promise<IFeedPost[]>;
+  findByUser: (userId: Types.ObjectId, limit?: number) => Promise<IFeedPost[]>;
+  findRecent: (limit?: number) => Promise<IFeedPost[]>;
 }
 
 // --- Schema Definition ---
@@ -120,7 +121,8 @@ FeedPostSchema.methods.removeComment = async function (
   commentId: Types.ObjectId
 ): Promise<boolean> {
   const idx = this.comments.findIndex((c) => c._id.equals(commentId));
-  if (idx === -1) return false;
+  if (idx === -1) 
+return false;
   this.comments.splice(idx, 1);
   await this.save();
   return true;

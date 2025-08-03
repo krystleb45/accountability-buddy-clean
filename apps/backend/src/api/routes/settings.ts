@@ -1,10 +1,13 @@
 // src/api/routes/setting.ts
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { check } from "express-validator";
 import sanitize from "mongo-sanitize";
-import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
+
 import * as settingsController from "../controllers/SettingsController";
+import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
@@ -17,10 +20,10 @@ const settingsLimiter = rateLimit({
 });
 
 // sanitize only req.body
-const sanitizeBody = (req: Request, _res: Response, next: NextFunction): void => {
+function sanitizeBody (req: Request, _res: Response, next: NextFunction): void {
   req.body = sanitize(req.body);
   next();
-};
+}
 
 /** GET /api/settings */
 router.get(

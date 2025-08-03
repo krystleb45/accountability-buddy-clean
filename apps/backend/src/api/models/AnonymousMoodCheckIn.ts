@@ -1,6 +1,8 @@
 // src/api/models/AnonymousMoodCheckIn.ts
 
-import mongoose, { Schema, Document, Model } from "mongoose";
+import type { Document, Model } from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 export interface IAnonymousMoodCheckIn extends Document {
   sessionId: string;
@@ -28,9 +30,9 @@ export interface IAggregatedMoodData {
 
 // Interface for the model with static methods
 export interface IAnonymousMoodCheckInModel extends Model<IAnonymousMoodCheckIn> {
-  getTodaysMoodDistribution(): Promise<IAggregatedMoodData>;
-  getMoodTrends(days: number): Promise<IAggregatedMoodData[]>;
-  hasSubmittedToday(sessionId: string): Promise<boolean>;
+  getTodaysMoodDistribution: () => Promise<IAggregatedMoodData>;
+  getMoodTrends: (days: number) => Promise<IAggregatedMoodData[]>;
+  hasSubmittedToday: (sessionId: string) => Promise<boolean>;
 }
 
 const AnonymousMoodCheckInSchema = new Schema<IAnonymousMoodCheckIn>(
@@ -48,7 +50,7 @@ const AnonymousMoodCheckInSchema = new Schema<IAnonymousMoodCheckIn>(
       min: 1,
       max: 5,
       validate: {
-        validator: function(v: number): boolean {
+        validator(v: number): boolean {
           return Number.isInteger(v) && v >= 1 && v <= 5;
         },
         message: "Mood must be an integer between 1 and 5"
@@ -186,7 +188,7 @@ AnonymousMoodCheckInSchema.statics.getMoodTrends = async function(days: number =
       }
     },
     {
-      $sort: { "_id.year": 1 as 1, "_id.month": 1 as 1, "_id.day": 1 as 1 }
+      $sort: { "_id.year": 1 as const, "_id.month": 1 as const, "_id.day": 1 as const }
     }
   ] as any[];
 

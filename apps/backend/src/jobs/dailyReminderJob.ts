@@ -1,11 +1,12 @@
 // src/jobs/dailyReminderJob.ts
-import cron from "node-cron";
+import dotenv from "dotenv";
 import mongoose from "mongoose";
+import cron from "node-cron";
+
 import { User } from "../api/models/User";
 import NotificationTriggerService from "../api/services/NotificationTriggerService";
-import { logger } from "../utils/winstonLogger";
 import { loadEnvironment } from "../utils/loadEnv";
-import dotenv from "dotenv";
+import { logger } from "../utils/winstonLogger";
 
 loadEnvironment();
 dotenv.config();

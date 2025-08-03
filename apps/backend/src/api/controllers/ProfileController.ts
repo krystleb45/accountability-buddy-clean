@@ -1,10 +1,12 @@
 // src/controllers/ProfileController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { validationResult } from "express-validator";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+
 import { createError } from "../middleware/errorHandler";
 import ProfileService from "../services/ProfileService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 /**
  * GET /api/profile

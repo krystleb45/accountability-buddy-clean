@@ -1,20 +1,23 @@
 import type { Request, Response } from "express";
-import mongoose from "mongoose";
+
 import sanitize from "mongo-sanitize";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import mongoose from "mongoose";
+
 import Challenge from "../models/Challenge";
-import { rewardChallengeCompletion } from "../utils/rewardUtils";
 import { createChallengeService } from "../services/challengeService";
+import catchAsync from "../utils/catchAsync";
+import { rewardChallengeCompletion } from "../utils/rewardUtils";
+import sendResponse from "../utils/sendResponse";
 
 export const getPublicChallenges = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
-    const page = parseInt((req.query.page as string) || "1", 10);
-    const pageSize = parseInt((req.query.pageSize as string) || "10", 10);
+    const page = Number.parseInt((req.query.page as string) || "1", 10);
+    const pageSize = Number.parseInt((req.query.pageSize as string) || "10", 10);
     const status = req.query.status as string | undefined;
 
     const filters: any = { visibility: "public" };
-    if (status) filters.status = status;
+    if (status) 
+filters.status = status;
 
     const challenges = await Challenge.find(filters)
       .skip((page - 1) * pageSize)
@@ -69,7 +72,7 @@ export const getChallengeById = catchAsync(
 );
 
 export const joinChallenge = catchAsync(
-  async (req: Request<{}, {}, { challengeId: string }>, res: Response): Promise<void> => {
+  async (req: Request<unknown, unknown, { challengeId: string }>, res: Response): Promise<void> => {
     const { challengeId } = sanitize(req.body);
     const userId = req.user?.id;
     if (!userId || !challengeId) {
@@ -97,7 +100,7 @@ export const joinChallenge = catchAsync(
 );
 
 export const leaveChallenge = catchAsync(
-  async (req: Request<{}, {}, { challengeId: string }>, res: Response): Promise<void> => {
+  async (req: Request<unknown, unknown, { challengeId: string }>, res: Response): Promise<void> => {
     const { challengeId } = sanitize(req.body);
     const userId = req.user?.id;
     if (!userId || !challengeId) {
@@ -127,8 +130,8 @@ export const leaveChallenge = catchAsync(
 
 export const fetchChallengesWithPagination = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
-    const page = parseInt((req.query.page as string) || "1", 10);
-    const pageSize = parseInt((req.query.pageSize as string) || "10", 10);
+    const page = Number.parseInt((req.query.page as string) || "1", 10);
+    const pageSize = Number.parseInt((req.query.pageSize as string) || "10", 10);
 
     const challenges = await Challenge.find()
       .skip((page - 1) * pageSize)

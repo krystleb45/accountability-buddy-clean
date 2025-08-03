@@ -1,9 +1,10 @@
 // src/api/routes/userpointsRoute.ts
 import { Router } from "express";
 import { check } from "express-validator";
+
+import * as PointController from "../controllers/pointController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import * as PointController from "../controllers/pointController";
 
 const router = Router();
 

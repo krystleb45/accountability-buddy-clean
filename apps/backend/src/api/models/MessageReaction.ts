@@ -1,5 +1,6 @@
 // src/api/models/MessageReaction.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Reaction Types ---
@@ -16,22 +17,22 @@ export interface IMessageReaction extends Document {
 
 // --- Model Interface (Statics) ---
 export interface IMessageReactionModel extends Model<IMessageReaction> {
-  addReaction(
+  addReaction: (
     messageId: Types.ObjectId,
     userId: Types.ObjectId,
     reaction: ReactionType
-  ): Promise<IMessageReaction>;
-  removeReaction(
+  ) => Promise<IMessageReaction>;
+  removeReaction: (
     messageId: Types.ObjectId,
     userId: Types.ObjectId,
     reaction: ReactionType
-  ): Promise<{ deletedCount?: number }>;
-  getReactionsForMessage(
+  ) => Promise<{ deletedCount?: number }>;
+  getReactionsForMessage: (
     messageId: Types.ObjectId
-  ): Promise<IMessageReaction[]>;
-  countReactions(
+  ) => Promise<IMessageReaction[]>;
+  countReactions: (
     messageId: Types.ObjectId
-  ): Promise<Record<ReactionType, number>>;
+  ) => Promise<Record<ReactionType, number>>;
 }
 
 // --- Schema Definition ---

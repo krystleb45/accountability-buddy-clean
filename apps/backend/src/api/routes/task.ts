@@ -1,15 +1,18 @@
 // src/api/routes/streaks.ts
-import { Router, Request, Response, NextFunction } from "express";
-import { protect } from "../middleware/authMiddleware";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { check } from "express-validator";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+
 import {
+  getStreakLeaderboard,
   getUserStreak,
   logDailyCheckIn,
-  getStreakLeaderboard,
 } from "../controllers/StreakController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import catchAsync from "../utils/catchAsync";
 
 const router = Router();
 

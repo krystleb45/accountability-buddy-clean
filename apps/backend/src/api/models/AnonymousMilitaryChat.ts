@@ -1,6 +1,8 @@
 // src/api/models/AnonymousMilitaryChat.ts
 
-import mongoose, { Schema, Document } from "mongoose";
+import type { Document } from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 export interface IAnonymousMilitaryMessage extends Document {
   room: string;                    // 'veterans-support', 'active-duty', 'family-members'

@@ -1,6 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 import type { ValidationChain } from "express-validator";
+
 import { validationResult } from "express-validator";
+
 import { logger } from "../../utils/winstonLogger";
 
 /**
@@ -8,7 +10,7 @@ import { logger } from "../../utils/winstonLogger";
  * @param {ValidationChain[]} validations - Array of validation chains to run before proceeding
  * @returns Middleware function to validate requests
  */
-const validationMiddleware = (validations: ValidationChain[] = []): ((req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+function validationMiddleware (validations: ValidationChain[] = []): ((req: Request, res: Response, next: NextFunction) => Promise<void>) {
   return async (
     req: Request,
     res: Response,
@@ -62,6 +64,6 @@ const validationMiddleware = (validations: ValidationChain[] = []): ((req: Reque
       });
     }
   };
-};
+}
 
 export default validationMiddleware;

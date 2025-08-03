@@ -1,6 +1,6 @@
 // src/api/types/LeaderboardTypes.ts
 
-import { Document, Types } from "mongoose";
+import type { Document, Types } from "mongoose";
 
 // Type representing the structure of a leaderboard entry
 export interface ILeaderboardEntry {

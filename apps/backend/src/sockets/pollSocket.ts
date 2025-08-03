@@ -1,10 +1,12 @@
-import { Server, Socket } from "socket.io";
-import Poll from "../api/models/Poll";
-import { logger } from "../utils/winstonLogger";
+import type { Server, Socket } from "socket.io";
+
 import { Types } from "mongoose";
 
+import Poll from "../api/models/Poll";
+import { logger } from "../utils/winstonLogger";
+
 // Function to handle WebSocket connections related to polls
-export const pollSocketHandler = (io: Server, socket: Socket): void => {
+export function pollSocketHandler (io: Server, socket: Socket): void {
   logger.info(`User connected: ${socket.id}`);
 
   // Listen for vote events on a poll
@@ -87,6 +89,6 @@ export const pollSocketHandler = (io: Server, socket: Socket): void => {
   socket.on("disconnect", () => {
     logger.info(`User disconnected: ${socket.id}`);
   });
-};
+}
 
 export default pollSocketHandler;

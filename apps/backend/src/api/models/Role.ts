@@ -1,6 +1,7 @@
 // src/api/models/Role.ts
 
 import type { Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Role Document Interface ---
@@ -12,15 +13,15 @@ export interface IRole extends Document {
   updatedAt: Date;                // Auto-generated
 
   // Instance methods
-  hasPermission(permission: string): boolean;
-  addPermission(permission: string): Promise<IRole>;
-  removePermission(permission: string): Promise<IRole>;
+  hasPermission: (permission: string) => boolean;
+  addPermission: (permission: string) => Promise<IRole>;
+  removePermission: (permission: string) => Promise<IRole>;
 }
 
 // --- Role Model Static Interface ---
 export interface IRoleModel extends Model<IRole> {
-  findByName(name: string): Promise<IRole | null>;
-  getRolesWithPermission(permission: string): Promise<IRole[]>;
+  findByName: (name: string) => Promise<IRole | null>;
+  getRolesWithPermission: (permission: string) => Promise<IRole[]>;
 }
 
 // --- Schema Definition ---

@@ -1,7 +1,11 @@
 // src/api/controllers/MilestoneController.ts
 import type { Request, Response } from "express";
+
 import mongoose from "mongoose";
-import Milestone, { IMilestone } from "../models/Milestone";
+
+import type { IMilestone } from "../models/Milestone";
+
+import Milestone from "../models/Milestone";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
 

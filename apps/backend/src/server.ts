@@ -1,6 +1,19 @@
 // src/server.ts - Backend Server Entry Point
 
 // ─── Crash Guards ───────────────────────────────────────────────
+// ─── Imports ─────────────────────────────────────────────────────
+import type { Server } from "socket.io";
+
+import dotenvFlow from "dotenv-flow";
+import mongoose from "mongoose";
+import { createServer } from "node:http";
+
+import app from "./app";
+import socketServer from "./sockets/index";
+import { loadSecretsFromAWS } from "./utils/loadSecrets";
+import { validateEnv } from "./utils/validateEnv";
+import { logger } from "./utils/winstonLogger";
+
 process.on("uncaughtException", (err) => {
   console.error("❌ Uncaught exception:", err);
   process.exit(1);
@@ -9,9 +22,6 @@ process.on("unhandledRejection", (reason) => {
   console.error("❌ Unhandled rejection:", reason);
   process.exit(1);
 });
-
-// ─── Imports ─────────────────────────────────────────────────────
-import dotenvFlow from "dotenv-flow";
 
 // ✅ FIXED: Only load .env files in development
 try {
@@ -41,17 +51,7 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
   console.log("✅ Redis forcibly disabled at application startup");
   console.log("📝 All Redis environment variables cleared");
 }
-
-import { validateEnv } from "./utils/validateEnv";
-validateEnv();
-
-import mongoose from "mongoose";
-import { loadSecretsFromAWS } from "./utils/loadSecrets";
-import { createServer } from "http";
-import { Server } from "socket.io";
-import app from "./app";
-import { logger } from "./utils/winstonLogger";
-import socketServer from "./sockets/index"; // This now returns { io, socketService }
+validateEnv(); // This now returns { io, socketService }
 
 // ─── Extend NodeJS global for Socket.io ────────────────────────
 declare global {
@@ -91,7 +91,7 @@ async function startServer(): Promise<void> {
     logger.info("✅ Anonymous military socket service registered");
 
     // 4) Start listening
-    const PORT = parseInt(process.env.PORT || "5000", 10);
+    const PORT = Number.parseInt(process.env.PORT || "5000", 10);
     httpServer.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Server listening on port ${PORT}`);
       console.log(`🌐 Server URL: http://0.0.0.0:${PORT}`);

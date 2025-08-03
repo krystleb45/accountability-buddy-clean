@@ -1,14 +1,17 @@
 // src/api/routes/goalAnalyticsRoutes.ts - Updated with subscription restrictions and proper typing
-import { Router, Request, Response } from "express";
+import type { Request, Response } from "express";
+
+import { Router } from "express";
 import { check, query } from "express-validator";
-import { protect } from "../middleware/authJwt";
-import { validateSubscription, validateFeatureAccess, trialPrompt } from "../middleware/subscriptionValidation";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import {
-  getUserGoalAnalytics,
-  getGoalAnalyticsById,
   getGoalAnalyticsByDateRange,
+  getGoalAnalyticsById,
+  getUserGoalAnalytics,
 } from "../controllers/goalAnalyticsController";
+import { protect } from "../middleware/authJwt";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import { trialPrompt, validateFeatureAccess, validateSubscription } from "../middleware/subscriptionValidation";
 
 const router = Router();
 

@@ -1,6 +1,7 @@
 // src/api/models/Session.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
 
@@ -20,13 +21,13 @@ export interface ISession extends Document {
   isExpired: boolean;
 
   // Instance methods
-  invalidateSession(): Promise<ISession>;
+  invalidateSession: () => Promise<ISession>;
 }
 
 // --- Session Model Static Interface ---
 export interface ISessionModel extends Model<ISession> {
-  invalidateUserSessions(userId: Types.ObjectId): Promise<void>;
-  findActiveSessions(userId: Types.ObjectId): Promise<ISession[]>;
+  invalidateUserSessions: (userId: Types.ObjectId) => Promise<void>;
+  findActiveSessions: (userId: Types.ObjectId) => Promise<ISession[]>;
 }
 
 // --- Schema Definition ---
@@ -88,9 +89,12 @@ SessionSchema.virtual("isExpired").get(function (this: ISession): boolean {
 
 // --- Middleware ---
 SessionSchema.pre<ISession>("save", function (next): void {
-  if (this.ipAddress) this.ipAddress = this.ipAddress.trim();
-  if (this.device) this.device = this.device.trim();
-  if (this.userAgent) this.userAgent = this.userAgent.trim();
+  if (this.ipAddress) 
+this.ipAddress = this.ipAddress.trim();
+  if (this.device) 
+this.device = this.device.trim();
+  if (this.userAgent) 
+this.userAgent = this.userAgent.trim();
 
   if (this.expiresAt.getTime() <= Date.now()) {
     this.isActive = false;

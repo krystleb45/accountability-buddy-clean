@@ -1,6 +1,8 @@
 // src/config/rateLimiter.ts - FIXED: Conditional Redis usage
-import rateLimit from "express-rate-limit";
 import type { Request, Response } from "express";
+
+import rateLimit from "express-rate-limit";
+
 import { logger } from "../utils/winstonLogger";
 
 // Check if Redis is disabled
@@ -9,12 +11,12 @@ const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
   process.env.DISABLE_REDIS === "true";
 
 // Validate environment variables and set defaults
-const maxRequests = parseInt(process.env.RATE_LIMIT_MAX || "100", 10);
-const windowMinutes = parseInt(process.env.RATE_LIMIT_WINDOW_MINUTES || "15", 10);
+const maxRequests = Number.parseInt(process.env.RATE_LIMIT_MAX || "100", 10);
+const windowMinutes = Number.parseInt(process.env.RATE_LIMIT_WINDOW_MINUTES || "15", 10);
 const useRedis = process.env.USE_REDIS_RATE_LIMIT === "true" && !isRedisDisabled;
 
 // Redis store setup (only if enabled)
-let store: any = undefined;
+let store: any;
 
 if (useRedis) {
   try {

@@ -1,8 +1,9 @@
 // src/api/controllers/FollowController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import FriendService from "../services/FriendService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import FriendService from "../services/FriendService";
 
 export default {
   followUser: catchAsync(async (req: Request<{ userId: string }>, res: Response, next: NextFunction) => {

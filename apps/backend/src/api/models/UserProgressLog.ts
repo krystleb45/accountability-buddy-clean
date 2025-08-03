@@ -1,6 +1,7 @@
 // src/api/models/UserProgressLog.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 /** Allowed types of things whose progress we log */
@@ -17,7 +18,7 @@ export interface IUserProgressLog extends Document {
   createdAt: Date;                    // When it was logged
 
   /** Handy summary for display or debugging */
-  summary(): string;
+  summary: () => string;
 }
 
 /** Model interface for statics */
@@ -25,30 +26,30 @@ export interface IUserProgressLogModel extends Model<IUserProgressLog> {
   /**
    * Create a new progress log entry.
    */
-  logProgress(
+  logProgress: (
     userId: Types.ObjectId,
     targetType: ProgressTargetType,
     targetId: Types.ObjectId,
     before: number,
     after: number,
     note?: string
-  ): Promise<IUserProgressLog>;
+  ) => Promise<IUserProgressLog>;
 
   /**
    * Fetch recent progress logs for a given user.
    * @param userId the user whose logs we want
    * @param limit  maximum number of entries (default 100)
    */
-  getByUser(userId: Types.ObjectId, limit?: number): Promise<IUserProgressLog[]>;
+  getByUser: (userId: Types.ObjectId, limit?: number) => Promise<IUserProgressLog[]>;
 
   /**
    * Fetch logs for a specific target (goal/task/tracker).
    */
-  getByTarget(
+  getByTarget: (
     targetType: ProgressTargetType,
     targetId: Types.ObjectId,
     limit?: number
-  ): Promise<IUserProgressLog[]>;
+  ) => Promise<IUserProgressLog[]>;
 }
 
 /** Schema definition */
@@ -84,8 +85,8 @@ UserProgressLogSchema.methods.summary = function (this: IUserProgressLog): strin
   const time = this.createdAt.toISOString();
   return (
     `[${time}] ${this.user.toString()} ${this.targetType} ${this.targetId.toString()}: ` +
-    `${this.before} → ${this.after}` +
-    (this.note ? ` (${this.note})` : "")
+    `${this.before} → ${this.after}${ 
+    this.note ? ` (${this.note})` : ""}`
   );
 };
 

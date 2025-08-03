@@ -1,7 +1,9 @@
-import mongoose, { Model, Schema } from "mongoose";
+import type { Model} from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 // Import IBook interface from the correct model file
-import { IBook } from "../models/Book"; // Import the IBook interface to ensure type safety
+import type { IBook } from "../models/Book"; // Import the IBook interface to ensure type safety
 
 // Define the Book Schema
 const BookSchema = new Schema<IBook>(
@@ -54,7 +56,7 @@ BookSchema.methods.addComment = async function (
 const Book: Model<IBook> = mongoose.model<IBook>("Book", BookSchema);
 
 // Example for creating a new book
-const createNewBook = async (): Promise<void> => {
+async function createNewBook (): Promise<void> {
   const newBook = new Book({
     title: "Test Book",
     category: "Programming",
@@ -70,7 +72,7 @@ const createNewBook = async (): Promise<void> => {
 
   // Log the result
   console.warn("New Book Created:", savedBook);
-};
+}
 
 // Call createNewBook and await its result
 createNewBook().catch((error) => {

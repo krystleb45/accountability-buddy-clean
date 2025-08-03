@@ -1,5 +1,6 @@
 // src/api/models/MilitaryResource.ts
 import type { Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Category Union ---
@@ -19,14 +20,14 @@ export interface IExternalSupportResource extends Document {
   domain: string;
 
   // Instance methods
-  deactivate(): Promise<IExternalSupportResource>;
-  activate(): Promise<IExternalSupportResource>;
+  deactivate: () => Promise<IExternalSupportResource>;
+  activate: () => Promise<IExternalSupportResource>;
 }
 
 // --- Model Interface for Statics ---
 export interface IExternalSupportResourceModel extends Model<IExternalSupportResource> {
-  findByCategory(category: ResourceCategory): Promise<IExternalSupportResource[]>;
-  searchByTitle(text: string): Promise<IExternalSupportResource[]>;
+  findByCategory: (category: ResourceCategory) => Promise<IExternalSupportResource[]>;
+  searchByTitle: (text: string) => Promise<IExternalSupportResource[]>;
 }
 
 // --- Schema Definition ---
@@ -47,7 +48,7 @@ const ExternalSupportResourceSchema = new Schema<
       required: [true, "URL is required."],
       trim: true,
       match: [
-        /^(https?:\/\/)?([\w\d-]+\.)+\w{2,}(\/.*)?$/,
+        /^(https?:\/\/)?([\w-]+\.)+\w{2,}(\/.*)?$/,
         "Please provide a valid URL.",
       ],
     },

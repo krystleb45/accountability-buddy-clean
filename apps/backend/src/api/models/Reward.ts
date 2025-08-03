@@ -1,6 +1,7 @@
 // src/api/models/Reward.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Reward Document Interface ---
@@ -15,15 +16,15 @@ export interface IReward {
   updatedAt: Date;
 
   // Instance methods
-  updateDetails(
+  updateDetails: (
     data: Partial<Pick<IReward, "description" | "pointsRequired" | "imageUrl">>
-  ): Promise<IReward & Document>;
+  ) => Promise<IReward & Document>;
 }
 
 // --- Reward Model Static Interface ---
 export interface IRewardModel extends Model<IReward & Document> {
-  findByType(type: IReward["rewardType"]): Promise<(IReward & Document)[]>;
-  getAvailableRewards(maxPoints: number): Promise<(IReward & Document)[]>;
+  findByType: (type: IReward["rewardType"]) => Promise<(IReward & Document)[]>;
+  getAvailableRewards: (maxPoints: number) => Promise<(IReward & Document)[]>;
 }
 
 // --- Schema Definition ---
@@ -75,9 +76,12 @@ RewardSchema.methods.updateDetails = async function (
   this: IReward & Document,
   data: Partial<Pick<IReward, "description" | "pointsRequired" | "imageUrl">>
 ): Promise<IReward & Document> {
-  if (data.description !== undefined) this.description = data.description;
-  if (data.pointsRequired !== undefined) this.pointsRequired = data.pointsRequired;
-  if (data.imageUrl !== undefined) this.imageUrl = data.imageUrl;
+  if (data.description !== undefined) 
+this.description = data.description;
+  if (data.pointsRequired !== undefined) 
+this.pointsRequired = data.pointsRequired;
+  if (data.imageUrl !== undefined) 
+this.imageUrl = data.imageUrl;
   await this.save();
   return this;
 };

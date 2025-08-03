@@ -1,7 +1,10 @@
 // src/api/services/MilestoneService.ts
 import mongoose from "mongoose";
-import Milestone, { IMilestone } from "../models/Milestone";
+
+import type { IMilestone } from "../models/Milestone";
+
 import { createError } from "../middleware/errorHandler";
+import Milestone from "../models/Milestone";
 import LoggingService from "./LoggingService";
 
 type UpdatableFields = "title" | "description" | "dueDate";
@@ -72,7 +75,8 @@ class MilestoneService {
 
     // Only update the allowed fields if provided
     if (updates.title !== undefined) {
-      if (!updates.title.trim()) throw createError("Title cannot be empty", 400);
+      if (!updates.title.trim()) 
+throw createError("Title cannot be empty", 400);
       milestone.title = updates.title.trim();
     }
     if (updates.description !== undefined) {

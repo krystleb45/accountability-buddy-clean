@@ -6,7 +6,7 @@ import axios from "axios";
 
 const API_BASE = process.env.API_URL || "http://localhost:5050";
 const TEST_USER = {
-  username: "testuser_" + Date.now(),
+  username: `testuser_${  Date.now()}`,
   email: `test+${Date.now()}@accountabilitybuddys.com`,
   password: "testpassword123"
 };
@@ -72,7 +72,7 @@ class SubscriptionTester {
       throw new Error("No token received from login response");
     }
 
-    return { token: this.token.substring(0, 20) + "..." };
+    return { token: `${this.token.substring(0, 20)  }...` };
   }
 
   private async getPlans(): Promise<{ planCount: number; plans: string[] }> {

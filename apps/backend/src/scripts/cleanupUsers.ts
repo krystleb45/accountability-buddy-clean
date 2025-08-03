@@ -1,10 +1,11 @@
 // src/scripts/cleanupUsers.ts
 
-import mongoose from "mongoose";
-import { User } from "../api/models/User";
 import dotenv from "dotenv";
-import { logger } from "../utils/winstonLogger";
+import mongoose from "mongoose";
+
+import { User } from "../api/models/User";
 import { loadEnvironment } from "../utils/loadEnv";
+import { logger } from "../utils/winstonLogger";
 
 // Load .env and any additional env logic
 loadEnvironment();

@@ -1,15 +1,17 @@
 // src/api/routes/payment.ts
-import { Router, Request, Response } from "express";
-import express from "express";
-import Stripe from "stripe";
+import type { Request, Response } from "express";
+import type Stripe from "stripe";
+
+import express, { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { check } from "express-validator";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
-import Subscription from "../models/Subscription";
+
 import stripeClient from "../../utils/stripe";
 import { logger } from "../../utils/winstonLogger";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import Subscription from "../models/Subscription";
+import catchAsync from "../utils/catchAsync";
 
 const router = Router();
 

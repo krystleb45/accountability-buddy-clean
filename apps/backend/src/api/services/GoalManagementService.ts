@@ -1,17 +1,20 @@
 // src/api/services/GoalManagementService.ts - Updated with subscription support
 import mongoose from "mongoose";
-import Goal, { IGoal } from "../models/Goal";
-import { User } from "../models/User";
-import { CustomError } from "../middleware/errorHandler";
-import { logger } from "../../utils/winstonLogger";
 
-type NewGoalData = {
+import type { IGoal } from "../models/Goal";
+
+import { logger } from "../../utils/winstonLogger";
+import { CustomError } from "../middleware/errorHandler";
+import Goal from "../models/Goal";
+import { User } from "../models/User";
+
+interface NewGoalData {
   title: string;
   description?: string;
   deadline: Date;
   category: string;
   target?: number;
-};
+}
 
 class GoalManagementService {
   /**

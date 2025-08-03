@@ -1,7 +1,9 @@
 import type { Server, Socket } from "socket.io";
+
+import mongoose from "mongoose";
+
 import Room from "../api/models/Room"; // Room model for database operations
 import { logger } from "../utils/winstonLogger";
-import mongoose from "mongoose";
 
 
 interface RoomData {
@@ -16,7 +18,7 @@ interface RoomData {
  * @param   io - The socket.io server instance.
  * @param   socket - The socket object representing the client's connection.
  */
-const roomSocket = (io: Server, socket: Socket): void => {
+function roomSocket (io: Server, socket: Socket): void {
   const userId = socket.data.user?.id as string; // Ensure user ID is retrieved properly
   if (!userId) {
     logger.error("Socket connection attempted without a valid user ID.");
@@ -48,7 +50,8 @@ const roomSocket = (io: Server, socket: Socket): void => {
 
       logger.info(`Room created: ${newRoom.name} by user ${userId}`);
       socket.emit("roomCreated", newRoom); // Confirm room creation to the user
-      if (!newRoom.isPrivate) io.emit("newRoom", newRoom); // Broadcast public room to all users
+      if (!newRoom.isPrivate) 
+io.emit("newRoom", newRoom); // Broadcast public room to all users
     } catch (error) {
       logger.error(`Error creating room: ${(error as Error).message}`);
       socket.emit("error", { msg: "Failed to create room." });
@@ -145,6 +148,6 @@ const roomSocket = (io: Server, socket: Socket): void => {
   socket.on("disconnect", () => {
     logger.info(`User ${userId} disconnected from room management`);
   });
-};
+}
 
 export default roomSocket;

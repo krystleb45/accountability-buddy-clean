@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 // List of sensitive words (you can expand this as needed)
 const sensitiveWords = [
@@ -15,7 +15,7 @@ const sensitiveWords = [
 ];
 
 // Middleware to filter sensitive messages
-const filterMessageContent = (message: string): string => {
+function filterMessageContent (message: string): string {
   // Convert message to lowercase for case-insensitive comparison
   const messageLower = message.toLowerCase();
 
@@ -34,10 +34,10 @@ const filterMessageContent = (message: string): string => {
   }
 
   return message; // Return the original message if no sensitive words are found
-};
+}
 
 // Middleware function
-const messageFilterMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+function messageFilterMiddleware (req: Request, res: Response, next: NextFunction): void {
   try {
     const { text } = req.body; // Assuming the message text is passed in the body
 
@@ -51,6 +51,6 @@ const messageFilterMiddleware = (req: Request, res: Response, next: NextFunction
   } catch (error: any) {
     res.status(500).json({ success: false, message: "Error filtering message", error: error.message });
   }
-};
+}
 
 export default messageFilterMiddleware;

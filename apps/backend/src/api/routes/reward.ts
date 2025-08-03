@@ -1,12 +1,14 @@
 // src/api/routes/rewards.ts
 import type { Router } from "express";
+
 import express from "express";
-import { check } from "express-validator";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import { check } from "express-validator";
+
 import * as RewardController from "../controllers/RewardController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
 
 const router: Router = express.Router();
 

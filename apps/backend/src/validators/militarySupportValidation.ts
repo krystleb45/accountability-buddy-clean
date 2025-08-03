@@ -1,4 +1,4 @@
-import { body, query, param } from "express-validator";
+import { body, param, query } from "express-validator";
 
 const validateMilitarySupportMessage = [
   body("message")

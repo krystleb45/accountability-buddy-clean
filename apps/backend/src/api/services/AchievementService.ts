@@ -1,7 +1,9 @@
+import type { IAchievement } from "../models/Achievement";
+import type { IUser } from "../models/User";
 // src/api/services/AchievementService.ts
 import { Types } from "mongoose";
-import Achievement, { IAchievement } from "../models/Achievement";
-import { IUser } from "../models/User";
+
+import Achievement from "../models/Achievement";
 
 export interface CreateAchievementDTO {
   name: string;
@@ -24,7 +26,8 @@ class AchievementService {
 
   /** Get a single achievement */
   static async getById(id: string): Promise<IAchievement | null> {
-    if (!Types.ObjectId.isValid(id)) return null;
+    if (!Types.ObjectId.isValid(id)) 
+return null;
     return Achievement.findById(new Types.ObjectId(id));
   }
 
@@ -38,9 +41,11 @@ class AchievementService {
     id: string,
     updates: UpdateAchievementDTO
   ): Promise<IAchievement | null> {
-    if (!Types.ObjectId.isValid(id)) return null;
+    if (!Types.ObjectId.isValid(id)) 
+return null;
     const ach = await Achievement.findById(new Types.ObjectId(id));
-    if (!ach) return null;
+    if (!ach) 
+return null;
     Object.assign(ach, updates);
     await ach.save();
     return ach;
@@ -48,7 +53,8 @@ class AchievementService {
 
   /** Delete an achievement */
   static async delete(id: string): Promise<boolean> {
-    if (!Types.ObjectId.isValid(id)) return false;
+    if (!Types.ObjectId.isValid(id)) 
+return false;
     const res = await Achievement.deleteOne({ _id: new Types.ObjectId(id) });
     return res.deletedCount === 1;
   }

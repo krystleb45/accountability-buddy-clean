@@ -1,4 +1,5 @@
 import type { JwtPayload, SignOptions } from "jsonwebtoken";
+
 import jwt from "jsonwebtoken";
 
 interface TokenPayload extends JwtPayload {
@@ -20,7 +21,7 @@ const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "7d";
  * @param payload - The payload to include in the token.
  * @returns The signed JWT.
  */
-export const generateAccessToken = (payload: TokenPayload): string => {
+export function generateAccessToken (payload: TokenPayload): string {
   if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined.");
   }
@@ -33,7 +34,7 @@ export const generateAccessToken = (payload: TokenPayload): string => {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Error generating access token: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Generate a refresh token.
@@ -41,7 +42,7 @@ export const generateAccessToken = (payload: TokenPayload): string => {
  * @param payload - The payload to include in the token.
  * @returns The signed refresh token.
  */
-export const generateRefreshToken = (payload: TokenPayload): string => {
+export function generateRefreshToken (payload: TokenPayload): string {
   if (!JWT_REFRESH_SECRET) {
     throw new Error("JWT_REFRESH_SECRET is not defined.");
   }
@@ -54,7 +55,7 @@ export const generateRefreshToken = (payload: TokenPayload): string => {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Error generating refresh token: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Verify an access token.
@@ -63,7 +64,7 @@ export const generateRefreshToken = (payload: TokenPayload): string => {
  * @returns The decoded payload if the token is valid.
  * @throws Error if the token is invalid or verification fails.
  */
-export const verifyJWT = (token: string): TokenPayload => {
+export function verifyJWT (token: string): TokenPayload {
   if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined.");
   }
@@ -74,7 +75,7 @@ export const verifyJWT = (token: string): TokenPayload => {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`JWT verification failed: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Verify a refresh token.
@@ -83,7 +84,7 @@ export const verifyJWT = (token: string): TokenPayload => {
  * @returns The decoded payload if the token is valid.
  * @throws Error if the token is invalid or verification fails.
  */
-export const verifyRefreshToken = (token: string): TokenPayload => {
+export function verifyRefreshToken (token: string): TokenPayload {
   if (!JWT_REFRESH_SECRET) {
     throw new Error("JWT_REFRESH_SECRET is not defined.");
   }
@@ -94,7 +95,7 @@ export const verifyRefreshToken = (token: string): TokenPayload => {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`Refresh token verification failed: ${errorMessage}`);
   }
-};
+}
 
 /**
  * Decode a token without verification.
@@ -102,7 +103,7 @@ export const verifyRefreshToken = (token: string): TokenPayload => {
  * @param token - The token to decode.
  * @returns The decoded payload or null if decoding fails.
  */
-export const decodeJWT = (token: string): JwtPayload | null => {
+export function decodeJWT (token: string): JwtPayload | null {
   try {
     const decoded = jwt.decode(token);
     return decoded as JwtPayload | null;
@@ -110,7 +111,7 @@ export const decodeJWT = (token: string): JwtPayload | null => {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     throw new Error(`JWT decoding failed: ${errorMessage}`);
   }
-};
+}
 
 export default {
   generateAccessToken,

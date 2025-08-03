@@ -1,6 +1,7 @@
 // backend/src/types/AuthenticatedRequest.ts
-import { Request } from "express";
-import { IUser } from "./AuthenticatedUser";
+import type { Request } from "express";
+
+import type { IUser } from "./AuthenticatedUser";
 
 // Generic interface that allows typing params
 export interface AuthenticatedRequest<P = any, ResBody = any, ReqBody = any, ReqQuery = any>

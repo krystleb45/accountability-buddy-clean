@@ -1,8 +1,11 @@
 // src/api/services/XpHistoryService.ts
 
 import { Types } from "mongoose";
-import XpHistory, { IXpHistory } from "../models/XpHistory";
+
+import type { IXpHistory } from "../models/XpHistory";
+
 import { createError } from "../middleware/errorHandler";
+import XpHistory from "../models/XpHistory";
 
 class XpHistoryService {
   /**

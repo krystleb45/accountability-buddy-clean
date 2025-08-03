@@ -1,10 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 /**
  * Middleware for logging all incoming requests with additional context.
  * Logs request details at the start and response details upon completion.
  */
-const loggingMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+function loggingMiddleware (req: Request, res: Response, next: NextFunction): void {
   const start = Date.now();
   const { method, url, headers, body } = req;
 
@@ -39,6 +40,6 @@ const loggingMiddleware = (req: Request, res: Response, next: NextFunction): voi
   });
 
   next();
-};
+}
 
 export default loggingMiddleware;

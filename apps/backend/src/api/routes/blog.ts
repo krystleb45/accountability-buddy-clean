@@ -1,10 +1,13 @@
 // src/api/routes/blog.ts
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import { check, param } from "express-validator";
+
+import * as blogController from "../controllers/blogController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 import catchAsync from "../utils/catchAsync";
-import * as blogController from "../controllers/blogController";
 
 const router = Router();
 

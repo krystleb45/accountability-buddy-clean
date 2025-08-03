@@ -1,10 +1,11 @@
 // src/api/routes/feedback.ts
 import { Router } from "express";
-import { check } from "express-validator";
 import rateLimit from "express-rate-limit";
+import { check } from "express-validator";
+
+import feedbackController from "../controllers/FeedbackController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import feedbackController from "../controllers/FeedbackController";
 
 const router = Router();
 
@@ -50,7 +51,7 @@ router.delete(
   protect,
   [
     check("feedbackId", "Invalid feedback ID")
-      .matches(/^[0-9a-fA-F]{24}$/)
+      .matches(/^[0-9a-f]{24}$/i)
       .withMessage("Must be a 24-char hex string"),
   ],
   handleValidationErrors,

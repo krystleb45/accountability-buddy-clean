@@ -1,7 +1,8 @@
 // src/api/models/Book.ts
 
-import type { Document, Model } from "mongoose";
-import mongoose, { Schema, Types as MongooseTypes } from "mongoose";
+import type { Document, Model , Types as MongooseTypes } from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 // --- Comment Subdocument ---
 export interface IBookComment extends Document {
@@ -38,16 +39,16 @@ export interface IBook extends Document {
   commentCount: number;
 
   // Instance methods
-  addLike(userId: MongooseTypes.ObjectId): Promise<IBook>;
-  removeLike(userId: MongooseTypes.ObjectId): Promise<IBook>;
-  addComment(userId: MongooseTypes.ObjectId, text: string): Promise<IBookComment>;
-  removeComment(commentId: MongooseTypes.ObjectId): Promise<boolean>;
+  addLike: (userId: MongooseTypes.ObjectId) => Promise<IBook>;
+  removeLike: (userId: MongooseTypes.ObjectId) => Promise<IBook>;
+  addComment: (userId: MongooseTypes.ObjectId, text: string) => Promise<IBookComment>;
+  removeComment: (commentId: MongooseTypes.ObjectId) => Promise<boolean>;
 }
 
 // --- Model Interface ---
 export interface IBookModel extends Model<IBook> {
-  findByCategory(this: IBookModel, category: string, limit?: number): Promise<IBook[]>;
-  findRecent   (this: IBookModel, limit?: number): Promise<IBook[]>;
+  findByCategory: (this: IBookModel, category: string, limit?: number) => Promise<IBook[]>;
+  findRecent: (this: IBookModel, limit?: number) => Promise<IBook[]>;
 }
 
 // --- Schema Definition ---
@@ -62,7 +63,7 @@ const BookSchema = new Schema<IBook, IBookModel>(
       trim: true,
       validate: {
         validator: (url: string): boolean =>
-          /^(https?:\/\/.+\.(png|jpg|jpeg|gif|svg))$/.test(url),
+          /^https?:\/\/.+\.(?:png|jpg|jpeg|gif|svg)$/.test(url),
         message: "Invalid cover image URL format",
       },
     },
@@ -130,7 +131,8 @@ BookSchema.methods.removeComment = async function (
   commentId: MongooseTypes.ObjectId
 ): Promise<boolean> {
   const idx = this.comments.findIndex((c) => c._id.equals(commentId));
-  if (idx === -1) return false;
+  if (idx === -1) 
+return false;
   this.comments.splice(idx, 1);
   await this.save();
   return true;

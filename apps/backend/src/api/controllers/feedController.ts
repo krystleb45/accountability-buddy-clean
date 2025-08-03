@@ -1,8 +1,9 @@
 // src/api/controllers/feedController.ts
 import type { Request, Response } from "express";
+
+import FeedService from "../services/FeedService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import FeedService from "../services/FeedService";
 
 /** GET /api/feed — fetch all feed posts */
 export const getFeed = catchAsync(async (_req: Request, res: Response): Promise<void> => {

@@ -105,7 +105,7 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
     const redisConfig = {
       socket: {
         host: process.env.REDIS_HOST || "localhost",
-        port: parseInt(process.env.REDIS_PORT || "6379", 10),
+        port: Number.parseInt(process.env.REDIS_PORT || "6379", 10),
         reconnectStrategy: (retries: number): number => Math.min(retries * 50, 2000),
       },
       password: process.env.REDIS_PASSWORD || undefined,
@@ -124,7 +124,7 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
     });
 
     redisClient.on("error", (err: Error): void => {
-      logger.error("Redis error: " + err.message);
+      logger.error(`Redis error: ${  err.message}`);
     });
 
     redisClient.on("end", (): void => {
@@ -137,7 +137,7 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
         await redisClient.connect();
         logger.info("Successfully connected to Redis.");
       } catch (error) {
-        logger.error("Could not establish a connection to Redis: " + (error as Error).message);
+        logger.error(`Could not establish a connection to Redis: ${  (error as Error).message}`);
         // DON'T EXIT - just log the error and continue without Redis
         logger.warn("⚠️ Continuing without Redis - some features may be limited");
       }
@@ -151,7 +151,7 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
           logger.info("Redis connection closed gracefully.");
         }
       } catch (err) {
-        logger.error("Error closing Redis connection: " + (err as Error).message);
+        logger.error(`Error closing Redis connection: ${  (err as Error).message}`);
       }
     };
 
@@ -159,7 +159,7 @@ if (process.env.DISABLE_REDIS === "true" || process.env.SKIP_REDIS_INIT === "tru
     process.on("SIGTERM", gracefulShutdown);
 
   } catch (error) {
-    logger.error("Failed to load Redis module: " + (error as Error).message);
+    logger.error(`Failed to load Redis module: ${  (error as Error).message}`);
     logger.warn("⚠️ Falling back to mock Redis client");
 
     // Fallback to mock client if Redis module fails to load

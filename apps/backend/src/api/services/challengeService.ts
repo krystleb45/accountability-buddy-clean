@@ -1,17 +1,14 @@
 // src/api/services/challengeService.ts
 import { Types } from "mongoose";
-import Challenge, { IChallenge } from "../models/Challenge";
+
+import type { IChallenge } from "../models/Challenge";
+
+import Challenge from "../models/Challenge";
 
 /**
  * Create a new challenge.
  */
-export const createChallengeService = async (
-  title: string,
-  description: string,
-  pointsRequired: number,
-  rewardType: string,
-  visibility: "public" | "private" = "public"
-): Promise<IChallenge> => {
+export async function createChallengeService (title: string,  description: string,  pointsRequired: number,  rewardType: string,  visibility: "public" | "private" = "public"): Promise<IChallenge> {
   const newChallenge = await Challenge.create({
     title,
     description,
@@ -22,19 +19,16 @@ export const createChallengeService = async (
     status: "ongoing",
   });
   return newChallenge;
-};
+}
 
 /**
  * Fetch public challenges (with optional status filter + pagination).
  */
-export const getPublicChallengesService = async (
-  page = 1,
-  pageSize = 10,
-  status?: string
-): Promise<IChallenge[]> => {
+export async function getPublicChallengesService (page = 1,  pageSize = 10,  status?: string): Promise<IChallenge[]> {
   const skip = (page - 1) * pageSize;
   const filter: Record<string, any> = { visibility: "public" };
-  if (status) filter.status = status;
+  if (status) 
+filter.status = status;
 
   const challenges = await Challenge.find(filter)
     .skip(skip)
@@ -43,14 +37,12 @@ export const getPublicChallengesService = async (
     .sort({ createdAt: -1 });
 
   return challenges;
-};
+}
 
 /**
  * Fetch a single challenge by ID.
  */
-export const getChallengeByIdService = async (
-  challengeId: string
-): Promise<IChallenge> => {
+export async function getChallengeByIdService (challengeId: string): Promise<IChallenge> {
   if (!Types.ObjectId.isValid(challengeId)) {
     throw new Error("Invalid challenge ID");
   }
@@ -62,15 +54,12 @@ export const getChallengeByIdService = async (
     throw new Error("Challenge not found");
   }
   return challenge;
-};
+}
 
 /**
  * Add the current user to the participants list.
  */
-export const joinChallengeService = async (
-  userId: string,
-  challengeId: string
-): Promise<IChallenge> => {
+export async function joinChallengeService (userId: string,  challengeId: string): Promise<IChallenge> {
   if (!Types.ObjectId.isValid(challengeId)) {
     throw new Error("Invalid challenge ID");
   }
@@ -86,15 +75,12 @@ export const joinChallengeService = async (
   challenge.participants.push({ user: uid, progress: 0, joinedAt: new Date() });
   await challenge.save();
   return challenge;
-};
+}
 
 /**
  * Remove the current user from participants.
  */
-export const leaveChallengeService = async (
-  userId: string,
-  challengeId: string
-): Promise<IChallenge> => {
+export async function leaveChallengeService (userId: string,  challengeId: string): Promise<IChallenge> {
   if (!Types.ObjectId.isValid(challengeId)) {
     throw new Error("Invalid challenge ID");
   }
@@ -109,15 +95,12 @@ export const leaveChallengeService = async (
   await challenge.save();
 
   return challenge;
-};
+}
 
 /**
  * Fetch all challenges (paginated, any visibility).
  */
-export const fetchChallengesWithPaginationService = async (
-  page = 1,
-  pageSize = 10
-): Promise<IChallenge[]> => {
+export async function fetchChallengesWithPaginationService (page = 1,  pageSize = 10): Promise<IChallenge[]> {
   const skip = (page - 1) * pageSize;
   const challenges = await Challenge.find()
     .skip(skip)
@@ -125,7 +108,7 @@ export const fetchChallengesWithPaginationService = async (
     .populate("creator", "username profilePicture")
     .sort({ createdAt: -1 });
   return challenges;
-};
+}
 
 export default {
   createChallengeService,

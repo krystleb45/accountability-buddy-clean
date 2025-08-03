@@ -1,10 +1,15 @@
 // src/api/services/SessionService.ts
-import jwt from "jsonwebtoken";
+import type { Request } from "express";
+
 import bcrypt from "bcryptjs";
-import { Request } from "express";
-import { Session, ISession } from "../models/Session";
-import { User, IUser } from "../models/User";
+import jwt from "jsonwebtoken";
+
+import type { ISession } from "../models/Session";
+import type { IUser } from "../models/User";
+
 import { createError } from "../middleware/errorHandler";
+import { Session } from "../models/Session";
+import { User } from "../models/User";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 const JWT_EXPIRES_IN = "1h";
@@ -24,10 +29,12 @@ class SessionService {
     req: Request
   ): Promise<LoginResult> {
     const user = await User.findOne({ email });
-    if (!user) throw createError("Invalid credentials", 401);
+    if (!user) 
+throw createError("Invalid credentials", 401);
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw createError("Invalid credentials", 401);
+    if (!match) 
+throw createError("Invalid credentials", 401);
 
     const payload = { id: user._id.toString() };
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -49,7 +56,8 @@ class SessionService {
    */
   static async logout(sessionId: string): Promise<void> {
     const session = await Session.findById(sessionId);
-    if (!session) return;
+    if (!session) 
+return;
     session.isActive = false;
     await session.save();
   }
@@ -84,7 +92,8 @@ class SessionService {
       { new: true }
     );
 
-    if (!session) throw createError("Session not found", 404);
+    if (!session) 
+throw createError("Session not found", 404);
     return newToken;
   }
 
@@ -95,7 +104,8 @@ class SessionService {
     const session = await Session.findById(sessionId).populate<
       ISession & { user: IUser }
     >("user");
-    if (!session) throw createError("Session not found", 404);
+    if (!session) 
+throw createError("Session not found", 404);
     return session;
   }
 
@@ -114,7 +124,8 @@ class SessionService {
     userId: string
   ): Promise<void> {
     const session = await Session.findOne({ _id: sessionId, user: userId });
-    if (!session) throw createError("Session not found or access denied", 404);
+    if (!session) 
+throw createError("Session not found or access denied", 404);
     await session.deleteOne();
   }
 }

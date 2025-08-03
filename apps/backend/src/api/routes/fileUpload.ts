@@ -1,7 +1,8 @@
 // src/api/routes/fileUpload.ts
 import { Router } from "express";
-import { protect } from "../middleware/authMiddleware";
+
 import * as fileController from "../controllers/FileUploadController";
+import { protect } from "../middleware/authMiddleware";
 
 const router = Router();
 

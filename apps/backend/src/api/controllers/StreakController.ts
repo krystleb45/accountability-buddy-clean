@@ -1,6 +1,8 @@
 // src/api/controllers/StreakController.ts
 import type { Request, Response } from "express";
+
 import mongoose from "mongoose";
+
 import * as StreakService from "../services/StreakService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
@@ -73,8 +75,8 @@ export const resetUserStreak = catchAsync(async (req: Request, res: Response): P
  * @access  Public
  */
 export const getStreakLeaderboard = catchAsync(async (req: Request, res: Response): Promise<void> => {
-  const limit = Math.min(100, parseInt(req.query.limit as string, 10) || 10);
-  const page  = Math.max(1,  parseInt(req.query.page  as string, 10) || 1);
+  const limit = Math.min(100, Number.parseInt(req.query.limit as string, 10) || 10);
+  const page  = Math.max(1,  Number.parseInt(req.query.page  as string, 10) || 1);
 
   const { streaks, pagination } = await StreakService.getStreakLeaderboard(limit, page);
   sendResponse(res, 200, true, "Streak leaderboard fetched successfully", {

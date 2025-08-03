@@ -1,11 +1,14 @@
 // src/api/routes/messages.ts - Updated with subscription restrictions
-import { Router, Request, Response, NextFunction } from "express";
-import { param, check, query } from "express-validator";
-import { protect } from "../middleware/authMiddleware";
-import { validateSubscription, validateFeatureAccess } from "../middleware/subscriptionValidation";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
+import { check, param, query } from "express-validator";
+
 import * as MessageController from "../controllers/MessageController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import { validateFeatureAccess, validateSubscription } from "../middleware/subscriptionValidation";
+import catchAsync from "../utils/catchAsync";
 
 const router = Router();
 

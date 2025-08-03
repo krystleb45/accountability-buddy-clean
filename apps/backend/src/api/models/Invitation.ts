@@ -1,5 +1,7 @@
 // src/api/models/Invitation.ts
-import mongoose, { Schema, Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose";
+
+import mongoose, { Schema } from "mongoose";
 
 export type InvitationStatus = "pending" | "accepted" | "rejected";
 

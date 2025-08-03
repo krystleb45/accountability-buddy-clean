@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 
 // For AWS S3 configuration
 export const s3Config = {

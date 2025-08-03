@@ -1,6 +1,7 @@
 // src/api/models/MilitarySupportChatroom.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Chatroom Interface ---
@@ -18,16 +19,16 @@ export interface IMilitarySupportChatroom extends Document {
   memberCount: number;
 
   // Instance methods
-  addMember(userId: Types.ObjectId): Promise<IMilitarySupportChatroom>;
-  removeMember(userId: Types.ObjectId): Promise<IMilitarySupportChatroom>;
-  deactivate(): Promise<IMilitarySupportChatroom>;
-  activate(): Promise<IMilitarySupportChatroom>;
+  addMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom>;
+  removeMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom>;
+  deactivate: () => Promise<IMilitarySupportChatroom>;
+  activate: () => Promise<IMilitarySupportChatroom>;
 }
 
 // --- Model Interface ---
 export interface IMilitarySupportChatroomModel extends Model<IMilitarySupportChatroom> {
-  findPublic(): Promise<IMilitarySupportChatroom[]>;
-  findByMember(userId: Types.ObjectId): Promise<IMilitarySupportChatroom[]>;
+  findPublic: () => Promise<IMilitarySupportChatroom[]>;
+  findByMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom[]>;
 }
 
 // --- Schema Definition ---

@@ -1,8 +1,9 @@
 // src/api/controllers/groupController.ts - COMPLETE FIXED VERSION
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import GroupService from "../services/GroupService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import GroupService from "../services/GroupService";
 
 /**
  * GET /api/groups - Get all groups with optional filters

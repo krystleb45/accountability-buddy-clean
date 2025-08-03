@@ -1,9 +1,11 @@
 // src/api/controllers/collaborationGoalController.ts
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+
+import sanitize from "mongo-sanitize";
+
+import CollaborationGoalService from "../services/CollaborationGoalService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import sanitize from "mongo-sanitize";
-import CollaborationGoalService from "../services/CollaborationGoalService";
 
 export const createCollaborationGoal = catchAsync(
   async (

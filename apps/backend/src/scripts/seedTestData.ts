@@ -1,7 +1,8 @@
 // src/scripts/seedTestData.ts
+import bcrypt from "bcryptjs";
+
 import { Role } from "../api/models/Role";
 import { User } from "../api/models/User";
-import bcrypt from "bcryptjs";
 
 export async function seedRoles(): Promise<void> {
   const roles = [

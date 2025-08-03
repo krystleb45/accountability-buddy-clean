@@ -1,5 +1,6 @@
 // src/api/models/Leaderboard.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interface for Leaderboard Document ---
@@ -19,15 +20,15 @@ export interface ILeaderboard extends Document {
 
 // --- Model Interface for Statics ---
 export interface ILeaderboardModel extends Model<ILeaderboard> {
-  updateLeaderboard(
+  updateLeaderboard: (
     userId: Types.ObjectId,
     points: number,
     goals: number,
     milestones: number,
     streak: number
-  ): Promise<ILeaderboard>;
-  recalculateRanks(): Promise<void>;
-  getTop(n: number): Promise<ILeaderboard[]>;
+  ) => Promise<ILeaderboard>;
+  recalculateRanks: () => Promise<void>;
+  getTop: (n: number) => Promise<ILeaderboard[]>;
 }
 
 // --- Schema Definition ---

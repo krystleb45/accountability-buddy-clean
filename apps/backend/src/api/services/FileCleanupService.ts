@@ -1,7 +1,8 @@
-import path from "path";
-import fs from "fs";
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import sanitizeFilename from "sanitize-filename";
-import { execSync } from "child_process";
+
 import { logger } from "../../utils/winstonLogger";
 
 const UPLOAD_DIR = path.resolve(__dirname, "../uploads");
@@ -52,7 +53,7 @@ export async function deleteUpload(filename: string): Promise<void> {
 /**
  * Build a public URL for a given uploaded filename.
  */
-export function urlFor(req: { protocol: string; get(header: string): string | undefined }, filename: string): string {
+export function urlFor(req: { protocol: string; get: (header: string) => string | undefined }, filename: string): string {
   const host = `${req.protocol}://${req.get("host")}`;
   const clean = sanitizeFilename(filename);
   return `${host}/uploads/${clean}`;

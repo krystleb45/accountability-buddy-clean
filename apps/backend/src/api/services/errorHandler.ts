@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 
 /**
@@ -38,12 +39,7 @@ export class CustomError extends Error {
  * @param res - Express response object
  * @param next - Express next middleware function
  */
-export const errorHandler = (
-  err: CustomError | Error,
-  req: Request,
-  res: Response,
-  _next: NextFunction,
-): void => {
+export function errorHandler (err: CustomError | Error,  req: Request,  res: Response,  _next: NextFunction): void {
   const statusCode = err instanceof CustomError ? err.statusCode : 500;
   const errorResponse: Record<string, unknown> = {
     success: false,
@@ -69,7 +65,7 @@ export const errorHandler = (
   }
 
   res.status(statusCode).json(errorResponse);
-};
+}
 
 /**
  * Utility to wrap asynchronous functions for consistent error handling.
@@ -77,13 +73,11 @@ export const errorHandler = (
  * @param fn - Async function to be wrapped
  * @returns Wrapped async function with error handling
  */
-export const asyncHandler = (
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
-): ((req: Request, res: Response, next: NextFunction) => void) => {
+export function asyncHandler (fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>): ((req: Request, res: Response, next: NextFunction) => void) {
   return (req: Request, res: Response, next: NextFunction): void => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
-};
+}
 
 /**
  * Error Logging Middleware
@@ -91,12 +85,12 @@ export const asyncHandler = (
  * @param err - Error object
  * @param req - Express request object
  */
-export const logError = (err: Error, req: Request): void => {
+export function logError (err: Error, req: Request): void {
   // Add additional logging logic here (e.g., send error details to a monitoring service)
   logger.error(
     `Error Logged: ${err.message} | Status: ${(err as CustomError).statusCode || 500} | URL: ${req.originalUrl}`,
   );
-};
+}
 
 export default {
   errorHandler,

@@ -1,11 +1,14 @@
 // src/api/routes/matches.ts
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
 import { param } from "express-validator";
+
+import * as MatchController from "../controllers/MatchController";
+import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 import catchAsync from "../utils/catchAsync";
-import * as MatchController from "../controllers/MatchController";
 
 const router = Router();
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 50 });

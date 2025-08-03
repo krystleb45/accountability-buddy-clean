@@ -1,5 +1,6 @@
 // src/api/models/Challenge.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Subdocument Interfaces ---
@@ -41,20 +42,20 @@ export interface IChallenge extends Document {
   updatedAt: Date;
 
   // Instance methods
-  addReward(rewardType: IReward["rewardType"], rewardValue: string): Promise<IChallenge>;
-  addMilestone(milestoneTitle: string, dueDate: Date): Promise<IMilestone>;
+  addReward: (rewardType: IReward["rewardType"], rewardValue: string) => Promise<IChallenge>;
+  addMilestone: (milestoneTitle: string, dueDate: Date) => Promise<IMilestone>;
 }
 
 // --- Model Interface ---
 export interface IChallengeModel extends Model<IChallenge> {
-  addParticipant(challengeId: Types.ObjectId, userId: Types.ObjectId): Promise<IChallenge>;
-  updateProgress(challengeId: Types.ObjectId, userId: Types.ObjectId, progressUpdate: number): Promise<IChallenge>;
-  updateMilestoneStatus(challengeId: Types.ObjectId, milestoneId: Types.ObjectId): Promise<void>;
-  fetchChallengesWithPagination(
+  addParticipant: (challengeId: Types.ObjectId, userId: Types.ObjectId) => Promise<IChallenge>;
+  updateProgress: (challengeId: Types.ObjectId, userId: Types.ObjectId, progressUpdate: number) => Promise<IChallenge>;
+  updateMilestoneStatus: (challengeId: Types.ObjectId, milestoneId: Types.ObjectId) => Promise<void>;
+  fetchChallengesWithPagination: (
     page: number,
     pageSize: number,
     filters?: Record<string, any>
-  ): Promise<IChallenge[]>;
+  ) => Promise<IChallenge[]>;
 }
 
 // --- Schema Definitions ---
@@ -166,7 +167,8 @@ ChallengeSchema.statics.addParticipant = async function (
   userId: Types.ObjectId
 ): Promise<IChallenge> {
   const challenge = await this.findById(challengeId);
-  if (!challenge) throw new Error("Challenge not found");
+  if (!challenge) 
+throw new Error("Challenge not found");
   if (!challenge.participants.some(p => p.user.equals(userId))) {
     challenge.participants.push({ user: userId, progress: 0, joinedAt: new Date() } as any);
     await challenge.save();
@@ -180,9 +182,11 @@ ChallengeSchema.statics.updateProgress = async function (
   progressUpdate: number
 ): Promise<IChallenge> {
   const challenge = await this.findById(challengeId);
-  if (!challenge) throw new Error("Challenge not found");
+  if (!challenge) 
+throw new Error("Challenge not found");
   const participant = challenge.participants.find(p => p.user.equals(userId));
-  if (!participant) throw new Error("Participant not found");
+  if (!participant) 
+throw new Error("Participant not found");
   participant.progress += progressUpdate;
   await challenge.save();
   return challenge;
@@ -193,9 +197,11 @@ ChallengeSchema.statics.updateMilestoneStatus = async function (
   milestoneId: Types.ObjectId
 ): Promise<void> {
   const challenge = await this.findById(challengeId);
-  if (!challenge) throw new Error("Challenge not found");
+  if (!challenge) 
+throw new Error("Challenge not found");
   const milestone = challenge.milestones.id(milestoneId);
-  if (!milestone) throw new Error("Milestone not found");
+  if (!milestone) 
+throw new Error("Milestone not found");
   milestone.completed = true;
   await challenge.save();
 };

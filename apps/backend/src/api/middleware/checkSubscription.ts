@@ -1,13 +1,14 @@
-import type { Request, Response, NextFunction, RequestHandler } from "express";
-import { User } from "../models/User";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger"; // ✅ Logging for better debugging
+import { User } from "../models/User";
 
 /**
  * ✅ Middleware factory to check if a user has an active subscription
  * @param requiredStatus - The required subscription status (e.g., "trial", "paid")
  * @returns Express middleware function
  */
-const checkSubscription = (requiredStatus: "trial" | "paid"): RequestHandler => {
+function checkSubscription (requiredStatus: "trial" | "paid"): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user || !req.user.id) {
@@ -45,6 +46,6 @@ const checkSubscription = (requiredStatus: "trial" | "paid"): RequestHandler => 
       next(error); // ✅ Proper error propagation
     }
   };
-};
+}
 
 export default checkSubscription;

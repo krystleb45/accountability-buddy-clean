@@ -1,8 +1,9 @@
 // src/api/models/Newsletter.ts
 import type { Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
+import crypto from "node:crypto";
 import validator from "validator";
-import crypto from "crypto";
 
 // --- Interface for Newsletter Document ---
 export interface INewsletter extends Document {
@@ -14,15 +15,15 @@ export interface INewsletter extends Document {
   updatedAt: Date;
 
   // Instance methods
-  unsubscribe(token: string): Promise<INewsletter>;
-  regenerateUnsubscribeToken(): Promise<INewsletter>;
+  unsubscribe: (token: string) => Promise<INewsletter>;
+  regenerateUnsubscribeToken: () => Promise<INewsletter>;
 }
 
 // --- Model Interface for Statics ---
 export interface INewsletterModel extends Model<INewsletter> {
-  findOrCreate(email: string): Promise<INewsletter>;
-  findSubscribed(): Promise<INewsletter[]>;
-  findUnsubscribed(): Promise<INewsletter[]>;
+  findOrCreate: (email: string) => Promise<INewsletter>;
+  findSubscribed: () => Promise<INewsletter[]>;
+  findUnsubscribed: () => Promise<INewsletter[]>;
 }
 
 // --- Schema Definition ---

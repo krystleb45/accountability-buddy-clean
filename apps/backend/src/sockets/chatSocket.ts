@@ -1,8 +1,9 @@
-import { Server, Socket } from "socket.io";
+import type { Server, Socket } from "socket.io";
+
 import { logger } from "../utils/winstonLogger";  // Assuming you have logging utility
 
 // Function to handle WebSocket connections
-export const chatSocketHandler = (io: Server, socket: Socket): void => {
+export function chatSocketHandler (io: Server, socket: Socket): void {
   // Handle the WebSocket connection logic here
   socket.on("joinChat", async (chatId: string) => {
     try {
@@ -66,4 +67,4 @@ export const chatSocketHandler = (io: Server, socket: Socket): void => {
   socket.on("disconnect", () => {
     logger.info(`User disconnected: ${socket.id}`);
   });
-};
+}

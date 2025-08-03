@@ -1,6 +1,7 @@
 // src/api/models/FriendRequest.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Types & Interfaces ---
@@ -15,18 +16,18 @@ export interface IFriendRequest extends Document {
 }
 
 export interface IFriendRequestModel extends Model<IFriendRequest> {
-  sendRequest(
+  sendRequest: (
     sender: Types.ObjectId,
     recipient: Types.ObjectId
-  ): Promise<IFriendRequest>;
-  respondRequest(
+  ) => Promise<IFriendRequest>;
+  respondRequest: (
     requestId: Types.ObjectId,
     status: FriendRequestStatus
-  ): Promise<IFriendRequest | null>;
-  getRequestsForUser(
+  ) => Promise<IFriendRequest | null>;
+  getRequestsForUser: (
     userId: Types.ObjectId,
     status?: FriendRequestStatus
-  ): Promise<IFriendRequest[]>;
+  ) => Promise<IFriendRequest[]>;
 }
 
 // --- Schema Definition ---
@@ -78,7 +79,8 @@ FriendRequestSchema.statics.respondRequest = async function (
   status: FriendRequestStatus
 ): Promise<IFriendRequest | null> {
   const req = await this.findById(requestId);
-  if (!req) return null;
+  if (!req) 
+return null;
   req.status = status;
   await req.save();
   return req;
@@ -89,7 +91,8 @@ FriendRequestSchema.statics.getRequestsForUser = function (
   status?: FriendRequestStatus
 ): Promise<IFriendRequest[]> {
   const filter: Record<string, unknown> = { recipient: userId };
-  if (status) filter.status = status;
+  if (status) 
+filter.status = status;
   return this.find(filter)
     .sort({ createdAt: -1 })
     .populate("sender", "username profilePicture");

@@ -1,7 +1,8 @@
 // src/api/models/BlogPost.ts
 import type { Document, Model, Types } from "mongoose";
-import mongoose, { Schema } from "mongoose";
+
 import sanitize from "mongo-sanitize";
+import mongoose, { Schema } from "mongoose";
 
 /** --- Comment Subdocument Interface --- */
 export interface IComment {
@@ -37,16 +38,16 @@ export interface IBlogPost extends Document {
   commentCount: number;
 
   // Instance methods
-  addLike(userId: Types.ObjectId): Promise<IBlogPost>;
-  removeLike(userId: Types.ObjectId): Promise<IBlogPost>;
-  addComment(userId: Types.ObjectId, text: string): Promise<IComment>;
-  removeComment(commentId: Types.ObjectId): Promise<boolean>;
+  addLike: (userId: Types.ObjectId) => Promise<IBlogPost>;
+  removeLike: (userId: Types.ObjectId) => Promise<IBlogPost>;
+  addComment: (userId: Types.ObjectId, text: string) => Promise<IComment>;
+  removeComment: (commentId: Types.ObjectId) => Promise<boolean>;
 }
 
 /** --- BlogPost Model Interface --- */
 export interface IBlogPostModel extends Model<IBlogPost> {
-  findByCategory(this: IBlogPostModel, category: string, limit?: number): Promise<IBlogPost[]>;
-  findRecent(this: IBlogPostModel, limit?: number): Promise<IBlogPost[]>;
+  findByCategory: (this: IBlogPostModel, category: string, limit?: number) => Promise<IBlogPost[]>;
+  findRecent: (this: IBlogPostModel, limit?: number) => Promise<IBlogPost[]>;
 }
 
 /** --- Schema Definition (notice the second generic for IBlogPostModel) --- */
@@ -120,7 +121,8 @@ BlogPostSchema.methods.removeComment = async function (
   commentId: Types.ObjectId
 ): Promise<boolean> {
   const idx = this.comments.findIndex((c) => c._id.equals(commentId));
-  if (idx === -1) return false;
+  if (idx === -1) 
+return false;
   this.comments.splice(idx, 1);
   await this.save();
   return true;

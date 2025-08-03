@@ -1,9 +1,11 @@
-import type { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response, Router } from "express";
+
 import express from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
-import * as AchievementController from "../controllers/AchievementController";
 import mongoose from "mongoose";
+
+import * as AchievementController from "../controllers/AchievementController";
+import { protect } from "../middleware/authMiddleware";
 
 const router: Router = express.Router();
 
@@ -16,9 +18,8 @@ const rateLimiter = rateLimit({
   },
 });
 
-const validateBody =
-  (fields: string[]) =>
-    (req: Request, res: Response, next: NextFunction): void => {
+function validateBody (fields: string[]) {
+  return (req: Request, res: Response, next: NextFunction): void => {
       const missingFields = fields.filter((field) => !req.body[field]);
       if (missingFields.length > 0) {
         res.status(400).json({
@@ -28,7 +29,8 @@ const validateBody =
         return;
       }
       next();
-    };
+    }
+}
 
 /**
  * @swagger

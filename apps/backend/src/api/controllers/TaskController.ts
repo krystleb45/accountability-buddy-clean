@@ -1,9 +1,11 @@
 // src/api/controllers/TaskController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import type { ITask } from "../models/Task";
+
+import TaskService from "../services/TaskService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import TaskService from "../services/TaskService";
-import { ITask } from "../models/Task";
 
 /**
  * @desc    Fetch all tasks for the authenticated user

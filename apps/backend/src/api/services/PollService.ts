@@ -1,10 +1,13 @@
 // src/api/services/PollService.ts
-import Poll, { IPoll } from "../models/Poll";
-import Group from "../models/Group";
 import { Types } from "mongoose";
+
+import type { IPoll } from "../models/Poll";
+
 import { logger } from "../../utils/winstonLogger";
-import NotificationService from "./NotificationService";
 import { createError } from "../middleware/errorHandler";
+import Group from "../models/Group";
+import Poll from "../models/Poll";
+import NotificationService from "./NotificationService";
 
 export interface PollResult {
   question: string;
@@ -60,8 +63,10 @@ class PollService {
       throw createError("Invalid poll or user ID", 400);
     }
     const poll = await Poll.findById(pollId);
-    if (!poll) throw createError("Poll not found", 404);
-    if (poll.get("isExpired")) throw createError("Poll has expired", 400);
+    if (!poll) 
+throw createError("Poll not found", 404);
+    if (poll.get("isExpired")) 
+throw createError("Poll has expired", 400);
 
     if (
       poll.options.some((opt) =>
@@ -72,7 +77,8 @@ class PollService {
     }
 
     const opt = poll.options.find((o) => o._id.toString() === optionId);
-    if (!opt) throw createError("Invalid option", 400);
+    if (!opt) 
+throw createError("Invalid option", 400);
 
     opt.votes.push(new Types.ObjectId(voterId));
     await poll.save();
@@ -100,7 +106,8 @@ class PollService {
       throw createError("Invalid poll ID", 400);
     }
     const poll = await Poll.findById(pollId);
-    if (!poll) throw createError("Poll not found", 404);
+    if (!poll) 
+throw createError("Poll not found", 404);
 
     const results = poll.options.map((o) => ({
       option: o.option,
@@ -119,7 +126,8 @@ class PollService {
       throw createError("Invalid poll ID", 400);
     }
     const poll = await Poll.findById(pollId);
-    if (!poll) throw createError("Poll not found", 404);
+    if (!poll) 
+throw createError("Poll not found", 404);
 
     if (poll.get("isExpired")) {
       const { results } = await this.getPollResults(pollId);

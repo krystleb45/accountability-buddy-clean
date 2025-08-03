@@ -1,6 +1,8 @@
-import type { Request, Response, NextFunction } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core";
 import type { Twilio } from "twilio";
+
 import twilio from "twilio";
+
 import { logger } from "../../utils/winstonLogger";
 // Twilio configuration
 const accountSid = process.env.TWILIO_ACCOUNT_SID || "your_account_sid";
@@ -13,11 +15,7 @@ const client: Twilio = twilio(accountSid, authToken);
 /**
  * Middleware to send SMS notifications
  */
-const smsMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> => {
+async function smsMiddleware (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   const { to, message } = req.body;
 
   if (!to || !message) {
@@ -50,6 +48,6 @@ const smsMiddleware = async (
       error: errorMessage,
     });
   }
-};
+}
 
 export default smsMiddleware;

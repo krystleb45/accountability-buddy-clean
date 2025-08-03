@@ -1,14 +1,16 @@
 // src/api/routes/support.ts
 import type { Router } from "express";
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import express from "express";
-import { check } from "express-validator";
 import rateLimit from "express-rate-limit";
+import { check } from "express-validator";
 import sanitize from "mongo-sanitize";
-import { protect } from "../middleware/authMiddleware";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import * as supportController from "../controllers/supportController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
 
 const router: Router = express.Router();
 
@@ -20,10 +22,10 @@ const limiter = rateLimit({
 });
 
 // sanitize body helper
-const sanitizeBody = (req: Request, _res: Response, next: NextFunction): void => {
+function sanitizeBody (req: Request, _res: Response, next: NextFunction): void {
   req.body = sanitize(req.body);
   next();
-};
+}
 
 /**
  * POST /api/support/contact

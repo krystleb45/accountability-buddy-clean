@@ -1,9 +1,11 @@
 // src/api/controllers/integrationController.ts
 import type { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+
+import type { IntegrationSettings } from "../models/Integration";
+
 import IntegrationService from "../services/IntegrationService";
-import type { IntegrationSettings } from "../models/Integration"; 
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse"; 
 
 /** POST /api/integrations */
 export const createIntegration = catchAsync(

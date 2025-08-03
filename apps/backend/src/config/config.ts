@@ -61,18 +61,18 @@ const config: Config = {
   // ✅ FIXED: Redis Configuration for Railway (no localhost fallbacks)
   REDIS_URL: process.env.REDIS_URL, // Railway provides this
   REDIS_HOST: process.env.REDIS_HOST, // Only use if REDIS_URL not available
-  REDIS_PORT: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : undefined,
+  REDIS_PORT: process.env.REDIS_PORT ? Number.parseInt(process.env.REDIS_PORT, 10) : undefined,
   REDIS_PASSWORD: process.env.REDIS_PASSWORD,
 
   // Server
-  PORT: parseInt(process.env.PORT || "5000", 10),
+  PORT: Number.parseInt(process.env.PORT || "5000", 10),
   NODE_ENV: (process.env.NODE_ENV as "development" | "production" | "test") || "development",
 
   // Email
   EMAIL_USER: process.env.EMAIL_USER || "",
   EMAIL_PASS: process.env.EMAIL_PASS || "",
   EMAIL_HOST: process.env.EMAIL_HOST || "smtp.gmail.com",
-  EMAIL_PORT: parseInt(process.env.EMAIL_PORT || "587", 10),
+  EMAIL_PORT: Number.parseInt(process.env.EMAIL_PORT || "587", 10),
 
   // OAuth
   OAUTH_CLIENT_ID: process.env.OAUTH_CLIENT_ID,

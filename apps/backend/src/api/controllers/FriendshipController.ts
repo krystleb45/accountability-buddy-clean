@@ -1,8 +1,9 @@
 // src/api/controllers/FriendshipController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import FriendService from "../services/FriendService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import FriendService from "../services/FriendService";
 
 export default {
   sendFriendRequest: catchAsync(async (req: Request<{}, {}, { recipientId: string }>, res: Response, next: NextFunction) => {
@@ -102,7 +103,7 @@ export default {
   // Added getOnlineFriends as part of the default export object
   getOnlineFriends: catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.user!.id;
-    const limit = parseInt(req.query.limit as string) || 5;
+    const limit = Number.parseInt(req.query.limit as string) || 5;
 
     try {
       // Use FriendService (not FriendshipService) to match your existing pattern

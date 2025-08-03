@@ -1,19 +1,23 @@
 // src/api/controllers/AchievementController.ts
-import { Request, Response, NextFunction } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
-import { createError } from "../middleware/errorHandler";
-import AchievementService, {
+import type { NextFunction, Request, Response } from "express";
+
+import type { IUser } from "../models/User";
+import type {
   CreateAchievementDTO,
   UpdateAchievementDTO,
 } from "../services/AchievementService";
-import { IUser } from "../models/User";
+
+import { createError } from "../middleware/errorHandler";
+import AchievementService from "../services/AchievementService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 /** GET /api/achievements */
 export const getAllAchievements = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const uid = req.user?.id;
-    if (!uid) return next(createError("Unauthorized", 401));
+    if (!uid) 
+return next(createError("Unauthorized", 401));
     const achievements = await AchievementService.getAllForUser(uid);
     sendResponse(res, 200, true, "User achievements retrieved", { achievements });
   }
@@ -24,7 +28,8 @@ export const getAchievementById = catchAsync(
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const achievement = await AchievementService.getById(id);
-    if (!achievement) return next(createError("Not found", 404));
+    if (!achievement) 
+return next(createError("Not found", 404));
     sendResponse(res, 200, true, "Achievement retrieved", { achievement });
   }
 );
@@ -54,7 +59,8 @@ export const updateAchievement = catchAsync(
   ) => {
     const { id } = req.params;
     const updated = await AchievementService.update(id, req.body);
-    if (!updated) return next(createError("Not found", 404));
+    if (!updated) 
+return next(createError("Not found", 404));
     sendResponse(res, 200, true, "Achievement updated", { achievement: updated });
   }
 );
@@ -64,7 +70,8 @@ export const deleteAchievement = catchAsync(
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const ok = await AchievementService.delete(id);
-    if (!ok) return next(createError("Not found", 404));
+    if (!ok) 
+return next(createError("Not found", 404));
     sendResponse(res, 200, true, "Achievement deleted");
   }
 );

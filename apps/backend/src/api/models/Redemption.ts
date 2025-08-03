@@ -1,5 +1,6 @@
 // src/api/models/Redemption.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Redemption Document Interface ---
@@ -12,13 +13,13 @@ export interface IRedemption extends Document {
   updatedAt: Date;              // Auto-generated
 
   // Instance methods
-  summarize(): string;
+  summarize: () => string;
 }
 
 // --- Redemption Model Static Interface ---
 export interface IRedemptionModel extends Model<IRedemption> {
-  findByUser(userId: Types.ObjectId): Promise<IRedemption[]>;
-  findByDateRange(start: Date, end: Date): Promise<IRedemption[]>;
+  findByUser: (userId: Types.ObjectId) => Promise<IRedemption[]>;
+  findByDateRange: (start: Date, end: Date) => Promise<IRedemption[]>;
 }
 
 // --- Schema Definition ---

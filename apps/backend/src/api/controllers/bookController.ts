@@ -1,6 +1,8 @@
 // src/api/controllers/bookController.ts
 import type { Request, Response } from "express";
+
 import mongoose from "mongoose";
+
 import * as bookService from "../services/bookRecommendationService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
@@ -101,7 +103,7 @@ export const unlikeBook = catchAsync(async (req: Request<{ id: string }>, res: R
 });
 
 export const addComment = catchAsync(async (
-  req: Request<{ id: string }, {}, { text: string }>,
+  req: Request<{ id: string }, unknown, { text: string }>,
   res: Response
 ): Promise<void> => {
   const userId = req.user?.id;

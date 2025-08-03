@@ -1,6 +1,7 @@
 // src/api/models/AdminActionLog.ts
 
 import type { Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Types & Interfaces ---
@@ -29,18 +30,18 @@ export interface IAdminActionLog extends Document {
   actionType: string;
 
   // Instance helper
-  getActionType(): string;
+  getActionType: () => string;
 }
 
 export interface IAdminActionLogModel extends Model<IAdminActionLog> {
-  logAction(
+  logAction: (
     adminId: mongoose.Types.ObjectId,
     action: AdminAction,
     targetId?: mongoose.Types.ObjectId | null,
     description?: string,
     details?: Record<string, string>,
     ipAddress?: string
-  ): Promise<IAdminActionLog>;
+  ) => Promise<IAdminActionLog>;
 }
 
 // --- Schema Definition ---
@@ -87,7 +88,7 @@ const AdminActionLogSchema = new Schema<IAdminActionLog, IAdminActionLogModel>(
       trim: true,
       validate: {
         validator: (v: string): boolean =>
-          /^([0-9]{1,3}\.){3}[0-9]{1,3}$/.test(v),
+          /^(?:\d{1,3}\.){3}\d{1,3}$/.test(v),
         message: "Invalid IP address format",
       },
     },

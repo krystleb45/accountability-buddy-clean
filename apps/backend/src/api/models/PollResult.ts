@@ -1,5 +1,6 @@
 // src/api/models/PollResult.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- PollResult Document Interface ---
@@ -11,14 +12,14 @@ export interface IPollResult extends Document {
   updatedAt: Date;
 
   // Instance methods
-  incrementVotes(count?: number): Promise<IPollResult>;
-  resetVotes(): Promise<IPollResult>;
+  incrementVotes: (count?: number) => Promise<IPollResult>;
+  resetVotes: () => Promise<IPollResult>;
 }
 
 // --- PollResult Model Static Interface ---
 export interface IPollResultModel extends Model<IPollResult> {
-  getResultsForPoll(pollId: Types.ObjectId): Promise<IPollResult[]>;
-  recordVote(pollId: Types.ObjectId, optionId: Types.ObjectId): Promise<IPollResult>;
+  getResultsForPoll: (pollId: Types.ObjectId) => Promise<IPollResult[]>;
+  recordVote: (pollId: Types.ObjectId, optionId: Types.ObjectId) => Promise<IPollResult>;
 }
 
 // --- Schema Definition ---
@@ -82,7 +83,8 @@ PollResultSchema.statics.recordVote = async function (
   const update = { $inc: { votesCount: 1 } };
   const opts = { new: true, upsert: true, setDefaultsOnInsert: true };
   const result = await this.findOneAndUpdate(filter, update, opts);
-  if (!result) throw new Error("Failed to record vote");
+  if (!result) 
+throw new Error("Failed to record vote");
   return result;
 };
 

@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
  * @param email - The user's email for Stripe checkout.
  * @returns The Stripe session object.
  */
-export const createCheckoutSession = async (userId: string, email: string): Promise<Stripe.Checkout.Session> => {
+export async function createCheckoutSession (userId: string, email: string): Promise<Stripe.Checkout.Session> {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -25,7 +25,7 @@ export const createCheckoutSession = async (userId: string, email: string): Prom
       cancel_url: `${process.env.CLIENT_URL}/cancel`,
       customer_email: email,
       metadata: {
-        userId: userId, // Storing user ID in metadata for reference
+        userId, // Storing user ID in metadata for reference
       },
     });
 
@@ -33,7 +33,7 @@ export const createCheckoutSession = async (userId: string, email: string): Prom
   } catch (error) {
     throw new Error(`Stripe checkout session creation failed: ${(error as Error).message}`);
   }
-};
+}
 
 /**
  * Helper function to handle Stripe webhook events.
@@ -41,7 +41,7 @@ export const createCheckoutSession = async (userId: string, email: string): Prom
  * @param sig - The signature of the webhook event.
  * @returns A promise that resolves after handling the event.
  */
-export const handleStripeWebhook = async (payload: string, sig: string): Promise<void> => {
+export async function handleStripeWebhook (payload: string, sig: string): Promise<void> {
   try {
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
     const event = stripe.webhooks.constructEvent(payload, sig, endpointSecret);
@@ -68,21 +68,21 @@ export const handleStripeWebhook = async (payload: string, sig: string): Promise
   } catch (error) {
     throw new Error(`Webhook error: ${(error as Error).message}`);
   }
-};
+}
 
 /**
  * Helper function to retrieve a subscription's status.
  * @param subscriptionId - The Stripe subscription ID.
  * @returns The Stripe subscription object.
  */
-export const getSubscriptionStatus = async (subscriptionId: string): Promise<Stripe.Subscription> => {
+export async function getSubscriptionStatus (subscriptionId: string): Promise<Stripe.Subscription> {
   try {
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     return subscription;
   } catch (error) {
     throw new Error(`Error retrieving subscription status: ${(error as Error).message}`);
   }
-};
+}
 
 /**
  * Helper function to update subscription status in Stripe (e.g., to "canceled").
@@ -90,7 +90,7 @@ export const getSubscriptionStatus = async (subscriptionId: string): Promise<Str
  * @param status - The new status to update the subscription to.
  * @returns The updated Stripe subscription object.
  */
-export const updateSubscriptionStatus = async (subscriptionId: string, status: string): Promise<Stripe.Subscription> => {
+export async function updateSubscriptionStatus (subscriptionId: string, status: string): Promise<Stripe.Subscription> {
   try {
     const subscription = await stripe.subscriptions.update(subscriptionId, {
       cancel_at_period_end: status === "canceled", // Optionally cancel the subscription at period end
@@ -99,6 +99,6 @@ export const updateSubscriptionStatus = async (subscriptionId: string, status: s
   } catch (error) {
     throw new Error(`Error updating subscription status: ${(error as Error).message}`);
   }
-};
+}
 
 export default stripe;

@@ -1,14 +1,15 @@
 // src/api/routes/streaks.ts
 import { Router } from "express";
-import { protect } from "../middleware/authJwt";
 import rateLimit from "express-rate-limit";
 import { check } from "express-validator";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import {
+  getStreakLeaderboard,
   getUserStreak,
   logDailyCheckIn,
-  getStreakLeaderboard,
 } from "../controllers/StreakController";
+import { protect } from "../middleware/authJwt";
+import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
 

@@ -1,14 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 /**
  * Middleware to validate leaderboard update or submission data.
  * Validates inputs like streakCount, points, and userId if provided in the request body.
  */
-export const validateLeaderboardData = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Response | void => {
+export function validateLeaderboardData (req: Request,  res: Response,  next: NextFunction): Response | void {
   const { userId, streakCount, points } = req.body;
 
   const errors: string[] = [];
@@ -37,4 +33,4 @@ export const validateLeaderboardData = (
   }
 
   next();
-};
+}

@@ -1,11 +1,14 @@
 // src/api/routes/auth.ts
 
-import { Router, RequestHandler } from "express";
+import type { RequestHandler } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { check, validationResult } from "express-validator";
+
+import { logger } from "../../utils/winstonLogger";
 import authController from "../controllers/authController";
 import { protect } from "../middleware/authMiddleware";
-import { logger } from "../../utils/winstonLogger";
 
 const router = Router();
 
@@ -44,7 +47,7 @@ router.post(
       return; // void
     }
     await authController.register(req, res, next);
-    return;      // ensure void
+          // ensure void
   })
 );
 
@@ -63,7 +66,7 @@ router.post(
       return;
     }
     await authController.login(req, res, next);
-    return;
+    
   })
 );
 
@@ -78,7 +81,7 @@ router.post(
       return;
     }
     await authController.refreshToken(req, res, next);
-    return;
+    
   })
 );
 
@@ -87,7 +90,7 @@ router.post(
   "/logout",
   wrap(async (req, res, next) => {
     await authController.logout(req, res, next);
-    return;
+    
   })
 );
 
@@ -97,7 +100,7 @@ router.get(
   protect,
   wrap(async (req, res, next) => {
     await authController.getCurrentUser(req, res, next);
-    return;
+    
   })
 );
 

@@ -1,6 +1,7 @@
 // src/api/models/Activity.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Types & Interfaces ---
@@ -29,14 +30,14 @@ export interface IActivity extends Document {
   updatedAt: Date;
 
   // Instance methods
-  addParticipant(userId: Types.ObjectId): Promise<void>;
-  markDeleted(): Promise<void>;
+  addParticipant: (userId: Types.ObjectId) => Promise<void>;
+  markDeleted: () => Promise<void>;
 }
 
 export interface IActivityModel extends Model<IActivity> {
-  getRecentForUser(userId: Types.ObjectId, limit: number): Promise<IActivity[]>;
-  getByType(type: ActivityType): Promise<IActivity[]>;
-  softDeleteByUser(userId: Types.ObjectId): Promise<{ deletedCount?: number }>;
+  getRecentForUser: (userId: Types.ObjectId, limit: number) => Promise<IActivity[]>;
+  getByType: (type: ActivityType) => Promise<IActivity[]>;
+  softDeleteByUser: (userId: Types.ObjectId) => Promise<{ deletedCount?: number }>;
 }
 
 // --- Schema Definition ---

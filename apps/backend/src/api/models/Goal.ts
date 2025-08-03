@@ -1,8 +1,9 @@
 // src/api/models/Goal.ts
 
 import type { Document, FilterQuery, Model, Types } from "mongoose";
-import mongoose, { Schema } from "mongoose";
+
 import sanitize from "mongo-sanitize";
+import mongoose, { Schema } from "mongoose";
 
 // --- Reminder Subdocument ---
 export interface IReminder {
@@ -46,18 +47,18 @@ export interface IGoal extends Document {
   reminderCount: number;
 
   // Instance methods
-  addReminder(message: string, remindAt: Date): Promise<IGoal>;
-  markMilestoneComplete(index: number): Promise<IGoal>;
+  addReminder: (message: string, remindAt: Date) => Promise<IGoal>;
+  markMilestoneComplete: (index: number) => Promise<IGoal>;
 }
 
 // --- Model Interface ---
 export interface IGoalModel extends Model<IGoal> {
-  findByUser(
+  findByUser: (
     userId: Types.ObjectId,
     filter?: FilterQuery<IGoal>
-  ): Promise<IGoal[]>;
+  ) => Promise<IGoal[]>;
 
-  archiveCompleted(): Promise<{ nDeleted?: number }>;
+  archiveCompleted: () => Promise<{ nDeleted?: number }>;
 }
 
 // --- Sub‐schemas ---
@@ -147,7 +148,8 @@ GoalSchema.virtual("reminderCount").get(function (this: IGoal): number {
 // --- Middleware ---
 GoalSchema.pre<IGoal>("save", function (next) {
   this.title = sanitize(this.title);
-  if (this.description) this.description = sanitize(this.description);
+  if (this.description) 
+this.description = sanitize(this.description);
   // when status goes to completed, stamp completedAt
   if (this.isModified("status") && this.status === "completed") {
     this.completedAt = new Date();
@@ -170,7 +172,8 @@ GoalSchema.methods.markMilestoneComplete = async function (
   index: number
 ): Promise<IGoal> {
   const ms = this.milestones[index];
-  if (!ms) throw new Error("Milestone not found");
+  if (!ms) 
+throw new Error("Milestone not found");
   ms.completed = true;
   await this.save();
   return this;

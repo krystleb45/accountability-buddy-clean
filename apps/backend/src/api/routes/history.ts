@@ -1,10 +1,13 @@
 // src/api/routes/history.ts
-import { Router, Request, Response, NextFunction } from "express";
-import { check } from "express-validator";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
+import { check } from "express-validator";
+
+import historyController from "../controllers/HistoryController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import historyController from "../controllers/HistoryController";
 
 const router = Router();
 

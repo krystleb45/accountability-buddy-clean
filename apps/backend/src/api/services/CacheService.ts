@@ -15,6 +15,7 @@ let redisClient: any = null;
 
 if (!isRedisDisabled) {
   try {
+    // eslint-disable-next-line ts/no-require-imports
     redisClient = require("../../config/redisClient").default;
     logger.info("✅ CacheService using Redis client");
   } catch (error) {
@@ -25,7 +26,7 @@ if (!isRedisDisabled) {
 }
 
 // Helper function to clean up expired memory cache entries
-const cleanupMemoryCache = (): void => {
+function cleanupMemoryCache (): void {
   if (memoryCache.size > 100) {
     const now = Date.now();
     for (const [key, value] of memoryCache.entries()) {
@@ -34,7 +35,7 @@ const cleanupMemoryCache = (): void => {
       }
     }
   }
-};
+}
 
 const CacheService = {
   /**

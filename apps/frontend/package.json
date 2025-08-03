@@ -1,5 +1,5 @@
 {
-  "name": "accountability-buddy-frontend",
+  "name": "@ab/frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,8 @@
     "build:full": "next build && next-sitemap --config next-sitemap.config.mjs",
     "start": "next start",
     "lint": "next lint",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

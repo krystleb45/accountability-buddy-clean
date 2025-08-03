@@ -1,7 +1,10 @@
 // src/api/services/SubscriptionService.ts - Fixed for your User model structure
 import Stripe from "stripe";
+
+import type { IUser, SubscriptionTier } from "../models/User";
+
 import { logger } from "../../utils/winstonLogger";
-import { User, IUser, SubscriptionTier } from "../models/User";
+import { User } from "../models/User";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-02-24.acacia",
@@ -133,7 +136,8 @@ export default class SubscriptionService {
   static async hasFeatureAccess(userId: string, feature: string): Promise<boolean> {
     try {
       const user = await User.findById(userId);
-      if (!user) return false;
+      if (!user) 
+return false;
 
       // Check if trial has expired
       if (user.isInTrial() && user.trial_end_date && new Date() > user.trial_end_date) {

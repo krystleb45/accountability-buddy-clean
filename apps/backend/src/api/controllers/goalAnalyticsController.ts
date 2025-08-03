@@ -1,9 +1,10 @@
 // src/api/controllers/GoalAnalyticsController.ts
 import type { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+
 import { createError } from "../middleware/errorHandler";
 import GoalAnalyticsService from "../services/GoalAnalyticsService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 /**
  * GET /api/analytics/goals
@@ -62,7 +63,8 @@ export const getGoalAnalyticsByDateRange = catchAsync(
  */
 export const getGlobalGoalAnalytics = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
-    if (req.user?.role !== "admin") throw createError("Access denied", 403);
+    if (req.user?.role !== "admin") 
+throw createError("Access denied", 403);
     const analytics = await GoalAnalyticsService.getAll();
     sendResponse(res, 200, true, "Global goal analytics fetched successfully", { analytics });
   }

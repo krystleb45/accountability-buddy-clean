@@ -1,8 +1,9 @@
 // src/api/controllers/historyController.ts
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+
+import HistoryService from "../services/HistoryService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import HistoryService from "../services/HistoryService";
 
 export const getAllHistory = catchAsync(
   async (req: Request, res: Response): Promise<void> => {

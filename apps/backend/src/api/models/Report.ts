@@ -1,6 +1,7 @@
 // src/api/models/Report.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Report Document Interface ---
@@ -16,14 +17,14 @@ export interface IReport extends Document {
   updatedAt: Date;
 
   // Instance methods
-  resolve(resolverId: Types.ObjectId): Promise<IReport>;
+  resolve: (resolverId: Types.ObjectId) => Promise<IReport>;
 }
 
 // --- Report Model Static Interface ---
 export interface IReportModel extends Model<IReport> {
-  getByUser(userId: Types.ObjectId): Promise<IReport[]>;
-  getPending(): Promise<IReport[]>;
-  resolveReport(reportId: string, resolverId: Types.ObjectId): Promise<IReport>;
+  getByUser: (userId: Types.ObjectId) => Promise<IReport[]>;
+  getPending: () => Promise<IReport[]>;
+  resolveReport: (reportId: string, resolverId: Types.ObjectId) => Promise<IReport>;
 }
 
 // --- Schema Definition ---

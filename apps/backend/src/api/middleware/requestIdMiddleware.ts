@@ -1,5 +1,7 @@
-import type { Request, Response, NextFunction } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core";
+
 import { v4 as uuidv4 } from "uuid";
+
 import { logger } from "../../utils/winstonLogger";
 // Extend the Express Request interface to include the custom property
 declare module "express-serve-static-core" {
@@ -11,7 +13,7 @@ declare module "express-serve-static-core" {
 /**
  * Middleware to generate a unique request ID and set it in request and response
  */
-const requestIdMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+function requestIdMiddleware (req: Request, res: Response, next: NextFunction): void {
   try {
     const requestId = uuidv4();
     req.requestId = requestId; // Set requestId in the request object
@@ -23,6 +25,6 @@ const requestIdMiddleware = (req: Request, res: Response, next: NextFunction): v
   }
 
   next();
-};
+}
 
 export default requestIdMiddleware;

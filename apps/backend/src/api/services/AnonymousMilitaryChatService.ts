@@ -1,7 +1,7 @@
 // src/api/services/AnonymousMilitaryChatService.ts - FIXED: Added return types
 
-import { AnonymousMilitaryMessage, AnonymousSession } from "../models/AnonymousMilitaryChat";
 import { createError } from "../middleware/errorHandler";
+import { AnonymousMilitaryMessage, AnonymousSession } from "../models/AnonymousMilitaryChat";
 
 const VALID_ROOMS = ["veterans-support", "active-duty", "family-members"];
 
@@ -25,8 +25,16 @@ const ROOM_DETAILS = {
 
 // Crisis keywords that trigger resource display
 const CRISIS_KEYWORDS = [
-  "suicide", "kill myself", "end it all", "hurt myself", "want to die",
-  "no point", "give up", "can't go on", "hopeless", "worthless"
+  "suicide", 
+"kill myself", 
+"end it all", 
+"hurt myself", 
+"want to die",
+  "no point", 
+"give up", 
+"can't go on", 
+"hopeless", 
+"worthless"
 ];
 
 // Types for return values

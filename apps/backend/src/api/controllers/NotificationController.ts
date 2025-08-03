@@ -1,9 +1,10 @@
 // src/api/controllers/NotificationController.ts
-import { Request, Response, NextFunction } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 import NotificationService from "../services/NotificationService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 interface SendPayload {
   receiverId: string;
@@ -46,8 +47,8 @@ export const getNotifications = catchAsync(
     res: Response
   ) => {
     const userId = req.user!.id;
-    const page   = Math.max(1, parseInt(req.query.page  || "1", 10));
-    const limit  = Math.min(100, Math.max(1, parseInt(req.query.limit || "10", 10)));
+    const page   = Math.max(1, Number.parseInt(req.query.page  || "1", 10));
+    const limit  = Math.min(100, Math.max(1, Number.parseInt(req.query.limit || "10", 10)));
 
     const { notifications, total } = await NotificationService.listForUser(userId, { page, limit });
 

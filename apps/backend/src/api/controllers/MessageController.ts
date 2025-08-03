@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+
 import MessageService from "../services/MessageService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
@@ -30,8 +31,8 @@ export const sendMessage = catchAsync(async (req: Request, res: Response) => {
 export const getMessagesWithUser = catchAsync(
   async (req: Request<{ userId: string }>, res: Response) => {
     const otherUserId = req.params.userId;
-    const page = parseInt(req.query.page as string || "1", 10);
-    const limit = parseInt(req.query.limit as string || "20", 10);
+    const page = Number.parseInt(req.query.page as string || "1", 10);
+    const limit = Number.parseInt(req.query.limit as string || "20", 10);
     const userId = req.user!.id;
 
     const { messages, pagination } =
@@ -84,8 +85,8 @@ export const getMessageThreads = catchAsync(async (req: Request, res: Response) 
   const threads = await MessageService.getMessageThreads(
     userId,
     {
-      limit: parseInt(limit as string, 10),
-      page: parseInt(page as string, 10),
+      limit: Number.parseInt(limit as string, 10),
+      page: Number.parseInt(page as string, 10),
       messageType: messageType as string,
       search: search as string,
     }
@@ -108,8 +109,8 @@ export const getMessagesInThread = catchAsync(
       threadId,
       userId,
       {
-        limit: parseInt(limit as string, 10),
-        page: parseInt(page as string, 10),
+        limit: Number.parseInt(limit as string, 10),
+        page: Number.parseInt(page as string, 10),
         before: before as string,
       }
     );
@@ -145,7 +146,7 @@ export const getRecentMessages = catchAsync(async (req: Request, res: Response) 
 
   const messages = await MessageService.getRecentMessages(
     userId,
-    parseInt(limit as string, 10)
+    Number.parseInt(limit as string, 10)
   );
 
   sendResponse(res, 200, true, "Recent messages fetched successfully", messages);
@@ -267,7 +268,7 @@ export const searchMessages = catchAsync(async (req: Request, res: Response) => 
       messageType: messageType as string,
       recipientId: recipientId as string,
       groupId: groupId as string,
-      limit: parseInt(limit as string, 10),
+      limit: Number.parseInt(limit as string, 10),
     }
   );
 
@@ -290,8 +291,8 @@ export const getMessages = catchAsync(async (req: Request, res: Response): Promi
     const { messages, pagination } = await MessageService.getMessagesWithUser(
       userId,
       recipientId as string,
-      parseInt(page as string, 10),
-      parseInt(limit as string, 10)
+      Number.parseInt(page as string, 10),
+      Number.parseInt(limit as string, 10)
     );
 
     sendResponse(res, 200, true, "Messages fetched successfully", {
@@ -307,8 +308,8 @@ export const getMessages = catchAsync(async (req: Request, res: Response): Promi
       groupId as string,
       userId,
       {
-        limit: parseInt(limit as string, 10),
-        page: parseInt(page as string, 10),
+        limit: Number.parseInt(limit as string, 10),
+        page: Number.parseInt(page as string, 10),
       }
     );
 
@@ -322,8 +323,8 @@ export const getMessages = catchAsync(async (req: Request, res: Response): Promi
 
   // Case 3: No specific recipient or group - return conversation threads
   const threads = await MessageService.getMessageThreads(userId, {
-    limit: parseInt(limit as string, 10),
-    page: parseInt(page as string, 10),
+    limit: Number.parseInt(limit as string, 10),
+    page: Number.parseInt(page as string, 10),
   });
 
   sendResponse(res, 200, true, "Conversation threads fetched successfully", {

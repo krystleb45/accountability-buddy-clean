@@ -1,8 +1,9 @@
 // src/api/models/RefreshToken.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 // --- RefreshToken Document Interface ---
 export interface IRefreshToken extends Document {
@@ -18,15 +19,15 @@ export interface IRefreshToken extends Document {
   isActive: boolean;
 
   // Instance methods
-  revoke(): Promise<IRefreshToken>;
+  revoke: () => Promise<IRefreshToken>;
 }
 
 // --- RefreshToken Model Static Interface ---
 export interface IRefreshTokenModel extends Model<IRefreshToken> {
-  generate(userId: Types.ObjectId, expiresInSeconds?: number): Promise<IRefreshToken>;
-  findValid(token: string): Promise<IRefreshToken | null>;
-  revokeToken(token: string): Promise<void>;
-  removeExpired(): Promise<{ deletedCount?: number }>;
+  generate: (userId: Types.ObjectId, expiresInSeconds?: number) => Promise<IRefreshToken>;
+  findValid: (token: string) => Promise<IRefreshToken | null>;
+  revokeToken: (token: string) => Promise<void>;
+  removeExpired: () => Promise<{ deletedCount?: number }>;
 }
 
 // --- Schema Definition ---

@@ -1,5 +1,6 @@
 // src/sockets/messageQueue.ts - UPDATED: Optional RabbitMQ with fallbacks
-import type { Channel, ConsumeMessage, ChannelModel } from "amqplib";
+import type { Channel, ChannelModel, ConsumeMessage } from "amqplib";
+
 import { logger } from "../utils/winstonLogger";
 
 // Check if message queue is disabled
@@ -25,7 +26,7 @@ let queueConnection: QueueConnection | null = null;
  * @desc    Initializes a connection to the message queue (RabbitMQ).
  * @returns Promise<QueueConnection> - Returns the connection and channel objects.
  */
-const initializeQueue = async (): Promise<QueueConnection | null> => {
+async function initializeQueue (): Promise<QueueConnection | null> {
   if (isMessageQueueDisabled) {
     logger.info("🚫 Message queue disabled - using in-memory queue");
     return null;
@@ -55,14 +56,14 @@ const initializeQueue = async (): Promise<QueueConnection | null> => {
     logger.warn("⚠️ Falling back to in-memory message queue");
     return null;
   }
-};
+}
 
 /**
  * @desc    Publishes a message to the message queue.
  * @param   message - The message object to be queued.
  * @returns Promise<void>
  */
-const publishMessage = async (message: Record<string, unknown>): Promise<void> => {
+async function publishMessage (message: Record<string, unknown>): Promise<void> {
   try {
     const queue = await initializeQueue();
 
@@ -94,16 +95,14 @@ const publishMessage = async (message: Record<string, unknown>): Promise<void> =
       logger.error(`Failed to publish to fallback queue: ${(fallbackError as Error).message}`);
     }
   }
-};
+}
 
 /**
  * @desc    Consumes messages from the message queue and processes them.
  * @param   messageHandler - Callback function to process each message.
  * @returns Promise<void>
  */
-const consumeMessages = async (
-  messageHandler: (message: Record<string, unknown>) => void,
-): Promise<void> => {
+async function consumeMessages (messageHandler: (message: Record<string, unknown>) => void): Promise<void> {
   try {
     const queue = await initializeQueue();
 
@@ -160,6 +159,6 @@ const consumeMessages = async (
     logger.error(`Error consuming messages from queue: ${(error as Error).message}`);
     logger.warn("⚠️ Message consumption disabled due to error");
   }
-};
+}
 
-export { publishMessage, consumeMessages };
+export { consumeMessages, publishMessage };

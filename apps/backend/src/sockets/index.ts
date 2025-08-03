@@ -1,19 +1,22 @@
 // src/sockets/index.ts - FIXED: Register AnonymousMilitarySocketService
-import type { Server as HttpServer } from "http";
-import { Server, Socket } from "socket.io";
-import chatSocket from "./chat";
-import { setupAnonymousMilitaryChat } from "./anonymousMilitaryChat";
-import { AnonymousMilitarySocketService } from "../api/services/AnonymousMilitarySocketService"; // ADD THIS
+import type { Server as HttpServer } from "node:http";
+import type { Socket } from "socket.io";
+
+import { Server } from "socket.io";
+
 import Notification from "../api/models/Notification";
+import { AnonymousMilitarySocketService } from "../api/services/AnonymousMilitarySocketService"; // ADD THIS
 import AuthService from "../api/services/AuthService";
 import { logger } from "../utils/winstonLogger";
+import { setupAnonymousMilitaryChat } from "./anonymousMilitaryChat";
+import chatSocket from "./chat";
 
 interface DecodedToken {
   userId: string;
   role: string;
 }
 
-const socketServer = (server: HttpServer): { io: Server; socketService: AnonymousMilitarySocketService } => {
+function socketServer (server: HttpServer): { io: Server; socketService: AnonymousMilitarySocketService } {
   const io = new Server(server, {
     cors: {
       origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
@@ -37,7 +40,7 @@ const socketServer = (server: HttpServer): { io: Server; socketService: Anonymou
       // Support token via query or Authorization header
       const rawToken =
         (socket.handshake.query.token as string) ||
-        (socket.handshake.headers["authorization"] as string);
+        (socket.handshake.headers.authorization as string);
 
       if (!rawToken) {
         logger.warn("Socket connection attempted without a token.");
@@ -109,6 +112,6 @@ const socketServer = (server: HttpServer): { io: Server; socketService: Anonymou
 
   // 🆕 RETURN both io and the socket service
   return { io, socketService: anonymousSocketService };
-};
+}
 
 export default socketServer;

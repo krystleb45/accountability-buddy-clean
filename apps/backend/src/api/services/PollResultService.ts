@@ -1,8 +1,9 @@
 // src/api/services/PollResultService.ts
-import Poll from "../models/Poll";
 import { Types } from "mongoose";
-import NotificationService from "./NotificationService";
+
 import { createError } from "../middleware/errorHandler";
+import Poll from "../models/Poll";
+import NotificationService from "./NotificationService";
 
 export interface PollResult {
   optionId: string;
@@ -30,8 +31,10 @@ class PollResultService {
 
     // 2) load poll
     const poll = await Poll.findById(pollId);
-    if (!poll) throw createError("Poll not found", 404);
-    if (poll.get("isExpired")) throw createError("Poll has expired", 400);
+    if (!poll) 
+throw createError("Poll not found", 404);
+    if (poll.get("isExpired")) 
+throw createError("Poll has expired", 400);
 
     // 3) prevent double‐voting
     if (
@@ -44,7 +47,8 @@ class PollResultService {
 
     // 4) cast vote
     const opt = poll.options.find((o) => o._id.toString() === optionId);
-    if (!opt) throw createError("Invalid option", 400);
+    if (!opt) 
+throw createError("Invalid option", 400);
     opt.votes.push(new Types.ObjectId(voterId));
     await poll.save();
 
@@ -73,7 +77,8 @@ class PollResultService {
       throw createError("Invalid poll ID", 400);
     }
     const poll = await Poll.findById(pollId);
-    if (!poll) throw createError("Poll not found", 404);
+    if (!poll) 
+throw createError("Poll not found", 404);
 
     return poll.options.map((o) => ({
       optionId: o._id.toString(),

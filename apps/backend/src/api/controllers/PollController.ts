@@ -1,11 +1,13 @@
 // src/api/controllers/PollController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { Types } from "mongoose";
+
+import { logger } from "../../utils/winstonLogger";
+import Poll from "../models/Poll"; // only used for listByGroup
+import PollService from "../services/PollService";  // ← default import
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import { logger } from "../../utils/winstonLogger";
-import PollService from "../services/PollService";  // ← default import
-import Poll from "../models/Poll"; // only used for listByGroup
 
 /**
  * @desc    Create a new poll in a group

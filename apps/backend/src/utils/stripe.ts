@@ -1,8 +1,9 @@
 import Stripe from "stripe";
-import { User } from "../api/models/User";
+
 import Subscription from "../api/models/Subscription";
+import { User } from "../api/models/User";
 import { logger } from "../utils/winstonLogger";
-//import mongoose from "mongoose"; // Added for casting
+// import mongoose from "mongoose"; // Added for casting
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-02-24.acacia",
@@ -11,7 +12,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 /**
  * ✅ Create a new Stripe customer and save ID to User
  */
-export const createStripeCustomer = async (userId: string, email: string): Promise<Stripe.Customer> => {
+export async function createStripeCustomer (userId: string, email: string): Promise<Stripe.Customer> {
   try {
     const customer = await stripe.customers.create({ email });
     await User.findByIdAndUpdate(userId, { stripeCustomerId: customer.id });
@@ -20,12 +21,12 @@ export const createStripeCustomer = async (userId: string, email: string): Promi
     logger.error("❌ Failed to create Stripe customer", error);
     throw new Error("Could not create Stripe customer.");
   }
-};
+}
 
 /**
  * ✅ Start 7-day trial and persist Subscription model instance
  */
-export const createTrialSubscription = async (userId: string): Promise<Stripe.Subscription> => {
+export async function createTrialSubscription (userId: string): Promise<Stripe.Subscription> {
   try {
     const user = await User.findById(userId);
     if (!user || !user.stripeCustomerId) {
@@ -68,15 +69,16 @@ export const createTrialSubscription = async (userId: string): Promise<Stripe.Su
     logger.error("❌ Failed to create trial subscription", error);
     throw new Error("Could not create trial subscription.");
   }
-};
+}
 
 /**
  * ✅ Sync user subscription status with Stripe
  */
-export const checkAndUpdateSubscription = async (userId: string): Promise<void> => {
+export async function checkAndUpdateSubscription (userId: string): Promise<void> {
   try {
     const user = await User.findById(userId);
-    if (!user?.stripeCustomerId) throw new Error("User not found or missing Stripe ID");
+    if (!user?.stripeCustomerId) 
+throw new Error("User not found or missing Stripe ID");
 
     const subs = await stripe.subscriptions.list({ customer: user.stripeCustomerId });
     const activeSub = subs.data.find((s) => s.status === "active");
@@ -87,15 +89,16 @@ export const checkAndUpdateSubscription = async (userId: string): Promise<void> 
     logger.error("❌ Failed to check and update subscription status", error);
     throw new Error("Could not check/update subscription.");
   }
-};
+}
 
 /**
  * ✅ Cancel an active subscription and update DB
  */
-export const cancelStripeSubscription = async (userId: string): Promise<{ success: boolean; message: string }> => {
+export async function cancelStripeSubscription (userId: string): Promise<{ success: boolean; message: string }> {
   try {
     const user = await User.findById(userId);
-    if (!user?.stripeCustomerId) throw new Error("User not found or missing Stripe ID");
+    if (!user?.stripeCustomerId) 
+throw new Error("User not found or missing Stripe ID");
 
     const subs = await stripe.subscriptions.list({ customer: user.stripeCustomerId });
     const activeSub = subs.data.find((s) => s.status === "active");
@@ -122,6 +125,6 @@ export const cancelStripeSubscription = async (userId: string): Promise<{ succes
     logger.error("❌ Failed to cancel subscription", error);
     throw new Error("Could not cancel subscription.");
   }
-};
+}
 
 export default stripe;

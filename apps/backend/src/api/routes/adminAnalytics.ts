@@ -1,12 +1,12 @@
 // src/api/routes/adminAnalytics.ts
 import { Router } from "express";
-import { check, validationResult } from "express-validator";
 import rateLimit from "express-rate-limit";
+import { check, validationResult } from "express-validator";
 
+import * as AnalyticsController from "../controllers/AnalyticsController";
 import { protect } from "../middleware/authMiddleware";
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
 import catchAsync from "../utils/catchAsync";
-import * as AnalyticsController from "../controllers/AnalyticsController";
 
 const router = Router();
 const isAdmin = roleBasedAccessControl(["admin"]);

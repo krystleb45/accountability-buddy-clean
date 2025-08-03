@@ -1,16 +1,20 @@
 // src/api/services/BadgeService.ts
 import mongoose, { Types } from "mongoose";
-import Badge, { IBadge, BadgeType, BadgeLevel } from "../models/Badge";
-import BadgeProgress, { IBadgeProgress } from "../models/BadgeProgress";
+
+import type { BadgeLevel, BadgeType, IBadge } from "../models/Badge";
+import type { IBadgeProgress } from "../models/BadgeProgress";
+
 import { logger } from "../../utils/winstonLogger";
+import Badge from "../models/Badge";
+import BadgeProgress from "../models/BadgeProgress";
 import { awardPoints } from "./rewardService";
 
 // Local helper to bump badge levels
 const badgeLevels: BadgeLevel[] = ["Bronze", "Silver", "Gold"];
-const getNextBadgeLevel = (current: BadgeLevel): BadgeLevel => {
+function getNextBadgeLevel (current: BadgeLevel): BadgeLevel {
   const idx = badgeLevels.indexOf(current);
   return badgeLevels[Math.min(idx + 1, badgeLevels.length - 1)];
-};
+}
 
 export default class BadgeService {
   /** Award or upgrade a single badge */
@@ -50,7 +54,8 @@ export default class BadgeService {
     level: BadgeLevel = "Bronze"
   ): Promise<string[]> {
     const validIds = userIds.filter((id) => mongoose.isValidObjectId(id));
-    if (!validIds.length) throw new Error("No valid user IDs provided");
+    if (!validIds.length) 
+throw new Error("No valid user IDs provided");
 
     // upsert badges
     const ops = validIds.map((id) => ({

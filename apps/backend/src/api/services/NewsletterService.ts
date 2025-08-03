@@ -1,7 +1,10 @@
 // src/api/services/NewsletterService.ts
-import crypto from "crypto";
+import crypto from "node:crypto";
+
+import type { INewsletter } from "../models/Newsletter";
+
 import { createError } from "../middleware/errorHandler";
-import Newsletter, { INewsletter } from "../models/Newsletter";
+import Newsletter from "../models/Newsletter";
 import LoggingService from "./LoggingService";
 
 class NewsletterService {

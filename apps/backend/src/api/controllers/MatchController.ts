@@ -1,9 +1,10 @@
 // src/api/controllers/MatchController.ts
-import { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 import MatchService from "../services/MatchService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 export const createMatch = catchAsync(async (req: Request, res: Response) => {
   const { user1, user2, status } = req.body;
@@ -14,8 +15,8 @@ export const createMatch = catchAsync(async (req: Request, res: Response) => {
 
 export const getUserMatches = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user!.id;
-  const page = parseInt(req.query.page as string, 10) || 1;
-  const limit = parseInt(req.query.limit as string, 10) || 10;
+  const page = Number.parseInt(req.query.page as string, 10) || 1;
+  const limit = Number.parseInt(req.query.limit as string, 10) || 10;
   const { items: matches, total, totalPages } = await MatchService.getUserMatches(
     userId,
     page,

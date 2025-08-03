@@ -1,16 +1,18 @@
 // src/api/controllers/subscriptionController.ts - FIXED: Remove User model method dependencies
 
 import type { RequestHandler } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import { logger } from "../../utils/winstonLogger";
 import { createError } from "../middleware/errorHandler";
 import { User } from "../models/User";
 import GoalManagementService from "../services/GoalManagementService";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
-import { logger } from "../../utils/winstonLogger";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 // Helper functions to replace User model methods
-const getGoalLimitForTier = (tier: string): number => {
+function getGoalLimitForTier (tier: string): number {
   const goalLimits: Record<string, number> = {
     "free-trial": -1, // unlimited
     "basic": 3,
@@ -18,9 +20,9 @@ const getGoalLimitForTier = (tier: string): number => {
     "elite": -1 // unlimited
   };
   return goalLimits[tier] ?? 3; // default to 3
-};
+}
 
-const hasFeatureAccessForTier = (tier: string, feature: string): boolean => {
+function hasFeatureAccessForTier (tier: string, feature: string): boolean {
   const featureAccess: Record<string, string[]> = {
     "free-trial": ["all"],
     "basic": ["streak", "dailyPrompts", "groupChat"],
@@ -30,30 +32,31 @@ const hasFeatureAccessForTier = (tier: string, feature: string): boolean => {
 
   const userFeatures = featureAccess[tier] ?? ["streak", "dailyPrompts", "groupChat"];
   return userFeatures.includes("all") || userFeatures.includes(feature);
-};
+}
 
-const isInTrialStatus = (user: any): boolean => {
+function isInTrialStatus (user: any): boolean {
   if (user.subscription_status === "trial" || user.subscription_status === "trialing") {
     if (user.trial_end_date) {
       return new Date() < new Date(user.trial_end_date);
     }
   }
   return false;
-};
+}
 
-const getDaysUntilTrialEnd = (user: any): number => {
-  if (!user.trial_end_date) return 0;
+function getDaysUntilTrialEnd (user: any): number {
+  if (!user.trial_end_date) 
+return 0;
   const now = new Date();
   const trialEnd = new Date(user.trial_end_date);
   const diffTime = trialEnd.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return Math.max(0, diffDays);
-};
+}
 
-const canCreateMoreGoals = (tier: string, activeGoals: number): boolean => {
+function canCreateMoreGoals (tier: string, activeGoals: number): boolean {
   const goalLimit = getGoalLimitForTier(tier);
   return goalLimit === -1 || activeGoals < goalLimit;
-};
+}
 
 /**
  * GET /api/subscription/plans
@@ -190,8 +193,8 @@ export const getSubscriptionStatus: RequestHandler = catchAsync(async (req, res,
       currentPlan: user.subscriptionTier,
       subscription_status: user.subscription_status,
       isActive: ["active", "trial", "trialing"].includes(user.subscription_status),
-      isInTrial: isInTrial,
-      daysUntilTrialEnd: daysUntilTrialEnd,
+      isInTrial,
+      daysUntilTrialEnd,
       trial_end_date: user.trial_end_date,
       renewalDate: user.next_billing_date,
       billingCycle: user.billing_cycle,
@@ -228,8 +231,8 @@ export const getUserLimits: RequestHandler = catchAsync(async (req, res, next) =
     hasDMMessaging: hasFeatureAccessForTier(user.subscriptionTier, "dmMessaging"),
     hasPrivateRooms: hasFeatureAccessForTier(user.subscriptionTier, "privateRooms"),
     hasWeeklyMeetings: hasFeatureAccessForTier(user.subscriptionTier, "weeklyMeetings"),
-    currentGoalCount: currentGoalCount,
-    canCreateMore: canCreateMore,
+    currentGoalCount,
+    canCreateMore,
   };
 
   sendResponse(res, 200, true, "User limits fetched successfully", { limits });

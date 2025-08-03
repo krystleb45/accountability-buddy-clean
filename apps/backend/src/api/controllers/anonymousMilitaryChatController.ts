@@ -1,10 +1,11 @@
 // src/api/controllers/anonymousMilitaryChatController.ts
 
-import { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { Request, Response } from "express";
+
 import { createError } from "../middleware/errorHandler";
 import AnonymousMilitaryChatService from "../services/AnonymousMilitaryChatService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 interface AnonymousRequest extends Request {
   anonymousUser?: {
@@ -72,7 +73,7 @@ export const leaveRoom = catchAsync(async (req: AnonymousRequest, res: Response)
 
 export const getMessages = catchAsync(async (req: Request, res: Response) => {
   const { roomId } = req.params;
-  const limit = parseInt(req.query.limit as string) || 50;
+  const limit = Number.parseInt(req.query.limit as string) || 50;
 
   const messages = await AnonymousMilitaryChatService.getMessages(roomId, limit);
 

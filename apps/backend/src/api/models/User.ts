@@ -1,8 +1,9 @@
 // src/api/models/User.ts - Enhanced version with TypeScript fixes
-import type { Document, Types, Model, CallbackError } from "mongoose";
-import mongoose, { Schema } from "mongoose";
+import type { CallbackError, Document, Model, Types } from "mongoose";
+
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
+import mongoose, { Schema } from "mongoose";
+import crypto from "node:crypto";
 
 export interface UserSettings {
   notifications?: {
@@ -121,19 +122,19 @@ export interface IUser extends Document {
   updatedAt: Date;
 
   // Methods
-  comparePassword(candidatePassword: string): Promise<boolean>;
-  generateResetToken(): string;
-  updatePoints(pointsToAdd: number): Promise<void>;
-  updateStreak(): Promise<void>;
-  awardBadge(badgeId: Types.ObjectId): Promise<void>;
+  comparePassword: (candidatePassword: string) => Promise<boolean>;
+  generateResetToken: () => string;
+  updatePoints: (pointsToAdd: number) => Promise<void>;
+  updateStreak: () => Promise<void>;
+  awardBadge: (badgeId: Types.ObjectId) => Promise<void>;
 
   // New subscription-related methods
-  canCreateGoal(): boolean;
-  getGoalLimit(): number;
-  hasFeatureAccess(feature: string): boolean;
-  isSubscriptionActive(): boolean;
-  isInTrial(): boolean;
-  getDaysUntilTrialEnd(): number;
+  canCreateGoal: () => boolean;
+  getGoalLimit: () => number;
+  hasFeatureAccess: (feature: string) => boolean;
+  isSubscriptionActive: () => boolean;
+  isInTrial: () => boolean;
+  getDaysUntilTrialEnd: () => number;
 }
 
 const UserSchema: Schema<IUser> = new Schema(
@@ -324,7 +325,8 @@ UserSchema.virtual("isActive").set(function(value: boolean) {
 UserSchema.pre("save", function(next) {
   if (this.isModified("goals")) {
     this.goals?.forEach(goal => {
-      if (!goal.createdAt) goal.createdAt = new Date();
+      if (!goal.createdAt) 
+goal.createdAt = new Date();
       goal.updatedAt = new Date();
     });
   }
@@ -342,7 +344,7 @@ UserSchema.pre<IUser>(
       return next();
     }
     try {
-      const rounds = parseInt(process.env.SALT_ROUNDS ?? "10", 10);
+      const rounds = Number.parseInt(process.env.SALT_ROUNDS ?? "10", 10);
       this.password = await bcrypt.hash(this.password, rounds);
       next();
     } catch (err) {
@@ -368,7 +370,8 @@ UserSchema.methods.canCreateGoal = function(): boolean {
   const limit = goalLimits[tier] ?? 3; // default to 3 if tier not found
 
   // Return true for unlimited plans
-  if (limit === -1) return true;
+  if (limit === -1) 
+return true;
 
   // FIXED: Use the same status values as GoalManagementService
   // Note: This method is now mainly for quick checks -
@@ -423,7 +426,8 @@ UserSchema.methods.isInTrial = function(): boolean {
 };
 
 UserSchema.methods.getDaysUntilTrialEnd = function(): number {
-  if (!this.trial_end_date) return 0;
+  if (!this.trial_end_date) 
+return 0;
   const now = new Date();
   const trialEnd = new Date(this.trial_end_date);
   const diffTime = trialEnd.getTime() - now.getTime();

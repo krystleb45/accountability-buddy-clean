@@ -1,19 +1,17 @@
 // src/api/middleware/subscriptionValidation.ts - Fixed goal count validation
 
-import { Request, Response, NextFunction } from "express";
-import { User } from "../models/User";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+import type { NextFunction, Request, Response } from "express";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
 import { logger } from "../../utils/winstonLogger";
+import { User } from "../models/User";
 
 /**
  * Middleware to validate subscription status
  * Works with your User model that stores subscription data directly on the user
  */
-export const validateSubscription = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function validateSubscription (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.user?.id;
@@ -73,13 +71,13 @@ export const validateSubscription = async (
       message: "Server error during subscription validation"
     });
   }
-};
+}
 
 /**
  * Middleware to validate specific feature access
  * Use this for routes that require specific subscription features
  */
-export const validateFeatureAccess = (requiredFeature: string) => {
+export function validateFeatureAccess (requiredFeature: string) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const authReq = req as AuthenticatedRequest;
@@ -137,17 +135,13 @@ export const validateFeatureAccess = (requiredFeature: string) => {
       });
     }
   };
-};
+}
 
 /**
  * Middleware to check if user can create more goals
  * FIXED: Now uses the correct service to count goals from Goal collection
  */
-export const validateGoalLimit = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function validateGoalLimit (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const authReq = req as AuthenticatedRequest;
     const userId = authReq.user?.id;
@@ -223,13 +217,13 @@ export const validateGoalLimit = async (
       message: "Server error during goal limit validation"
     });
   }
-};
+}
 
 /**
  * Middleware for trial users - shows upgrade prompts but allows access
  * Use this for features you want to encourage upgrades for
  */
-export const trialPrompt = (featureName: string) => {
+export function trialPrompt (featureName: string) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const authReq = req as AuthenticatedRequest;
@@ -257,4 +251,4 @@ export const trialPrompt = (featureName: string) => {
       next(); // Don't block the request on error
     }
   };
-};
+}

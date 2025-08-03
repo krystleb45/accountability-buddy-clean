@@ -1,11 +1,12 @@
 // src/api/routes/user.ts
 import { Router } from "express";
-import { check } from "express-validator";
 import rateLimit from "express-rate-limit";
+import { check } from "express-validator";
+
+import { getLeaderboard } from "../controllers/LeaderboardController";
+import * as userCtrl from "../controllers/userController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import * as userCtrl from "../controllers/userController";
-import { getLeaderboard } from "../controllers/LeaderboardController";
 
 
 const router = Router();

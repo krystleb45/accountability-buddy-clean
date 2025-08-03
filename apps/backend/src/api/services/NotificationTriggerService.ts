@@ -1,10 +1,11 @@
 // src/api/services/NotificationTriggerService.ts
 import { Types } from "mongoose";
+
+import { logger } from "../../utils/winstonLogger";
+import { createError } from "../middleware/errorHandler";
 import Notification from "../models/Notification";
 import { User } from "../models/User";
 import sendEmail from "../utils/sendEmail";
-import { logger } from "../../utils/winstonLogger";
-import { createError } from "../middleware/errorHandler";
 
 class NotificationTriggerService {
   /**

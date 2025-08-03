@@ -1,10 +1,13 @@
 // src/api/routes/subscriptionRoutes.ts
-import express, { Router } from "express";
+import type { Router } from "express";
+
+import express from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
 import { check } from "express-validator";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import * as subscriptionController from "../controllers/subscriptionController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router: Router = express.Router();
 

@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core";
 
 interface CacheControlOptions {
   maxAge?: number;       // Maximum time (in seconds) the response should be cached
@@ -17,7 +17,7 @@ interface CacheControlOptions {
  * @param options - Configuration options for cache control.
  * @returns Middleware function to set Cache-Control headers.
  */
-const cacheControl = (options: CacheControlOptions = {}) => {
+function cacheControl (options: CacheControlOptions = {}) {
   const {
     maxAge = 0,          // Default max age (in seconds)
     sMaxAge = null,      // Default to null for shared max age
@@ -35,11 +35,16 @@ const cacheControl = (options: CacheControlOptions = {}) => {
       cacheHeader.push("no-store");
     } else {
       // Apply other cache directives based on options
-      if (noCache) cacheHeader.push("no-cache");
-      if (isPrivate) cacheHeader.push("private");
-      if (isPublic) cacheHeader.push("public");
-      if (maxAge) cacheHeader.push(`max-age=${maxAge}`);
-      if (sMaxAge) cacheHeader.push(`s-maxage=${sMaxAge}`);
+      if (noCache) 
+cacheHeader.push("no-cache");
+      if (isPrivate) 
+cacheHeader.push("private");
+      if (isPublic) 
+cacheHeader.push("public");
+      if (maxAge) 
+cacheHeader.push(`max-age=${maxAge}`);
+      if (sMaxAge) 
+cacheHeader.push(`s-maxage=${sMaxAge}`);
     }
 
     // Set the 'Cache-Control' header if directives are defined
@@ -49,6 +54,6 @@ const cacheControl = (options: CacheControlOptions = {}) => {
 
     next();
   };
-};
+}
 
 export default cacheControl;

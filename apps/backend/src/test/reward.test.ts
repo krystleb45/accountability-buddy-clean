@@ -6,7 +6,7 @@ describe("reward routes", () => {
     expect(true).toBe(true);
   });
   it("GET /api/rewards ? 200 OK", async () => {
-    const res = await global.authGet("/api/reward");
+    const res = await globalThis.authGet("/api/reward");
     expect(res.status).toBe(200);
     // TODO: add more assertions here
   });

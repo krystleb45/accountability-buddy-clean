@@ -1,5 +1,6 @@
 // src/api/routes/redemptions.ts
 import { Router } from "express";
+
 import {
   createRedemption,
   getMyRedemptions,

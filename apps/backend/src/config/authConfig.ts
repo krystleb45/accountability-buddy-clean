@@ -108,7 +108,7 @@ const authConfig: AuthConfig = {
 
   // Password Policy Configuration
   passwordPolicy: {
-    minLength: parseInt(process.env.PASSWORD_MIN_LENGTH || "8", 10),
+    minLength: Number.parseInt(process.env.PASSWORD_MIN_LENGTH || "8", 10),
     requireUppercase: process.env.PASSWORD_REQUIRE_UPPERCASE === "true",
     requireNumbers: process.env.PASSWORD_REQUIRE_NUMBERS === "true",
     requireSpecialCharacters:
@@ -117,8 +117,8 @@ const authConfig: AuthConfig = {
 
   // Rate Limiting for Auth Routes
   rateLimit: {
-    windowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || "900000", 10),
-    maxRequests: parseInt(process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || "10", 10),
+    windowMs: Number.parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || "900000", 10),
+    maxRequests: Number.parseInt(process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || "10", 10),
   },
 
   // Token Revocation List Configuration

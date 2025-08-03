@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-export const checkEnvVariables = (): void => {
+export function checkEnvVariables (): void {
   dotenv.config();
 
   if (!process.env.MONGO_URI) {
@@ -19,4 +19,4 @@ export const checkEnvVariables = (): void => {
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET is required but not defined in the .env file.");
   }
-};
+}

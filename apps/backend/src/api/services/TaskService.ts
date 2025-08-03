@@ -1,8 +1,9 @@
 // src/api/services/TaskService.ts
 import type { ITask } from "../models/Task";
+
 import Task from "../models/Task";
-import NotificationService from "./NotificationService";
 import LoggingService from "./LoggingService";
+import NotificationService from "./NotificationService";
 
 const TaskService = {
   /**

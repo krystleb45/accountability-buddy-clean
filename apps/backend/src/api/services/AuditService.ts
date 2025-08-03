@@ -1,6 +1,7 @@
 // src/api/services/AuditService.ts
-import { logger } from "../../utils/winstonLogger";
 import type { Document } from "mongoose";
+
+import { logger } from "../../utils/winstonLogger";
 import AuditLog from "../models/AuditLog";
 
 interface AuditLogData {

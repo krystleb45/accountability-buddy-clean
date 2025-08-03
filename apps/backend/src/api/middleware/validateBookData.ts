@@ -1,14 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 /**
  * Middleware to validate incoming book data for creation or updates.
  * Ensures required fields are present and of correct type.
  */
-export const validateBookData = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Response | void => {
+export function validateBookData (req: Request,  res: Response,  next: NextFunction): Response | void {
   const { title, author, genre, summary, publishedYear, pages } = req.body;
 
   const errors: string[] = [];
@@ -42,4 +38,4 @@ export const validateBookData = (
   }
 
   next();
-};
+}

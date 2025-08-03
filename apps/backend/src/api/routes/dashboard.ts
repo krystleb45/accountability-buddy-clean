@@ -1,19 +1,21 @@
 // src/api/routes/dashboardRoutes.ts - FIXED: Direct subscription logic instead of User methods
 import { Router } from "express";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import { logger } from "../../utils/winstonLogger";
 import { protect } from "../middleware/authJwt";
-import { validateSubscription, validateFeatureAccess } from "../middleware/subscriptionValidation";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
 import { createError } from "../middleware/errorHandler";
+import { validateFeatureAccess, validateSubscription } from "../middleware/subscriptionValidation";
 import Goal from "../models/Goal";
 import { User } from "../models/User";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
-import { logger } from "../../utils/winstonLogger";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 const router = Router();
 
 // Helper functions to replace User model methods
-const getGoalLimitForTier = (tier: string): number => {
+function getGoalLimitForTier (tier: string): number {
   const goalLimits: Record<string, number> = {
     "free-trial": -1, // unlimited
     "basic": 3,
@@ -21,9 +23,9 @@ const getGoalLimitForTier = (tier: string): number => {
     "elite": -1 // unlimited
   };
   return goalLimits[tier] ?? 3; // default to 3
-};
+}
 
-const hasFeatureAccessForTier = (tier: string, feature: string): boolean => {
+function hasFeatureAccessForTier (tier: string, feature: string): boolean {
   const featureAccess: Record<string, string[]> = {
     "free-trial": ["all"],
     "basic": ["streak", "dailyPrompts", "groupChat"],
@@ -33,30 +35,31 @@ const hasFeatureAccessForTier = (tier: string, feature: string): boolean => {
 
   const userFeatures = featureAccess[tier] ?? ["streak", "dailyPrompts", "groupChat"];
   return userFeatures.includes("all") || userFeatures.includes(feature);
-};
+}
 
-const isInTrialStatus = (user: any): boolean => {
+function isInTrialStatus (user: any): boolean {
   if (user.subscription_status === "trial" || user.subscription_status === "trialing") {
     if (user.trial_end_date) {
       return new Date() < new Date(user.trial_end_date);
     }
   }
   return false;
-};
+}
 
-const getDaysUntilTrialEnd = (user: any): number => {
-  if (!user.trial_end_date) return 0;
+function getDaysUntilTrialEnd (user: any): number {
+  if (!user.trial_end_date) 
+return 0;
   const now = new Date();
   const trialEnd = new Date(user.trial_end_date);
   const diffTime = trialEnd.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return Math.max(0, diffDays);
-};
+}
 
-const canCreateMoreGoals = (tier: string, activeGoals: number): boolean => {
+function canCreateMoreGoals (tier: string, activeGoals: number): boolean {
   const goalLimit = getGoalLimitForTier(tier);
   return goalLimit === -1 || activeGoals < goalLimit;
-};
+}
 
 // GET /api/dashboard/stats - Enhanced with subscription data
 router.get(
@@ -93,8 +96,8 @@ router.get(
     const subscriptionInfo = {
       tier: user.subscriptionTier,
       status: user.subscription_status,
-      isInTrial: isInTrial,
-      daysUntilTrialEnd: daysUntilTrialEnd,
+      isInTrial,
+      daysUntilTrialEnd,
 
       features: {
         hasUnlimitedGoals: hasFeatureAccessForTier(user.subscriptionTier, "unlimited_goals"),
@@ -105,9 +108,9 @@ router.get(
       },
 
       limits: {
-        goalLimit: goalLimit,
+        goalLimit,
         currentGoals: activeGoals,
-        canCreateMore: canCreateMore,
+        canCreateMore,
         goalLimitReached: !canCreateMore && goalLimit !== -1,
       }
     };
@@ -221,8 +224,8 @@ router.get(
       subscription: {
         tier: user.subscriptionTier,
         status: user.subscription_status,
-        isInTrial: isInTrial,
-        daysUntilTrialEnd: daysUntilTrialEnd,
+        isInTrial,
+        daysUntilTrialEnd,
         trialEndDate: user.trial_end_date,
         nextBillingDate: user.next_billing_date,
 
@@ -235,9 +238,9 @@ router.get(
         },
 
         limits: {
-          goalLimit: goalLimit,
+          goalLimit,
           currentGoals: activeGoalCount,
-          canCreateMore: canCreateMore,
+          canCreateMore,
         }
       },
 

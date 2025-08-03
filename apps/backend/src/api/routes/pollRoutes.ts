@@ -1,15 +1,18 @@
 // src/api/routes/pollRoutes.ts
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import { check, param } from "express-validator";
+
+import {
+  createPoll,
+  getPollResults,
+  getPollsByGroup,
+  voteOnPoll,
+} from "../controllers/PollController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
 import catchAsync from "../utils/catchAsync";
-import {
-  createPoll,
-  getPollsByGroup,
-  voteOnPoll,
-  getPollResults,
-} from "../controllers/PollController";
 
 const router = Router();
 

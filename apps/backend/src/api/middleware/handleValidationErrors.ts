@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+
 import { validationResult } from "express-validator";
 
 /**

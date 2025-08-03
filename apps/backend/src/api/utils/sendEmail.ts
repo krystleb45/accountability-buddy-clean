@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
 import { google } from "googleapis";
+import nodemailer from "nodemailer";
 
 interface EmailOptions {
   to: string;
@@ -22,7 +22,7 @@ oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
  * @returns Promise<nodemailer.Transporter> - Configured transporter for sending emails.
  * @throws Error if transporter configuration fails.
  */
-const createTransporter = async (): Promise<nodemailer.Transporter> => {
+async function createTransporter (): Promise<nodemailer.Transporter> {
   try {
     if (process.env.USE_GMAIL_OAUTH === "true") {
       const accessToken = await oAuth2Client.getAccessToken();
@@ -57,7 +57,7 @@ const createTransporter = async (): Promise<nodemailer.Transporter> => {
   } catch (error) {
     throw new Error(`Failed to configure email transporter: ${(error as Error).message}`);
   }
-};
+}
 
 /**
  * Sends an email using the configured transporter.
@@ -65,7 +65,7 @@ const createTransporter = async (): Promise<nodemailer.Transporter> => {
  * @returns Promise<void> - Resolves when the email is successfully sent.
  * @throws Error if email sending fails.
  */
-const sendEmail = async (options: EmailOptions): Promise<void> => {
+async function sendEmail (options: EmailOptions): Promise<void> {
   try {
     const transporter = await createTransporter();
     await transporter.sendMail({
@@ -78,6 +78,6 @@ const sendEmail = async (options: EmailOptions): Promise<void> => {
   } catch (error) {
     throw new Error(`Unable to send email: ${(error as Error).message}`);
   }
-};
+}
 
 export default sendEmail;

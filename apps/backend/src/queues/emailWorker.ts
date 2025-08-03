@@ -37,8 +37,10 @@ if (isProd && !disableQueue && !isRedisDisabled) {
   }
 } else {
   let reason = "dev mode";
-  if (disableQueue) reason = "DISABLE_EMAIL_QUEUE=true";
-  if (isRedisDisabled) reason = "Redis disabled";
+  if (disableQueue) 
+reason = "DISABLE_EMAIL_QUEUE=true";
+  if (isRedisDisabled) 
+reason = "Redis disabled";
 
   console.warn(`⚠️ emailWorker disabled (${reason})`);
   if (isRedisDisabled) {

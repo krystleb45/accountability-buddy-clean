@@ -1,7 +1,9 @@
 // src/api/services/integrationService.ts
-import { createError } from "../middleware/errorHandler";
-import Integration, { IIntegration, IntegrationSettings } from "../models/Integration";
+import type { IIntegration, IntegrationSettings } from "../models/Integration";
+
 import { logger } from "../../utils/winstonLogger";
+import { createError } from "../middleware/errorHandler";
+import Integration from "../models/Integration";
 
 class IntegrationService {
   /**
@@ -94,7 +96,7 @@ class IntegrationService {
         err instanceof Error ? err.message : err
       );
       throw createError(
-        "Integration test failed: " + (err instanceof Error ? err.message : String(err)),
+        `Integration test failed: ${  err instanceof Error ? err.message : String(err)}`,
         500
       );
     }

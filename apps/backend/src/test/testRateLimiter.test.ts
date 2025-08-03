@@ -6,7 +6,7 @@ describe("testRateLimiter.test routes", () => {
     expect(true).toBe(true);
   });
   it("GET /api/rate‑limit → 200 OK", async () => {
-    const res = await global.authGet("/api/rate-limit");
+    const res = await globalThis.authGet("/api/rate-limit");
 
     expect(res.status).toBe(200);
   });

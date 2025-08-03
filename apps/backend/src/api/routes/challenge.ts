@@ -1,16 +1,17 @@
 // src/api/routes/challenge.ts
 import { Router } from "express";
-import { protect } from "../middleware/authMiddleware";
 import rateLimit from "express-rate-limit";
 import { check, param } from "express-validator";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import {
   createChallenge,
+  getChallengeById,
   getPublicChallenges,
   joinChallenge,
   leaveChallenge,
-  getChallengeById,
 } from "../controllers/ChallengeController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
 

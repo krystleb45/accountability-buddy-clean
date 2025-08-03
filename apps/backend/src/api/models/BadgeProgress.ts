@@ -1,6 +1,8 @@
 // src/api/models/BadgeProgress.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
+
 import { logger } from "../../utils/winstonLogger";
 
 /**
@@ -52,7 +54,7 @@ const BadgeProgressSchema = new Schema<IBadgeProgress>(
 BadgeProgressSchema.index({ user: 1, badgeType: 1 });
 
 // Example hook: log each save
-BadgeProgressSchema.post<IBadgeProgress>("save", function (doc) {
+BadgeProgressSchema.post<IBadgeProgress>("save", (doc) => {
   logger.info(
     `BadgeProgress for user ${doc.user.toString()} and badgeType "${doc.badgeType}" is now ${doc.progress}`
   );

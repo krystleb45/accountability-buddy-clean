@@ -1,10 +1,13 @@
-import nodemailer, { SendMailOptions, TransportOptions } from "nodemailer";
+import type { SendMailOptions, TransportOptions } from "nodemailer";
+
+import nodemailer from "nodemailer";
+
 import { logger } from "../../utils/winstonLogger";
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT || "587", 10),
+  port: Number.parseInt(process.env.EMAIL_PORT || "587", 10),
   secure: process.env.EMAIL_PORT === "465",
   auth: {
     user: process.env.EMAIL_USER,
@@ -15,13 +18,7 @@ const transporter = nodemailer.createTransport({
   },
 } as TransportOptions);
 
-export const sendEmail = async (
-  to: string,
-  subject: string,
-  text = "",
-  options: Partial<SendMailOptions> = {},
-  retries = 3,
-): Promise<void> => {
+export async function sendEmail (to: string,  subject: string,  text = "",  options: Partial<SendMailOptions> = {},  retries = 3): Promise<void> {
   if (!to || !subject) {
     throw new Error("Recipient email and subject are required");
   }
@@ -51,7 +48,7 @@ export const sendEmail = async (
       await new Promise((r) => setTimeout(r, 2000));
     }
   }
-};
+}
 
 /**
  * Sends an email with HTML content.
@@ -60,12 +57,7 @@ export const sendEmail = async (
  * @param html - HTML content for the email.
  * @param options - Additional email options.
  */
-export const sendHtmlEmail = async (
-  to: string,
-  subject: string,
-  html: string,
-  options: Partial<SendMailOptions> = {},
-): Promise<void> => {
+export async function sendHtmlEmail (to: string,  subject: string,  html: string,  options: Partial<SendMailOptions> = {}): Promise<void> {
   if (!html) {
     throw new Error("HTML content is required for sending an HTML email");
   }
@@ -76,7 +68,7 @@ export const sendHtmlEmail = async (
   };
 
   await sendEmail(to, subject, "", mailOptions);
-};
+}
 
 /**
  * Sends an email with attachments.
@@ -85,14 +77,9 @@ export const sendHtmlEmail = async (
  * @param text - Plain text content (optional if HTML is provided).
  * @param attachments - Array of attachment objects.
  */
-export const sendEmailWithAttachments = async (
-  to: string,
-  subject: string,
-  text: string,
-  attachments: Array<{ filename: string; path: string }> = [],
-): Promise<void> => {
+export async function sendEmailWithAttachments (to: string,  subject: string,  text: string,  attachments: Array<{ filename: string; path: string }> = []): Promise<void> {
   if (!Array.isArray(attachments)) {
-    throw new Error("Attachments must be provided as an array");
+    throw new TypeError("Attachments must be provided as an array");
   }
 
   const mailOptions: Partial<SendMailOptions> = {
@@ -101,12 +88,12 @@ export const sendEmailWithAttachments = async (
   };
 
   await sendEmail(to, subject, text, mailOptions);
-};
+}
 
 /**
  * Verifies the SMTP connection to ensure the server is ready to send emails.
  */
-export const verifySmtpConnection = async (): Promise<void> => {
+export async function verifySmtpConnection (): Promise<void> {
   try {
     await transporter.verify();
     logger.info("SMTP server is ready to take messages");
@@ -116,4 +103,4 @@ export const verifySmtpConnection = async (): Promise<void> => {
     logger.error(`SMTP connection verification failed: ${errorMessage}`);
     throw new Error("Failed to verify SMTP connection");
   }
-};
+}

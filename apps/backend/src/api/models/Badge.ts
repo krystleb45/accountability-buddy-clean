@@ -1,6 +1,8 @@
 // src/api/models/Badge.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
+
 import { logger } from "../../utils/winstonLogger";
 
 // --- Types & Interfaces ---
@@ -33,13 +35,13 @@ export interface IBadge extends Document {
   isExpired: boolean;
 
   // Instance methods
-  updateProgress(amount: number): Promise<IBadge>;
+  updateProgress: (amount: number) => Promise<IBadge>;
 }
 
 export interface IBadgeModel extends Model<IBadge> {
-  getNextLevel(currentLevel: BadgeLevel): BadgeLevel;
-  isExpired(expiresAt?: Date): boolean;
-  awardPointsForBadge(badgeType: BadgeType): number;
+  getNextLevel: (currentLevel: BadgeLevel) => BadgeLevel;
+  isExpired: (expiresAt?: Date) => boolean;
+  awardPointsForBadge: (badgeType: BadgeType) => number;
 }
 
 // --- Schema Definition ---
@@ -140,7 +142,7 @@ BadgeSchema.pre<IBadge>("save", function (next: (err?: Error) => void): void {
   next();
 });
 
-BadgeSchema.post<IBadge>("save", function (doc: IBadge): void {
+BadgeSchema.post<IBadge>("save", (doc: IBadge): void => {
   try {
     logger.info(
       `Badge ${doc.badgeType} (${doc.level}) recorded for user ${doc.user.toString()}`

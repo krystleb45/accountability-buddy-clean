@@ -1,5 +1,6 @@
 // src/api/models/Profile.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Profile Document Interface ---
@@ -13,16 +14,16 @@ export interface IProfile extends Document {
   updatedAt: Date;
 
   // Instance methods
-  updateProfile(data: Partial<Pick<IProfile, "name" | "bio" | "profilePicture">>): Promise<IProfile>;
+  updateProfile: (data: Partial<Pick<IProfile, "name" | "bio" | "profilePicture">>) => Promise<IProfile>;
 }
 
 // --- Profile Model Static Interface ---
 export interface IProfileModel extends Model<IProfile> {
-  findByUserId(userId: Types.ObjectId): Promise<IProfile | null>;
-  createOrUpdate(
+  findByUserId: (userId: Types.ObjectId) => Promise<IProfile | null>;
+  createOrUpdate: (
     userId: Types.ObjectId,
     data: { name: string; email: string; bio?: string; profilePicture?: string }
-  ): Promise<IProfile>;
+  ) => Promise<IProfile>;
 }
 
 // --- Schema Definition ---
@@ -46,7 +47,7 @@ const ProfileSchema = new Schema<IProfile, IProfileModel>(
       trim: true,
       lowercase: true,
       unique: true,               // uniqueness still declared here
-      match: [/\S+@\S+\.\S+/, "Invalid email address"],
+      match: [/\S[^\s@]*@\S+\.\S+/, "Invalid email address"],
     },
     bio: {
       type: String,
@@ -81,9 +82,12 @@ ProfileSchema.methods.updateProfile = async function (
   this: IProfile,
   data: Partial<Pick<IProfile, "name" | "bio" | "profilePicture">>
 ): Promise<IProfile> {
-  if (data.name !== undefined) this.name = data.name;
-  if (data.bio !== undefined) this.bio = data.bio;
-  if (data.profilePicture !== undefined) this.profilePicture = data.profilePicture;
+  if (data.name !== undefined) 
+this.name = data.name;
+  if (data.bio !== undefined) 
+this.bio = data.bio;
+  if (data.profilePicture !== undefined) 
+this.profilePicture = data.profilePicture;
   await this.save();
   return this;
 };

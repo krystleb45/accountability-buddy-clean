@@ -1,6 +1,7 @@
 // src/api/models/Streak.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Streak Document Interface ---
@@ -12,14 +13,14 @@ export interface IStreak extends Document {
   updatedAt: Date;
 
   // Instance methods
-  recordCheckIn(): Promise<IStreak>;
-  resetStreak(): Promise<IStreak>;
+  recordCheckIn: () => Promise<IStreak>;
+  resetStreak: () => Promise<IStreak>;
 }
 
 // --- Streak Model Static Interface ---
 export interface IStreakModel extends Model<IStreak> {
-  getByUser(userId: Types.ObjectId): Promise<IStreak | null>;
-  resetUserStreak(userId: Types.ObjectId): Promise<void>;
+  getByUser: (userId: Types.ObjectId) => Promise<IStreak | null>;
+  resetUserStreak: (userId: Types.ObjectId) => Promise<void>;
 }
 
 // --- Schema Definition ---

@@ -1,12 +1,14 @@
 // src/api/controllers/FileUploadController.ts
-import { Request, Response } from "express";
-import fs from "fs";
-import path from "path";
+import type { Request, Response } from "express";
+
 import multer from "multer";
+import fs from "node:fs";
+import path from "node:path";
+
+import * as FileCleanupService from "../services/FileCleanupService";
+import FileUploadService from "../services/FileUploadService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import FileUploadService from "../services/FileUploadService";
-import * as FileCleanupService from "../services/FileCleanupService";
 
 const upload = multer({
   dest: path.join(__dirname, "../uploads/tmp"),
@@ -37,7 +39,7 @@ export const uploadSingle = [
 
     fs.unlinkSync(tmpPath);
     sendResponse(res, 201, true, "File uploaded successfully", { url, key });
-    return;
+    
   }),
 ];
 
@@ -73,7 +75,7 @@ export const uploadMultiple = [
     }
 
     sendResponse(res, 201, true, "Files uploaded successfully", { files: results });
-    return;
+    
   }),
 ];
 
@@ -84,7 +86,7 @@ export const getSignedUrl = catchAsync(async (req: Request<{ key: string }>, res
   } catch (err) {
     sendResponse(res, 404, false, (err as Error).message);
   }
-  return;
+  
 });
 
 export const deleteFile = catchAsync(async (req: Request<{ key: string }>, res: Response) => {
@@ -94,7 +96,7 @@ export const deleteFile = catchAsync(async (req: Request<{ key: string }>, res: 
   } catch (err) {
     sendResponse(res, 404, false, (err as Error).message);
   }
-  return;
+  
 });
 
 export default {

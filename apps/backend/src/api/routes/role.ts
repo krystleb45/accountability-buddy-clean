@@ -1,8 +1,11 @@
-import { Router, Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
+
+import * as RoleCtrl from "../controllers/RoleController";
 import { protect } from "../middleware/authMiddleware";
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
-import * as RoleCtrl from "../controllers/RoleController";
 
 const router = Router();
 const adminOnly = roleBasedAccessControl(["admin"]);

@@ -1,16 +1,13 @@
 // src/api/controllers/StripeWebhookController.ts - Fixed logging import
-import { Request, Response, NextFunction } from "express";
-import Stripe from "stripe";
-import StripeService from "../services/StripeService";
+import type { NextFunction, Request, Response } from "express";
+import type Stripe from "stripe";
+
 import { logger } from "../../utils/winstonLogger"; // Fixed: Use your winston logger
+import StripeService from "../services/StripeService";
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
-export const handleStripeWebhook = async (
-  req: Request,
-  res: Response,
-  _next: NextFunction
-): Promise<void> => {
+export async function handleStripeWebhook (req: Request,  res: Response,  _next: NextFunction): Promise<void> {
   const sig = req.headers["stripe-signature"] as string;
   let event: Stripe.Event;
 
@@ -56,4 +53,4 @@ export const handleStripeWebhook = async (
     logger.error(`❌ Error processing webhook ${event.type}:`, error);
     res.status(500).json({ error: "Webhook processing failed" });
   }
-};
+}

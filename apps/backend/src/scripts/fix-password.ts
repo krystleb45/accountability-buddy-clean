@@ -1,10 +1,11 @@
 // scripts/fix-password.ts
-import dotenvFlow from "dotenv-flow";
-dotenvFlow.config(); // loads .env.development / .env
-
-import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import dotenvFlow from "dotenv-flow"; // loads .env.development / .env
+import mongoose from "mongoose";
+
 import { User } from "../api/models/User";
+
+dotenvFlow.config();
 
 /**
  * Re-hashes the password for a given user email.

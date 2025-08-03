@@ -1,10 +1,11 @@
 // src/api/routes/badgeRoutes.ts
 import { Router } from "express";
-import { check } from "express-validator";
 import rateLimit from "express-rate-limit";
+import { check } from "express-validator";
+
+import * as BadgeController from "../controllers/BadgeController";
 import { protect, restrictTo } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import * as BadgeController from "../controllers/BadgeController";
 
 const router = Router();
 

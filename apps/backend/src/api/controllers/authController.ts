@@ -1,12 +1,13 @@
 // src/api/controllers/authController.ts - Updated with subscription support
 
 import type { RequestHandler } from "express";
+
+import { logger } from "../../utils/winstonLogger";
+import { createError } from "../middleware/errorHandler";
 import { User } from "../models/User";
+import AuthService from "../services/AuthService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import { createError } from "../middleware/errorHandler";
-import AuthService from "../services/AuthService";
-import { logger } from "../../utils/winstonLogger";
 
 interface RegisterRequestBody {
   email?: string;
@@ -58,7 +59,7 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
   const user = new User({
     email: normalizedEmail,
     username,
-    password: password, // Will be hashed by pre-save middleware
+    password, // Will be hashed by pre-save middleware
     subscriptionTier: selectedPlan as any,
     subscription_status: selectedPlan === "free-trial" ? "trial" : "active",
     billing_cycle: billingCycle,

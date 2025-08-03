@@ -19,7 +19,7 @@ const sessionConfig: SessionConfig = {
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === "production",
-    maxAge: parseInt(process.env.SESSION_MAX_AGE || "86400000", 10), // Default: 1 day
+    maxAge: Number.parseInt(process.env.SESSION_MAX_AGE || "86400000", 10), // Default: 1 day
   },
   store: process.env.SESSION_STORE || undefined, // Optional session store (e.g., Redis)
 };

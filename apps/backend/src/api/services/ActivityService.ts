@@ -1,7 +1,10 @@
 // src/api/services/ActivityService.ts
 
 import mongoose from "mongoose";
-import { Activity, IActivity } from "../models/Activity";  // ← named import
+
+import type { IActivity } from "../models/Activity";
+
+import { Activity } from "../models/Activity";  // ← named import
 
 
 export interface PaginatedActivities {
@@ -32,7 +35,8 @@ export default class ActivityService {
     opts: { type?: string; page?: number; limit?: number }
   ): Promise<PaginatedActivities> {
     const query: Record<string, any> = { user: userId };
-    if (opts.type) query.type = opts.type;
+    if (opts.type) 
+query.type = opts.type;
 
     const limit = opts.limit ?? 10;
     const skip = ((opts.page ?? 1) - 1) * limit;
@@ -93,7 +97,8 @@ export default class ActivityService {
       user: userId,
       isDeleted: { $ne: true },
     });
-    if (!act) return null;
+    if (!act) 
+return null;
     Object.assign(act, updates);
     return act.save();
   }
@@ -104,7 +109,8 @@ export default class ActivityService {
     userId: string
   ): Promise<IActivity | null> {
     const act = await Activity.findById(activityId);
-    if (!act || act.isDeleted) return null;
+    if (!act || act.isDeleted) 
+return null;
 
     const uid = new mongoose.Types.ObjectId(userId);
     if (!act.participants.some((p) => p.equals(uid))) {
@@ -120,7 +126,8 @@ export default class ActivityService {
     userId: string
   ): Promise<IActivity | null> {
     const act = await Activity.findById(activityId);
-    if (!act || act.isDeleted) return null;
+    if (!act || act.isDeleted) 
+return null;
 
     act.participants = act.participants.filter((p) => !p.equals(userId));
     await act.save();
@@ -133,7 +140,8 @@ export default class ActivityService {
     userId: string
   ): Promise<boolean> {
     const act = await Activity.findOne({ _id: activityId, user: userId });
-    if (!act) return false;
+    if (!act) 
+return false;
     act.isDeleted = true;
     await act.save();
     return true;

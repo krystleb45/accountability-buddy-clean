@@ -1,5 +1,6 @@
 // src/api/models/ChallengeMilestone.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Interface for Challenge Milestone ---
@@ -13,14 +14,14 @@ export interface IChallengeMilestone extends Document {
   updatedAt: Date;                  // Auto-set by timestamps
 
   // Instance methods
-  markComplete(userId: Types.ObjectId): Promise<IChallengeMilestone>;
-  reset(): Promise<IChallengeMilestone>;
+  markComplete: (userId: Types.ObjectId) => Promise<IChallengeMilestone>;
+  reset: () => Promise<IChallengeMilestone>;
 }
 
 // --- Model Interface for static methods ---
 export interface IChallengeMilestoneModel extends Model<IChallengeMilestone> {
-  getByChallenge(challengeId: Types.ObjectId): Promise<IChallengeMilestone[]>;
-  getPending(challengeId: Types.ObjectId): Promise<IChallengeMilestone[]>;
+  getByChallenge: (challengeId: Types.ObjectId) => Promise<IChallengeMilestone[]>;
+  getPending: (challengeId: Types.ObjectId) => Promise<IChallengeMilestone[]>;
 }
 
 // --- Schema Definition ---

@@ -1,7 +1,10 @@
 // src/api/services/GamificationService.ts
 
 import mongoose from "mongoose";
-import GamificationModel, { type IGamification } from "../models/Gamification";
+
+import type {IGamification} from "../models/Gamification";
+
+import GamificationModel from "../models/Gamification";
 
 // What we want in our final payload
 export interface LeaderboardEntry {

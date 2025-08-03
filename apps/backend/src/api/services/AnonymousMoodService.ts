@@ -1,8 +1,10 @@
 // src/api/services/AnonymousMoodService.ts
 
-import AnonymousMoodCheckIn, { type IAggregatedMoodData } from "../models/AnonymousMoodCheckIn";
-import { createError } from "../middleware/errorHandler";
+import type {IAggregatedMoodData} from "../models/AnonymousMoodCheckIn";
+
 import { logger } from "../../utils/winstonLogger";
+import { createError } from "../middleware/errorHandler";
+import AnonymousMoodCheckIn from "../models/AnonymousMoodCheckIn";
 
 export interface MoodCheckInResult {
   checkInId: string;

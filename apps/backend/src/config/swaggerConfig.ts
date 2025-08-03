@@ -1,9 +1,11 @@
+import type { Application } from "express";
 import type { Options } from "swagger-jsdoc";
+
+import express from "express";
+import path from "node:path";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import type { Application } from "express";
-import path from "path";
-import express from "express";
+
 import { logger } from "../utils/winstonLogger";
 
 const env = process.env.NODE_ENV || "development";
@@ -63,7 +65,7 @@ const swaggerOptions: Options = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 // Conditionally enable Swagger only in dev/test unless explicitly turned on
-const setupSwagger = (app: Application): void => {
+function setupSwagger (app: Application): void {
   const enableDocs = process.env.ENABLE_SWAGGER === "true" || env !== "production";
 
   if (!enableDocs) {
@@ -83,6 +85,6 @@ const setupSwagger = (app: Application): void => {
   );
 
   logger.info(`✅ Swagger UI available at /api-docs (${env})`);
-};
+}
 
 export default setupSwagger;

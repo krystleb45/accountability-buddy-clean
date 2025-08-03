@@ -11,7 +11,8 @@ interface MailOptions {
 let transporter: nodemailer.Transporter;
 
 function initTransporter() {
-  if (transporter) return transporter;
+  if (transporter) 
+return transporter;
 
   if (process.env.USE_GMAIL_OAUTH === "true") {
     // Gmail OAuth2 example

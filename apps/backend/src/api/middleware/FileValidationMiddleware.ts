@@ -1,5 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import fs from "fs";
+import type { NextFunction, Request, Response } from "express";
+
+import fs from "node:fs";
+
 import { logger } from "../../utils/winstonLogger";
 
 // File size limit (e.g., 10MB)
@@ -47,7 +49,7 @@ const FileValidationMiddleware = {
  * @param res The response object
  * @param next The next middleware function
  */
-const validateSingleFile = (file: Express.Multer.File, res: Response, next: NextFunction): void => {
+function validateSingleFile (file: Express.Multer.File, res: Response, next: NextFunction): void {
   const fileSize = file.size;
   const fileType = file.mimetype;
 
@@ -82,7 +84,7 @@ const validateSingleFile = (file: Express.Multer.File, res: Response, next: Next
     // Proceed to the next middleware if file is valid
     next();
   });
-};
+}
 
 /**
  * Validate multiple files
@@ -90,11 +92,7 @@ const validateSingleFile = (file: Express.Multer.File, res: Response, next: Next
  * @param res Response object
  * @param next Next middleware function
  */
-const validateMultipleFiles = (
-  files: Express.Multer.File[],
-  res: Response,
-  next: NextFunction
-): void => {
+function validateMultipleFiles (files: Express.Multer.File[],  res: Response,  next: NextFunction): void {
   const invalidFiles: string[] = [];
 
   for (const file of files) {
@@ -138,6 +136,6 @@ const validateMultipleFiles = (
 
   // Proceed to the next middleware if all files are valid
   next();
-};
+}
 
 export default FileValidationMiddleware;

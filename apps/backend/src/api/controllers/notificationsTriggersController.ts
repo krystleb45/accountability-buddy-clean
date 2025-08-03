@@ -1,8 +1,9 @@
 // src/api/controllers/notificationTriggerController.ts
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
+
+import NotificationTriggerService from "../services/NotificationTriggerService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import NotificationTriggerService from "../services/NotificationTriggerService";
 
 export const dailyStreakReminder = catchAsync(
   async (req: Request<{}, {}, { userId: string }>, res: Response) => {

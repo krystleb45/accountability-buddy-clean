@@ -2,7 +2,7 @@
 import newrelic from "newrelic"; // Make sure you have installed the `newrelic` package
 
 // Function to initialize New Relic
-const initializeNewRelic = (): void => {
+function initializeNewRelic (): void {
   // You can configure custom settings or add additional monitoring hooks here if needed
 
   // Example of adding custom attributes for requests
@@ -18,12 +18,12 @@ const initializeNewRelic = (): void => {
   // newrelic.recordCustomEvent('CustomEvent', { key: 'value' });
 
   console.warn("New Relic monitoring initialized");
-};
+}
 
 // If you need to monitor any specific custom business transactions, use this API.
-const monitorBusinessTransaction = (transactionName: string): void => {
+function monitorBusinessTransaction (transactionName: string): void {
   // You can capture custom business transactions like API calls, database queries, etc.
   newrelic.setTransactionName(transactionName);
-};
+}
 
 export { initializeNewRelic, monitorBusinessTransaction };

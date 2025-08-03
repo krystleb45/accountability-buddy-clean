@@ -1,5 +1,6 @@
 // src/api/models/PaymentTransaction.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Transaction Status & Method Types ---
@@ -27,15 +28,15 @@ export interface IPaymentTransaction extends Document {
   isCompleted: boolean;
 
   // Instance methods
-  markAsCompleted(): Promise<void>;
-  markAsFailed(reason: string): Promise<void>;
-  initiateRefund(reason: string): Promise<IPaymentTransaction>;
+  markAsCompleted: () => Promise<void>;
+  markAsFailed: (reason: string) => Promise<void>;
+  initiateRefund: (reason: string) => Promise<IPaymentTransaction>;
 }
 
 // --- Model Interface for Statics ---
 export interface IPaymentTransactionModel extends Model<IPaymentTransaction> {
-  findByUser(userId: Types.ObjectId): Promise<IPaymentTransaction[]>;
-  getTotalAmountForUser(userId: Types.ObjectId): Promise<number>;
+  findByUser: (userId: Types.ObjectId) => Promise<IPaymentTransaction[]>;
+  getTotalAmountForUser: (userId: Types.ObjectId) => Promise<number>;
 }
 
 // --- Schema Definition ---

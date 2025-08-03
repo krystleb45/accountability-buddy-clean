@@ -1,12 +1,15 @@
 // src/api/routes/chat.ts - Updated with subscription restrictions
-import { Router, Request, Response, NextFunction } from "express";
-import { check, param } from "express-validator";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
-import { validateSubscription, validateFeatureAccess } from "../middleware/subscriptionValidation";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+import { check, param } from "express-validator";
+
 import * as chatController from "../controllers/chatController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import { validateFeatureAccess, validateSubscription } from "../middleware/subscriptionValidation";
+import catchAsync from "../utils/catchAsync";
 
 const router = Router();
 

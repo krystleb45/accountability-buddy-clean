@@ -1,12 +1,15 @@
 // src/api/routes/collaborationGoals.ts
-import { Router, Request, Response, NextFunction } from "express";
-import { protect } from "../middleware/authMiddleware";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { check, param } from "express-validator";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
-import CollaborationGoal from "../models/CollaborationGoal";
 import mongoose from "mongoose";
+
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
+import CollaborationGoal from "../models/CollaborationGoal";
+import catchAsync from "../utils/catchAsync";
 
 const router = Router();
 
@@ -77,7 +80,7 @@ router.put(
   handleValidationErrors,
   catchAsync(async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
     const goalId = req.params.id;
-    const progress = parseInt(req.body.progress, 10);
+    const progress = Number.parseInt(req.body.progress, 10);
     const userId = req.user?.id!;
     const userObjectId = new mongoose.Types.ObjectId(String(userId));
 

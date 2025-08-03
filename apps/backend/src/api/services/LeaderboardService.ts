@@ -1,8 +1,9 @@
 // src/api/services/LeaderboardService.ts - FIXED: Conditional Redis usage
-import Leaderboard from "../models/Leaderboard";
-import Goal from "../models/Goal";
-import { SortOrder } from "mongoose";
+import type { SortOrder } from "mongoose";
+
 import { logger } from "../../utils/winstonLogger";
+import Goal from "../models/Goal";
+import Leaderboard from "../models/Leaderboard";
 
 // Check if Redis is disabled
 const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
@@ -36,7 +37,7 @@ if (!isRedisDisabled) {
 }
 
 // Cache helper functions
-const cacheGet = async (key: string): Promise<string | null> => {
+async function cacheGet (key: string): Promise<string | null> {
   if (redis) {
     try {
       return await redis.get(key);
@@ -52,9 +53,9 @@ const cacheGet = async (key: string): Promise<string | null> => {
     return cached.data;
   }
   return null;
-};
+}
 
-const cacheSet = async (key: string, value: string, ttlSeconds: number): Promise<void> => {
+async function cacheSet (key: string, value: string, ttlSeconds: number): Promise<void> {
   if (redis) {
     try {
       await redis.setex(key, ttlSeconds, value);
@@ -80,9 +81,9 @@ const cacheSet = async (key: string, value: string, ttlSeconds: number): Promise
       }
     }
   }
-};
+}
 
-const cacheDel = async (keys: string[]): Promise<void> => {
+async function cacheDel (keys: string[]): Promise<void> {
   if (redis && keys.length > 0) {
     try {
       await redis.del(...keys);
@@ -95,9 +96,9 @@ const cacheDel = async (keys: string[]): Promise<void> => {
 
   // Fallback to memory cache
   keys.forEach(key => memoryCache.delete(key));
-};
+}
 
-const cacheKeys = async (pattern: string): Promise<string[]> => {
+async function cacheKeys (pattern: string): Promise<string[]> {
   if (redis) {
     try {
       return await redis.keys(pattern);
@@ -114,7 +115,7 @@ const cacheKeys = async (pattern: string): Promise<string[]> => {
     return keys.filter(key => key.startsWith(prefix));
   }
   return keys.filter(key => key === pattern);
-};
+}
 
 // Default sort: highest goals → milestones → points
 const SORT_CRITERIA: Record<string, SortOrder> = {
@@ -178,7 +179,8 @@ export default class LeaderboardService {
         .populate("user", "username profilePicture");
 
       const idx = entries.findIndex((e) => e.user._id.toString() === userId);
-      if (idx === -1) throw new Error("User not on leaderboard");
+      if (idx === -1) 
+throw new Error("User not on leaderboard");
 
       return { position: idx + 1, entry: entries[idx] };
     } catch (error) {

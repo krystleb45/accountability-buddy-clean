@@ -1,7 +1,10 @@
 // src/api/services/StreakService.ts
 import mongoose from "mongoose";
-import Streak, { IStreak } from "../models/Streak";
+
+import type { IStreak } from "../models/Streak";
+
 import { logger } from "../../utils/winstonLogger";
+import Streak from "../models/Streak";
 
 export interface LeaderboardResult {
   streaks: IStreak[];
@@ -12,7 +15,7 @@ export interface LeaderboardResult {
   };
 }
 
-export const getUserStreak = async (userId: string): Promise<IStreak> => {
+export async function getUserStreak (userId: string): Promise<IStreak> {
   if (!mongoose.isValidObjectId(userId)) {
     throw new Error("Invalid User ID format.");
   }
@@ -21,9 +24,9 @@ export const getUserStreak = async (userId: string): Promise<IStreak> => {
     throw new Error("Streak not found for this user.");
   }
   return streak;
-};
+}
 
-export const logDailyCheckIn = async (userId: string): Promise<IStreak> => {
+export async function logDailyCheckIn (userId: string): Promise<IStreak> {
   if (!mongoose.isValidObjectId(userId)) {
     throw new Error("Invalid User ID format.");
   }
@@ -49,9 +52,9 @@ export const logDailyCheckIn = async (userId: string): Promise<IStreak> => {
   await streak.save();
   logger.info(`✅ Streak updated for user ${userId}: ${streak.streakCount} days`);
   return streak;
-};
+}
 
-export const resetUserStreak = async (userId: string): Promise<void> => {
+export async function resetUserStreak (userId: string): Promise<void> {
   if (!mongoose.isValidObjectId(userId)) {
     throw new Error("Invalid User ID format.");
   }
@@ -63,12 +66,9 @@ export const resetUserStreak = async (userId: string): Promise<void> => {
   streak.lastCheckIn = null;
   await streak.save();
   logger.info(`✅ Streak reset for user: ${userId}`);
-};
+}
 
-export const getStreakLeaderboard = async (
-  limit: number,
-  page: number
-): Promise<LeaderboardResult> => {
+export async function getStreakLeaderboard (limit: number,  page: number): Promise<LeaderboardResult> {
   const skip = (page - 1) * limit;
   const [streaks, totalEntries] = await Promise.all([
     Streak.find()
@@ -82,4 +82,4 @@ export const getStreakLeaderboard = async (
   ]);
   const totalPages = Math.ceil(totalEntries / limit);
   return { streaks, pagination: { totalEntries, currentPage: page, totalPages } };
-};
+}

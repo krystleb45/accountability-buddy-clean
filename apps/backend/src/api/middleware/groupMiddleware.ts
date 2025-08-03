@@ -1,11 +1,13 @@
 // src/api/middleware/groupMiddleware.ts
-import { Request, Response, NextFunction } from "express";
-import Group from "../models/Group";
-import catchAsync from "../utils/catchAsync";
+import type { NextFunction, Request, Response } from "express";
+
 import mongoose from "mongoose";
 
+import Group from "../models/Group";
+import catchAsync from "../utils/catchAsync";
+
 // Extend Request interface to include group data
-declare global {
+declare globalThis {
   namespace Express {
     interface Request {
       group?: any; // Will store the group document

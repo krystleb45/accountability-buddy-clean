@@ -1,8 +1,9 @@
 // src/api/controllers/progressController.ts
 import type { Request, Response } from "express";
+
+import ProgressService from "../services/ProgressService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import ProgressService from "../services/ProgressService";
 // 👇 import your server-side gamification service
 import GamificationService from "../services/GamificationService";
 

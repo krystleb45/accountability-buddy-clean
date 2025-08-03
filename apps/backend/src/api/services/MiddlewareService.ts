@@ -1,13 +1,17 @@
 // src/api/services/MiddlewareService.ts
-import { Request, Response, NextFunction } from "express";
-import type { JwtPayload } from "jsonwebtoken";
-import jwt from "jsonwebtoken";
-import { createError, errorHandler as defaultErrorHandler } from "../middleware/errorHandler";
-import { IUser, User } from "../models/User";
-import { logger } from "../../utils/winstonLogger";
+import type { NextFunction, Request, Response } from "express";
 import type Joi from "joi";
+import type { JwtPayload } from "jsonwebtoken";
 
-declare global {
+import jwt from "jsonwebtoken";
+
+import type { IUser} from "../models/User";
+
+import { logger } from "../../utils/winstonLogger";
+import { createError, errorHandler as defaultErrorHandler } from "../middleware/errorHandler";
+import { User } from "../models/User";
+
+declare globalThis {
   namespace Express {
     interface Request {
       user?: IUser;

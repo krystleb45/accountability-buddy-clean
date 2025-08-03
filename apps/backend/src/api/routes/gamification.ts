@@ -1,10 +1,13 @@
 // src/api/routes/gamification.ts
-import { Router, Request, Response, NextFunction } from "express";
-import { query, check } from "express-validator";
+import type { NextFunction, Request, Response } from "express";
+
+import { Router } from "express";
 import rateLimit from "express-rate-limit";
+import { check, query } from "express-validator";
+
+import gamificationController from "../controllers/gamificationController";
 import { protect } from "../middleware/authMiddleware";
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import gamificationController from "../controllers/gamificationController";
 
 const router = Router();
 

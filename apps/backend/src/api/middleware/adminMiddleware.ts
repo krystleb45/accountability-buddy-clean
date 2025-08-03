@@ -1,16 +1,19 @@
 import type { RequestHandler } from "express";
+
 import jwt from "jsonwebtoken";
 import sanitize from "mongo-sanitize";
-import { User } from "../models/User";
-import { logger } from "../../utils/winstonLogger";
+
 import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import { logger } from "../../utils/winstonLogger";
+import { User } from "../models/User";
 
 /**
  * Middleware to enforce permission-based access control
  * Accepts either a single permission or an array of permissions.
  * Grants access if the user has any one of them or is an admin.
  */
-const checkPermission = (requiredPermissions: string | string[]): RequestHandler => {
+function checkPermission (requiredPermissions: string | string[]): RequestHandler {
   return async (req, res, next): Promise<void> => {
     const authReq = req as AuthenticatedRequest;
 
@@ -68,6 +71,6 @@ const checkPermission = (requiredPermissions: string | string[]): RequestHandler
       res.status(500).json({ message: "Internal server error during authentication." });
     }
   };
-};
+}
 
 export default checkPermission;

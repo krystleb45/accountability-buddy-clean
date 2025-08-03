@@ -1,7 +1,10 @@
 // src/api/services/NotificationService.ts
-import Notification, { INotification } from "../models/Notification";
 import { Types } from "mongoose";
+
+import type { INotification } from "../models/Notification";
+
 import { createError } from "../middleware/errorHandler";
+import Notification from "../models/Notification";
 
 interface SendArgs {
   senderId: string;

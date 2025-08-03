@@ -1,7 +1,10 @@
 // src/api/services/MatchService.ts
 import { Types } from "mongoose";
-import { Match, IMatch } from "../models/Match";
+
+import type { IMatch } from "../models/Match";
+
 import { CustomError } from "../middleware/errorHandler";
+import { Match } from "../models/Match";
 
 export interface PaginationResult<T> {
   items: T[];

@@ -1,10 +1,13 @@
 // src/api/services/InviteService.ts
 import { Types } from "mongoose";
-import Group from "../models/Group";
-import GroupInvitation, { IInvitation } from "../models/Invitation";
-import NotificationService from "./NotificationService";
+
+import type { IInvitation } from "../models/Invitation";
+
 import { logger } from "../../utils/winstonLogger";
 import { createError } from "../middleware/errorHandler";
+import Group from "../models/Group";
+import GroupInvitation from "../models/Invitation";
+import NotificationService from "./NotificationService";
 
 export default class InviteService {
   /**

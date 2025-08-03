@@ -1,6 +1,7 @@
 // src/api/models/Event.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Types & Interfaces ---
@@ -39,20 +40,20 @@ export interface IEvent extends Document {
   activeReminderCount: number;
 
   // Instance methods
-  addReminder(message: string, scheduledTime: Date): Promise<IEvent>;
-  getActiveReminders(): IEventReminder[];
+  addReminder: (message: string, scheduledTime: Date) => Promise<IEvent>;
+  getActiveReminders: () => IEventReminder[];
 }
 
 export interface IEventModel extends Model<IEvent> {
-  addParticipant(
+  addParticipant: (
     eventId: Types.ObjectId,
     userId: Types.ObjectId,
     status?: ParticipantStatus
-  ): Promise<IEvent>;
-  removeParticipant(
+  ) => Promise<IEvent>;
+  removeParticipant: (
     eventId: Types.ObjectId,
     userId: Types.ObjectId
-  ): Promise<IEvent>;
+  ) => Promise<IEvent>;
 }
 
 // --- Sub‑Schemas ---
@@ -167,7 +168,8 @@ EventSchema.statics.addParticipant = async function (
   status: ParticipantStatus = "invited"
 ): Promise<IEvent> {
   const event = await this.findById(eventId);
-  if (!event) throw new Error("Event not found");
+  if (!event) 
+throw new Error("Event not found");
   if (event.participants.some((p) => p.user.equals(userId))) {
     throw new Error("User already a participant");
   }
@@ -181,7 +183,8 @@ EventSchema.statics.removeParticipant = async function (
   userId: Types.ObjectId
 ): Promise<IEvent> {
   const event = await this.findById(eventId);
-  if (!event) throw new Error("Event not found");
+  if (!event) 
+throw new Error("Event not found");
   event.participants = event.participants.filter(
     (p) => !p.user.equals(userId)
   ) as mongoose.Types.DocumentArray<IEventParticipant>;

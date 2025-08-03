@@ -1,11 +1,12 @@
-import mongoose from "mongoose";
+import type mongoose from "mongoose";
+
 import Badge from "../api/models/Badge";
-import Leaderboard from "../api/models/Leaderboard";
 import Goal from "../api/models/Goal";
+import Leaderboard from "../api/models/Leaderboard";
 import { logger } from "../utils/winstonLogger";
 
 // Utility function to update leaderboard in bulk
-export const updateLeaderboardInBulk = async (userId: mongoose.Types.ObjectId, points: number, goals: number, milestones: number, streak: number): Promise<void> => {
+export async function updateLeaderboardInBulk (userId: mongoose.Types.ObjectId, points: number, goals: number, milestones: number, streak: number): Promise<void> {
   try {
     const leaderboardUpdate = {
       $inc: {
@@ -27,10 +28,10 @@ export const updateLeaderboardInBulk = async (userId: mongoose.Types.ObjectId, p
   } catch (error) {
     logger.error(`Error updating leaderboard in bulk for user ${userId}: ${(error as Error).message}`);
   }
-};
+}
 
 // Utility function to update streak progress in bulk
-export const updateStreakProgressInBulk = async (userId: mongoose.Types.ObjectId, streakIncrement: number): Promise<void> => {
+export async function updateStreakProgressInBulk (userId: mongoose.Types.ObjectId, streakIncrement: number): Promise<void> {
   try {
     // Increase streak count in bulk
     await Goal.updateMany(
@@ -42,10 +43,10 @@ export const updateStreakProgressInBulk = async (userId: mongoose.Types.ObjectId
   } catch (error) {
     logger.error(`Error updating streak progress for user ${userId}: ${(error as Error).message}`);
   }
-};
+}
 
 // Utility function to award badges in bulk
-export const awardBadgesInBulk = async (userIds: mongoose.Types.ObjectId[], badgeType: string, level: string): Promise<void> => {
+export async function awardBadgesInBulk (userIds: mongoose.Types.ObjectId[], badgeType: string, level: string): Promise<void> {
   try {
     const bulkOperations = userIds.map(userId => ({
       updateOne: {
@@ -64,10 +65,10 @@ export const awardBadgesInBulk = async (userIds: mongoose.Types.ObjectId[], badg
   } catch (error) {
     logger.error(`Error awarding badges in bulk: ${(error as Error).message}`);
   }
-};
+}
 
 // Utility function to process batch updates for badges and leaderboard
-export const processBatchUpdates = async (userIds: mongoose.Types.ObjectId[], points: number, goals: number, milestones: number, streak: number, badgeType: string, level: string): Promise<void> => {
+export async function processBatchUpdates (userIds: mongoose.Types.ObjectId[], points: number, goals: number, milestones: number, streak: number, badgeType: string, level: string): Promise<void> {
   try {
     // Update leaderboard in bulk
     await updateLeaderboardInBulk(userIds[0], points, goals, milestones, streak); // Example: userIds[0] as an example user to update leaderboard
@@ -82,4 +83,4 @@ export const processBatchUpdates = async (userIds: mongoose.Types.ObjectId[], po
   } catch (error) {
     logger.error(`Error processing batch updates: ${(error as Error).message}`);
   }
-};
+}

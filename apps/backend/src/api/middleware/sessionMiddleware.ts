@@ -1,7 +1,9 @@
 // src/api/middleware/sessionMiddleware.ts - COMPLETELY REWRITTEN: No top-level Redis imports
+import type { NextFunction, Request, Response } from "express";
 import type { SessionOptions } from "express-session";
+
 import session from "express-session";
-import { Request, Response, NextFunction } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 
 // Check if Redis is disabled BEFORE any Redis imports
@@ -120,11 +122,7 @@ if (isRedisDisabled) {
 }
 
 // Enhanced middleware wrapper to handle session errors gracefully
-const enhancedSessionMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
+function enhancedSessionMiddleware (req: Request,  res: Response,  next: NextFunction): void {
   void sessionMiddleware(req, res, (err?: any) => {
     if (err instanceof Error) {
       logger.error(`Session middleware error: ${err.message}`);
@@ -141,6 +139,6 @@ const enhancedSessionMiddleware = (
       next();
     }
   });
-};
+}
 
 export default enhancedSessionMiddleware;

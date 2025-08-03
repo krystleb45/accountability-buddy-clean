@@ -70,8 +70,8 @@ class HealthCheckService {
 
     return {
       disabled: isDisabled,
-      skipInit: skipInit,
-      disableRedis: disableRedis,
+      skipInit,
+      disableRedis,
       environmentVariables: {
         redisUrl: process.env.REDIS_URL ? "SET" : "UNSET",
         redisPrivateUrl: process.env.REDIS_PRIVATE_URL ? "SET" : "UNSET",

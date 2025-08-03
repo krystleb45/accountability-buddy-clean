@@ -1,14 +1,15 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import MilitarySupportChatroom from "../api/models/MilitarySupportChatroom";
+import mongoose from "mongoose";
+
 import MilitaryResource from "../api/models/MilitaryResource";  // Import your MilitaryResource model
+import MilitarySupportChatroom from "../api/models/MilitarySupportChatroom";
 import { logger } from "../utils/winstonLogger";
 
 // Load environment variables
 dotenv.config();
 
 // Connect to MongoDB
-const connectDB = async (): Promise<void> => {
+async function connectDB (): Promise<void> {
   try {
     await mongoose.connect(process.env.MONGO_URI || "mongodb://localhost:27017/your-db-name");
     logger.info("Connected to MongoDB");
@@ -16,10 +17,10 @@ const connectDB = async (): Promise<void> => {
     logger.error(`Error: ${(error as Error).message}`);
     process.exit(1);
   }
-};
+}
 
 // Seed the database
-const seedDatabase = async (): Promise<void> => {
+async function seedDatabase (): Promise<void> {
   try {
     // Clear previous data (optional: you can skip this if you want to keep previous entries)
     await MilitarySupportChatroom.deleteMany({});
@@ -76,15 +77,15 @@ const seedDatabase = async (): Promise<void> => {
   } catch (error) {
     logger.error(`Error seeding database: ${(error as Error).message}`);
   }
-};
+}
 
 // Run the seed script
-const runSeed = async (): Promise<void> => {
+async function runSeed (): Promise<void> {
   await connectDB();
   await seedDatabase();
   await mongoose.connection.close(); // Add await here
   logger.info("Database seeding complete.");
-};
+}
 
 // Run the seeding process
 runSeed().catch((error) => {

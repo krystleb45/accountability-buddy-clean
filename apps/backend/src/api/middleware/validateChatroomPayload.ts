@@ -1,15 +1,11 @@
 // middleware/validateChatroomPayload.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 /**
  * Middleware to validate the payload when creating a military chatroom
  * @route POST /api/military-support/chatrooms
  */
-const validateChatroomPayload = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+function validateChatroomPayload (req: Request,  res: Response,  next: NextFunction): void {
   const { name, description, members } = req.body;
 
   if (!name || typeof name !== "string" || name.trim().length < 3) {
@@ -47,6 +43,6 @@ const validateChatroomPayload = (
   }
 
   next();
-};
+}
 
 export default validateChatroomPayload;

@@ -1,5 +1,6 @@
 // src/sockets/users.ts - FIXED: Conditional Redis usage
 import type { Server, Socket } from "socket.io";
+
 import { User } from "../api/models/User";
 import { logger } from "../utils/winstonLogger";
 
@@ -29,7 +30,7 @@ if (!isRedisDisabled) {
 const ONLINE_USERS_KEY = "online_users";
 
 // Helper functions for online users management
-const addOnlineUser = async (userId: string): Promise<void> => {
+async function addOnlineUser (userId: string): Promise<void> {
   try {
     if (redisClient && !isRedisDisabled) {
       await redisClient.sAdd(ONLINE_USERS_KEY, userId);
@@ -41,9 +42,9 @@ const addOnlineUser = async (userId: string): Promise<void> => {
   } catch (error) {
     logger.error(`Error adding online user ${userId}:`, error);
   }
-};
+}
 
-const removeOnlineUser = async (userId: string): Promise<void> => {
+async function removeOnlineUser (userId: string): Promise<void> {
   try {
     if (redisClient && !isRedisDisabled) {
       await redisClient.sRem(ONLINE_USERS_KEY, userId);
@@ -55,9 +56,9 @@ const removeOnlineUser = async (userId: string): Promise<void> => {
   } catch (error) {
     logger.error(`Error removing online user ${userId}:`, error);
   }
-};
+}
 
-const getOnlineUsers = async (): Promise<string[]> => {
+async function getOnlineUsers (): Promise<string[]> {
   try {
     if (redisClient && !isRedisDisabled) {
       const users = await redisClient.sMembers(ONLINE_USERS_KEY);
@@ -72,14 +73,14 @@ const getOnlineUsers = async (): Promise<string[]> => {
     logger.error("Error getting online users:", error);
     return [];
   }
-};
+}
 
 /**
  * @desc    Handles WebSocket events related to user management.
  * @param   {Server} io - The socket.io server instance.
  * @param   {Socket} socket - The socket object representing the client's connection.
  */
-const usersSocket = (io: Server, socket: Socket): void => {
+function usersSocket (io: Server, socket: Socket): void {
   const userId = socket.data.user?.id as string; // Proper user ID retrieval
   if (!userId) {
     logger.error("Socket connection attempted without a valid user ID.");
@@ -179,7 +180,7 @@ const usersSocket = (io: Server, socket: Socket): void => {
 
   /**
    * @desc    Handles private messaging between users.
-   * @param   {Object} messageData - Contains recipientId and message.
+   * @param   {object} messageData - Contains recipientId and message.
    */
   socket.on(
     "privateMessage",
@@ -213,6 +214,6 @@ const usersSocket = (io: Server, socket: Socket): void => {
       }
     },
   );
-};
+}
 
 export default usersSocket;

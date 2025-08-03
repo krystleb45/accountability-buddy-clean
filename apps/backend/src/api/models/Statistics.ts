@@ -1,6 +1,7 @@
 // src/api/models/Statistics.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Statistics Document Interface ---
@@ -14,16 +15,16 @@ export interface IStatistics extends Document {
   lastUpdated: Date;
 
   // Instance methods
-  recordGoalCompletion(): Promise<IStatistics>;
-  recordActivity(day: string, count?: number): Promise<IStatistics>;
-  addPoints(points: number): Promise<IStatistics>;
+  recordGoalCompletion: () => Promise<IStatistics>;
+  recordActivity: (day: string, count?: number) => Promise<IStatistics>;
+  addPoints: (points: number) => Promise<IStatistics>;
 }
 
 // --- Statistics Model Static Interface ---
 export interface IStatisticsModel extends Model<IStatistics> {
-  getByUser(userId: Types.ObjectId): Promise<IStatistics | null>;
-  initializeForUser(userId: Types.ObjectId): Promise<IStatistics>;
-  resetWeeklyActivity(userId: Types.ObjectId): Promise<IStatistics | null>;
+  getByUser: (userId: Types.ObjectId) => Promise<IStatistics | null>;
+  initializeForUser: (userId: Types.ObjectId) => Promise<IStatistics>;
+  resetWeeklyActivity: (userId: Types.ObjectId) => Promise<IStatistics | null>;
 }
 
 // --- Schema Definition ---
@@ -129,7 +130,8 @@ StatisticsSchema.statics.resetWeeklyActivity = async function (
   userId: Types.ObjectId
 ): Promise<IStatistics | null> {
   const stats = await this.findOne({ user: userId }).exec();
-  if (!stats) return null;
+  if (!stats) 
+return null;
   const resetMap: Record<string, number> = {
     Monday: 0,
     Tuesday: 0,

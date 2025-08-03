@@ -1,6 +1,7 @@
 // src/api/models/SupportTicket.ts
 
 import type { Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Message Subdocument Interface ---
@@ -23,14 +24,14 @@ export interface ISupportTicket extends Document {
   updatedAt: Date;
 
   // Instance methods
-  addMessage(sender: string, content: string): Promise<ISupportTicket>;
-  setStatus(status: "open" | "pending" | "closed"): Promise<ISupportTicket>;
+  addMessage: (sender: string, content: string) => Promise<ISupportTicket>;
+  setStatus: (status: "open" | "pending" | "closed") => Promise<ISupportTicket>;
 }
 
 // --- Model Static Interface ---
 export interface ISupportTicketModel extends Model<ISupportTicket> {
-  findByStatus(status: string): Promise<ISupportTicket[]>;
-  findByEmail(email: string): Promise<ISupportTicket[]>;
+  findByStatus: (status: string) => Promise<ISupportTicket[]>;
+  findByEmail: (email: string) => Promise<ISupportTicket[]>;
 }
 
 // --- Message Subdocument Schema ---

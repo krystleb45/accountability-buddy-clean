@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 const ROUTES_DIR = path.resolve(__dirname, "../api/routes");
 
@@ -13,7 +13,8 @@ function scanDir(dir: string): string[] {
     .readdirSync(dir, { withFileTypes: true })
     .flatMap((dirent) => {
       const full = path.join(dir, dirent.name);
-      if (dirent.isDirectory()) return scanDir(full);
+      if (dirent.isDirectory()) 
+return scanDir(full);
       return dirent.isFile() && full.endsWith(".ts") ? [full] : [];
     });
 }
@@ -31,7 +32,7 @@ function main(): void {
     const rel = path.relative(ROUTES_DIR, file).replace(/\\/g, "/");
     const content = fs.readFileSync(file, "utf8");
     const mw: string[] = [];
-    const importRe = /import\s+[^'"]+\s+from\s+['"]\.\.\/middleware\/([^'"]+)['"]/g;
+    const importRe = /import\s[^'"]+\sfrom\s+['"]\.\.\/middleware\/([^'"]+)['"]/g;
     let match: RegExpExecArray | null;
 
     while ((match = importRe.exec(content))) {

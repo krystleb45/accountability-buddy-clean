@@ -1,10 +1,11 @@
 // src/api/controllers/anonymousMoodController.ts
 
-import { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { Request, Response } from "express";
+
 import { createError } from "../middleware/errorHandler";
 import AnonymousMoodService from "../services/AnonymousMoodService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 interface AnonymousRequest extends Request {
   anonymousUser?: {
@@ -70,7 +71,7 @@ export const getCommunityMoodData = catchAsync(async (_req: Request, res: Respon
  * @access  Public
  */
 export const getMoodTrends = catchAsync(async (req: Request, res: Response) => {
-  const days = parseInt(req.query.days as string) || 7;
+  const days = Number.parseInt(req.query.days as string) || 7;
 
   // Validate days parameter
   if (days < 1 || days > 30) {
@@ -117,7 +118,7 @@ export const hasSubmittedToday = catchAsync(async (req: AnonymousRequest, res: R
  * @access  Public (could be restricted to admin in the future)
  */
 export const getMoodStatistics = catchAsync(async (req: Request, res: Response) => {
-  const days = parseInt(req.query.days as string) || 30;
+  const days = Number.parseInt(req.query.days as string) || 30;
 
   // Validate days parameter
   if (days < 1 || days > 90) {
@@ -142,7 +143,7 @@ export const getMoodStatistics = catchAsync(async (req: Request, res: Response) 
  * @access  Public
  */
 export const getMoodEncouragement = catchAsync(async (req: Request, res: Response) => {
-  const mood = parseInt(req.params.mood);
+  const mood = Number.parseInt(req.params.mood);
 
   if (!Number.isInteger(mood) || mood < 1 || mood > 5) {
     throw createError("Mood must be an integer between 1 and 5", 400);

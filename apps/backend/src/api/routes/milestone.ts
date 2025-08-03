@@ -1,10 +1,11 @@
 // src/api/routes/milestone.ts
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
 import { check, param } from "express-validator";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+
 import * as milestoneController from "../controllers/MilestoneController";
+import { protect } from "../middleware/authMiddleware";
+import handleValidationErrors from "../middleware/handleValidationErrors";
 
 const router = Router();
 

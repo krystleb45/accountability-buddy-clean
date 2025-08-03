@@ -1,5 +1,6 @@
 // src/sockets/rateLimiter.ts - FIXED: Conditional Redis usage
 import type { Socket } from "socket.io";
+
 import { logger } from "../utils/winstonLogger";
 
 // Check if Redis is disabled
@@ -25,7 +26,7 @@ if (!isRedisDisabled) {
 }
 
 // Helper functions for rate limiting
-const incrementRateLimit = async (key: string, windowMs: number): Promise<number> => {
+async function incrementRateLimit (key: string, windowMs: number): Promise<number> {
   try {
     if (redisClient && !isRedisDisabled) {
       // Use Redis
@@ -61,10 +62,10 @@ const incrementRateLimit = async (key: string, windowMs: number): Promise<number
     logger.error(`Error incrementing rate limit for ${key}:`, error);
     return 1; // Return 1 to allow the request on error
   }
-};
+}
 
 // Clean up expired memory rate limit entries
-const cleanupMemoryRateLimit = (): void => {
+function cleanupMemoryRateLimit (): void {
   if (memoryRateLimit.size > 1000) {
     const now = Date.now();
     for (const [key, value] of memoryRateLimit.entries()) {
@@ -73,7 +74,7 @@ const cleanupMemoryRateLimit = (): void => {
       }
     }
   }
-};
+}
 
 /**
  * @desc    Creates a rate limiter middleware for WebSocket events.
@@ -84,11 +85,7 @@ const cleanupMemoryRateLimit = (): void => {
  * @param   eventName - The WebSocket event to be rate-limited.
  * @returns Middleware function for socket rate limiting.
  */
-const createSocketRateLimiter = (
-  maxRequests: number,
-  windowMs: number,
-  eventName: string,
-) => {
+function createSocketRateLimiter (maxRequests: number,  windowMs: number,  eventName: string) {
   return async (socket: Socket, next: (err?: Error) => void): Promise<void> => {
     const userId = socket.data.user?.id as string; // Retrieve the user ID from socket data
     if (!userId) {
@@ -119,6 +116,6 @@ const createSocketRateLimiter = (
       next(new Error("Rate limiter error. Please try again later."));
     }
   };
-};
+}
 
 export default createSocketRateLimiter;

@@ -1,10 +1,11 @@
-import type { Request, Response, NextFunction } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core";
+
 import { logger } from "../../utils/winstonLogger";
 /**
  * Middleware to measure and log the response time for requests.
  * Adds an `X-Response-Time` header to the response and logs the duration.
  */
-const responseTimeMiddleware = (req: Request, res: Response, next: NextFunction): void => {
+function responseTimeMiddleware (req: Request, res: Response, next: NextFunction): void {
   // Capture the start time
   const start = process.hrtime();
 
@@ -28,6 +29,6 @@ const responseTimeMiddleware = (req: Request, res: Response, next: NextFunction)
   });
 
   next(); // Proceed to the next middleware or route handler
-};
+}
 
 export default responseTimeMiddleware;

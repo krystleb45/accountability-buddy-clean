@@ -1,5 +1,6 @@
 // src/api/models/Message.ts
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Types ---
@@ -56,16 +57,16 @@ export interface IMessage extends Document {
   attachmentCount: number;
 
   // Instance methods
-  addReaction(userId: Types.ObjectId, emoji: string): Promise<IMessage>;
-  removeReaction(userId: Types.ObjectId): Promise<IMessage>;
-  edit(newText: string): Promise<IMessage>;
-  softDelete(): Promise<IMessage>;
+  addReaction: (userId: Types.ObjectId, emoji: string) => Promise<IMessage>;
+  removeReaction: (userId: Types.ObjectId) => Promise<IMessage>;
+  edit: (newText: string) => Promise<IMessage>;
+  softDelete: () => Promise<IMessage>;
 }
 
 // --- Message Model Interface ---
 export interface IMessageModel extends Model<IMessage> {
-  getByChat(chatId: Types.ObjectId, limit?: number): Promise<IMessage[]>;
-  getUserMessages(userId: Types.ObjectId, limit?: number): Promise<IMessage[]>;
+  getByChat: (chatId: Types.ObjectId, limit?: number) => Promise<IMessage[]>;
+  getUserMessages: (userId: Types.ObjectId, limit?: number) => Promise<IMessage[]>;
 }
 
 // --- Schema Definition ---

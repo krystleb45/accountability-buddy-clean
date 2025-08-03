@@ -1,4 +1,5 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import { logger } from "../../utils/winstonLogger";
 
 /**
@@ -23,12 +24,7 @@ class ErrorResponse extends Error {
 /**
  * Error handling middleware that sends structured error responses.
  */
-const errorHandler = (
-  err: Error & { statusCode?: number; code?: number; value?: string; errors?: Record<string, { message: string }> },
-  req: Request,
-  res: Response,
-  _next: NextFunction, 
-): void => {
+function errorHandler (err: Error & { statusCode?: number; code?: number; value?: string; errors?: Record<string, { message: string }> },  req: Request,  res: Response,  _next: NextFunction): void {
   let error: ErrorResponse | Error & { statusCode?: number } = { ...err };
   error.message = err.message;
 
@@ -87,6 +83,6 @@ const errorHandler = (
     // Include stack trace in development mode for easier debugging
     stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
   });
-};
+}
 
-export { ErrorResponse, errorHandler };
+export { errorHandler, ErrorResponse };

@@ -1,6 +1,7 @@
 // src/api/models/Integration.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Settings Type ---
@@ -18,12 +19,12 @@ export interface IIntegration extends Document {
   updatedAt: Date;
 
   // Instance method
-  toggleActiveState(): Promise<IIntegration>;
+  toggleActiveState: () => Promise<IIntegration>;
 }
 
 // --- Integration Model Interface ---
 export interface IIntegrationModel extends Model<IIntegration> {
-  findActiveIntegrationsByUser(userId: Types.ObjectId): Promise<IIntegration[]>;
+  findActiveIntegrationsByUser: (userId: Types.ObjectId) => Promise<IIntegration[]>;
 }
 
 // --- Schema Definition ---

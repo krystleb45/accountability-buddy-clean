@@ -1,5 +1,6 @@
 // src/api/models/Milestone.ts
 import type { Document, Model } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Milestone Document Interface ---
@@ -11,13 +12,13 @@ export interface IMilestone extends Document {
   updatedAt: Date;
 
   // Instance methods
-  isPastDue(): boolean;
+  isPastDue: () => boolean;
 }
 
 // --- Milestone Model Interface ---
 export interface IMilestoneModel extends Model<IMilestone> {
-  findUpcoming(daysAhead?: number): Promise<IMilestone[]>;
-  findOverdue(): Promise<IMilestone[]>;
+  findUpcoming: (daysAhead?: number) => Promise<IMilestone[]>;
+  findOverdue: () => Promise<IMilestone[]>;
 }
 
 // --- Schema Definition ---

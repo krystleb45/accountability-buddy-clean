@@ -1,8 +1,9 @@
 // src/api/models/APIKey.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 // --- Types & Interfaces ---
 export type Permission = "read" | "write" | "delete" | "admin";
@@ -20,18 +21,18 @@ export interface IAPIKey extends Document {
   status: string;
 
   // Instance methods
-  deactivate(this: IAPIKey): Promise<IAPIKey>;
-  renew(this: IAPIKey, days?: number): Promise<IAPIKey>;
-  hasPermission(this: IAPIKey, permission: Permission): boolean;
+  deactivate: (this: IAPIKey) => Promise<IAPIKey>;
+  renew: (this: IAPIKey, days?: number) => Promise<IAPIKey>;
+  hasPermission: (this: IAPIKey, permission: Permission) => boolean;
 }
 
 export interface IAPIKeyModel extends Model<IAPIKey> {
-  validateKey(apiKey: string): Promise<IAPIKey | null>;
-  generateKeyForUser(
+  validateKey: (apiKey: string) => Promise<IAPIKey | null>;
+  generateKeyForUser: (
     userId: Types.ObjectId,
     permissions?: Permission[],
     expirationDays?: number
-  ): Promise<IAPIKey>;
+  ) => Promise<IAPIKey>;
 }
 
 // --- Schema Definition ---
@@ -76,7 +77,8 @@ APIKeySchema.index({ expiresAt: 1 });
 
 // --- Virtuals ---
 APIKeySchema.virtual("status").get(function (this: IAPIKey): string {
-  if (!this.isActive) return "Inactive";
+  if (!this.isActive) 
+return "Inactive";
   return this.expiresAt.getTime() > Date.now() ? "Active" : "Expired";
 });
 

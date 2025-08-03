@@ -6,14 +6,16 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "prepare": "husky install"
+    "format": "turbo run format"
   },
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "devDependencies": {
     "husky": "^8.0.3",
     "lint-staged": "^13.0.6",
+    "prettier": "3.6.2",
     "turbo": "^2.5.5"
   },
   "husky": {

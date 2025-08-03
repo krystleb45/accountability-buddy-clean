@@ -1,8 +1,9 @@
 // src/api/controllers/gamificationController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import GamificationService from "../services/GamificationService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import GamificationService from "../services/GamificationService";
 
 export default {
   /**
@@ -13,8 +14,8 @@ export default {
   getLeaderboard: catchAsync(
     async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
       // parse & default
-      const page    = Math.max(1, parseInt(req.query.page  as string, 10) || 1);
-      const limit   = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 10));
+      const page    = Math.max(1, Number.parseInt(req.query.page  as string, 10) || 1);
+      const limit   = Math.min(100, Math.max(1, Number.parseInt(req.query.limit as string, 10) || 10));
 
       // delegate to service
       const { entries, pagination } = await GamificationService.getLeaderboard(page, limit);

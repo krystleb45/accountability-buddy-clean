@@ -1,12 +1,14 @@
 import type { RequestHandler } from "express";
-import { logger } from "../../utils/winstonLogger";
+
 import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import { logger } from "../../utils/winstonLogger";
 
 /**
  * Middleware for Role-Based Access Control (RBAC)
  * @param allowedRoles - Array of roles authorized to access the route.
  */
-export const roleBasedAccessControl = (allowedRoles: string[]): RequestHandler => {
+export function roleBasedAccessControl (allowedRoles: string[]): RequestHandler {
   return (req, res, next): void => {
     const authReq = req as AuthenticatedRequest; // ✅ Fix: Explicitly cast `req` as `AuthenticatedRequest`
 
@@ -50,4 +52,4 @@ export const roleBasedAccessControl = (allowedRoles: string[]): RequestHandler =
       });
     }
   };
-};
+}

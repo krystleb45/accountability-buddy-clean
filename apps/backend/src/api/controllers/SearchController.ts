@@ -1,12 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import SearchService from "../services/SearchService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import SearchService from "../services/SearchService";
 
-type Q = { query: string; page?: string; limit?: string };
+interface Q { query: string; page?: string; limit?: string }
 
 /**
- * Composite “global” search: ?type=…
+ * Composite “globalThis” search: ?type=…
  */
 export const globalSearch = catchAsync(
   async (
@@ -41,7 +42,7 @@ export const globalSearch = catchAsync(
       default:
         // this should never happen once express-validator is in place, but just in case:
         sendResponse(res, 400, false, `Unsupported search type: ${type}`);
-        return;
+        
     }
   }
 );

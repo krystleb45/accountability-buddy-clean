@@ -1,10 +1,11 @@
 // src/scripts/seedUsers.ts
-import mongoose from "mongoose";
-import { User } from "../api/models/User";
-import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
-import { logger } from "../utils/winstonLogger";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+
+import { User } from "../api/models/User";
 import { loadEnvironment } from "../utils/loadEnv";
+import { logger } from "../utils/winstonLogger";
 
 loadEnvironment();
 
@@ -35,17 +36,17 @@ interface SeedUser {
 }
 
 // Helper function to create date offsets
-const daysFromNow = (days: number): Date => {
+function daysFromNow (days: number): Date {
   const date = new Date();
   date.setDate(date.getDate() + days);
   return date;
-};
+}
 
-const monthsFromNow = (months: number): Date => {
+function monthsFromNow (months: number): Date {
   const date = new Date();
   date.setMonth(date.getMonth() + months);
   return date;
-};
+}
 
 // Define users to seed with various subscription statuses
 const users: SeedUser[] = [
@@ -241,7 +242,7 @@ const users: SeedUser[] = [
   }
 ];
 
-const seedUsers = async (): Promise<void> => {
+async function seedUsers (): Promise<void> {
   if (!process.env.MONGO_URI) {
     logger.error("❌ MONGO_URI is not defined in environment variables.");
     process.exit(1);
@@ -306,7 +307,7 @@ const seedUsers = async (): Promise<void> => {
     await mongoose.disconnect();
     logger.info("🔌 Disconnected from MongoDB");
   }
-};
+}
 
 // Handle process termination gracefully
 process.on("SIGINT", async () => {

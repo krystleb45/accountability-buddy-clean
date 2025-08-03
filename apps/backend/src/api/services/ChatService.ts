@@ -1,7 +1,11 @@
 // src/api/services/ChatService.ts
 import { Types } from "mongoose";
-import Chat, { IChat } from "../models/Chat";
-import Message, { IMessage } from "../models/Message";
+
+import type { IChat } from "../models/Chat";
+import type { IMessage } from "../models/Message";
+
+import Chat from "../models/Chat";
+import Message from "../models/Message";
 
 export interface PaginatedMessages {
   messages: IMessage[];

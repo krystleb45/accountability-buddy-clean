@@ -1,12 +1,13 @@
 // src/api/controllers/FeedbackController.ts
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
+import { createError } from "../middleware/errorHandler";
+import FeedbackService from "../services/FeedbackService";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
-import FeedbackService from "../services/FeedbackService";
-import { createError } from "../middleware/errorHandler";
 
 // Import the existing FeedbackType from your model
-import { FeedbackType } from "../models/Feedback";
+import type { FeedbackType } from "../models/Feedback";
 
 // Define the valid feedback types (adjust these to match your actual FeedbackType values)
 const VALID_FEEDBACK_TYPES = ["bug", "feature", "improvement", "general", "complaint", "praise"] as const;
@@ -60,7 +61,8 @@ export const submitFeedback = catchAsync(
 export const getUserFeedback = catchAsync(
   async (req: Request, res: Response): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) throw createError("Unauthorized", 401);
+    if (!userId) 
+throw createError("Unauthorized", 401);
 
     const list = await FeedbackService.getUserFeedback(userId);
     sendResponse(res, 200, true, "User feedback retrieved successfully", {
@@ -77,7 +79,8 @@ export const getUserFeedback = catchAsync(
 export const deleteFeedback = catchAsync(
   async (req: Request<{ feedbackId: string }>, res: Response): Promise<void> => {
     const userId = req.user?.id;
-    if (!userId) throw createError("Unauthorized", 401);
+    if (!userId) 
+throw createError("Unauthorized", 401);
 
     const { feedbackId } = req.params;
 

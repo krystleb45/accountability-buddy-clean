@@ -1,9 +1,4 @@
-export const paginate = (
-  totalItems: number,
-  currentPage: number,
-  pageSize: number,
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-) => {
+export function paginate (totalItems: number,  currentPage: number,  pageSize: number) {
   const totalPages = Math.ceil(totalItems / pageSize);
   const hasNextPage = currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
@@ -16,4 +11,4 @@ export const paginate = (
     hasNextPage,
     hasPrevPage,
   };
-};
+}

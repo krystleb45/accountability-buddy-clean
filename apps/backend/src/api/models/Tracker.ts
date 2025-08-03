@@ -1,4 +1,5 @@
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Tracker Document Interface ---
@@ -10,15 +11,15 @@ export interface ITracker extends Document {
   updatedAt: Date;        // Timestamp for last update
 
   // Instance methods
-  addProgress(amount: number): Promise<ITracker>;
-  reset(): Promise<ITracker>;
-  isComplete(): boolean;
+  addProgress: (amount: number) => Promise<ITracker>;
+  reset: () => Promise<ITracker>;
+  isComplete: () => boolean;
 }
 
 // --- Tracker Model Interface ---
 export interface ITrackerModel extends Model<ITracker> {
-  findByUser(userId: Types.ObjectId): Promise<ITracker[]>;
-  resetAll(userId: Types.ObjectId): Promise<void>;
+  findByUser: (userId: Types.ObjectId) => Promise<ITracker[]>;
+  resetAll: (userId: Types.ObjectId) => Promise<void>;
 }
 
 // --- Tracker Schema Definition ---

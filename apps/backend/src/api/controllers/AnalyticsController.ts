@@ -1,11 +1,13 @@
 // src/api/controllers/AnalyticsController.ts
 import type { Request, Response } from "express";
+
 import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
+
 import { PERMISSIONS } from "../../constants/roles";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
 import { createError } from "../middleware/errorHandler";
 import AnalyticsService from "../services/AnalyticsService";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
 
 // ────────────────────────────
 // Dashboard overview analytics
@@ -49,7 +51,7 @@ export const getGlobalAnalytics = catchAsync(
   async (_req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
     const data = await AnalyticsService.getGlobalAnalytics();
     if (data == null) {
-      throw createError("Failed to compute global analytics", 500);
+      throw createError("Failed to compute globalThis analytics", 500);
     }
     sendResponse(res, 200, true, "Global analytics fetched successfully", { data });
   }
@@ -78,14 +80,14 @@ export const getFinancialAnalytics = catchAsync(
 // ────────────────────────────
 export const getCustomAnalytics = catchAsync(
   async (
-    req: AdminAuthenticatedRequest<{}, any, { startDate: string; endDate: string; metric: string }>,
+    req: AdminAuthenticatedRequest<unknown, any, { startDate: string; endDate: string; metric: string }>,
     res: Response
   ): Promise<void> => {
     const { startDate, endDate, metric } = req.body;
     if (!startDate || !endDate || !metric) {
       throw createError("Missing required fields: startDate, endDate, metric", 400);
     }
-    if (isNaN(Date.parse(startDate)) || isNaN(Date.parse(endDate))) {
+    if (Number.isNaN(Date.parse(startDate)) || Number.isNaN(Date.parse(endDate))) {
       throw createError("Invalid date format. Expected ISO 8601.", 400);
     }
 

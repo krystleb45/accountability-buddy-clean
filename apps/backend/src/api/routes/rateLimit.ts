@@ -1,5 +1,6 @@
 // src/api/routes/rateLimit.ts
 import { Router } from "express";
+
 import { getRateLimitStatus } from "../controllers/RateLimiterController";
 
 const router = Router();

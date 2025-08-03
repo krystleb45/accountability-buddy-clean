@@ -1,14 +1,15 @@
 // src/api/routes/progress.ts
 import { Router } from "express";
 import { check } from "express-validator";
+
+import {
+  getProgress,
+  getProgressDashboard,
+  resetProgress,
+  updateProgress,
+} from "../controllers/ProgressController";
 import { protect } from "../middleware/authJwt";            // ← fix this import
 import handleValidationErrors from "../middleware/handleValidationErrors";
-import {
-  getProgressDashboard,
-  getProgress,
-  updateProgress,
-  resetProgress,
-} from "../controllers/ProgressController";
 
 const router = Router();
 

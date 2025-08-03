@@ -1,11 +1,14 @@
 // src/api/middleware/authJwt.ts - Fixed to handle both _id and userId
-import { RequestHandler } from "express";
+import type { RequestHandler } from "express";
+
 import jwt from "jsonwebtoken";
+
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+
+import { logger } from "../../utils/winstonLogger";
+import { User } from "../models/User";
 import catchAsync from "../utils/catchAsync";
 import { createError } from "./errorHandler";
-import { User } from "../models/User";
-import { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
-import { logger } from "../../utils/winstonLogger";
 
 interface JwtPayload {
   userId?: string;
@@ -116,9 +119,7 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
 /**
  * Restricts access to specific roles
  */
-export const restrictTo = (
-  ...roles: ("admin" | "moderator" | "military" | "user")[]
-): RequestHandler => {
+export function restrictTo (...roles: ("admin" | "moderator" | "military" | "user")[]): RequestHandler {
   return (req, _res, next) => {
     const authReq = req as AuthenticatedRequest;
 
@@ -137,7 +138,7 @@ export const restrictTo = (
     logger.info(`✅ Role check passed for ${authReq.user.email}: ${authReq.user.role}`);
     next();
   };
-};
+}
 
 /**
  * Military-only access

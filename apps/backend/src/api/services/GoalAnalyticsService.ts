@@ -1,7 +1,10 @@
 // src/api/services/GoalAnalyticsService.ts
 import mongoose from "mongoose";
-import GoalAnalytics, { IGoalAnalytics } from "../models/GoalAnalytics";
+
+import type { IGoalAnalytics } from "../models/GoalAnalytics";
+
 import { createError } from "../middleware/errorHandler";
+import GoalAnalytics from "../models/GoalAnalytics";
 
 class GoalAnalyticsService {
   /** Fetch analytics for a given user */

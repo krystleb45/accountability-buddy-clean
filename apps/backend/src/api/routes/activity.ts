@@ -1,19 +1,20 @@
 // src/api/routes/activity.ts
 import { Router } from "express";
-import { check, param } from "express-validator";
 import rateLimit from "express-rate-limit";
-import { protect } from "../middleware/authMiddleware";
-import validationMiddleware from "../middleware/validationMiddleware";
+import { check, param } from "express-validator";
+
 import {
-  getUserActivities,
-  getActivityById,
   createActivity,
-  updateActivity,
   deleteActivity,
-  logActivity,
+  getActivityById,
+  getUserActivities,
   joinActivity,
   leaveActivity,
+  logActivity,
+  updateActivity,
 } from "../controllers/ActivityController";
+import { protect } from "../middleware/authMiddleware";
+import validationMiddleware from "../middleware/validationMiddleware";
 
 const router = Router();
 

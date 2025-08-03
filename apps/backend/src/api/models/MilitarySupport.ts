@@ -1,6 +1,7 @@
 // src/api/models/MilitarySupport.ts
 
 import type { Document, Model, Types } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Message Subdocument Interface ---
@@ -23,14 +24,14 @@ export interface IMilitaryUser extends Document {
   messageCount: number;
 
   // Instance methods
-  addMessage(content: string, senderId: Types.ObjectId): Promise<IMilitaryUser>;
-  removeMessage(messageId: Types.ObjectId): Promise<boolean>;
+  addMessage: (content: string, senderId: Types.ObjectId) => Promise<IMilitaryUser>;
+  removeMessage: (messageId: Types.ObjectId) => Promise<boolean>;
 }
 
 // --- MilitaryUser Model Interface ---
 export interface IMilitaryUserModel extends Model<IMilitaryUser> {
-  findByUser(userId: Types.ObjectId): Promise<IMilitaryUser | null>;
-  getMilitaryUsers(): Promise<IMilitaryUser[]>;
+  findByUser: (userId: Types.ObjectId) => Promise<IMilitaryUser | null>;
+  getMilitaryUsers: () => Promise<IMilitaryUser[]>;
 }
 
 // --- Sub-Schema Definition ---
@@ -84,7 +85,8 @@ MilitaryUserSchema.methods.removeMessage = async function (
   messageId: Types.ObjectId
 ): Promise<boolean> {
   const idx = this.messages.findIndex(m => m._id.equals(messageId));
-  if (idx === -1) return false;
+  if (idx === -1) 
+return false;
   this.messages.splice(idx, 1);
   await this.save();
   return true;

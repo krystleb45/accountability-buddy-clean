@@ -1,6 +1,6 @@
 // src/api/types/BadgeTypes.ts
 
-import { Document, Types } from "mongoose";
+import type { Document, Types } from "mongoose";
 
 // Type representing the badge levels
 export type BadgeLevel = "Bronze" | "Silver" | "Gold"; // Example levels for badges

@@ -1,6 +1,8 @@
-import { createLogger, format, transports, Logger } from "winston";
-import * as path from "path";
-import * as fs from "fs";
+import type { Logger } from "winston";
+
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
 
 // ✅ Define log directory and level
@@ -57,9 +59,9 @@ const logger: Logger = createLogger({
 });
 
 // ✅ Add `logStructured` function separately
-const logStructured = (infoObject: object): void => {
+function logStructured (infoObject: object): void {
   logger.info(JSON.stringify(infoObject, null, 2));
-};
+}
 
 // ✅ Add console transport for development environments
 if (process.env.NODE_ENV !== "production") {
@@ -89,9 +91,9 @@ logger.on("error", (err) => {
 });
 
 // ✅ Flush logs before exiting
-//process.on("exit", () => {
+// process.on("exit", () => {
 //  logger.info("Logger shutdown.");
 //  logger.end();
-//});
+// });
 
 export { logger, logStructured };

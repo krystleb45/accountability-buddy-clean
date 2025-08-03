@@ -1,6 +1,7 @@
 // src/utils/loadEnv.ts
 import dotenvFlow from "dotenv-flow";
-import path from "path";
+import path from "node:path";
+
 import { logger } from "./winstonLogger";
 
 export function loadEnvironment(): void {

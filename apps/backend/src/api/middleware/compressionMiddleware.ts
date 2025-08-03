@@ -1,5 +1,6 @@
+import type { NextFunction, Request, Response } from "express";
+
 import compression from "compression";
-import { Request, Response, NextFunction } from "express";
 
 /**
  * Middleware for request compression using gzip and Brotli.

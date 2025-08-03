@@ -1,16 +1,19 @@
-import type { Router, Response, NextFunction, RequestHandler } from "express";
+import type { NextFunction, RequestHandler, Response, Router } from "express";
+
 import express from "express";
 import { check, validationResult } from "express-validator";
+
+import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
+
+import { PERMISSIONS } from "../../constants/roles";
 import { logger } from "../../utils/winstonLogger";
 import {
+  deleteUserAccount,
   getAllUsers,
   updateUserRole,
-  deleteUserAccount,
 } from "../controllers/AdminController";
-import { protect } from "../middleware/authMiddleware";
 import checkPermission from "../middleware/adminMiddleware"; // ✅ supports single or multiple permissions
-import { PERMISSIONS } from "../../constants/roles";
-import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
+import { protect } from "../middleware/authMiddleware";
 
 const router: Router = express.Router();
 
@@ -21,9 +24,8 @@ const router: Router = express.Router();
  *   description: Admin endpoints for managing users
  */
 
-const handleRouteErrors =
-  (handler: (req: AdminAuthenticatedRequest, res: Response, next: NextFunction) => Promise<void>): RequestHandler =>
-    async (req, res, next) => {
+function handleRouteErrors (handler: (req: AdminAuthenticatedRequest, res: Response, next: NextFunction) => Promise<void>): RequestHandler {
+  return async (req, res, next) => {
       try {
         const typedReq = req as unknown as AdminAuthenticatedRequest;
         await handler(typedReq, res, next);
@@ -31,7 +33,8 @@ const handleRouteErrors =
         logger.error(`Error occurred: ${(error as Error).message}`);
         next(error);
       }
-    };
+    }
+}
 
 /**
  * @swagger

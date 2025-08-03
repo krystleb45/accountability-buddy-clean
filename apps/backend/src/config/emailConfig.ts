@@ -1,5 +1,6 @@
-import nodemailer from "nodemailer";
 import { google } from "googleapis";
+import nodemailer from "nodemailer";
+
 import { logger } from "../utils/winstonLogger";
 // OAuth2 Client Setup
 const oAuth2Client = new google.auth.OAuth2(
@@ -17,7 +18,7 @@ oAuth2Client.setCredentials({
  * @returns {Promise<string>} The generated access token.
  * @throws  {Error} If token generation fails.
  */
-const getAccessToken = async (): Promise<string> => {
+async function getAccessToken (): Promise<string> {
   try {
     const { token } = await oAuth2Client.getAccessToken();
     if (!token) {
@@ -28,7 +29,7 @@ const getAccessToken = async (): Promise<string> => {
     logger.error("Error generating access token: ", error);
     throw new Error("Could not generate access token for email service");
   }
-};
+}
 
 /**
  * @desc    Creates a Nodemailer transporter based on environment configuration.
@@ -36,7 +37,7 @@ const getAccessToken = async (): Promise<string> => {
  * @returns {Promise<nodemailer.Transporter>} The configured Nodemailer transporter.
  * @throws  {Error} If transporter creation fails.
  */
-const createTransporter = async (): Promise<nodemailer.Transporter> => {
+async function createTransporter (): Promise<nodemailer.Transporter> {
   try {
     if (process.env.USE_GMAIL_OAUTH === "true") {
       const accessToken = await getAccessToken();
@@ -57,7 +58,7 @@ const createTransporter = async (): Promise<nodemailer.Transporter> => {
       // Fallback to basic SMTP configuration
       return nodemailer.createTransport({
         host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || "587", 10),
+        port: Number.parseInt(process.env.SMTP_PORT || "587", 10),
         secure: process.env.SMTP_SECURE === "true", // Use TLS if secure is true
         auth: {
           user: process.env.SMTP_USER,
@@ -69,6 +70,6 @@ const createTransporter = async (): Promise<nodemailer.Transporter> => {
     logger.error("Error creating email transporter: ", error);
     throw new Error("Failed to create email transporter");
   }
-};
+}
 
 export default createTransporter;

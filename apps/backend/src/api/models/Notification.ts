@@ -1,5 +1,6 @@
 // src/api/models/Notification.ts
 import type { Document, Model, Types, UpdateWriteOpResult } from "mongoose";
+
 import mongoose, { Schema } from "mongoose";
 
 // --- Notification Types ---
@@ -26,22 +27,22 @@ export interface INotification extends Document {
   isExpired: boolean;
 
   // Instance methods
-  markRead(): Promise<INotification>;
-  markUnread(): Promise<INotification>;
+  markRead: () => Promise<INotification>;
+  markUnread: () => Promise<INotification>;
 }
 
 // --- Model Interface for Statics ---
 export interface INotificationModel extends Model<INotification> {
-  findByUser(userId: Types.ObjectId, unreadOnly?: boolean): Promise<INotification[]>;
-  markAllRead(userId: Types.ObjectId): Promise<UpdateWriteOpResult>;
-  createNotification(data: {
+  findByUser: (userId: Types.ObjectId, unreadOnly?: boolean) => Promise<INotification[]>;
+  markAllRead: (userId: Types.ObjectId) => Promise<UpdateWriteOpResult>;
+  createNotification: (data: {
     user: Types.ObjectId;
     sender?: Types.ObjectId;
     message: string;
     type: NotificationType;
     link?: string;
     expiresAt?: Date;
-  }): Promise<INotification>;
+  }) => Promise<INotification>;
 }
 
 // --- Schema Definition ---
@@ -130,7 +131,8 @@ NotificationSchema.statics.findByUser = function (
   unreadOnly = false
 ): Promise<INotification[]> {
   const filter: any = { user: userId };
-  if (unreadOnly) filter.read = false;
+  if (unreadOnly) 
+filter.read = false;
   return this.find(filter)
     .sort({ createdAt: -1 })
     .limit(100);

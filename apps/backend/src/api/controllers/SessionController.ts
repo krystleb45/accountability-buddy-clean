@@ -1,11 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import type { NextFunction, Request, Response } from "express";
+
 import SessionService from "../services/SessionService";
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function login (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   const { email, password } = req.body;
   try {
     const { token, session } = await SessionService.login(email, password, req);
@@ -18,13 +15,9 @@ export const login = async (
   } catch (err: any) {
     next(err);
   }
-};
+}
 
-export const logout = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function logout (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const sessionId = req.session.id;
     await SessionService.logout(sessionId);
@@ -32,13 +25,9 @@ export const logout = async (
   } catch (err: any) {
     next(err);
   }
-};
+}
 
-export const deleteAllSessions = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function deleteAllSessions (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const userId = req.user!.id;
     const sessionId = req.session.id;
@@ -49,13 +38,9 @@ export const deleteAllSessions = async (
   } catch (err: any) {
     next(err);
   }
-};
+}
 
-export const refreshSession = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function refreshSession (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const userId = req.user!.id;
     const token = await SessionService.refresh(userId);
@@ -67,13 +52,9 @@ export const refreshSession = async (
   } catch (err: any) {
     next(err);
   }
-};
+}
 
-export const getSession = async (
-  req: Request<{ sessionId: string }>,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function getSession (req: Request<{ sessionId: string }>,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const { sessionId } = req.params;
     const session = await SessionService.getById(sessionId);
@@ -85,13 +66,9 @@ export const getSession = async (
   } catch (err: any) {
     next(err);
   }
-};
+}
 
-export const getUserSessions = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function getUserSessions (req: Request,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const userId = req.user!.id;
     const sessions = await SessionService.listForUser(userId);
@@ -99,13 +76,9 @@ export const getUserSessions = async (
   } catch (err: any) {
     next(err);
   }
-};
+}
 
-export const deleteSession = async (
-  req: Request<{ sessionId: string }>,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+export async function deleteSession (req: Request<{ sessionId: string }>,  res: Response,  next: NextFunction): Promise<void> {
   try {
     const { sessionId } = req.params;
     const userId = req.user!.id;
@@ -114,4 +87,4 @@ export const deleteSession = async (
   } catch (err: any) {
     next(err);
   }
-};
+}

@@ -1,13 +1,20 @@
 // src/api/services/UserService.ts
-import { FilterQuery, Types } from "mongoose";
+import type { FilterQuery} from "mongoose";
+
 import bcrypt from "bcryptjs";
 import { subDays } from "date-fns";
+import { Types } from "mongoose";
 
-import { User, IUser } from "../models/User";
-import Goal, { IGoal } from "../models/Goal";
-import Badge, { IBadge } from "../models/Badge";
+import type { IBadge } from "../models/Badge";
+import type { CheckInDocument } from "../models/CheckIn";
+import type { IGoal } from "../models/Goal";
+import type { IUser } from "../models/User";
+
+import Badge from "../models/Badge";
+import CheckIn from "../models/CheckIn"; // <-- ensure this model exists
+import Goal from "../models/Goal";
 import Streak from "../models/Streak";
-import CheckIn, { CheckInDocument } from "../models/CheckIn"; // <-- ensure this model exists
+import { User } from "../models/User";
 import { CustomError } from "./errorHandler";
 
 interface LeaderboardOpts {
@@ -18,7 +25,8 @@ interface LeaderboardOpts {
 export default class UserService {
   static async getUserById(userId: string): Promise<IUser> {
     const user = await User.findById(userId).select("-password");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
     return user;
   }
 
@@ -28,7 +36,8 @@ export default class UserService {
     nextPwd: string
   ): Promise<void> {
     const user = await User.findById(userId).select("+password");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     if (!(await bcrypt.compare(current, user.password))) {
       throw new CustomError("Current password incorrect", 400);
@@ -40,7 +49,8 @@ export default class UserService {
 
   static async deleteUser(userId: string): Promise<void> {
     const removed = await User.findByIdAndDelete(userId);
-    if (!removed) throw new CustomError("User not found", 404);
+    if (!removed) 
+throw new CustomError("User not found", 404);
   }
 
   static async getAllUsers(
@@ -60,13 +70,18 @@ export default class UserService {
     const { sortBy, timeRange } = opts;
     const now = new Date();
     const filter: any = {};
-    if (timeRange === "week") filter.updatedAt = { $gte: subDays(now, 7) };
-    else if (timeRange === "month") filter.updatedAt = { $gte: subDays(now, 30) };
+    if (timeRange === "week") 
+filter.updatedAt = { $gte: subDays(now, 7) };
+    else if (timeRange === "month") 
+filter.updatedAt = { $gte: subDays(now, 30) };
 
     let sort: Record<string, -1> = {};
-    if (sortBy === "xp") sort = { points: -1 };
-    if (sortBy === "goals") sort = { completedGoals: -1 };
-    if (sortBy === "streaks") sort = { streakCount: -1 };
+    if (sortBy === "xp") 
+sort = { points: -1 };
+    if (sortBy === "goals") 
+sort = { completedGoals: -1 };
+    if (sortBy === "streaks") 
+sort = { streakCount: -1 };
 
     return User.find(filter)
       .sort(sort)
@@ -76,7 +91,8 @@ export default class UserService {
 
   static async pinGoal(userId: string, goalId: string): Promise<Types.ObjectId[]> {
     const user = await User.findById(userId);
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     const oid = new Types.ObjectId(goalId);
     user.pinnedGoals = user.pinnedGoals ?? [];
@@ -89,7 +105,8 @@ export default class UserService {
 
   static async unpinGoal(userId: string, goalId: string): Promise<Types.ObjectId[]> {
     const user = await User.findById(userId);
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     user.pinnedGoals = (user.pinnedGoals ?? []).filter(
       (g) => g.toString() !== goalId
@@ -100,7 +117,8 @@ export default class UserService {
 
   static async getPinnedGoals(userId: string): Promise<IGoal[]> {
     const user = await User.findById(userId).populate("pinnedGoals");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     const raw = Array.isArray(user.pinnedGoals) ? (user.pinnedGoals as any[]) : [];
     return raw.map((g) => g as IGoal);
@@ -111,7 +129,8 @@ export default class UserService {
     achievementId: string
   ): Promise<Types.ObjectId[]> {
     const user = await User.findById(userId);
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     const aid = new Types.ObjectId(achievementId);
     user.featuredAchievements = user.featuredAchievements ?? [];
@@ -127,7 +146,8 @@ export default class UserService {
     achievementId: string
   ): Promise<Types.ObjectId[]> {
     const user = await User.findById(userId);
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     user.featuredAchievements = (user.featuredAchievements ?? []).filter(
       (a) => a.toString() !== achievementId
@@ -138,7 +158,8 @@ export default class UserService {
 
   static async getFeaturedAchievements(userId: string): Promise<IBadge[]> {
     const user = await User.findById(userId).populate("featuredAchievements");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     const raw = Array.isArray(user.featuredAchievements)
       ? (user.featuredAchievements as any[])
@@ -152,7 +173,8 @@ export default class UserService {
 
   static async fetchUserBadges(userId: string): Promise<IBadge[]> {
     const user = await User.findById(userId).populate("badges");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     const raw = Array.isArray(user.badges) ? (user.badges as any[]) : [];
     return raw.map((b) => b as IBadge);
@@ -160,7 +182,8 @@ export default class UserService {
 
   static async awardBadge(userId: string, badgeId: string): Promise<IBadge[]> {
     const user = await User.findById(userId);
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     const bid = new Types.ObjectId(badgeId);
     user.badges = user.badges ?? [];
@@ -178,7 +201,8 @@ export default class UserService {
     const user = await User.findById(userId).select(
       "username profilePicture points completedGoals streakCount createdAt subscriptionTier subscription_status"
     );
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
 
     const streakDoc = await Streak.findOne({ user: user._id });
     const streak = streakDoc?.streakCount ?? 0;
@@ -239,7 +263,8 @@ export default class UserService {
       updates,
       { new: true, runValidators: true }
     ).select("-password");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
     return user;
   }
 
@@ -271,7 +296,8 @@ export default class UserService {
       { active: false },
       { new: true }
     ).select("-password");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
     return user;
   }
 
@@ -282,7 +308,8 @@ export default class UserService {
       { active: true },
       { new: true }
     ).select("-password");
-    if (!user) throw new CustomError("User not found", 404);
+    if (!user) 
+throw new CustomError("User not found", 404);
     return user;
   }
 }
