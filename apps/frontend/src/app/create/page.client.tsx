@@ -1,21 +1,21 @@
 // src/app/create/page.client.tsx
-'use client';
+"use client"
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion"
+import React, { useState } from "react"
 
 export default function CreateForm() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [success, setSuccess] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     // TODO: actually call your API to create a goal
-    setSuccess(true);
-    setTitle('');
-    setDescription('');
-  };
+    setSuccess(true)
+    setTitle("")
+    setDescription("")
+  }
 
   return (
     <div className="min-h-screen bg-black p-6 text-white">
@@ -26,7 +26,9 @@ export default function CreateForm() {
         className="mx-auto max-w-4xl"
       >
         <header className="mb-8 text-center">
-          <h1 className="text-4xl font-extrabold text-kelly-green">Create New Goal</h1>
+          <h1 className="text-4xl font-extrabold text-kelly-green">
+            Create New Goal
+          </h1>
           <p className="text-lg text-gray-400">
             Set your sights on success by creating and tracking your goals.
           </p>
@@ -51,7 +53,10 @@ export default function CreateForm() {
           )}
 
           <div className="mb-4">
-            <label htmlFor="title" className="mb-2 block font-medium text-gray-300">
+            <label
+              htmlFor="title"
+              className="mb-2 block font-medium text-gray-300"
+            >
               Goal Title
             </label>
             <input
@@ -65,7 +70,10 @@ export default function CreateForm() {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="description" className="mb-2 block font-medium text-gray-300">
+            <label
+              htmlFor="description"
+              className="mb-2 block font-medium text-gray-300"
+            >
               Description
             </label>
             <textarea
@@ -89,5 +97,5 @@ export default function CreateForm() {
         </motion.form>
       </motion.div>
     </div>
-  );
+  )
 }

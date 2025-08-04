@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from "react"
 
 /**
  * Custom hook for throttling a function.
@@ -15,44 +15,44 @@ function useThrottle<T extends (...args: unknown[]) => void>(
   callback: T,
   delay: number,
 ): (...args: Parameters<T>) => void {
-  const lastCall = useRef(0);
-  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const savedCallback = useRef(callback);
+  const lastCall = useRef(0)
+  const timeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const savedCallback = useRef(callback)
 
   // Always keep the latest callback in ref
   useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+    savedCallback.current = callback
+  }, [callback])
 
   const throttledFn = useCallback(
     (...args: Parameters<T>) => {
-      const now = Date.now();
-      const remaining = delay - (now - lastCall.current);
+      const now = Date.now()
+      const remaining = delay - (now - lastCall.current)
 
       if (remaining <= 0) {
         // It's been longer than `delay`: call immediately
-        lastCall.current = now;
-        savedCallback.current(...args);
+        lastCall.current = now
+        savedCallback.current(...args)
       } else if (!timeout.current) {
         // Otherwise schedule a trailing call
         timeout.current = setTimeout(() => {
-          lastCall.current = Date.now();
-          timeout.current = null;
-          savedCallback.current(...args);
-        }, remaining);
+          lastCall.current = Date.now()
+          timeout.current = null
+          savedCallback.current(...args)
+        }, remaining)
       }
     },
     [delay],
-  ); // only re-create if `delay` changes
+  ) // only re-create if `delay` changes
 
   // Clean up on unmount
   useEffect(() => {
     return () => {
-      if (timeout.current) clearTimeout(timeout.current);
-    };
-  }, []);
+      if (timeout.current) clearTimeout(timeout.current)
+    }
+  }, [])
 
-  return throttledFn;
+  return throttledFn
 }
 
-export default useThrottle;
+export default useThrottle

@@ -1,19 +1,26 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { Card, CardContent, CardHeader, Typography, Button } from '@mui/material';
-import styles from './Recommendations.module.css';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+} from "@mui/material"
+import React from "react"
+
+import styles from "./Recommendations.module.css"
 
 export interface GroupRecommendation {
-  id: string;
-  name: string;
-  description: string;
-  membersCount: number;
+  id: string
+  name: string
+  description: string
+  membersCount: number
 }
 
 interface GroupRecommendationsProps {
-  recommendations: GroupRecommendation[];
-  onJoinGroup: (groupId: string) => void;
+  recommendations: GroupRecommendation[]
+  onJoinGroup: (groupId: string) => void
 }
 
 const GroupRecommendations: React.FC<GroupRecommendationsProps> = ({
@@ -21,26 +28,29 @@ const GroupRecommendations: React.FC<GroupRecommendationsProps> = ({
   onJoinGroup,
 }) => {
   return (
-    <section className={styles.groupContainer ?? ''} aria-labelledby="group-recommendations-header">
+    <section
+      className={styles.groupContainer ?? ""}
+      aria-labelledby="group-recommendations-header"
+    >
       <Typography
         component="h2"
         variant="h4"
         gutterBottom
         id="group-recommendations-header"
-        className={styles.heading ?? ''}
+        className={styles.heading ?? ""}
       >
         Recommended Groups
       </Typography>
 
       {recommendations.length > 0 ? (
-        <ul className={styles.groupGrid ?? ''}>
+        <ul className={styles.groupGrid ?? ""}>
           {recommendations.map((group) => (
-            <li key={group.id} className={styles.groupItem ?? ''}>
+            <li key={group.id} className={styles.groupItem ?? ""}>
               <Card
                 component="div"
                 role="region"
                 aria-labelledby={`group-title-${group.id}`}
-                className={styles.groupCard ?? ''}
+                className={styles.groupCard ?? ""}
               >
                 <CardHeader
                   id={`group-title-${group.id}`}
@@ -57,7 +67,7 @@ const GroupRecommendations: React.FC<GroupRecommendationsProps> = ({
                     color="primary"
                     onClick={() => onJoinGroup(group.id)}
                     aria-label={`Join ${group.name}`}
-                    className={styles.joinButton ?? ''}
+                    className={styles.joinButton ?? ""}
                   >
                     Join Group
                   </Button>
@@ -67,12 +77,16 @@ const GroupRecommendations: React.FC<GroupRecommendationsProps> = ({
           ))}
         </ul>
       ) : (
-        <Typography variant="body1" color="textSecondary" className={styles.emptyMessage ?? ''}>
+        <Typography
+          variant="body1"
+          color="textSecondary"
+          className={styles.emptyMessage ?? ""}
+        >
           No recommended groups available at the moment.
         </Typography>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default GroupRecommendations;
+export default GroupRecommendations

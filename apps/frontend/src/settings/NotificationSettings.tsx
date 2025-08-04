@@ -1,21 +1,29 @@
-'use client';
+"use client"
 
-import React, { useCallback } from 'react';
-import styles from './NotificationSettings.module.css';
-import useLocalStorage from '@/hooks/state/useLocalStorage';
+import React, { useCallback } from "react"
+
+import useLocalStorage from "@/hooks/state/useLocalStorage"
+
+import styles from "./NotificationSettings.module.css"
 
 const NotificationSettings: React.FC = () => {
   const [emailNotifications, setEmailNotifications] = useLocalStorage<boolean>(
-    'emailNotifications',
+    "emailNotifications",
     true,
-  );
+  )
   const [smsNotifications, setSmsNotifications] = useLocalStorage<boolean>(
-    'smsNotifications',
+    "smsNotifications",
     false,
-  );
+  )
 
-  const toggleEmail = useCallback(() => setEmailNotifications((v) => !v), [setEmailNotifications]);
-  const toggleSms = useCallback(() => setSmsNotifications((v) => !v), [setSmsNotifications]);
+  const toggleEmail = useCallback(
+    () => setEmailNotifications((v) => !v),
+    [setEmailNotifications],
+  )
+  const toggleSms = useCallback(
+    () => setSmsNotifications((v) => !v),
+    [setSmsNotifications],
+  )
 
   return (
     <div className={styles.container}>
@@ -32,7 +40,9 @@ const NotificationSettings: React.FC = () => {
             onChange={toggleEmail}
             className={styles.hiddenCheckbox}
           />
-          <span className={styles.customCheckbox}>{emailNotifications && '✔️'}</span>
+          <span className={styles.customCheckbox}>
+            {emailNotifications && "✔️"}
+          </span>
           Enable Email Notifications
         </label>
       </div>
@@ -47,12 +57,14 @@ const NotificationSettings: React.FC = () => {
             onChange={toggleSms}
             className={styles.hiddenCheckbox}
           />
-          <span className={styles.customCheckbox}>{smsNotifications && '✔️'}</span>
+          <span className={styles.customCheckbox}>
+            {smsNotifications && "✔️"}
+          </span>
           Enable SMS Notifications
         </label>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NotificationSettings;
+export default NotificationSettings

@@ -54,7 +54,7 @@
 
 /* Optional little arrow using ::after */
 .tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 0;
   height: 0;

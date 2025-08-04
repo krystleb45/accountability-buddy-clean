@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from "react"
 
 /**
  * Type definition for the return value of the `useModal` hook.
@@ -6,12 +6,12 @@ import { useState, useCallback } from 'react';
  * @template T - The type of the modal content.
  */
 interface UseModalReturn<T> {
-  isOpen: boolean;
-  content: T | null;
-  open: (content: T | null) => void;
-  close: () => void;
-  toggle: () => void;
-  setContent: (content: T | null) => void;
+  isOpen: boolean
+  content: T | null
+  open: (content: T | null) => void
+  close: () => void
+  toggle: () => void
+  setContent: (content: T | null) => void
 }
 
 /**
@@ -24,26 +24,26 @@ interface UseModalReturn<T> {
  *          and a function to set modal content.
  */
 function useModal<T = unknown>(): UseModalReturn<T> {
-  const [isOpen, setIsOpen] = useState(false);
-  const [content, setContentState] = useState<T | null>(null);
+  const [isOpen, setIsOpen] = useState(false)
+  const [content, setContentState] = useState<T | null>(null)
 
   const open = useCallback((newContent: T | null) => {
-    setContentState(newContent);
-    setIsOpen(true);
-  }, []);
+    setContentState(newContent)
+    setIsOpen(true)
+  }, [])
 
   const close = useCallback(() => {
-    setIsOpen(false);
-    setContentState(null);
-  }, []);
+    setIsOpen(false)
+    setContentState(null)
+  }, [])
 
   const toggle = useCallback(() => {
-    setIsOpen((prev) => !prev);
-  }, []);
+    setIsOpen((prev) => !prev)
+  }, [])
 
   const setContent = useCallback((newContent: T | null) => {
-    setContentState(newContent);
-  }, []);
+    setContentState(newContent)
+  }, [])
 
   return {
     isOpen,
@@ -52,7 +52,7 @@ function useModal<T = unknown>(): UseModalReturn<T> {
     close,
     toggle,
     setContent,
-  };
+  }
 }
 
-export default useModal;
+export default useModal

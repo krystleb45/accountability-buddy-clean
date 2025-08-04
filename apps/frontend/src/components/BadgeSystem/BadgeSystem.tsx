@@ -1,18 +1,19 @@
-'use client';
+"use client"
 
-import React from 'react';
-import styles from './BadgeSystem.module.css';
+import React from "react"
+
+import styles from "./BadgeSystem.module.css"
 
 export interface BadgeData {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
+  id: string
+  name: string
+  description: string
+  imageUrl: string
 }
 
 export interface BadgeSystemProps {
-  badges: BadgeData[];
-  user?: { id: string; name: string };
+  badges: BadgeData[]
+  user?: { id: string; name: string }
 }
 
 /**
@@ -22,17 +23,31 @@ export interface BadgeSystemProps {
 const BadgeSystem: React.FC<BadgeSystemProps> = ({ badges, user }) => {
   return (
     <div className={styles.badgeSystemContainer} data-testid="badge-system">
-      <h2 className={styles.userGreeting}>{user ? `Badges for ${user.name}` : 'Badges'}</h2>
+      <h2 className={styles.userGreeting}>
+        {user ? `Badges for ${user.name}` : "Badges"}
+      </h2>
 
       {badges.length === 0 ? (
-        <p className={styles.emptyMessage} role="alert" data-testid="empty-message">
+        <p
+          className={styles.emptyMessage}
+          role="alert"
+          data-testid="empty-message"
+        >
           No badges available.
         </p>
       ) : (
         <ul className={styles.badgeList} aria-label="List of badges">
           {badges.map((badge) => (
-            <li key={badge.id} className={styles.badgeItem} data-testid="badge-item">
-              <img src={badge.imageUrl} alt={badge.name} className={styles.badgeImage} />
+            <li
+              key={badge.id}
+              className={styles.badgeItem}
+              data-testid="badge-item"
+            >
+              <img
+                src={badge.imageUrl}
+                alt={badge.name}
+                className={styles.badgeImage}
+              />
               <div className={styles.badgeDetails}>
                 <h3 className={styles.badgeName}>{badge.name}</h3>
                 <p className={styles.badgeDescription}>{badge.description}</p>
@@ -42,7 +57,7 @@ const BadgeSystem: React.FC<BadgeSystemProps> = ({ badges, user }) => {
         </ul>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default BadgeSystem;
+export default BadgeSystem

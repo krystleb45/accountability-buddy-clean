@@ -1,61 +1,68 @@
-'use client';
+"use client"
 
-import React, {
-  useEffect,
-  useRef,
-  ReactNode,
+import type {
   MouseEvent,
   KeyboardEvent as ReactKeyboardEvent,
-} from 'react';
-import styles from './Modal.module.css';
+  ReactNode,
+} from "react"
+
+import React, { useEffect, useRef } from "react"
+
+import styles from "./Modal.module.css"
 
 export interface ModalProps {
-  title?: string;
-  children: ReactNode;
-  isVisible: boolean;
-  onClose: () => void;
-  className?: string;
+  title?: string
+  children: ReactNode
+  isVisible: boolean
+  onClose: () => void
+  className?: string
 }
 
-const Modal: React.FC<ModalProps> = ({ title, children, isVisible, onClose, className = '' }) => {
-  const overlayRef = useRef<HTMLDivElement>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
+const Modal: React.FC<ModalProps> = ({
+  title,
+  children,
+  isVisible,
+  onClose,
+  className = "",
+}) => {
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   // Close on Escape
   useEffect((): (() => void) => {
     const handleKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') {
-        onClose();
+      if (e.key === "Escape") {
+        onClose()
       }
-    };
-    document.addEventListener('keydown', handleKey);
+    }
+    document.addEventListener("keydown", handleKey)
     return (): void => {
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [onClose]);
+      document.removeEventListener("keydown", handleKey)
+    }
+  }, [onClose])
 
   // Focus dialog when opened
   useEffect((): void => {
     if (isVisible && dialogRef.current) {
-      dialogRef.current.focus();
+      dialogRef.current.focus()
     }
-  }, [isVisible]);
+  }, [isVisible])
 
-  if (!isVisible) return null;
+  if (!isVisible) return null
 
   // Close if backdrop clicked
   const handleOverlayClick = (e: MouseEvent<HTMLDivElement>): void => {
     if (e.target === overlayRef.current) {
-      onClose();
+      onClose()
     }
-  };
+  }
 
   // Close on Enter/Space when backdrop is focused
   const handleOverlayKey = (e: ReactKeyboardEvent<HTMLDivElement>): void => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      onClose();
+    if (e.key === "Enter" || e.key === " ") {
+      onClose()
     }
-  };
+  }
 
   return (
     <div
@@ -74,7 +81,7 @@ const Modal: React.FC<ModalProps> = ({ title, children, isVisible, onClose, clas
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? 'modal-title' : undefined}
+        aria-labelledby={title ? "modal-title" : undefined}
         data-testid="modal"
       >
         {title && (
@@ -98,7 +105,7 @@ const Modal: React.FC<ModalProps> = ({ title, children, isVisible, onClose, clas
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Modal;
+export default Modal

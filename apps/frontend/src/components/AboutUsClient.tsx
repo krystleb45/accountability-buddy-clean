@@ -1,8 +1,8 @@
 // src/components/AboutUsClient.tsx
-'use client'
+"use client"
 
-import { motion } from 'framer-motion'
-import React from 'react'
+import { motion } from "framer-motion"
+import React from "react"
 
 export default function AboutUsClient() {
   return (
@@ -21,7 +21,8 @@ export default function AboutUsClient() {
             About Accountability Buddy
           </h1>
           <p className="text-lg text-gray-300">
-            Empowering individuals to achieve their goals through accountability and community.
+            Empowering individuals to achieve their goals through accountability
+            and community.
           </p>
         </header>
 
@@ -34,9 +35,10 @@ export default function AboutUsClient() {
               Our Mission
             </h2>
             <p className="leading-relaxed text-gray-300">
-              At Accountability Buddy, we believe in the power of support and consistency. Our
-              mission is to help individuals achieve their personal and professional goals by
-              providing a platform that encourages accountability and fosters a sense of community.
+              At Accountability Buddy, we believe in the power of support and
+              consistency. Our mission is to help individuals achieve their
+              personal and professional goals by providing a platform that
+              encourages accountability and fosters a sense of community.
             </p>
           </section>
 
@@ -63,14 +65,16 @@ export default function AboutUsClient() {
               Join Us
             </h2>
             <p className="text-gray-300">
-              Join our growing community of goal-oriented individuals and start your accountability
-              journey today. Together, we can achieve great things!
+              Join our growing community of goal-oriented individuals and start
+              your accountability journey today. Together, we can achieve great
+              things!
             </p>
           </section>
         </main>
 
         <footer className="mt-12 text-center text-gray-400">
-          &copy; {new Date().getFullYear()} Accountability Buddy. All rights reserved.
+          &copy; {new Date().getFullYear()} Accountability Buddy. All rights
+          reserved.
         </footer>
       </motion.div>
     </div>

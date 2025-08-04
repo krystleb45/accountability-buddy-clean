@@ -1,34 +1,38 @@
 // src/components/Forms/ResetPassword.tsx
-'use client';
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { motion } from 'framer-motion';
-import { useResetPassword } from '@/hooks/useResetPassword';
-import styles from './ResetPassword.module.css';
+"use client"
+import { motion } from "framer-motion"
+import { useRouter } from "next/router"
+import React, { useEffect, useState } from "react"
+
+import { useResetPassword } from "@/hooks/useResetPassword"
+
+import styles from "./ResetPassword.module.css"
 
 const ResetPassword: React.FC = () => {
-  const router = useRouter();
-  const token = Array.isArray(router.query.token) ? router.query.token[0] : router.query.token;
+  const router = useRouter()
+  const token = Array.isArray(router.query.token)
+    ? router.query.token[0]
+    : router.query.token
 
-  const { loading, error, success, reset } = useResetPassword();
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirm] = useState('');
+  const { loading, error, success, reset } = useResetPassword()
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirm] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!token) return alert('Missing reset token.');
+    e.preventDefault()
+    if (!token) return alert("Missing reset token.")
     if (password !== confirmPassword) {
-      return alert('Passwords must match.');
+      return alert("Passwords must match.")
     }
-    await reset(token, password);
-  };
+    await reset(token, password)
+  }
 
   // On success, redirect
   useEffect(() => {
     if (success) {
-      setTimeout(() => router.push('/login'), 3000);
+      setTimeout(() => router.push("/login"), 3000)
     }
-  }, [success, router]);
+  }, [success, router])
 
   return (
     <motion.div
@@ -72,12 +76,17 @@ const ResetPassword: React.FC = () => {
             required
           />
         </div>
-        <button type="submit" className={styles.button} disabled={loading} aria-busy={loading}>
-          {loading ? 'Resetting…' : 'Reset Password'}
+        <button
+          type="submit"
+          className={styles.button}
+          disabled={loading}
+          aria-busy={loading}
+        >
+          {loading ? "Resetting…" : "Reset Password"}
         </button>
       </form>
     </motion.div>
-  );
-};
+  )
+}
 
-export default ResetPassword;
+export default ResetPassword

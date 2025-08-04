@@ -16,7 +16,9 @@
   border-radius: 4px;
   color: #333;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
 }
 
 .pagination-button:hover:not(:disabled) {
@@ -42,7 +44,7 @@
 }
 
 .pagination-button.active,
-.pagination-button[aria-current='page'] {
+.pagination-button[aria-current="page"] {
   background-color: #007bff;
   border-color: #007bff;
   color: #fff;

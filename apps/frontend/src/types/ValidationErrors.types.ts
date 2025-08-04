@@ -3,10 +3,10 @@
  */
 export interface ValidationError {
   /** The field name where the error occurred. */
-  field: string;
+  field: string
 
   /** A human-readable message describing the validation error. */
-  message: string;
+  message: string
 }
 
 /**
@@ -14,8 +14,8 @@ export interface ValidationError {
  */
 export interface ValidationErrors {
   /** A list of field-specific validation errors. */
-  errors: ValidationError[];
+  errors: ValidationError[]
 
   /** Optional message summarizing the errors. */
-  message?: string;
+  message?: string
 }

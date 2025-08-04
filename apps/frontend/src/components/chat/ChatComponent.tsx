@@ -1,32 +1,32 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-('use client');
+"use client"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
-import { useChat } from '@/context/ChatContext';
-import ChatBubble from '@/components/chat/ChatBubble';
+import ChatBubble from "@/components/chat/ChatBubble"
+import { useChat } from "@/context/ChatContext"
 
 interface ChatComponentProps {
-  chatId: string;
+  chatId: string
 }
 
 const ChatComponent: React.FC<ChatComponentProps> = ({ chatId }) => {
-  const { messages, send } = useChat();
-  const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const { messages, send } = useChat()
+  const [newMessage, setNewMessage] = useState("")
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
 
   // Retrieve messages for this chatId
-  const chatMessages = messages[chatId] || [];
+  const chatMessages = useMemo(() => messages[chatId] || [], [messages, chatId])
 
   // Auto scroll on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chatMessages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [chatMessages])
 
   const handleSendMessage = useCallback(() => {
-    const text = newMessage.trim();
-    if (!text) return;
-    send(chatId, text);
-    setNewMessage('');
-  }, [chatId, newMessage, send]);
+    const text = newMessage.trim()
+    if (!text) return
+    send(chatId, text)
+    setNewMessage("")
+  }, [chatId, newMessage, send])
 
   return (
     <div className="flex h-full flex-col rounded-2xl bg-black p-4 shadow-lg">
@@ -39,11 +39,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ chatId }) => {
             <ChatBubble
               key={msg.id}
               message={msg.content}
-              isSender={msg.senderName === 'You'}
-              avatarUrl={msg.avatarUrl ?? '/default-avatar.png'}
+              isSender={msg.senderName === "You"}
+              avatarUrl={msg.avatarUrl ?? "/default-avatar.png"}
               timestamp={new Date(msg.timestamp).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
+                hour: "2-digit",
+                minute: "2-digit",
               })}
             />
           ))
@@ -61,7 +61,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ chatId }) => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           className="flex-1 rounded-lg border border-gray-700 bg-gray-800 p-2 text-white"
-          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+          onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
         />
         <button
           onClick={handleSendMessage}
@@ -72,7 +72,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ chatId }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ChatComponent;
+export default ChatComponent

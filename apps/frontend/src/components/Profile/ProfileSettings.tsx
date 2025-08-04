@@ -1,109 +1,122 @@
 // src/components/Profile/ProfileSettings.tsx
-'use client';
+"use client"
 
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { motion } from 'framer-motion';
-import styles from './ProfileSettings.module.css';
+import type { ChangeEvent, FormEvent } from "react"
+
+import { motion } from "framer-motion"
+import React, { useState } from "react"
+
+import styles from "./ProfileSettings.module.css"
 
 interface User {
-  name: string;
-  email: string;
-  bio?: string | undefined;
-  location?: string | undefined;
-  interests?: string[];
-  profileImage?: string | undefined;
-  coverImage?: string | undefined;
+  name: string
+  email: string
+  bio?: string | undefined
+  location?: string | undefined
+  interests?: string[]
+  profileImage?: string | undefined
+  coverImage?: string | undefined
 }
 
 interface ProfileSettingsProps {
-  user: User;
-  onUpdate: (updatedData: Partial<User> & { password?: string }) => Promise<void>;
+  user: User
+  onUpdate: (
+    updatedData: Partial<User> & { password?: string },
+  ) => Promise<void>
 }
 
 interface FormFields {
-  name: string;
-  email: string;
-  bio: string;
-  location: string;
-  interests: string;
-  profileImage: string;
-  coverImage: string;
-  password: string;
-  confirmPassword: string;
+  name: string
+  email: string
+  bio: string
+  location: string
+  interests: string
+  profileImage: string
+  coverImage: string
+  password: string
+  confirmPassword: string
 }
 
-const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => {
+const ProfileSettings: React.FC<ProfileSettingsProps> = ({
+  user,
+  onUpdate,
+}) => {
   const [form, setForm] = useState<FormFields>({
-    name:            user.name,
-    email:           user.email,
-    bio:             user.bio || '',
-    location:        user.location || '',
-    interests:       (user.interests || []).join(', '),
-    profileImage:    user.profileImage || '',
-    coverImage:      user.coverImage || '',
-    password:        '',
-    confirmPassword: '',
-  });
-  const [coverPreview, setCoverPreview]     = useState(form.coverImage);
-  const [avatarPreview, setAvatarPreview]   = useState(form.profileImage);
-  const [error, setError]                   = useState<string | null>(null);
-  const [success, setSuccess]               = useState<string | null>(null);
-  const [loading, setLoading]               = useState(false);
+    name: user.name,
+    email: user.email,
+    bio: user.bio || "",
+    location: user.location || "",
+    interests: (user.interests || []).join(", "),
+    profileImage: user.profileImage || "",
+    coverImage: user.coverImage || "",
+    password: "",
+    confirmPassword: "",
+  })
+  const [coverPreview, setCoverPreview] = useState(form.coverImage)
+  const [avatarPreview, setAvatarPreview] = useState(form.profileImage)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setForm(f => ({ ...f, [name]: value }));
-  };
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target
+    setForm((f) => ({ ...f, [name]: value }))
+  }
 
   const handleFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target;
-    if (!files?.[0]) return;
-    const reader = new FileReader();
+    const { name, files } = e.target
+    if (!files?.[0]) return
+    const reader = new FileReader()
     reader.onload = () => {
-      const url = reader.result as string;
-      setForm(f => ({ ...f, [name]: url }));
-      name === 'coverImage' ? setCoverPreview(url) : setAvatarPreview(url);
-    };
-    reader.readAsDataURL(files[0]);
-  };
+      const url = reader.result as string
+      setForm((f) => ({ ...f, [name]: url }))
+      name === "coverImage" ? setCoverPreview(url) : setAvatarPreview(url)
+    }
+    reader.readAsDataURL(files[0])
+  }
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
+    e.preventDefault()
+    setError(null)
+    setSuccess(null)
     if (form.password && form.password !== form.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
+      setError("Passwords do not match.")
+      return
     }
     if (form.password && form.password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
+      setError("Password must be at least 8 characters.")
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
     try {
       // build payload
       const payload: Partial<User> & { password?: string } = {
-        name:         form.name,
-        email:        form.email,
-        bio:          form.bio || undefined,
-        location:     form.location || undefined,
-        interests:    form.interests.split(',').map(i => i.trim()).filter(Boolean),
+        name: form.name,
+        email: form.email,
+        bio: form.bio || undefined,
+        location: form.location || undefined,
+        interests: form.interests
+          .split(",")
+          .map((i) => i.trim())
+          .filter(Boolean),
         profileImage: form.profileImage || undefined,
-        coverImage:   form.coverImage || undefined,
-      };
-      if (form.password) payload.password = form.password;
+        coverImage: form.coverImage || undefined,
+      }
+      if (form.password) payload.password = form.password
 
-      await onUpdate(payload);
-      setSuccess('Profile updated successfully!');
-      setForm(f => ({ ...f, password: '', confirmPassword: '' }));
-      setTimeout(() => setSuccess(null), 3000);
+      await onUpdate(payload)
+      setSuccess("Profile updated successfully!")
+      setForm((f) => ({ ...f, password: "", confirmPassword: "" }))
+      setTimeout(() => setSuccess(null), 3000)
     } catch {
-      setError('Failed to update profile.');
+      setError("Failed to update profile.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <motion.div
@@ -117,7 +130,11 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
       {/* Image Uploads */}
       <div className={styles.imageUploadContainer}>
         <label className={styles.uploadCard}>
-          <img src={coverPreview || '/default-cover.png'} alt="Cover preview" className={styles.coverPreview} />
+          <img
+            src={coverPreview || "/default-cover.png"}
+            alt="Cover preview"
+            className={styles.coverPreview}
+          />
           <span className={styles.uploadLabel}>Change Cover</span>
           <input
             type="file"
@@ -129,7 +146,11 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
         </label>
 
         <label className={styles.uploadCard}>
-          <img src={avatarPreview || '/default-avatar.png'} alt="Avatar preview" className={styles.avatarPreview} />
+          <img
+            src={avatarPreview || "/default-avatar.png"}
+            alt="Avatar preview"
+            className={styles.avatarPreview}
+          />
           <span className={styles.uploadLabel}>Change Avatar</span>
           <input
             type="file"
@@ -144,7 +165,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
       {/* Form */}
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGrid}>
-          {/** Name **/}
+          {/** Name */}
           <div className={styles.formGroup}>
             <label htmlFor="name">Name</label>
             <input
@@ -157,7 +178,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
             />
           </div>
 
-          {/** Email **/}
+          {/** Email */}
           <div className={styles.formGroup}>
             <label htmlFor="email">Email</label>
             <input
@@ -171,7 +192,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
             />
           </div>
 
-          {/** Bio **/}
+          {/** Bio */}
           <div className={styles.formGroupFull}>
             <label htmlFor="bio">Bio</label>
             <textarea
@@ -184,7 +205,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
             />
           </div>
 
-          {/** Location **/}
+          {/** Location */}
           <div className={styles.formGroup}>
             <label htmlFor="location">Location</label>
             <input
@@ -196,7 +217,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
             />
           </div>
 
-          {/** Interests **/}
+          {/** Interests */}
           <div className={styles.formGroup}>
             <label htmlFor="interests">Interests</label>
             <input
@@ -209,7 +230,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
             />
           </div>
 
-          {/** Password **/}
+          {/** Password */}
           <div className={styles.formGroup}>
             <label htmlFor="password">New Password</label>
             <input
@@ -245,11 +266,11 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ user, onUpdate }) => 
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
         >
-          {loading ? 'Updating…' : 'Update Profile'}
+          {loading ? "Updating…" : "Update Profile"}
         </motion.button>
       </form>
     </motion.div>
-  );
-};
+  )
+}
 
-export default ProfileSettings;
+export default ProfileSettings

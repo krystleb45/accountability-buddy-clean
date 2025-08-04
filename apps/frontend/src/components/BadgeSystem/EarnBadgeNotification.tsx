@@ -1,15 +1,16 @@
 // src/components/BadgeSystem/EarnBadgeNotification.tsx
-'use client';
+"use client"
 
-import React from 'react';
-import './EarnBadgeNotification.css';
+import React from "react"
+
+import "./EarnBadgeNotification.css"
 
 export interface EarnBadgeNotificationProps {
-  badgeName: string;
-  badgeIcon: string;
-  message?: string;
-  onClose: () => void;
-  onViewDetails?: () => void;
+  badgeName: string
+  badgeIcon: string
+  message?: string
+  onClose: () => void
+  onViewDetails?: () => void
 }
 
 /**
@@ -26,7 +27,11 @@ const EarnBadgeNotification: React.FC<EarnBadgeNotificationProps> = ({
   return (
     <div className="earn-badge-notification" role="alert" aria-live="assertive">
       <div className="notification-content">
-        <img src={badgeIcon} alt={`${badgeName} badge icon`} className="badge-icon" />
+        <img
+          src={badgeIcon}
+          alt={`${badgeName} badge icon`}
+          className="badge-icon"
+        />
         <div>
           <h3 className="notification-title">{message}</h3>
           <p className="badge-name">Badge: {badgeName}</p>
@@ -55,7 +60,7 @@ const EarnBadgeNotification: React.FC<EarnBadgeNotificationProps> = ({
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default EarnBadgeNotification;
+export default EarnBadgeNotification

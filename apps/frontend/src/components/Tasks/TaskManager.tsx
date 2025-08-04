@@ -1,39 +1,53 @@
 // src/components/Tasks/TaskManager.tsx
-import React, { useState, ChangeEvent } from 'react';
-import { Task } from './TaskItem';
-import TaskList from './TaskList';
-import styles from './TaskManager.module.css';
+import type { ChangeEvent } from "react"
+
+import React, { useState } from "react"
+
+import type { Task } from "./TaskItem"
+
+import TaskList from "./TaskList"
+import styles from "./TaskManager.module.css"
 
 const TaskManager: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [newTaskTitle, setNewTaskTitle] = useState<string>("")
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setNewTaskTitle(e.target.value);
-  };
+    setNewTaskTitle(e.target.value)
+  }
 
   const addTask = (): void => {
-    const title = newTaskTitle.trim();
-    if (!title) return;
+    const title = newTaskTitle.trim()
+    if (!title) return
 
-    setTasks((prev) => [...prev, { id: Date.now().toString(), title, isCompleted: false }]);
-    setNewTaskTitle('');
-  };
+    setTasks((prev) => [
+      ...prev,
+      { id: Date.now().toString(), title, isCompleted: false },
+    ])
+    setNewTaskTitle("")
+  }
 
   const toggleTaskCompletion = (id: string): void => {
-    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, isCompleted: !t.isCompleted } : t)));
-  };
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, isCompleted: !t.isCompleted } : t,
+      ),
+    )
+  }
 
   const deleteTask = (id: string): void => {
-    setTasks((prev) => prev.filter((t) => t.id !== id));
-  };
+    setTasks((prev) => prev.filter((t) => t.id !== id))
+  }
 
   const clearCompletedTasks = (): void => {
-    setTasks((prev) => prev.filter((t) => !t.isCompleted));
-  };
+    setTasks((prev) => prev.filter((t) => !t.isCompleted))
+  }
 
   return (
-    <section className={styles.container} aria-labelledby="task-manager-heading">
+    <section
+      className={styles.container}
+      aria-labelledby="task-manager-heading"
+    >
       <h2 id="task-manager-heading" className={styles.title}>
         Task Manager
       </h2>
@@ -61,15 +75,23 @@ const TaskManager: React.FC = () => {
         </button>
       </div>
 
-      <TaskList tasks={tasks} onComplete={toggleTaskCompletion} onDelete={deleteTask} />
+      <TaskList
+        tasks={tasks}
+        onComplete={toggleTaskCompletion}
+        onDelete={deleteTask}
+      />
 
       {tasks.some((t) => t.isCompleted) && (
-        <button type="button" onClick={clearCompletedTasks} className={styles.clearButton}>
+        <button
+          type="button"
+          onClick={clearCompletedTasks}
+          className={styles.clearButton}
+        >
           Clear Completed
         </button>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default TaskManager;
+export default TaskManager

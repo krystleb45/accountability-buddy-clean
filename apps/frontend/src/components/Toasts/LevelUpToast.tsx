@@ -1,18 +1,23 @@
-'use client';
+"use client"
 
-import React, { useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, Sparkles } from 'lucide-react';
-import type { LevelUpToastProps } from '../../types/Toasts.types';
+import { AnimatePresence, motion } from "framer-motion"
+import { CheckCircle, Sparkles } from "lucide-react"
+import React, { useEffect } from "react"
 
-const LevelUpToast: React.FC<LevelUpToastProps> = ({ level, show, onClose }) => {
+import type { LevelUpToastProps } from "../../types/Toasts.types"
+
+const LevelUpToast: React.FC<LevelUpToastProps> = ({
+  level,
+  show,
+  onClose,
+}) => {
   useEffect(() => {
     if (show) {
-      const timer = setTimeout(onClose, 4000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(onClose, 4000)
+      return () => clearTimeout(timer)
     }
-    return undefined; // or return () => {} (an empty function)
-  }, [show, onClose]);
+    return undefined // or return () => {} (an empty function)
+  }, [show, onClose])
 
   return (
     <AnimatePresence>
@@ -33,7 +38,7 @@ const LevelUpToast: React.FC<LevelUpToastProps> = ({ level, show, onClose }) => 
         </motion.div>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}
 
-export default LevelUpToast;
+export default LevelUpToast

@@ -43,7 +43,9 @@
   font-weight: bold;
   color: var(--rl-primary);
   text-decoration: none;
-  transition: color 0.2s ease-in-out, text-decoration 0.2s ease-in-out;
+  transition:
+    color 0.2s ease-in-out,
+    text-decoration 0.2s ease-in-out;
 }
 
 /* ✅ Hover & focus styles for accessibility */

@@ -1,6 +1,9 @@
 // src/components/Profile/Profile.types.ts
 
-import type { BadgeData, UserProgress as GamificationProgress } from '@/types/Gamification.types';
+import type {
+  BadgeData,
+  UserProgress as GamificationProgress,
+} from "@/types/Gamification.types"
 
 //
 // —————————————————————————————————————————————————————
@@ -8,14 +11,14 @@ import type { BadgeData, UserProgress as GamificationProgress } from '@/types/Ga
 // —————————————————————————————————————————————————————
 /** The shape returned by `profileService.getProfile()` */
 export interface ProfileData {
-  id: string;
-  name: string;
-  email?: string;
-  bio: string;
-  interests: string[];
-  profileImage: string;
-  coverImage: string;
-  lastGoalCompletedAt?: string;
+  id: string
+  name: string
+  email?: string
+  bio: string
+  interests: string[]
+  profileImage: string
+  coverImage: string
+  lastGoalCompletedAt?: string
 }
 
 //
@@ -24,7 +27,7 @@ export interface ProfileData {
 // —————————————————————————————————————————————————————
 /** Props for FavoriteBadges if you want to supply them instead of loading internally */
 export interface FavoriteBadgesProps {
-  badges: BadgeData[];
+  badges: BadgeData[]
 }
 
 //
@@ -32,8 +35,8 @@ export interface FavoriteBadgesProps {
 // 3) Streak reminder
 // —————————————————————————————————————————————————————
 export interface StreakReminderProps {
-  lastGoalCompletedAt?: string;
-  currentStreak: number;
+  lastGoalCompletedAt?: string
+  currentStreak: number
 }
 
 //
@@ -41,8 +44,8 @@ export interface StreakReminderProps {
 // 4) XP history graph
 // —————————————————————————————————————————————————————
 export interface XPEntry {
-  date: string;
-  points: number;
+  date: string
+  points: number
 }
 
 //
@@ -50,18 +53,20 @@ export interface XPEntry {
 // 5) Profile settings
 // —————————————————————————————————————————————————————
 export interface UserForSettings {
-  name: string;
-  email: string;
-  bio?: string;
-  location?: string;
-  interests?: string[];
-  profileImage?: string;
-  coverImage?: string;
+  name: string
+  email: string
+  bio?: string
+  location?: string
+  interests?: string[]
+  profileImage?: string
+  coverImage?: string
 }
 
 export interface ProfileSettingsProps {
-  user: UserForSettings;
-  onUpdate: (updatedData: UserForSettings & { password?: string }) => Promise<void>;
+  user: UserForSettings
+  onUpdate: (
+    updatedData: UserForSettings & { password?: string },
+  ) => Promise<void>
 }
 
 //
@@ -69,7 +74,7 @@ export interface ProfileSettingsProps {
 // 6) Profile stats (completed goals, followers, etc.)
 // —————————————————————————————————————————————————————
 export interface ProfileStatsProps {
-  userId: string;
+  userId: string
 }
 
 //
@@ -77,7 +82,7 @@ export interface ProfileStatsProps {
 // 7) Top‐level Profile component
 // —————————————————————————————————————————————————————
 export interface ProfileProps {
-  profile: ProfileData;
-  badges: BadgeData[];
-  progress?: GamificationProgress;
+  profile: ProfileData
+  badges: BadgeData[]
+  progress?: GamificationProgress
 }

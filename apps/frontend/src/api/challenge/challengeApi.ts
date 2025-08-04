@@ -11,7 +11,7 @@ export interface ChallengeParticipant {
 }
 
 export interface ChallengeReward {
-  rewardType: 'badge' | 'discount' | 'prize' | 'recognition'
+  rewardType: "badge" | "discount" | "prize" | "recognition"
   rewardValue: string
 }
 
@@ -30,7 +30,7 @@ export interface Challenge {
   goal: string
   startDate: string
   endDate: string
-  status: 'ongoing' | 'completed' | 'canceled'
+  status: "ongoing" | "completed" | "canceled"
   creator: {
     _id: string
     username: string
@@ -39,8 +39,8 @@ export interface Challenge {
   participants: ChallengeParticipant[]
   rewards: ChallengeReward[]
   participantCount?: number
-  visibility: 'public' | 'private'
-  progressTracking: 'individual' | 'team' | 'both'
+  visibility: "public" | "private"
+  progressTracking: "individual" | "team" | "both"
   createdAt: string
   updatedAt: string
   milestones: Milestone[]
@@ -51,7 +51,7 @@ export interface CreateChallengeInput {
   description: string
   goal: string
   endDate: string
-  visibility?: 'public' | 'private'
+  visibility?: "public" | "private"
   rewards?: string[]
   progressTracking?: boolean
 }
@@ -78,21 +78,20 @@ function toQueryString(params: Record<string, string>): string {
   return Object.entries(params)
     .map(
       ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
     )
-    .join('&')
+    .join("&")
 }
-
 
 // ────────────────────────────────────────────────────────────────────────────────
 // 1) Fetch public challenges, with optional filters, pagination, etc.
 //    GET /challenges/public?filter=all&page=1&pageSize=10&category=XYZ
 // ────────────────────────────────────────────────────────────────────────────────
 export async function fetchPublicChallenges(
-  filter?: 'all' | 'week' | 'month',
+  filter?: "all" | "week" | "month",
   page = 1,
   pageSize = 10,
-  category?: string
+  category?: string,
 ): Promise<Challenge[]> {
   try {
     // Build query parameters
@@ -107,20 +106,20 @@ export async function fetchPublicChallenges(
       ? `/backend-api/challenges/public?${query}`
       : `/backend-api/challenges/public`
 
-    const res = await fetch(url, { cache: 'no-store' })
+    const res = await fetch(url, { cache: "no-store" })
     if (!res.ok) {
-      console.error('fetchPublicChallenges failed:', await res.text())
+      console.error("fetchPublicChallenges failed:", await res.text())
       return []
     }
 
     const envelope = (await res.json()) as Envelope<{ challenges: Challenge[] }>
     if (!envelope.success) {
-      console.error('fetchPublicChallenges API error:', envelope.message)
+      console.error("fetchPublicChallenges API error:", envelope.message)
       return []
     }
     return envelope.data.challenges
   } catch (err) {
-    console.error('❌ [challengeApi::fetchPublicChallenges]', err)
+    console.error("❌ [challengeApi::fetchPublicChallenges]", err)
     return []
   }
 }
@@ -129,25 +128,27 @@ export async function fetchPublicChallenges(
  * 2) Fetch a single challenge by its ID:
  *    GET /challenges/:challengeId
  */
-export async function fetchChallengeById(challengeId: string): Promise<Challenge | null> {
+export async function fetchChallengeById(
+  challengeId: string,
+): Promise<Challenge | null> {
   try {
     const res = await fetch(
       `/backend-api/challenges/${encodeURIComponent(challengeId)}`,
-      { cache: 'no-store' }
+      { cache: "no-store" },
     )
     if (!res.ok) {
-      console.error('fetchChallengeById failed:', await res.text())
+      console.error("fetchChallengeById failed:", await res.text())
       return null
     }
 
     const envelope = (await res.json()) as Envelope<Challenge>
     if (!envelope.success) {
-      console.error('fetchChallengeById API error:', envelope.message)
+      console.error("fetchChallengeById API error:", envelope.message)
       return null
     }
     return envelope.data
   } catch (err) {
-    console.error('❌ [challengeApi::fetchChallengeById]', err)
+    console.error("❌ [challengeApi::fetchChallengeById]", err)
     return null
   }
 }
@@ -160,21 +161,21 @@ export async function fetchChallengeById(challengeId: string): Promise<Challenge
 export async function joinChallenge(challengeId: string): Promise<boolean> {
   try {
     const res = await fetch(`/backend-api/challenges/join`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId }),
-      cache: 'no-store'
+      cache: "no-store",
     })
     if (!res.ok) {
-      console.error('joinChallenge failed:', await res.text())
+      console.error("joinChallenge failed:", await res.text())
       return false
     }
 
     // The envelope might look like { success: true, message: "...", data: {} }
-    const envelope = (await res.json()) as Envelope<{}>
+    const envelope = (await res.json()) as Envelope<unknown>
     return envelope.success
   } catch (err) {
-    console.error('❌ [challengeApi::joinChallenge]', err)
+    console.error("❌ [challengeApi::joinChallenge]", err)
     return false
   }
 }
@@ -187,19 +188,19 @@ export async function joinChallenge(challengeId: string): Promise<boolean> {
 export async function leaveChallenge(challengeId: string): Promise<boolean> {
   try {
     const res = await fetch(`/backend-api/challenges/leave`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ challengeId }),
-      cache: 'no-store'
+      cache: "no-store",
     })
     if (!res.ok) {
-      console.error('leaveChallenge failed:', await res.text())
+      console.error("leaveChallenge failed:", await res.text())
       return false
     }
-    const envelope = (await res.json()) as Envelope<{}>
+    const envelope = (await res.json()) as Envelope<unknown>
     return envelope.success
   } catch (err) {
-    console.error('❌ [challengeApi::leaveChallenge]', err)
+    console.error("❌ [challengeApi::leaveChallenge]", err)
     return false
   }
 }
@@ -210,28 +211,28 @@ export async function leaveChallenge(challengeId: string): Promise<boolean> {
  *    Body: CreateChallengeInput
  */
 export async function createChallenge(
-  input: CreateChallengeInput
+  input: CreateChallengeInput,
 ): Promise<Challenge | null> {
   try {
     const res = await fetch(`/backend-api/challenges/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),
-      cache: 'no-store'
+      cache: "no-store",
     })
     if (!res.ok) {
-      console.error('createChallenge failed:', await res.text())
+      console.error("createChallenge failed:", await res.text())
       return null
     }
 
     const envelope = (await res.json()) as Envelope<{ challenge: Challenge }>
     if (!envelope.success) {
-      console.error('createChallenge API error:', envelope.message)
+      console.error("createChallenge API error:", envelope.message)
       return null
     }
     return envelope.data.challenge
   } catch (err) {
-    console.error('❌ [challengeApi::createChallenge]', err)
+    console.error("❌ [challengeApi::createChallenge]", err)
     return null
   }
 }
@@ -243,21 +244,23 @@ export async function createChallenge(
 export async function fetchUserParticipation(): Promise<Challenge[]> {
   try {
     const res = await fetch(`/backend-api/challenges/my-participation`, {
-      cache: 'no-store'
+      cache: "no-store",
     })
     if (!res.ok) {
-      console.error('fetchUserParticipation failed:', await res.text())
+      console.error("fetchUserParticipation failed:", await res.text())
       return []
     }
 
-    const envelope = (await res.json()) as Envelope<{ participations: Challenge[] }>
+    const envelope = (await res.json()) as Envelope<{
+      participations: Challenge[]
+    }>
     if (!envelope.success) {
-      console.error('fetchUserParticipation API error:', envelope.message)
+      console.error("fetchUserParticipation API error:", envelope.message)
       return []
     }
     return envelope.data.participations
   } catch (err) {
-    console.error('❌ [challengeApi::fetchUserParticipation]', err)
+    console.error("❌ [challengeApi::fetchUserParticipation]", err)
     return []
   }
 }
@@ -267,26 +270,26 @@ export async function fetchUserParticipation(): Promise<Challenge[]> {
  *    GET /challenges/private/:userId
  */
 export async function fetchPrivateChallenges(
-  userId: string
+  userId: string,
 ): Promise<Challenge[]> {
   try {
     const res = await fetch(
       `/backend-api/challenges/private/${encodeURIComponent(userId)}`,
-      { cache: 'no-store' }
+      { cache: "no-store" },
     )
     if (!res.ok) {
-      console.error('fetchPrivateChallenges failed:', await res.text())
+      console.error("fetchPrivateChallenges failed:", await res.text())
       return []
     }
 
     const envelope = (await res.json()) as Envelope<{ challenges: Challenge[] }>
     if (!envelope.success) {
-      console.error('fetchPrivateChallenges API error:', envelope.message)
+      console.error("fetchPrivateChallenges API error:", envelope.message)
       return []
     }
     return envelope.data.challenges
   } catch (err) {
-    console.error('❌ [challengeApi::fetchPrivateChallenges]', err)
+    console.error("❌ [challengeApi::fetchPrivateChallenges]", err)
     return []
   }
 }

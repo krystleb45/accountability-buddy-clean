@@ -78,7 +78,7 @@
 }
 
 /* ✅ Loading State */
-.button[aria-busy='true'] {
+.button[aria-busy="true"] {
   cursor: wait;
   opacity: 0.7;
 }

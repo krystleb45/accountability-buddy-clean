@@ -1,19 +1,26 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { Card, CardContent, CardHeader, Typography, Button } from '@mui/material';
-import styles from './Recommendations.module.css';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+} from "@mui/material"
+import React from "react"
+
+import styles from "./Recommendations.module.css"
 
 export interface IndividualRecommendation {
-  id: string;
-  name: string;
-  bio: string;
-  sharedGoals: string[];
+  id: string
+  name: string
+  bio: string
+  sharedGoals: string[]
 }
 
 interface IndividualRecommendationsProps {
-  recommendations: IndividualRecommendation[];
-  onConnect: (individualId: string) => void;
+  recommendations: IndividualRecommendation[]
+  onConnect: (individualId: string) => void
 }
 
 const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
@@ -22,7 +29,7 @@ const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
 }) => {
   return (
     <section
-      className={styles.individualRecommendationsContainer ?? ''}
+      className={styles.individualRecommendationsContainer ?? ""}
       aria-labelledby="individual-recommendations-header"
     >
       <Typography
@@ -30,12 +37,12 @@ const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
         variant="h4"
         gutterBottom
         id="individual-recommendations-header"
-        className={styles.header ?? ''}
+        className={styles.header ?? ""}
       >
         Recommended Individuals
       </Typography>
 
-      <div className={styles.recommendationsGrid ?? ''}>
+      <div className={styles.recommendationsGrid ?? ""}>
         {recommendations.length > 0 ? (
           recommendations.map((individual) => (
             <Card
@@ -43,7 +50,7 @@ const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
               component="div"
               role="region"
               aria-labelledby={`individual-name-${individual.id}`}
-              className={styles.individualCard ?? ''}
+              className={styles.individualCard ?? ""}
             >
               <CardHeader
                 component="div"
@@ -56,7 +63,7 @@ const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
                   component="p"
                   variant="body2"
                   color="textSecondary"
-                  className={styles.bioText ?? ''}
+                  className={styles.bioText ?? ""}
                 >
                   {individual.bio}
                 </Typography>
@@ -65,12 +72,12 @@ const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
                   component="div"
                   variant="body2"
                   color="textSecondary"
-                  className={styles.sharedGoalsHeader ?? ''}
+                  className={styles.sharedGoalsHeader ?? ""}
                 >
                   Shared Goals:
-                  <ul className={styles.sharedGoalsList ?? ''}>
+                  <ul className={styles.sharedGoalsList ?? ""}>
                     {individual.sharedGoals.map((goal, idx) => (
-                      <li key={idx} className={styles.sharedGoalItem ?? ''}>
+                      <li key={idx} className={styles.sharedGoalItem ?? ""}>
                         {goal}
                       </li>
                     ))}
@@ -83,7 +90,7 @@ const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
                   color="primary"
                   onClick={() => onConnect(individual.id)}
                   aria-label={`Connect with ${individual.name}`}
-                  className={styles.connectButton ?? ''}
+                  className={styles.connectButton ?? ""}
                 >
                   Connect
                 </Button>
@@ -95,14 +102,14 @@ const IndividualRecommendations: React.FC<IndividualRecommendationsProps> = ({
             component="p"
             variant="body1"
             color="textSecondary"
-            className={styles.emptyMessage ?? ''}
+            className={styles.emptyMessage ?? ""}
           >
             No recommended individuals available at the moment.
           </Typography>
         )}
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default IndividualRecommendations;
+export default IndividualRecommendations

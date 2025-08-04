@@ -1,6 +1,7 @@
 // src/badges/badgeApi.ts
-import { isAxiosError } from 'axios'
-import { http } from '@/utils/http'
+import { isAxiosError } from "axios"
+
+import { http } from "@/utils/http"
 
 //
 // —————————————————————————————————————————————————————
@@ -9,7 +10,7 @@ import { http } from '@/utils/http'
 export interface ApiBadge {
   _id: string
   badgeType: string
-  level: 'Bronze' | 'Silver' | 'Gold'
+  level: "Bronze" | "Silver" | "Gold"
   progress?: number
   goal?: number
   icon?: string
@@ -30,7 +31,10 @@ interface SuccessResponse<T> {
 // —————————————————————————————————————————————————————
 function logApiError(fn: string, error: unknown): void {
   if (isAxiosError(error)) {
-    console.error(`[badgeApi] ${fn} failed:`, error.response?.data || error.message)
+    console.error(
+      `[badgeApi] ${fn} failed:`,
+      error.response?.data || error.message,
+    )
   } else {
     console.error(`[badgeApi] ${fn} failed:`, error)
   }
@@ -50,16 +54,19 @@ function logApiError(fn: string, error: unknown): void {
 export async function fetchUserBadges(): Promise<ApiBadge[]> {
   try {
     const resp = await http.get<SuccessResponse<{ badges: ApiBadge[] }>>(
-      '/backend-api/users/badges'
+      "/backend-api/users/badges",
     )
 
     if (!resp.data.success) {
-      console.warn('[badgeApi] fetchUserBadges returned success=false:', resp.data.message)
+      console.warn(
+        "[badgeApi] fetchUserBadges returned success=false:",
+        resp.data.message,
+      )
       return []
     }
     return resp.data.data.badges
   } catch (err) {
-    logApiError('fetchUserBadges', err)
+    logApiError("fetchUserBadges", err)
     return []
   }
 }
@@ -72,17 +79,20 @@ export async function fetchUserBadges(): Promise<ApiBadge[]> {
  */
 export async function fetchShowcasedBadges(): Promise<ApiBadge[]> {
   try {
-    const resp = await http.get<SuccessResponse<{ showcasedBadges: ApiBadge[] }>>(
-      '/backend-api/badges/showcase'
-    )
+    const resp = await http.get<
+      SuccessResponse<{ showcasedBadges: ApiBadge[] }>
+    >("/backend-api/badges/showcase")
 
     if (!resp.data.success) {
-      console.warn('[badgeApi] fetchShowcasedBadges returned success=false:', resp.data.message)
+      console.warn(
+        "[badgeApi] fetchShowcasedBadges returned success=false:",
+        resp.data.message,
+      )
       return []
     }
     return resp.data.data.showcasedBadges
   } catch (err) {
-    logApiError('fetchShowcasedBadges', err)
+    logApiError("fetchShowcasedBadges", err)
     return []
   }
 }
@@ -96,21 +106,24 @@ export async function fetchShowcasedBadges(): Promise<ApiBadge[]> {
 export async function awardBadge(
   userId: string,
   badgeType: string,
-  level: 'Bronze' | 'Silver' | 'Gold' = 'Bronze'
+  level: "Bronze" | "Silver" | "Gold" = "Bronze",
 ): Promise<ApiBadge | null> {
   try {
     const resp = await http.post<SuccessResponse<{ badge: ApiBadge }>>(
-      '/backend-api/badges/award',
-      { userId, badgeType, level }
+      "/backend-api/badges/award",
+      { userId, badgeType, level },
     )
 
     if (!resp.data.success) {
-      console.warn('[badgeApi] awardBadge returned success=false:', resp.data.message)
+      console.warn(
+        "[badgeApi] awardBadge returned success=false:",
+        resp.data.message,
+      )
       return null
     }
     return resp.data.data.badge
   } catch (err) {
-    logApiError('awardBadge', err)
+    logApiError("awardBadge", err)
     return null
   }
 }
@@ -123,21 +136,24 @@ export async function awardBadge(
  */
 export async function updateBadgeProgress(
   badgeType: string,
-  increment: number
+  increment: number,
 ): Promise<ApiBadge | null> {
   try {
     const resp = await http.post<SuccessResponse<{ badge: ApiBadge }>>(
-      '/backend-api/badges/progress/update',
-      { badgeType, increment }
+      "/backend-api/badges/progress/update",
+      { badgeType, increment },
     )
 
     if (!resp.data.success) {
-      console.warn('[badgeApi] updateBadgeProgress returned success=false:', resp.data.message)
+      console.warn(
+        "[badgeApi] updateBadgeProgress returned success=false:",
+        resp.data.message,
+      )
       return null
     }
     return resp.data.data.badge
   } catch (err) {
-    logApiError('updateBadgeProgress', err)
+    logApiError("updateBadgeProgress", err)
     return null
   }
 }
@@ -148,20 +164,25 @@ export async function updateBadgeProgress(
  * Client calls → '/backend-api/badges/upgrade'
  * Next.js proxies to → 'http://<BACKEND_URL>/badges/upgrade'
  */
-export async function upgradeBadgeLevel(badgeType: string): Promise<ApiBadge | null> {
+export async function upgradeBadgeLevel(
+  badgeType: string,
+): Promise<ApiBadge | null> {
   try {
     const resp = await http.post<SuccessResponse<{ upgradedBadge: ApiBadge }>>(
-      '/backend-api/badges/upgrade',
-      { badgeType }
+      "/backend-api/badges/upgrade",
+      { badgeType },
     )
 
     if (!resp.data.success) {
-      console.warn('[badgeApi] upgradeBadgeLevel returned success=false:', resp.data.message)
+      console.warn(
+        "[badgeApi] upgradeBadgeLevel returned success=false:",
+        resp.data.message,
+      )
       return null
     }
     return resp.data.data.upgradedBadge
   } catch (err) {
-    logApiError('upgradeBadgeLevel', err)
+    logApiError("upgradeBadgeLevel", err)
     return null
   }
 }
@@ -175,16 +196,19 @@ export async function upgradeBadgeLevel(badgeType: string): Promise<ApiBadge | n
 export async function showcaseBadge(badgeId: string): Promise<ApiBadge | null> {
   try {
     const resp = await http.patch<SuccessResponse<{ badge: ApiBadge }>>(
-      `/backend-api/badges/showcase/${encodeURIComponent(badgeId)}`
+      `/backend-api/badges/showcase/${encodeURIComponent(badgeId)}`,
     )
 
     if (!resp.data.success) {
-      console.warn('[badgeApi] showcaseBadge returned success=false:', resp.data.message)
+      console.warn(
+        "[badgeApi] showcaseBadge returned success=false:",
+        resp.data.message,
+      )
       return null
     }
     return resp.data.data.badge
   } catch (err) {
-    logApiError('showcaseBadge', err)
+    logApiError("showcaseBadge", err)
     return null
   }
 }
@@ -195,19 +219,24 @@ export async function showcaseBadge(badgeId: string): Promise<ApiBadge | null> {
  * Client calls → '/backend-api/badges/unshowcase/[badgeId]'
  * Next.js proxies to → 'http://<BACKEND_URL>/badges/unshowcase/[badgeId]'
  */
-export async function unshowcaseBadge(badgeId: string): Promise<ApiBadge | null> {
+export async function unshowcaseBadge(
+  badgeId: string,
+): Promise<ApiBadge | null> {
   try {
     const resp = await http.patch<SuccessResponse<{ badge: ApiBadge }>>(
-      `/backend-api/badges/unshowcase/${encodeURIComponent(badgeId)}`
+      `/backend-api/badges/unshowcase/${encodeURIComponent(badgeId)}`,
     )
 
     if (!resp.data.success) {
-      console.warn('[badgeApi] unshowcaseBadge returned success=false:', resp.data.message)
+      console.warn(
+        "[badgeApi] unshowcaseBadge returned success=false:",
+        resp.data.message,
+      )
       return null
     }
     return resp.data.data.badge
   } catch (err) {
-    logApiError('unshowcaseBadge', err)
+    logApiError("unshowcaseBadge", err)
     return null
   }
 }

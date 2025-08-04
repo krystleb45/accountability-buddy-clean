@@ -1,13 +1,13 @@
 // src/hooks/seo/useSeo.ts
-import { useEffect } from 'react';
+import { useEffect } from "react"
 
 /**
  * Set document.title.
  */
 export function useTitle(title: string): void {
   useEffect(() => {
-    if (title) document.title = title;
-  }, [title]);
+    if (title) document.title = title
+  }, [title])
 }
 
 /**
@@ -15,27 +15,27 @@ export function useTitle(title: string): void {
  */
 export function useMeta(name: string, content: string): void {
   useEffect(() => {
-    if (!content) return;
-    let tag = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
+    if (!content) return
+    let tag = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)
     if (!tag) {
-      tag = document.createElement('meta');
-      tag.setAttribute('name', name);
-      document.head.appendChild(tag);
+      tag = document.createElement("meta")
+      tag.setAttribute("name", name)
+      document.head.appendChild(tag)
     }
-    tag.setAttribute('content', content);
-  }, [name, content]);
+    tag.setAttribute("content", content)
+  }, [name, content])
 }
 
 export interface SeoProps {
-  title?: string;
-  description?: string;
-  keywords?: string;
-  author?: string;
+  title?: string
+  description?: string
+  keywords?: string
+  author?: string
   // open-graph
-  ogTitle?: string;
-  ogDescription?: string;
-  ogImage?: string;
-  ogUrl?: string;
+  ogTitle?: string
+  ogDescription?: string
+  ogImage?: string
+  ogUrl?: string
 }
 
 /**
@@ -51,14 +51,17 @@ export function useSeo({
   ogImage,
   ogUrl,
 }: SeoProps): void {
-  useTitle(title ?? '');
-  useMeta('description', description ?? '');
-  useMeta('keywords', keywords ?? '');
-  useMeta('author', author ?? '');
+  useTitle(title ?? "")
+  useMeta("description", description ?? "")
+  useMeta("keywords", keywords ?? "")
+  useMeta("author", author ?? "")
 
   // Open-Graph tags
-  useMeta('og:title', ogTitle ?? title ?? '');
-  useMeta('og:description', ogDescription ?? description ?? '');
-  useMeta('og:image', ogImage ?? '');
-  useMeta('og:url', ogUrl ?? (typeof window !== 'undefined' ? window.location.href : ''));
+  useMeta("og:title", ogTitle ?? title ?? "")
+  useMeta("og:description", ogDescription ?? description ?? "")
+  useMeta("og:image", ogImage ?? "")
+  useMeta(
+    "og:url",
+    ogUrl ?? (typeof window !== "undefined" ? window.location.href : ""),
+  )
 }

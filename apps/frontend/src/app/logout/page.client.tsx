@@ -1,23 +1,23 @@
-'use client';
+"use client"
 
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation"
+import React, { useEffect } from "react"
 
 export default function LogoutClient() {
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       // dynamically import and cast to any so TS knows we have signOut
-      const mod = (await import('next-auth/react')) as any;
-      const { signOut } = mod;
+      const mod = (await import("next-auth/react")) as any
+      const { signOut } = mod
 
-      await signOut({ redirect: false });
-      sessionStorage.clear();
-      localStorage.clear();
-      router.replace('/login');
-    })();
-  }, [router]);
+      await signOut({ redirect: false })
+      sessionStorage.clear()
+      localStorage.clear()
+      router.replace("/login")
+    })()
+  }, [router])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-blue-100 p-6">
@@ -28,5 +28,5 @@ export default function LogoutClient() {
         </p>
       </div>
     </div>
-  );
+  )
 }

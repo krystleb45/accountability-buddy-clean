@@ -184,7 +184,7 @@
 }
 
 .challenge-milestone::before {
-  content: '🏁 ';
+  content: "🏁 ";
 }
 
 /* 🥇 Medal Styling */

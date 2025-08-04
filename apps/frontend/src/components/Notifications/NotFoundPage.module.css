@@ -26,7 +26,9 @@
   padding: 0.75rem 1.5rem;
   border: 1px solid #007bff;
   border-radius: 4px;
-  transition: background-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .backHome:hover,

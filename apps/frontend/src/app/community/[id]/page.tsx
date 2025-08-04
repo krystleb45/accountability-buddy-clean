@@ -1,26 +1,30 @@
 // src/app/community/[id]/page.tsx
-import type { Metadata } from 'next';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import dynamic from 'next/dynamic';
-import { redirect, notFound } from 'next/navigation';
-import type { ReactNode } from 'react';
-import { fetchCommunityById, type Community as APICommunity } from '@/api/community/communityApi';
+import type { Metadata } from "next"
+import type { ReactNode } from "react"
+
+import { getServerSession } from "next-auth/next"
+import dynamic from "next/dynamic"
+import { notFound, redirect } from "next/navigation"
+
+import type { Community as APICommunity } from "@/api/community/communityApi"
+
+import { fetchCommunityById } from "@/api/community/communityApi"
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 interface Params {
-  params: { id: string };
+  params: { id: string }
 }
 
 // 1) Server‐only SEO metadata
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  let community: APICommunity | null = null;
+  let community: APICommunity | null = null
   try {
-    community = await fetchCommunityById(params.id);
+    community = await fetchCommunityById(params.id)
   } catch {
-    return { title: 'Community Not Found • Accountability Buddy' };
+    return { title: "Community Not Found • Accountability Buddy" }
   }
   if (!community) {
-    return { title: 'Community Not Found • Accountability Buddy' };
+    return { title: "Community Not Found • Accountability Buddy" }
   }
   return {
     title: `${community.name} • Community • Accountability Buddy`,
@@ -29,31 +33,31 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title: community.name,
       description: community.description,
       url: `https://your-domain.com/community/${community._id}`,
-      type: 'website',
+      type: "website",
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: community.name,
       description: community.description,
     },
-  };
+  }
 }
 
 // 2) Dynamically load the client detail component (no SSR)
-const ClientCommunityDetail = dynamic(() => import('./client'));
+const ClientCommunityDetail = dynamic(() => import("./client"))
 
 export default async function CommunityDetailPage({
   params,
 }: Params): Promise<ReactNode> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
   if (!session) {
-    redirect('/login');
+    redirect("/login")
   }
 
-  const community = await fetchCommunityById(params.id);
+  const community = await fetchCommunityById(params.id)
   if (!community) {
-    notFound();
+    notFound()
   }
 
-  return <ClientCommunityDetail community={community} />;
+  return <ClientCommunityDetail community={community} />
 }

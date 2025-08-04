@@ -1,21 +1,23 @@
 // src/components/Providers.tsx
-'use client';
+"use client"
 
-import { ReactNode } from 'react';
-import { SessionProvider } from 'next-auth/react';
-import { NotificationProvider } from '@/context/ui/NotificationContext';
-import APIProvider from '@/context/data/APIContext';
+import type { ReactNode } from "react"
 
-interface Props { children: ReactNode }
+import { SessionProvider } from "next-auth/react"
+
+import APIProvider from "@/context/data/APIContext"
+import { NotificationProvider } from "@/context/ui/NotificationContext"
+
+interface Props {
+  children: ReactNode
+}
 
 export default function Providers({ children }: Props) {
   return (
     <SessionProvider>
       <APIProvider>
-        <NotificationProvider>
-          {children}
-        </NotificationProvider>
+        <NotificationProvider>{children}</NotificationProvider>
       </APIProvider>
     </SessionProvider>
-  );
+  )
 }

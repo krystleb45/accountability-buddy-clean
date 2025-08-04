@@ -3,25 +3,25 @@
  * These definitions allow customization of columns, rows, and table properties.
  */
 
-import {
+import type {
+  UsePaginationInstanceProps,
+  UsePaginationOptions,
+  UseSortByInstanceProps,
+  UseSortByOptions,
+  UseTableColumnProps,
   UseTableInstanceProps,
   UseTableOptions,
   UseTableRowProps,
-  UseTableColumnProps,
-  UseSortByInstanceProps,
-  UseSortByOptions,
-  UsePaginationInstanceProps,
-  UsePaginationOptions,
-} from 'react-table';
+} from "react-table"
 
 // Define a generic interface for your table data
 export interface TableData {
-  id: string | number;
-  [key: string]: unknown; // Allow additional dynamic fields
+  id: string | number
+  [key: string]: unknown // Allow additional dynamic fields
 }
 
 // Extend react-table with custom types for columns and rows
-declare module 'react-table' {
+declare module "react-table" {
   export interface TableOptions<D extends Record<string, unknown> = TableData>
     extends UseTableOptions<D>,
       UseSortByOptions<D>,
@@ -31,14 +31,15 @@ declare module 'react-table' {
      */
   }
 
-  export interface ColumnInterface<D extends Record<string, unknown> = TableData>
-    extends UseTableColumnProps<D> {
+  export interface ColumnInterface<
+    D extends Record<string, unknown> = TableData,
+  > extends UseTableColumnProps<D> {
     /**
      * Add custom properties for columns
      * Example: Specify a column as sortable or filterable
      */
-    isSortable?: boolean;
-    isFilterable?: boolean;
+    isSortable?: boolean
+    isFilterable?: boolean
   }
 
   export interface TableInstance<D extends Record<string, unknown> = TableData>
@@ -55,8 +56,9 @@ declare module 'react-table' {
     /**
      * Add custom properties for rows
      */
-    isSelected?: boolean;
+    isSelected?: boolean
   }
 
-  export type TableColumn<D extends Record<string, unknown> = TableData> = UseTableColumnProps<D>;
+  export type TableColumn<D extends Record<string, unknown> = TableData> =
+    UseTableColumnProps<D>
 }

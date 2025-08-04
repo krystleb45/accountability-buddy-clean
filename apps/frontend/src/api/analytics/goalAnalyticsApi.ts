@@ -1,7 +1,8 @@
 // src/analytics/goalAnalyticsApi.ts
 
-import axios from 'axios'
-import { http } from '@/utils/http'
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 /**
  * Shape of the "data" returned by the API for goal analytics.
@@ -60,12 +61,11 @@ function logError(context: string, err: unknown): void {
  */
 export async function getUserGoalAnalytics(): Promise<UserGoalAnalytics | null> {
   try {
-    const resp = await http.get<ApiResponse<UserGoalAnalytics>>(
-      '/analytics/goals'
-    )
+    const resp =
+      await http.get<ApiResponse<UserGoalAnalytics>>("/analytics/goals")
     return resp.data.data
   } catch (error) {
-    logError('getUserGoalAnalytics', error)
+    logError("getUserGoalAnalytics", error)
     return null
   }
 }
@@ -75,17 +75,17 @@ export async function getUserGoalAnalytics(): Promise<UserGoalAnalytics | null> 
  * Fetch detailed analytics for a single goal by its ID.
  */
 export async function getGoalAnalyticsById(
-  goalId: string
+  goalId: string,
 ): Promise<GoalAnalytics | null> {
   if (!goalId) return null
 
   try {
     const resp = await http.get<ApiResponse<GoalAnalytics>>(
-      `/analytics/goals/${encodeURIComponent(goalId)}`
+      `/analytics/goals/${encodeURIComponent(goalId)}`,
     )
     return resp.data.data
   } catch (error) {
-    logError('getGoalAnalyticsById', error)
+    logError("getGoalAnalyticsById", error)
     return null
   }
 }
@@ -96,18 +96,18 @@ export async function getGoalAnalyticsById(
  */
 export async function getGoalAnalyticsByDateRange(
   startDate: string,
-  endDate: string
+  endDate: string,
 ): Promise<DateRangeAnalytics | null> {
   try {
     const resp = await http.get<ApiResponse<DateRangeAnalytics>>(
       `/analytics/goals/date-range`,
       {
         params: { startDate, endDate },
-      }
+      },
     )
     return resp.data.data
   } catch (error) {
-    logError('getGoalAnalyticsByDateRange', error)
+    logError("getGoalAnalyticsByDateRange", error)
     return null
   }
 }

@@ -1,73 +1,81 @@
-'use client';
+"use client"
 
-import React, { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import toast from 'react-hot-toast';
+import { useSession } from "next-auth/react"
+import React, { useState } from "react"
+import toast from "react-hot-toast"
 
 interface Props {
-  isOpen: boolean;
-  onClose: () => void;
-  onChallengeCreated?: () => void;
+  isOpen: boolean
+  onClose: () => void
+  onChallengeCreated?: () => void
 }
 
 const defaultForm = {
-  title: '',
-  description: '',
-  goal: '',
-  endDate: '',
-  visibility: 'public',
+  title: "",
+  description: "",
+  goal: "",
+  endDate: "",
+  visibility: "public",
   rewards: [] as string[],
   progressTracking: false,
-};
+}
 
-const CreateChallengeModal: React.FC<Props> = ({ isOpen, onClose, onChallengeCreated }) => {
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
+const CreateChallengeModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  onChallengeCreated,
+}) => {
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
-  const [form, setForm] = useState(defaultForm);
-  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState(defaultForm)
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ): void => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
+    const { name, value, type, checked } = e.target as HTMLInputElement
     setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  };
+      [name]: type === "checkbox" ? checked : value,
+    }))
+  }
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
-    e.preventDefault();
+    e.preventDefault()
     if (!userId) {
-      toast.error('You must be logged in to create a challenge.');
-      return;
+      toast.error("You must be logged in to create a challenge.")
+      return
     }
-    const { title, description, goal, endDate } = form;
+    const { title, description, goal, endDate } = form
     if (!title || !goal || !description || !endDate) {
-      toast.error('Please fill in all required fields.');
-      return;
+      toast.error("Please fill in all required fields.")
+      return
     }
 
     try {
-      setLoading(true);
-      toast.success('🎉 Challenge created!');
-      onClose();
-      onChallengeCreated?.();
-      setForm(defaultForm);
+      setLoading(true)
+      toast.success("🎉 Challenge created!")
+      onClose()
+      onChallengeCreated?.()
+      setForm(defaultForm)
     } catch {
-      toast.error('Failed to create challenge.');
+      toast.error("Failed to create challenge.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-xl rounded-lg border border-gray-700 bg-gray-900 p-6 text-white shadow-lg">
-        <h2 className="mb-4 text-xl font-semibold">✍️ Create a New Challenge</h2>
+        <h2 className="mb-4 text-xl font-semibold">
+          ✍️ Create a New Challenge
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             name="title"
@@ -131,8 +139,8 @@ const CreateChallengeModal: React.FC<Props> = ({ isOpen, onClose, onChallengeCre
             <button
               type="button"
               onClick={() => {
-                onClose();
-                setForm(defaultForm);
+                onClose()
+                setForm(defaultForm)
               }}
               className="rounded bg-gray-600 px-4 py-2 hover:bg-gray-500"
               disabled={loading}
@@ -144,13 +152,13 @@ const CreateChallengeModal: React.FC<Props> = ({ isOpen, onClose, onChallengeCre
               className="rounded bg-green-600 px-4 py-2 hover:bg-green-500"
               disabled={loading}
             >
-              {loading ? 'Creating...' : 'Create'}
+              {loading ? "Creating..." : "Create"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CreateChallengeModal;
+export default CreateChallengeModal

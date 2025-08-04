@@ -1,23 +1,23 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from "react"
 
 export interface ModalProps {
   /**
    * Whether the modal is visible.
    */
-  isVisible: boolean;
+  isVisible: boolean
 
   /**
    * Function to handle closing the modal.
    */
-  onClose: () => void;
+  onClose: () => void
 
   /**
    * Optional title text to display in the modal header.
    */
-  title?: string;
+  title?: string
 
   /**
    * Optional content to display inside the modal body.
    */
-  content?: ReactNode;
+  content?: ReactNode
 }

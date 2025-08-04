@@ -1,85 +1,85 @@
 // src/app/statistics/page.client.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { fetchDashboardStats } from '@/api/dashboard/dashboardApi';
-import { fetchUserStreak } from '@/api/goal/goalsApi';
-import UserStatisticsChart from '@/components/charts/UserStatisticsChart';
-import Card, { CardContent } from '@/components/cards/Card';
-import '@/styles/global.css';
-import cardStyles from '@/components/cards/Card.module.css';
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import React, { useEffect, useState } from "react"
+
+import { fetchDashboardStats } from "@/api/dashboard/dashboardApi"
+import { fetchUserStreak } from "@/api/goal/goalsApi"
+import Card, { CardContent } from "@/components/cards/Card"
+import cardStyles from "@/components/cards/Card.module.css"
+import "@/styles/global.css"
+import UserStatisticsChart from "@/components/charts/UserStatisticsChart"
 
 interface Stats {
-  totalGoals: number;
-  completedGoals: number;
-  activeGoals: number;
-  collaborations: number;
-  achievements: string[];
-  goalTrends: { date: string; progress: number }[];
-  categoryBreakdown: { category: string; value: number }[];
-  currentStreak: number;
-  longestStreak: number;
-  completedGoalsPercentage: number;
+  totalGoals: number
+  completedGoals: number
+  activeGoals: number
+  collaborations: number
+  achievements: string[]
+  goalTrends: { date: string; progress: number }[]
+  categoryBreakdown: { category: string; value: number }[]
+  currentStreak: number
+  longestStreak: number
+  completedGoalsPercentage: number
 }
 
 export default function StatisticsClient() {
-  const { data: session, status } = useSession();
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: session, status } = useSession()
+  const [stats, setStats] = useState<Stats | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (status !== 'authenticated' || !session?.user?.id) return;
+    if (status !== "authenticated" || !session?.user?.id) return
 
-    (async () => {
-      setLoading(true);
+    ;(async () => {
+      setLoading(true)
       try {
         const [dashStats, rawStreakData] = await Promise.all([
           fetchDashboardStats(),
           fetchUserStreak(), // Removed the session.user.id argument
-        ]);
+        ])
 
         // Safely handle possibly null streak data
-        const currentStreak = rawStreakData?.currentStreak ?? 0;
-        const longestStreak = rawStreakData?.longestStreak ?? 0;
+        const currentStreak = rawStreakData?.currentStreak ?? 0
+        const longestStreak = rawStreakData?.longestStreak ?? 0
 
-        const totalGoals = dashStats.totalGoals;
-        const completedGoals = dashStats.completedGoals;
-        const collaborations = dashStats.collaborations;
-        const activeGoals = totalGoals - completedGoals;
+        const totalGoals = dashStats.totalGoals
+        const completedGoals = dashStats.completedGoals
+        const collaborations = dashStats.collaborations
+        const activeGoals = totalGoals - completedGoals
         const completedGoalsPercentage =
-          totalGoals > 0
-            ? Math.round((completedGoals / totalGoals) * 100)
-            : 0;
+          totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0
 
         setStats({
           totalGoals,
           completedGoals,
           activeGoals,
           collaborations,
-          achievements: [],         // TODO: fetch achievements
-          goalTrends: [],           // TODO: fetch goal trends
-          categoryBreakdown: [],    // TODO: fetch category breakdown
+          achievements: [], // TODO: fetch achievements
+          goalTrends: [], // TODO: fetch goal trends
+          categoryBreakdown: [], // TODO: fetch category breakdown
           currentStreak,
           longestStreak,
           completedGoalsPercentage,
-        });
+        })
       } catch (err: any) {
-        console.error(err);
-        setError(err.message || 'Failed to load statistics.');
+        console.error(err)
+        setError(err.message || "Failed to load statistics.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    })();
-  }, [status, session]);
+    })()
+  }, [status, session])
 
   if (loading)
-    return <p className="mt-10 text-center text-gray-400">Loading statistics…</p>;
-  if (error)
-    return <p className="mt-10 text-center text-red-500">{error}</p>;
-  if (!stats) return null;
+    return (
+      <p className="mt-10 text-center text-gray-400">Loading statistics…</p>
+    )
+  if (error) return <p className="mt-10 text-center text-red-500">{error}</p>
+  if (!stats) return null
 
   return (
     <div className="mx-auto w-full max-w-6xl rounded-lg bg-black p-6 text-white shadow-lg">
@@ -87,12 +87,14 @@ export default function StatisticsClient() {
         📊 Your Statistics
       </h1>
       <div className="mb-4 text-center">
-        <Link href="/dashboard" className="text-blue-400 hover:underline">← Back to Dashboard</Link>
+        <Link href="/dashboard" className="text-blue-400 hover:underline">
+          ← Back to Dashboard
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Goal Progress Card */}
-        <Card className={cardStyles.card ?? ''}>
+        <Card className={cardStyles.card ?? ""}>
           <CardContent>
             <h2 className="text-center text-2xl font-semibold text-green-300">
               🎯 Goal Progress
@@ -111,7 +113,7 @@ export default function StatisticsClient() {
         </Card>
 
         {/* Streak Tracker Card */}
-        <Card className={cardStyles.card ?? ''}>
+        <Card className={cardStyles.card ?? ""}>
           <CardContent>
             <h2 className="text-center text-2xl font-semibold text-orange-300">
               🔥 Streak Tracker
@@ -124,8 +126,8 @@ export default function StatisticsClient() {
                 style={{
                   width: stats.longestStreak
                     ? `${(stats.currentStreak / stats.longestStreak) * 100}%`
-                    : '0%',
-                  transition: 'width 0.5s ease-in-out',
+                    : "0%",
+                  transition: "width 0.5s ease-in-out",
                 }}
               />
             </div>
@@ -134,7 +136,7 @@ export default function StatisticsClient() {
       </div>
 
       {/* Achievements Section (full width) */}
-      <Card className={`mt-6 ${cardStyles.card ?? ''}`}>
+      <Card className={`mt-6 ${cardStyles.card ?? ""}`}>
         <CardContent>
           <h2 className="text-center text-2xl font-semibold text-yellow-300">
             🏆 Achievements
@@ -158,7 +160,7 @@ export default function StatisticsClient() {
       </Card>
 
       {/* Collaboration Goals Section */}
-      <Card className={`mt-6 ${cardStyles.card ?? ''}`}>
+      <Card className={`mt-6 ${cardStyles.card ?? ""}`}>
         <CardContent>
           <h2 className="text-center text-2xl font-semibold text-pink-300">
             🤝 Collaboration Goals
@@ -181,7 +183,7 @@ export default function StatisticsClient() {
       </Card>
 
       {/* Statistics Chart Section (full width) */}
-      <Card className={`mt-6 ${cardStyles.card ?? ''}`}>
+      <Card className={`mt-6 ${cardStyles.card ?? ""}`}>
         <CardContent>
           <UserStatisticsChart
             totalGoals={stats.totalGoals}
@@ -195,5 +197,5 @@ export default function StatisticsClient() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

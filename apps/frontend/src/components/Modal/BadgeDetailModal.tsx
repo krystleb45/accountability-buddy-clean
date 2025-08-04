@@ -1,28 +1,33 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import styles from './BadgeDetailModal.module.css';
+import { AnimatePresence, motion } from "framer-motion"
+import { X } from "lucide-react"
+import React from "react"
+
+import styles from "./BadgeDetailModal.module.css"
 
 export interface BadgeDetail {
-  _id: string;
-  badgeType: string;
-  description?: string;
-  level: 'Bronze' | 'Silver' | 'Gold';
-  progress: number;
-  goal: number;
-  icon?: string;
-  dateAwarded?: string;
+  _id: string
+  badgeType: string
+  description?: string
+  level: "Bronze" | "Silver" | "Gold"
+  progress: number
+  goal: number
+  icon?: string
+  dateAwarded?: string
 }
 
 interface BadgeDetailModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  badge: BadgeDetail;
+  isOpen: boolean
+  onClose: () => void
+  badge: BadgeDetail
 }
 
-const BadgeDetailModal: React.FC<BadgeDetailModalProps> = ({ isOpen, onClose, badge }) => {
+const BadgeDetailModal: React.FC<BadgeDetailModalProps> = ({
+  isOpen,
+  onClose,
+  badge,
+}) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -55,29 +60,31 @@ const BadgeDetailModal: React.FC<BadgeDetailModalProps> = ({ isOpen, onClose, ba
 
             <div className={styles.content}>
               <img
-                src={badge.icon ?? '/placeholder-badge.png'}
+                src={badge.icon ?? "/placeholder-badge.png"}
                 alt=""
                 aria-hidden={!!badge.icon}
                 className={styles.icon}
               />
               <h2 id="badge-modal-title" className={styles.title}>
-                {badge.badgeType.replace(/_/g, ' ')}
+                {badge.badgeType.replace(/_/g, " ")}
               </h2>
 
               <p
                 className={[
                   styles.level,
-                  badge.level === 'Gold'
+                  badge.level === "Gold"
                     ? styles.gold
-                    : badge.level === 'Silver'
+                    : badge.level === "Silver"
                       ? styles.silver
                       : styles.bronze,
-                ].join(' ')}
+                ].join(" ")}
               >
                 {badge.level} Level
               </p>
 
-              {badge.description && <p className={styles.description}>{badge.description}</p>}
+              {badge.description && (
+                <p className={styles.description}>{badge.description}</p>
+              )}
 
               <div className={styles.progressSection}>
                 <div className={styles.progressText}>
@@ -95,11 +102,11 @@ const BadgeDetailModal: React.FC<BadgeDetailModalProps> = ({ isOpen, onClose, ba
 
               {badge.dateAwarded && (
                 <p className={styles.dateAwarded}>
-                  Awarded on{' '}
+                  Awarded on{" "}
                   {new Date(badge.dateAwarded).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </p>
               )}
@@ -108,7 +115,7 @@ const BadgeDetailModal: React.FC<BadgeDetailModalProps> = ({ isOpen, onClose, ba
         </motion.div>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}
 
-export default BadgeDetailModal;
+export default BadgeDetailModal

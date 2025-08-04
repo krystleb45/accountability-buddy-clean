@@ -1,27 +1,28 @@
 // src/app/create/page.tsx
-import CreateForm from './page.client';
-import type { Metadata } from 'next';
+import type { Metadata } from "next"
+
+import CreateForm from "./page.client"
 
 export const metadata: Metadata = {
-  title: 'Create New Goal • Accountability Buddy',
+  title: "Create New Goal • Accountability Buddy",
   description:
-    'Set your sights on success—create and track your personal goals with Accountability Buddy.',
+    "Set your sights on success—create and track your personal goals with Accountability Buddy.",
   openGraph: {
-    title: 'Create New Goal • Accountability Buddy',
+    title: "Create New Goal • Accountability Buddy",
     description:
-      'Set your sights on success—create and track your personal goals with Accountability Buddy.',
-    url: 'https://your-domain.com/create',
-    siteName: 'Accountability Buddy',
-    type: 'website',
+      "Set your sights on success—create and track your personal goals with Accountability Buddy.",
+    url: "https://your-domain.com/create",
+    siteName: "Accountability Buddy",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Create New Goal • Accountability Buddy',
+    card: "summary_large_image",
+    title: "Create New Goal • Accountability Buddy",
     description:
-      'Set your sights on success—create and track your personal goals with Accountability Buddy.',
+      "Set your sights on success—create and track your personal goals with Accountability Buddy.",
   },
-};
+}
 
 export default function CreatePage() {
-  return <CreateForm />;
+  return <CreateForm />
 }

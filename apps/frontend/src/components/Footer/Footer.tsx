@@ -1,23 +1,28 @@
-'use client';
+"use client"
 
-import React, { useCallback } from 'react';
-import Link from 'next/link';
-import { getCurrentYear, generateFooterLinks } from '../../utils/FooterUtils';
-import NewsletterSignup from '@/components/Forms/NewsletterSignup';
-import { FaTwitter } from 'react-icons/fa';
-import styles from './Footer.module.css';
+import Link from "next/link"
+import React, { useCallback } from "react"
+import { FaTwitter } from "react-icons/fa"
+
+import NewsletterSignup from "@/components/Forms/NewsletterSignup"
+
+import { generateFooterLinks, getCurrentYear } from "../../utils/FooterUtils"
+import styles from "./Footer.module.css"
 
 /**
  * Footer component with newsletter signup, navigation links, and social icons.
  */
 const Footer: React.FC = () => {
-  const currentYear = getCurrentYear();
-  const footerLinks = generateFooterLinks();
+  const currentYear = getCurrentYear()
+  const footerLinks = generateFooterLinks()
 
-  const handleNewsletterSubmit = useCallback((data: { email: string; consent: boolean }): void => {
-    // TODO: integrate real newsletter API
-    console.log('Newsletter signup:', data);
-  }, []);
+  const handleNewsletterSubmit = useCallback(
+    (data: { email: string; consent: boolean }): void => {
+      // TODO: integrate real newsletter API
+      console.log("Newsletter signup:", data)
+    },
+    [],
+  )
 
   return (
     <footer
@@ -47,7 +52,10 @@ const Footer: React.FC = () => {
             <ul className="flex flex-col gap-2 sm:flex-row sm:gap-4">
               {footerLinks.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.url} className="text-gray-400 transition hover:text-kelly-green">
+                  <Link
+                    href={link.url}
+                    className="text-gray-400 transition hover:text-kelly-green"
+                  >
                     {link.name}
                   </Link>
                 </li>
@@ -72,7 +80,7 @@ const Footer: React.FC = () => {
         <div className="flex flex-1 justify-end">
           <button
             type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="rounded-lg bg-green-500 px-4 py-2 text-black transition hover:bg-green-400"
             aria-label="Scroll back to top"
           >
@@ -81,7 +89,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}
 
-export default Footer;
+export default Footer

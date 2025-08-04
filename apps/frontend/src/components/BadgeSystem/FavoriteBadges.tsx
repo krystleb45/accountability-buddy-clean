@@ -1,90 +1,94 @@
-'use client';
+"use client"
 
-import React, { useEffect, useState, KeyboardEvent } from 'react';
-import badgeService from '@/services/badgeService';
-import styles from './FavoriteBadges.module.css';
+import type { KeyboardEvent } from "react"
+
+import React, { useEffect, useState } from "react"
+
+import badgeService from "@/services/badgeService"
+
+import styles from "./FavoriteBadges.module.css"
 
 interface Badge {
-  id: string;
-  name: string;
-  icon?: string;
-  description?: string;
+  id: string
+  name: string
+  icon?: string
+  description?: string
 }
 
-const getStoredUserId = (): string | null => {
-  if (typeof window === 'undefined') return null;
-  const stored = localStorage.getItem('user');
-  if (!stored) return null;
+function getStoredUserId(): string | null {
+  if (typeof window === "undefined") return null
+  const stored = localStorage.getItem("user")
+  if (!stored) return null
   try {
-    const parsed = JSON.parse(stored);
-    return parsed.id ?? parsed._id ?? null;
+    const parsed = JSON.parse(stored)
+    return parsed.id ?? parsed._id ?? null
   } catch {
-    return null;
+    return null
   }
-};
+}
 
 const FavoriteBadges: React.FC = () => {
-  const [favoriteBadges, setFavoriteBadges] = useState<Badge[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [favoriteBadges, setFavoriteBadges] = useState<Badge[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
 
   // …
   useEffect(() => {
     const init = async (): Promise<void> => {
-      const uid = getStoredUserId();
-      setUserId(uid);
+      const uid = getStoredUserId()
+      setUserId(uid)
 
       if (!uid) {
-        console.warn('⚠️ No user ID found in localStorage.');
-        setLoading(false);
-        return;
+        console.warn("⚠️ No user ID found in localStorage.")
+        setLoading(false)
+        return
       }
 
       try {
         // No args here—your badgeService already reads user ID under the hood
-        const badges = await badgeService.fetchFavoriteBadges();
-        setFavoriteBadges(badges);
+        const badges = await badgeService.fetchFavoriteBadges()
+        setFavoriteBadges(badges)
       } catch (err) {
-        console.error('❌ Failed to fetch favorite badges:', err);
-        setError('Failed to load favorite badges.');
+        console.error("❌ Failed to fetch favorite badges:", err)
+        setError("Failed to load favorite badges.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    init();
-  }, []);
+    init()
+  }, [])
   // …
 
   const handleToggle = async (badgeId: string): Promise<void> => {
-    if (!userId) return;
+    if (!userId) return
     try {
-      const updated = await badgeService.toggleFavoriteBadge(userId, badgeId);
-      setFavoriteBadges(updated);
+      const updated = await badgeService.toggleFavoriteBadge(userId, badgeId)
+      setFavoriteBadges(updated)
     } catch (err) {
-      console.error('❌ Failed to toggle favorite badge:', err);
-      setError('Failed to update favorites.');
+      console.error("❌ Failed to toggle favorite badge:", err)
+      setError("Failed to update favorites.")
     }
-  };
+  }
 
   const onKeyDown =
     (badgeId: string) =>
     (e: KeyboardEvent<HTMLDivElement>): void => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleToggle(badgeId);
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault()
+        handleToggle(badgeId)
       }
-    };
+    }
 
   if (loading) {
-    return <p className={styles.statusText}>Loading favorite badges…</p>;
+    return <p className={styles.statusText}>Loading favorite badges…</p>
   }
   if (error) {
-    return <p className={styles.statusText}>{error}</p>;
+    return <p className={styles.statusText}>{error}</p>
   }
   if (favoriteBadges.length === 0) {
-    return <p className={styles.statusText}>No favorite badges selected yet.</p>;
+    return <p className={styles.statusText}>No favorite badges selected yet.</p>
   }
 
   return (
@@ -100,17 +104,19 @@ const FavoriteBadges: React.FC = () => {
           onKeyDown={onKeyDown(badge.id)}
         >
           <img
-            src={badge.icon ?? 'https://via.placeholder.com/60'}
+            src={badge.icon ?? "https://via.placeholder.com/60"}
             alt={badge.name}
             className={styles.badgeIcon}
           />
           <h4 className={styles.badgeName}>{badge.name}</h4>
-          {badge.description && <p className={styles.badgeDescription}>{badge.description}</p>}
+          {badge.description && (
+            <p className={styles.badgeDescription}>{badge.description}</p>
+          )}
           <p className={styles.favoriteHint}>⭐ Click to toggle favorite</p>
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default FavoriteBadges;
+export default FavoriteBadges

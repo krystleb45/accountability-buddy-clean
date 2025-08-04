@@ -1,42 +1,44 @@
 // src/components/BadgeSystem/BadgeItem.tsx
-'use client';
+"use client"
 
-import React from 'react';
-import type { Badge } from '@/types/Gamification.types';
-import clsx from 'clsx';
+import clsx from "clsx"
+import React from "react"
+
+import type { Badge } from "@/types/Gamification.types"
 
 export interface BadgeItemProps {
-  badge: Badge & { isEarned: boolean; dateEarned?: string };
-  onClick?: (id: string) => void;
+  badge: Badge & { isEarned: boolean; dateEarned?: string }
+  onClick?: (id: string) => void
 }
 
 const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onClick }) => {
-  const { id, name, imageUrl, isEarned, dateEarned } = badge;
+  const { id, name, imageUrl, isEarned, dateEarned } = badge
 
   const handleClick = (): void => {
-    if (isEarned && onClick) onClick(id);
-  };
+    if (isEarned && onClick) onClick(id)
+  }
 
   return (
     <button
       type="button"
       onClick={handleClick}
       disabled={!isEarned}
-      aria-label={`Badge: ${name}${isEarned && dateEarned ? `, earned on ${new Date(dateEarned).toLocaleDateString()}` : ''}`}
+      aria-label={`Badge: ${name}${isEarned && dateEarned ? `, earned on ${new Date(dateEarned).toLocaleDateString()}` : ""}`}
       className={clsx(
-        'flex transform flex-col items-center justify-center rounded-xl border p-4 shadow-sm transition-transform',
-        'focus:outline-none focus:ring-2 focus:ring-kelly-green focus:ring-offset-2',
-        'hover:scale-105',
+        "flex flex-col items-center justify-center rounded-xl border p-4 shadow-sm transition-transform",
+        "focus:outline-none focus:ring-2 focus:ring-kelly-green focus:ring-offset-2",
+        "hover:scale-105",
         {
-          'cursor-pointer border-green-400 bg-white': isEarned,
-          'cursor-not-allowed border-gray-300 bg-gray-100 opacity-60': !isEarned,
+          "cursor-pointer border-green-400 bg-white": isEarned,
+          "cursor-not-allowed border-gray-300 bg-gray-100 opacity-60":
+            !isEarned,
         },
       )}
     >
       <img
-        src={imageUrl || '/placeholder-badge.png'}
+        src={imageUrl || "/placeholder-badge.png"}
         alt={`${name} badge icon`}
-        className="mb-2 h-16 w-16 object-contain"
+        className="mb-2 size-16 object-contain"
         aria-hidden="true"
       />
       <h3 className="text-md text-center font-semibold">{name}</h3>
@@ -50,7 +52,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onClick }) => {
         <p className="mt-1 text-sm text-gray-500">Not earned yet</p>
       )}
     </button>
-  );
-};
+  )
+}
 
-export default React.memo(BadgeItem);
+export default React.memo(BadgeItem)

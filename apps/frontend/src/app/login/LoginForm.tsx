@@ -1,70 +1,70 @@
 // src/app/login/LoginForm.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import React, { useEffect, useState } from "react"
 
 interface AuthErrorMessages {
-  SessionRequired: string;
-  CredentialsSignin: string;
-  default: string;
+  SessionRequired: string
+  CredentialsSignin: string
+  default: string
 }
 
 const messages: AuthErrorMessages = {
-  SessionRequired: 'You must be logged in to view that page.',
-  CredentialsSignin: 'Invalid email or password.',
-  default: '',
-};
+  SessionRequired: "You must be logged in to view that page.",
+  CredentialsSignin: "Invalid email or password.",
+  default: "",
+}
 
 export default function LoginForm() {
-  const router = useRouter();
-  const params = useSearchParams();
+  const router = useRouter()
+  const params = useSearchParams()
 
-  const callbackUrl = params.get('callbackUrl') ?? '/dashboard';
-  const errorParam = params.get('error') ?? '';
+  const callbackUrl = params.get("callbackUrl") ?? "/dashboard"
+  const errorParam = params.get("error") ?? ""
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   // Map NextAuth error codes into our whitelist of messages
   useEffect(() => {
-    if (!errorParam) return;
-    const key = errorParam as keyof AuthErrorMessages;
-    const msg = messages[key] ?? messages.default;
-    if (msg) setError(msg);
-  }, [errorParam]);
+    if (!errorParam) return
+    const key = errorParam as keyof AuthErrorMessages
+    const msg = messages[key] ?? messages.default
+    if (msg) setError(msg)
+  }, [errorParam])
 
- const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault()
-  setLoading(true)
-  setError(null)
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
 
-  try {
-    const { signIn } = (await import('next-auth/react')) as any
-    const res = await signIn('credentials', {
-      redirect: false,
-      callbackUrl,
-      email,
-      password,
-    })
-    if (res?.error) {
-      setError(messages.CredentialsSignin)
-    } else {
-      router.push(res?.url ?? callbackUrl)
+    try {
+      const { signIn } = (await import("next-auth/react")) as any
+      const res = await signIn("credentials", {
+        redirect: false,
+        callbackUrl,
+        email,
+        password,
+      })
+      if (res?.error) {
+        setError(messages.CredentialsSignin)
+      } else {
+        router.push(res?.url ?? callbackUrl)
+      }
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again."
+      setError(msg)
+    } finally {
+      setLoading(false)
     }
-  } catch (err: unknown) {
-    const msg = err instanceof Error
-      ? err.message
-      : 'An unexpected error occurred. Please try again.'
-    setError(msg)
-  } finally {
-    setLoading(false)
   }
-}
-
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-black px-4 text-white">
@@ -111,23 +111,26 @@ export default function LoginForm() {
             disabled={loading}
             className={`w-full rounded-lg py-3 text-white ${
               loading
-                ? 'cursor-not-allowed bg-kelly-green bg-opacity-50'
-                : 'bg-kelly-green hover:bg-opacity-80'
+                ? "cursor-not-allowed bg-kelly-green bg-opacity-50"
+                : "bg-kelly-green hover:bg-opacity-80"
             }`}
           >
-            {loading ? 'Logging in…' : 'Login'}
+            {loading ? "Logging in…" : "Login"}
           </button>
         </form>
 
         <div className="mt-6 space-y-2 text-center text-gray-400">
           <p>
-            Forgot password?{' '}
-            <Link href="/forgot-password" className="text-kelly-green underline">
+            Forgot password?{" "}
+            <Link
+              href="/forgot-password"
+              className="text-kelly-green underline"
+            >
               Reset here
             </Link>
           </p>
           <p>
-            Don’t have an account?{' '}
+            Don’t have an account?{" "}
             <Link href="/register" className="text-kelly-green underline">
               Sign up here
             </Link>
@@ -135,5 +138,5 @@ export default function LoginForm() {
         </div>
       </div>
     </div>
-  );
+  )
 }

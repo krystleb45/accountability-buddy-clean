@@ -1,73 +1,84 @@
 // src/services/messageService.ts
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface Message {
-  _id: string;
-  sender: string;
-  receiver: string;
-  content: string;
-  createdAt: string;
-  isRead?: boolean;
+  _id: string
+  sender: string
+  receiver: string
+  content: string
+  createdAt: string
+  isRead?: boolean
 }
 
 export interface Pagination {
-  totalMessages: number;
-  currentPage: number;
-  totalPages: number;
+  totalMessages: number
+  currentPage: number
+  totalPages: number
 }
 
 export interface MessageListResponse {
-  messages: Message[];
-  pagination: Pagination;
+  messages: Message[]
+  pagination: Pagination
 }
 
-const handleError = <T>(fn: string, error: unknown, fallback?: T): T => {
+function handleError<T>(fn: string, error: unknown, fallback?: T): T {
   if (axios.isAxiosError(error)) {
-    console.error(`❌ [messageService::${fn}]`, error.response?.data || error.message);
+    console.error(
+      `❌ [messageService::${fn}]`,
+      error.response?.data || error.message,
+    )
   } else {
-    console.error(`❌ [messageService::${fn}]`, error);
+    console.error(`❌ [messageService::${fn}]`, error)
   }
-  return fallback as T;
-};
+  return fallback as T
+}
 
 const MessageService = {
   /** POST /messages */
   async sendMessage(receiverId: string, content: string): Promise<Message> {
     try {
-      const resp = await http.post<Message>('/messages', {
+      const resp = await http.post<Message>("/messages", {
         receiverId,
         message: content,
-      });
-      return resp.data;
+      })
+      return resp.data
     } catch (err) {
-      return handleError('sendMessage', err, {} as Message);
+      return handleError("sendMessage", err, {} as Message)
     }
   },
 
   /** GET /messages/:userId?page=&limit= */
-  async getConversation(userId: string, page = 1, limit = 20): Promise<MessageListResponse> {
+  async getConversation(
+    userId: string,
+    page = 1,
+    limit = 20,
+  ): Promise<MessageListResponse> {
     try {
-      const resp = await http.get<MessageListResponse>(`/messages/${encodeURIComponent(userId)}`, {
-        params: { page, limit },
-      });
-      return resp.data;
+      const resp = await http.get<MessageListResponse>(
+        `/messages/${encodeURIComponent(userId)}`,
+        {
+          params: { page, limit },
+        },
+      )
+      return resp.data
     } catch (err) {
-      return handleError('getConversation', err, {
+      return handleError("getConversation", err, {
         messages: [],
         pagination: { totalMessages: 0, currentPage: page, totalPages: 0 },
-      });
+      })
     }
   },
 
   /** DELETE /messages/:messageId */
   async deleteMessage(messageId: string): Promise<boolean> {
     try {
-      await http.delete(`/messages/${encodeURIComponent(messageId)}`);
-      return true;
+      await http.delete(`/messages/${encodeURIComponent(messageId)}`)
+      return true
     } catch (err) {
-      handleError('deleteMessage', err);
-      return false;
+      handleError("deleteMessage", err)
+      return false
     }
   },
 
@@ -76,12 +87,12 @@ const MessageService = {
     try {
       const resp = await http.patch<{ updatedMessages: number }>(
         `/messages/${encodeURIComponent(userId)}/read`,
-      );
-      return resp.data.updatedMessages;
+      )
+      return resp.data.updatedMessages
     } catch (err) {
-      return handleError('markAsRead', err, 0);
+      return handleError("markAsRead", err, 0)
     }
   },
-};
+}
 
-export default MessageService;
+export default MessageService

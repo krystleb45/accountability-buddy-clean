@@ -1,35 +1,37 @@
 // src/components/Notifications/PartnerNotifications.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import ApiService from '../../services/apiService';
-import styles from './PartnerNotifications.module.css';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import React, { useEffect, useState } from "react"
+
+import ApiService from "../../services/apiService"
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner"
+import styles from "./PartnerNotifications.module.css"
 
 interface RawNotification {
-  id: string;
-  message: string;
-  read?: boolean;
+  id: string
+  message: string
+  read?: boolean
 }
 
 export interface PartnerNotification {
-  id: string;
-  message: string;
-  isRead: boolean;
+  id: string
+  message: string
+  isRead: boolean
 }
 
 const PartnerNotifications: React.FC = () => {
-  const [notifications, setNotifications] = useState<PartnerNotification[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  const [notifications, setNotifications] = useState<PartnerNotification[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>("")
 
   useEffect((): void => {
     const fetchNotifications = async (): Promise<void> => {
-      setLoading(true);
-      setError('');
+      setLoading(true)
+      setError("")
 
       try {
-        const apiNotifications: RawNotification[] = await ApiService.getPartnerNotifications();
+        const apiNotifications: RawNotification[] =
+          await ApiService.getPartnerNotifications()
 
         setNotifications(
           apiNotifications.map((n) => ({
@@ -37,46 +39,51 @@ const PartnerNotifications: React.FC = () => {
             message: n.message,
             isRead: n.read ?? false,
           })),
-        );
+        )
       } catch (err) {
-        console.error('Error fetching notifications:', err);
-        setError('Failed to load notifications. Please try again.');
+        console.error("Error fetching notifications:", err)
+        setError("Failed to load notifications. Please try again.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    void fetchNotifications();
-  }, []);
+    void fetchNotifications()
+  }, [])
 
   const markAsRead = async (id: string): Promise<void> => {
     try {
-      await ApiService.markNotificationAsRead(id);
-      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)));
+      await ApiService.markNotificationAsRead(id)
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
+      )
     } catch (err) {
-      console.error('Error marking notification as read:', err);
+      console.error("Error marking notification as read:", err)
     }
-  };
+  }
 
   const deleteNotification = async (id: string): Promise<void> => {
     try {
-      await ApiService.deleteNotification(id);
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      await ApiService.deleteNotification(id)
+      setNotifications((prev) => prev.filter((n) => n.id !== id))
     } catch (err) {
-      console.error('Error deleting notification:', err);
+      console.error("Error deleting notification:", err)
     }
-  };
+  }
 
   if (loading) {
     return (
       <div className={styles.spinnerWrapper}>
         <LoadingSpinner size={40} />
       </div>
-    );
+    )
   }
 
   return (
-    <section className={styles.container} aria-labelledby="partner-notifs-heading">
+    <section
+      className={styles.container}
+      aria-labelledby="partner-notifs-heading"
+    >
       <h2 id="partner-notifs-heading" className={styles.heading}>
         Partner Notifications
       </h2>
@@ -120,7 +127,7 @@ const PartnerNotifications: React.FC = () => {
         </ul>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default PartnerNotifications;
+export default PartnerNotifications

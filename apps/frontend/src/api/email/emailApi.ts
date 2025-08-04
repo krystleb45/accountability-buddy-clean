@@ -1,12 +1,13 @@
 // src/email/emailApi.ts
 
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface SendEmailPayload {
-  to: string;
-  subject: string;
-  message: string;
+  to: string
+  subject: string
+  message: string
 }
 
 /**
@@ -15,16 +16,22 @@ export interface SendEmailPayload {
  */
 export async function sendEmail(payload: SendEmailPayload): Promise<boolean> {
   try {
-    const resp = await http.post<{ success: boolean; message?: string }>('/email/send', payload);
-    return resp.data.success;
+    const resp = await http.post<{ success: boolean; message?: string }>(
+      "/email/send",
+      payload,
+    )
+    return resp.data.success
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('❌ [emailApi::sendEmail]', error.response?.data || error.message);
+      console.error(
+        "❌ [emailApi::sendEmail]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('❌ [emailApi::sendEmail]', error);
+      console.error("❌ [emailApi::sendEmail]", error)
     }
-    return false;
+    return false
   }
 }
 
-export default { sendEmail };
+export default { sendEmail }

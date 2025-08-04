@@ -1,23 +1,26 @@
 // src/app/goal-creation/page.client.tsx
-'use client';
+"use client"
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import GoalService, { Goal } from '@/services/goalService';
+import { useRouter } from "next/navigation"
+import React, { useState } from "react"
+
+import type { Goal } from "@/services/goalService"
+
+import GoalService from "@/services/goalService"
 
 export default function GoalCreationClient() {
-  const router = useRouter();
+  const router = useRouter()
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [deadline, setDeadline] = useState(''); // YYYY-MM-DD
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
+  const [category, setCategory] = useState("")
+  const [deadline, setDeadline] = useState("") // YYYY-MM-DD
+  const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
+    e.preventDefault()
+    setSubmitting(true)
     try {
       const newGoal: Partial<Goal> = {
         title,
@@ -25,15 +28,15 @@ export default function GoalCreationClient() {
         deadline,
         category,
         progress: 0,
-      };
-      await GoalService.createGoal(newGoal);
-      router.push('/goals');
+      }
+      await GoalService.createGoal(newGoal)
+      router.push("/goals")
     } catch (err: any) {
-      setError(err.message || 'Failed to create goal.');
+      setError(err.message || "Failed to create goal.")
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <main className="mx-auto max-w-md p-6">
@@ -86,9 +89,9 @@ export default function GoalCreationClient() {
           disabled={submitting}
           className="w-full rounded bg-green-500 py-2 text-white hover:bg-green-600"
         >
-          {submitting ? 'Creating…' : 'Create Goal'}
+          {submitting ? "Creating…" : "Create Goal"}
         </button>
       </form>
     </main>
-  );
+  )
 }

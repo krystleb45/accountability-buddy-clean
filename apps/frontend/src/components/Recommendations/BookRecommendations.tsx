@@ -1,53 +1,60 @@
 // components/Recommendations/BookRecommendations.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import styles from './Recommendations.module.css';
+import React, { useEffect, useState } from "react"
+
+import styles from "./Recommendations.module.css"
 
 interface BookRecommendation {
-  id: string;
-  title: string;
-  author: string;
-  description: string;
-  link?: string;
+  id: string
+  title: string
+  author: string
+  description: string
+  link?: string
 }
 
 interface BookRecommendationsProps {
-  recommendations?: BookRecommendation[];
+  recommendations?: BookRecommendation[]
 }
 
-const BookRecommendations: React.FC<BookRecommendationsProps> = ({ recommendations }) => {
-  const [books, setBooks] = useState<BookRecommendation[]>([]);
-  const [loading, setLoading] = useState<boolean>(!recommendations);
-  const [error, setError] = useState<string | null>(null);
+const BookRecommendations: React.FC<BookRecommendationsProps> = ({
+  recommendations,
+}) => {
+  const [books, setBooks] = useState<BookRecommendation[]>([])
+  const [loading, setLoading] = useState<boolean>(!recommendations)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (recommendations) {
-      setBooks(recommendations);
-      setLoading(false);
-      return;
+      setBooks(recommendations)
+      setLoading(false)
+      return
     }
 
     const fetchBookRecommendations = async (): Promise<void> => {
-      setLoading(true);
-      setError(null);
+      setLoading(true)
+      setError(null)
       try {
-        const res = await fetch('/api/book-recommendations');
-        if (!res.ok) throw new Error('Failed to fetch book recommendations');
-        const data: BookRecommendation[] = await res.json();
-        setBooks(data);
+        const res = await fetch("/api/book-recommendations")
+        if (!res.ok) throw new Error("Failed to fetch book recommendations")
+        const data: BookRecommendation[] = await res.json()
+        setBooks(data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error fetching recommendations');
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unknown error fetching recommendations",
+        )
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchBookRecommendations();
-  }, [recommendations]);
+    fetchBookRecommendations()
+  }, [recommendations])
 
   if (loading) {
-    return <p className={styles.status}>Loading book recommendations…</p>;
+    return <p className={styles.status}>Loading book recommendations…</p>
   }
 
   if (error) {
@@ -55,7 +62,7 @@ const BookRecommendations: React.FC<BookRecommendationsProps> = ({ recommendatio
       <p className={styles.status} role="alert">
         {error}
       </p>
-    );
+    )
   }
 
   return (
@@ -89,10 +96,12 @@ const BookRecommendations: React.FC<BookRecommendationsProps> = ({ recommendatio
           ))}
         </ul>
       ) : (
-        <p className={styles.empty}>No book recommendations available at the moment.</p>
+        <p className={styles.empty}>
+          No book recommendations available at the moment.
+        </p>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default BookRecommendations;
+export default BookRecommendations

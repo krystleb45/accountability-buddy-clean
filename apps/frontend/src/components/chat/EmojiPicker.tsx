@@ -1,11 +1,11 @@
-'use client';
+"use client"
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import Picker from '@emoji-mart/react'; // Removed unused Emoji import
-import data from '@emoji-mart/data';
+import data from "@emoji-mart/data"
+import Picker from "@emoji-mart/react" // Removed unused Emoji import
+import React, { useCallback, useEffect, useRef, useState } from "react"
 
 interface EmojiPickerProps {
-  onSelect: (emoji: string) => void;
+  onSelect: (emoji: string) => void
 }
 
 /**
@@ -13,40 +13,40 @@ interface EmojiPickerProps {
  * and returns the native emoji string via onSelect callback.
  */
 const EmojiPicker: React.FC<EmojiPickerProps> = ({ onSelect }) => {
-  const [showPicker, setShowPicker] = useState<boolean>(false);
-  const pickerRef = useRef<HTMLDivElement | null>(null);
+  const [showPicker, setShowPicker] = useState<boolean>(false)
+  const pickerRef = useRef<HTMLDivElement | null>(null)
 
   // Toggle picker visibility
   const togglePicker = useCallback(() => {
-    setShowPicker((prev) => !prev);
-  }, []);
+    setShowPicker((prev) => !prev)
+  }, [])
 
   // Handle emoji selection
   const handleSelect = useCallback(
     (emoji: { native: string }) => {
-      onSelect(emoji.native);
-      setShowPicker(false);
+      onSelect(emoji.native)
+      setShowPicker(false)
     },
     [onSelect],
-  );
+  )
 
   // Close picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-        setShowPicker(false);
+        setShowPicker(false)
       }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   return (
     <div className="relative inline-block" ref={pickerRef}>
       <button
         type="button"
         onClick={togglePicker}
-        aria-label={showPicker ? 'Close emoji picker' : 'Open emoji picker'}
+        aria-label={showPicker ? "Close emoji picker" : "Open emoji picker"}
         className="rounded bg-gray-200 p-2 focus:outline-none focus:ring"
       >
         😊
@@ -58,7 +58,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({ onSelect }) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default EmojiPicker;
+export default EmojiPicker

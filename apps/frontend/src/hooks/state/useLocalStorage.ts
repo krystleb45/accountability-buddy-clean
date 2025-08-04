@@ -1,5 +1,5 @@
 // src/hooks/state/useLocalStorage.ts
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react"
 
 /**
  * Custom hook for managing localStorage with TypeScript support.
@@ -20,48 +20,51 @@ function useLocalStorage<T>(
   const getInitial = (): T => {
     // Lazy default resolution
     const defaultValue =
-      typeof initialValue === 'function' ? (initialValue as () => T)() : initialValue;
+      typeof initialValue === "function"
+        ? (initialValue as () => T)()
+        : initialValue
 
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       // SSR: just return the default
-      return defaultValue;
+      return defaultValue
     }
 
     try {
-      const item = window.localStorage.getItem(key);
-      return item !== null ? (JSON.parse(item) as T) : defaultValue;
+      const item = window.localStorage.getItem(key)
+      return item !== null ? (JSON.parse(item) as T) : defaultValue
     } catch (err) {
-      console.error(`useLocalStorage: error reading key "${key}"`, err);
-      return defaultValue;
+      console.error(`useLocalStorage: error reading key "${key}"`, err)
+      return defaultValue
     }
-  };
+  }
 
-  const [storedValue, setStoredValue] = useState<T>(getInitial);
+  const [storedValue, setStoredValue] = useState<T>(getInitial)
 
   // Write to localStorage whenever storedValue changes
   const setValue = (value: T | ((val: T) => T)): void => {
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      const valueToStore =
+        typeof value === "function" ? value(storedValue) : value
+      setStoredValue(valueToStore)
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore))
       }
     } catch (err) {
-      console.error(`useLocalStorage: error setting key "${key}"`, err);
+      console.error(`useLocalStorage: error setting key "${key}"`, err)
     }
-  };
+  }
 
   // Remove the item and reset to initial
   const removeItem = (): void => {
     try {
-      if (typeof window !== 'undefined') {
-        window.localStorage.removeItem(key);
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(key)
       }
-      setStoredValue(getInitial());
+      setStoredValue(getInitial())
     } catch (err) {
-      console.error(`useLocalStorage: error removing key "${key}"`, err);
+      console.error(`useLocalStorage: error removing key "${key}"`, err)
     }
-  };
+  }
 
   // Listen for other tabs updating localStorage
   useEffect(() => {
@@ -69,21 +72,23 @@ function useLocalStorage<T>(
       if (event.key === key) {
         try {
           setStoredValue(
-            event.newValue !== null ? (JSON.parse(event.newValue) as T) : getInitial(),
-          );
+            event.newValue !== null
+              ? (JSON.parse(event.newValue) as T)
+              : getInitial(),
+          )
         } catch {
-          setStoredValue(getInitial());
+          setStoredValue(getInitial())
         }
       }
-    };
+    }
 
-    window.addEventListener('storage', handleStorage);
+    window.addEventListener("storage", handleStorage)
     return () => {
-      window.removeEventListener('storage', handleStorage);
-    };
-  }, [key]);
+      window.removeEventListener("storage", handleStorage)
+    }
+  }, [key])
 
-  return [storedValue, setValue, removeItem];
+  return [storedValue, setValue, removeItem]
 }
 
-export default useLocalStorage;
+export default useLocalStorage

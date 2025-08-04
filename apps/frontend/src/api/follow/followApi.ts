@@ -1,13 +1,14 @@
 // src/follow/followApi.ts
 
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 /** Minimal user shape returned by the follow endpoints */
 export interface FollowUser {
-  id: string;
-  name: string;
-  avatarUrl?: string;
+  id: string
+  name: string
+  avatarUrl?: string
 }
 
 /**
@@ -17,19 +18,22 @@ export interface FollowUser {
  */
 export async function followUser(targetUserId: string): Promise<boolean> {
   if (!targetUserId) {
-    console.error('[followApi::followUser] targetUserId is required');
-    return false;
+    console.error("[followApi::followUser] targetUserId is required")
+    return false
   }
   try {
-    await http.post('/follow', { targetUserId });
-    return true;
+    await http.post("/follow", { targetUserId })
+    return true
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('[followApi::followUser]', error.response?.data || error.message);
+      console.error(
+        "[followApi::followUser]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('[followApi::followUser]', error);
+      console.error("[followApi::followUser]", error)
     }
-    return false;
+    return false
   }
 }
 
@@ -40,19 +44,22 @@ export async function followUser(targetUserId: string): Promise<boolean> {
  */
 export async function unfollowUser(targetUserId: string): Promise<boolean> {
   if (!targetUserId) {
-    console.error('[followApi::unfollowUser] targetUserId is required');
-    return false;
+    console.error("[followApi::unfollowUser] targetUserId is required")
+    return false
   }
   try {
-    await http.delete(`/follow/${encodeURIComponent(targetUserId)}`);
-    return true;
+    await http.delete(`/follow/${encodeURIComponent(targetUserId)}`)
+    return true
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('[followApi::unfollowUser]', error.response?.data || error.message);
+      console.error(
+        "[followApi::unfollowUser]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('[followApi::unfollowUser]', error);
+      console.error("[followApi::unfollowUser]", error)
     }
-    return false;
+    return false
   }
 }
 
@@ -63,19 +70,24 @@ export async function unfollowUser(targetUserId: string): Promise<boolean> {
  */
 export async function getFollowers(userId: string): Promise<FollowUser[]> {
   if (!userId) {
-    console.error('[followApi::getFollowers] userId is required');
-    return [];
+    console.error("[followApi::getFollowers] userId is required")
+    return []
   }
   try {
-    const resp = await http.get<FollowUser[]>(`/followers/${encodeURIComponent(userId)}`);
-    return resp.data;
+    const resp = await http.get<FollowUser[]>(
+      `/followers/${encodeURIComponent(userId)}`,
+    )
+    return resp.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('[followApi::getFollowers]', error.response?.data || error.message);
+      console.error(
+        "[followApi::getFollowers]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('[followApi::getFollowers]', error);
+      console.error("[followApi::getFollowers]", error)
     }
-    return [];
+    return []
   }
 }
 
@@ -86,19 +98,24 @@ export async function getFollowers(userId: string): Promise<FollowUser[]> {
  */
 export async function getFollowing(userId: string): Promise<FollowUser[]> {
   if (!userId) {
-    console.error('[followApi::getFollowing] userId is required');
-    return [];
+    console.error("[followApi::getFollowing] userId is required")
+    return []
   }
   try {
-    const resp = await http.get<FollowUser[]>(`/following/${encodeURIComponent(userId)}`);
-    return resp.data;
+    const resp = await http.get<FollowUser[]>(
+      `/following/${encodeURIComponent(userId)}`,
+    )
+    return resp.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('[followApi::getFollowing]', error.response?.data || error.message);
+      console.error(
+        "[followApi::getFollowing]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('[followApi::getFollowing]', error);
+      console.error("[followApi::getFollowing]", error)
     }
-    return [];
+    return []
   }
 }
 
@@ -107,4 +124,4 @@ export default {
   unfollowUser,
   getFollowers,
   getFollowing,
-};
+}

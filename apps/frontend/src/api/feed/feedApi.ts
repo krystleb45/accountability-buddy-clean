@@ -1,50 +1,57 @@
 // src/feed/feedApi.ts
 
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface FeedPost {
-  _id: string;
+  _id: string
   user: {
-    _id: string;
-    username: string;
-  };
-  goal: string;
-  milestone?: string;
-  message: string;
-  likes: string[];
+    _id: string
+    username: string
+  }
+  goal: string
+  milestone?: string
+  message: string
+  likes: string[]
   comments: {
-    _id: string;
-    user: { _id: string; username: string };
-    text: string;
-  }[];
-  createdAt: string;
-  updatedAt: string;
+    _id: string
+    user: { _id: string; username: string }
+    text: string
+  }[]
+  createdAt: string
+  updatedAt: string
 }
 
 export interface FeedComment {
-  _id: string;
-  user: { _id: string; username: string };
-  text: string;
+  _id: string
+  user: { _id: string; username: string }
+  text: string
 }
 
 /**
  * Fetch paginated feed posts
  * GET /feed?page=&pageSize=
  */
-export async function fetchFeedPosts(page = 1, pageSize = 10): Promise<FeedPost[]> {
+export async function fetchFeedPosts(
+  page = 1,
+  pageSize = 10,
+): Promise<FeedPost[]> {
   try {
-    const resp = await http.get<FeedPost[]>('/feed', {
+    const resp = await http.get<FeedPost[]>("/feed", {
       params: { page, pageSize },
-    });
-    return resp.data;
+    })
+    return resp.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('❌ [feedApi::fetchFeedPosts]', error.response?.data || error.message);
+      console.error(
+        "❌ [feedApi::fetchFeedPosts]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('❌ [feedApi::fetchFeedPosts]', error);
+      console.error("❌ [feedApi::fetchFeedPosts]", error)
     }
-    return [];
+    return []
   }
 }
 
@@ -53,20 +60,23 @@ export async function fetchFeedPosts(page = 1, pageSize = 10): Promise<FeedPost[
  * POST /feed
  */
 export async function createFeedPost(payload: {
-  goalId: string;
-  message: string;
-  milestone?: string;
+  goalId: string
+  message: string
+  milestone?: string
 }): Promise<FeedPost | null> {
   try {
-    const resp = await http.post<FeedPost>('/feed', payload);
-    return resp.data;
+    const resp = await http.post<FeedPost>("/feed", payload)
+    return resp.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('❌ [feedApi::createFeedPost]', error.response?.data || error.message);
+      console.error(
+        "❌ [feedApi::createFeedPost]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('❌ [feedApi::createFeedPost]', error);
+      console.error("❌ [feedApi::createFeedPost]", error)
     }
-    return null;
+    return null
   }
 }
 
@@ -76,19 +86,24 @@ export async function createFeedPost(payload: {
  */
 export async function likeFeedPost(postId: string): Promise<FeedPost | null> {
   if (!postId) {
-    console.error('❌ [feedApi::likeFeedPost] postId is required');
-    return null;
+    console.error("❌ [feedApi::likeFeedPost] postId is required")
+    return null
   }
   try {
-    const resp = await http.post<FeedPost>(`/feed/${encodeURIComponent(postId)}/like`);
-    return resp.data;
+    const resp = await http.post<FeedPost>(
+      `/feed/${encodeURIComponent(postId)}/like`,
+    )
+    return resp.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('❌ [feedApi::likeFeedPost]', error.response?.data || error.message);
+      console.error(
+        "❌ [feedApi::likeFeedPost]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('❌ [feedApi::likeFeedPost]', error);
+      console.error("❌ [feedApi::likeFeedPost]", error)
     }
-    return null;
+    return null
   }
 }
 
@@ -96,21 +111,32 @@ export async function likeFeedPost(postId: string): Promise<FeedPost | null> {
  * Add a comment to a feed post
  * POST /feed/:postId/comment
  */
-export async function commentOnFeedPost(postId: string, text: string): Promise<FeedPost | null> {
+export async function commentOnFeedPost(
+  postId: string,
+  text: string,
+): Promise<FeedPost | null> {
   if (!postId || !text.trim()) {
-    console.error('❌ [feedApi::commentOnFeedPost] postId and text are required');
-    return null;
+    console.error(
+      "❌ [feedApi::commentOnFeedPost] postId and text are required",
+    )
+    return null
   }
   try {
-    const resp = await http.post<FeedPost>(`/feed/${encodeURIComponent(postId)}/comment`, { text });
-    return resp.data;
+    const resp = await http.post<FeedPost>(
+      `/feed/${encodeURIComponent(postId)}/comment`,
+      { text },
+    )
+    return resp.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('❌ [feedApi::commentOnFeedPost]', error.response?.data || error.message);
+      console.error(
+        "❌ [feedApi::commentOnFeedPost]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('❌ [feedApi::commentOnFeedPost]', error);
+      console.error("❌ [feedApi::commentOnFeedPost]", error)
     }
-    return null;
+    return null
   }
 }
 
@@ -123,19 +149,26 @@ export async function removeFeedComment(
   commentId: string,
 ): Promise<FeedPost | null> {
   if (!postId || !commentId) {
-    console.error('❌ [feedApi::removeFeedComment] postId and commentId are required');
-    return null;
+    console.error(
+      "❌ [feedApi::removeFeedComment] postId and commentId are required",
+    )
+    return null
   }
   try {
-    const resp = await http.delete<FeedPost>(`/feed/${encodeURIComponent(postId)}/comment/${encodeURIComponent(commentId)}`);
-    return resp.data;
+    const resp = await http.delete<FeedPost>(
+      `/feed/${encodeURIComponent(postId)}/comment/${encodeURIComponent(commentId)}`,
+    )
+    return resp.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('❌ [feedApi::removeFeedComment]', error.response?.data || error.message);
+      console.error(
+        "❌ [feedApi::removeFeedComment]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('❌ [feedApi::removeFeedComment]', error);
+      console.error("❌ [feedApi::removeFeedComment]", error)
     }
-    return null;
+    return null
   }
 }
 
@@ -145,4 +178,4 @@ export default {
   likeFeedPost,
   commentOnFeedPost,
   removeFeedComment,
-};
+}

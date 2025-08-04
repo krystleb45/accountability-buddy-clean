@@ -7,7 +7,9 @@
  * @returns true if `value` is a number, not NaN, and finite
  */
 export function isValidNumber(value: unknown): value is number {
-  return typeof value === 'number' && !Number.isNaN(value) && Number.isFinite(value);
+  return (
+    typeof value === "number" && !Number.isNaN(value) && Number.isFinite(value)
+  )
 }
 
 /**
@@ -19,9 +21,11 @@ export function isValidNumber(value: unknown): value is number {
  */
 export function getRandomNumber(min: number, max: number): number {
   if (!isValidNumber(min) || !isValidNumber(max) || min >= max) {
-    throw new Error('Invalid range: `min` must be < `max`, both finite numbers.');
+    throw new Error(
+      "Invalid range: `min` must be < `max`, both finite numbers.",
+    )
   }
-  return Math.random() * (max - min) + min;
+  return Math.random() * (max - min) + min
 }
 
 /**
@@ -33,12 +37,14 @@ export function getRandomNumber(min: number, max: number): number {
  */
 export function getRandomInt(min: number, max: number): number {
   if (!isValidNumber(min) || !isValidNumber(max) || min > max) {
-    throw new Error('Invalid range: `min` must be ≤ `max`, both finite numbers.');
+    throw new Error(
+      "Invalid range: `min` must be ≤ `max`, both finite numbers.",
+    )
   }
   // We want an integer between min and max inclusive
-  const low = Math.ceil(min);
-  const high = Math.floor(max);
-  return Math.floor(Math.random() * (high - low + 1)) + low;
+  const low = Math.ceil(min)
+  const high = Math.floor(max)
+  return Math.floor(Math.random() * (high - low + 1)) + low
 }
 
 /**
@@ -52,11 +58,11 @@ export function getRandomInt(min: number, max: number): number {
 export function roundTo(num: number, decimals = 2): number {
   if (!isValidNumber(num) || !Number.isInteger(decimals) || decimals < 0) {
     throw new Error(
-      'Invalid arguments: `num` must be a number and `decimals` a non-negative integer.',
-    );
+      "Invalid arguments: `num` must be a number and `decimals` a non-negative integer.",
+    )
   }
-  const factor = 10 ** decimals;
-  return Math.round(num * factor) / factor;
+  const factor = 10 ** decimals
+  return Math.round(num * factor) / factor
 }
 
 /**
@@ -68,11 +74,17 @@ export function roundTo(num: number, decimals = 2): number {
  * @returns a string like "$1,234.56"
  * @throws if `amount` isn’t a valid number
  */
-export function formatCurrency(amount: number, currency = 'USD', locale = 'en-US'): string {
+export function formatCurrency(
+  amount: number,
+  currency = "USD",
+  locale = "en-US",
+): string {
   if (!isValidNumber(amount)) {
-    throw new Error('Invalid amount: must be a finite number.');
+    throw new Error("Invalid amount: must be a finite number.")
   }
-  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
+  return new Intl.NumberFormat(locale, { style: "currency", currency }).format(
+    amount,
+  )
 }
 
 /**
@@ -85,9 +97,9 @@ export function formatCurrency(amount: number, currency = 'USD', locale = 'en-US
  */
 export function toPercentage(fraction: number, decimals = 2): string {
   if (!isValidNumber(fraction)) {
-    throw new Error('Invalid fraction: must be a finite number.');
+    throw new Error("Invalid fraction: must be a finite number.")
   }
-  return `${roundTo(fraction * 100, decimals)}%`;
+  return `${roundTo(fraction * 100, decimals)}%`
 }
 
 /**
@@ -100,10 +112,17 @@ export function toPercentage(fraction: number, decimals = 2): string {
  * @throws if bounds are invalid or num isn’t valid
  */
 export function clampNumber(num: number, min: number, max: number): number {
-  if (!isValidNumber(num) || !isValidNumber(min) || !isValidNumber(max) || min > max) {
-    throw new Error('Invalid arguments: ensure num, min, max are finite and min ≤ max.');
+  if (
+    !isValidNumber(num) ||
+    !isValidNumber(min) ||
+    !isValidNumber(max) ||
+    min > max
+  ) {
+    throw new Error(
+      "Invalid arguments: ensure num, min, max are finite and min ≤ max.",
+    )
   }
-  return Math.max(min, Math.min(num, max));
+  return Math.max(min, Math.min(num, max))
 }
 
 /**
@@ -114,11 +133,11 @@ export function clampNumber(num: number, min: number, max: number): number {
  * @returns a string like "1,234,567"
  * @throws if `num` isn’t valid
  */
-export function formatWithCommas(num: number, locale = 'en-US'): string {
+export function formatWithCommas(num: number, locale = "en-US"): string {
   if (!isValidNumber(num)) {
-    throw new Error('Invalid number: must be finite.');
+    throw new Error("Invalid number: must be finite.")
   }
-  return new Intl.NumberFormat(locale).format(num);
+  return new Intl.NumberFormat(locale).format(num)
 }
 
 /**
@@ -130,9 +149,9 @@ export function formatWithCommas(num: number, locale = 'en-US'): string {
  */
 export function factorial(n: number): number {
   if (!Number.isInteger(n) || n < 0) {
-    throw new Error('Invalid input: factorial requires a non-negative integer.');
+    throw new Error("Invalid input: factorial requires a non-negative integer.")
   }
-  return n <= 1 ? 1 : n * factorial(n - 1);
+  return n <= 1 ? 1 : n * factorial(n - 1)
 }
 
 /**
@@ -145,9 +164,9 @@ export function factorial(n: number): number {
  */
 export function gcd(a: number, b: number): number {
   if (!isValidNumber(a) || !isValidNumber(b)) {
-    throw new Error('Invalid inputs: gcd requires finite numbers.');
+    throw new Error("Invalid inputs: gcd requires finite numbers.")
   }
-  return b === 0 ? Math.abs(a) : gcd(b, a % b);
+  return b === 0 ? Math.abs(a) : gcd(b, a % b)
 }
 
 /**
@@ -160,10 +179,10 @@ export function gcd(a: number, b: number): number {
  */
 export function lcm(a: number, b: number): number {
   if (!isValidNumber(a) || !isValidNumber(b)) {
-    throw new Error('Invalid inputs: lcm requires finite numbers.');
+    throw new Error("Invalid inputs: lcm requires finite numbers.")
   }
   // Avoid division by zero
-  const _gcd = gcd(a, b);
-  if (_gcd === 0) return 0;
-  return Math.abs((a * b) / _gcd);
+  const _gcd = gcd(a, b)
+  if (_gcd === 0) return 0
+  return Math.abs((a * b) / _gcd)
 }

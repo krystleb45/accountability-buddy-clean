@@ -1,16 +1,18 @@
 // File: app/terms-of-service/page.tsx
 
-import { Metadata } from 'next';
+import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: 'Terms of Service – Accountability Buddy',
-  description: 'Review the terms and conditions for using Accountability Buddy.',
+  title: "Terms of Service – Accountability Buddy",
+  description:
+    "Review the terms and conditions for using Accountability Buddy.",
   openGraph: {
-    title: 'Terms of Service – Accountability Buddy',
-    description: 'Review the terms and conditions for using Accountability Buddy.',
+    title: "Terms of Service – Accountability Buddy",
+    description:
+      "Review the terms and conditions for using Accountability Buddy.",
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/terms-of-service`,
   },
-};
+}
 
 export default function TermsOfServicePage() {
   return (
@@ -22,8 +24,8 @@ export default function TermsOfServicePage() {
         <section>
           <h2 className="mb-2 text-2xl font-semibold">1. Introduction</h2>
           <p className="text-gray-700">
-            Welcome to Accountability Buddy. By using our website and services, you agree to these
-            Terms of Service. Please read them carefully.
+            Welcome to Accountability Buddy. By using our website and services,
+            you agree to these Terms of Service. Please read them carefully.
           </p>
         </section>
 
@@ -32,19 +34,22 @@ export default function TermsOfServicePage() {
         <section>
           <h2 className="mb-2 text-2xl font-semibold">7. Contact Us</h2>
           <p className="text-gray-700">
-            If you have any questions about these Terms of Service, please contact us at{' '}
+            If you have any questions about these Terms of Service, please
+            contact us at{" "}
             <a
               href="mailto:support@accountabilitybuddy.com"
               className="text-blue-600 hover:underline"
             >
               support@accountabilitybuddy.com
-            </a>.
+            </a>
+            .
           </p>
         </section>
       </main>
       <footer className="mt-8 text-center text-gray-600">
-        &copy; {new Date().getFullYear()} Accountability Buddy. All rights reserved.
+        &copy; {new Date().getFullYear()} Accountability Buddy. All rights
+        reserved.
       </footer>
     </div>
-  );
+  )
 }

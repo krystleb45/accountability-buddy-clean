@@ -1,21 +1,24 @@
 // src/components/Subscriptions/SubscriptionActions.tsx
-'use client';
+"use client"
 
-import React, { useState } from 'react';
-import useStripe from '@/hooks/useStripe';
-import type { UpdateSubscriptionPayload } from '@/types/Stripe.types';
-import styles from './SubscriptionActions.module.css';
+import React, { useState } from "react"
+
+import type { UpdateSubscriptionPayload } from "@/types/Stripe.types"
+
+import useStripe from "@/hooks/useStripe"
+
+import styles from "./SubscriptionActions.module.css"
 
 const SubscriptionActions: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { subscription, updateSubscription, cancelSubscription } = useStripe();
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const { subscription, updateSubscription, cancelSubscription } = useStripe()
 
   const handleUpgrade = async (priceId: string) => {
-    if (!subscription) return;
+    if (!subscription) return
 
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
 
     const payload: UpdateSubscriptionPayload = {
       subscriptionId: subscription.id,
@@ -25,39 +28,42 @@ const SubscriptionActions: React.FC = () => {
           quantity: 1,
         },
       ],
-    };
+    }
 
     try {
-      await updateSubscription(payload);
+      await updateSubscription(payload)
       // The hook will refresh subscription data automatically
     } catch (err) {
-      console.error('Upgrade error:', err);
-      setError('Failed to upgrade subscription. Please try again.');
+      console.error("Upgrade error:", err)
+      setError("Failed to upgrade subscription. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleCancel = async () => {
-    if (!window.confirm('Are you sure you want to cancel your subscription?')) {
-      return;
+    if (!window.confirm("Are you sure you want to cancel your subscription?")) {
+      return
     }
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
 
     try {
-      await cancelSubscription();
+      await cancelSubscription()
       // subscription is now null in the hook
     } catch (err) {
-      console.error('Cancel error:', err);
-      setError('Failed to cancel subscription. Please try again.');
+      console.error("Cancel error:", err)
+      setError("Failed to cancel subscription. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <section className={styles.container} aria-labelledby="subscription-actions-heading">
+    <section
+      className={styles.container}
+      aria-labelledby="subscription-actions-heading"
+    >
       <h2 id="subscription-actions-heading" className={styles.heading}>
         Manage Your Subscription
       </h2>
@@ -77,11 +83,11 @@ const SubscriptionActions: React.FC = () => {
             <button
               type="button"
               className={styles.upgradeButton}
-              onClick={() => handleUpgrade('price_new_plan_id')}
+              onClick={() => handleUpgrade("price_new_plan_id")}
               disabled={loading}
               aria-busy={loading}
             >
-              {loading ? 'Upgrading…' : 'Upgrade Plan'}
+              {loading ? "Upgrading…" : "Upgrade Plan"}
             </button>
             <button
               type="button"
@@ -90,7 +96,7 @@ const SubscriptionActions: React.FC = () => {
               disabled={loading}
               aria-busy={loading}
             >
-              {loading ? 'Cancelling…' : 'Cancel Subscription'}
+              {loading ? "Cancelling…" : "Cancel Subscription"}
             </button>
           </div>
 
@@ -106,7 +112,7 @@ const SubscriptionActions: React.FC = () => {
         </p>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default SubscriptionActions;
+export default SubscriptionActions

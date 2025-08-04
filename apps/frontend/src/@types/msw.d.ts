@@ -1,6 +1,6 @@
 // msw.d.ts
-declare module 'msw' {
-  import { DefaultBodyType, MockedRequest, PathParams } from 'msw';
+declare module "msw" {
+  import type { DefaultBodyType, MockedRequest, PathParams } from "msw"
 
   export const rest: {
     get: <RequestBodyType = DefaultBodyType>(
@@ -10,7 +10,7 @@ declare module 'msw' {
         res: (responseResolver: unknown) => unknown,
         ctx: unknown,
       ) => unknown,
-    ) => unknown;
+    ) => unknown
     post: <RequestBodyType = DefaultBodyType>(
       url: string,
       resolver: (
@@ -18,7 +18,7 @@ declare module 'msw' {
         res: (responseResolver: unknown) => unknown,
         ctx: unknown,
       ) => unknown,
-    ) => unknown;
+    ) => unknown
     put: <RequestBodyType = DefaultBodyType>(
       url: string,
       resolver: (
@@ -26,7 +26,7 @@ declare module 'msw' {
         res: (responseResolver: unknown) => unknown,
         ctx: unknown,
       ) => unknown,
-    ) => unknown;
+    ) => unknown
     delete: <RequestBodyType = DefaultBodyType>(
       url: string,
       resolver: (
@@ -34,18 +34,22 @@ declare module 'msw' {
         res: (responseResolver: unknown) => unknown,
         ctx: unknown,
       ) => unknown,
-    ) => unknown;
+    ) => unknown
     // Add other HTTP methods as needed
-  };
-  type MockedRequest<RequestBodyType = DefaultBodyType, PathParamsType = PathParams<string>> = Omit<
-    Request,
-    'body' | 'params'
-  > & {
-    body: RequestBodyType;
-    params: PathParamsType;
-  };
+  }
+  type MockedRequest<
+    RequestBodyType = DefaultBodyType,
+    PathParamsType = PathParams<string>,
+  > = Omit<Request, "body" | "params"> & {
+    body: RequestBodyType
+    params: PathParamsType
+  }
 
-  export const setupWorker: (...handlers: Array<(...args: unknown[]) => unknown>) => unknown;
+  export const setupWorker: (
+    ...handlers: Array<(...args: unknown[]) => unknown>
+  ) => unknown
 
-  export const setupServer: (...handlers: Array<(...args: unknown[]) => unknown>) => unknown;
+  export const setupServer: (
+    ...handlers: Array<(...args: unknown[]) => unknown>
+  ) => unknown
 }

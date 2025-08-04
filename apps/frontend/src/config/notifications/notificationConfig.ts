@@ -5,32 +5,37 @@
 // ——————————————————————————————————————————————
 
 interface NotificationType {
-  duration: number;
+  duration: number
   style: {
-    backgroundColor: string;
-    color: string;
-  };
-  icon: string;
+    backgroundColor: string
+    color: string
+  }
+  icon: string
 }
 
-type Position = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
+type Position =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "center"
 
 interface NotificationConfig {
-  defaultDuration: number;
-  position: Position;
-  types: Record<string, NotificationType>;
+  defaultDuration: number
+  position: Position
+  types: Record<string, NotificationType>
 
   /** Return the config for a given type, or a fallback if unknown */
-  getConfig(this: NotificationConfig, type: string): NotificationType;
+  getConfig: (this: NotificationConfig, type: string) => NotificationType
 
   /**
    * Globally override the default duration and/or position.
    * Only accepts valid positions.
    */
-  setGlobalConfig(
+  setGlobalConfig: (
     this: NotificationConfig,
     config: { duration?: number; position?: Position },
-  ): void;
+  ) => void
 }
 
 // ——————————————————————————————————————————————
@@ -39,28 +44,28 @@ interface NotificationConfig {
 
 const notificationConfig: NotificationConfig = {
   defaultDuration: 5000,
-  position: 'top-right',
+  position: "top-right",
 
   types: {
     success: {
       duration: 3000,
-      style: { backgroundColor: '#4caf50', color: '#ffffff' },
-      icon: '✔️',
+      style: { backgroundColor: "#4caf50", color: "#ffffff" },
+      icon: "✔️",
     },
     error: {
       duration: 7000,
-      style: { backgroundColor: '#f44336', color: '#ffffff' },
-      icon: '❌',
+      style: { backgroundColor: "#f44336", color: "#ffffff" },
+      icon: "❌",
     },
     info: {
       duration: 5000,
-      style: { backgroundColor: '#2196f3', color: '#ffffff' },
-      icon: 'ℹ️',
+      style: { backgroundColor: "#2196f3", color: "#ffffff" },
+      icon: "ℹ️",
     },
     warning: {
       duration: 6000,
-      style: { backgroundColor: '#ff9800', color: '#ffffff' },
-      icon: '⚠️',
+      style: { backgroundColor: "#ff9800", color: "#ffffff" },
+      icon: "⚠️",
     },
   },
 
@@ -68,10 +73,10 @@ const notificationConfig: NotificationConfig = {
     return (
       this.types[type] || {
         duration: this.defaultDuration,
-        style: { backgroundColor: '#333', color: '#fff' },
-        icon: '🔔',
+        style: { backgroundColor: "#333", color: "#fff" },
+        icon: "🔔",
       }
-    );
+    )
   },
 
   setGlobalConfig(
@@ -79,12 +84,12 @@ const notificationConfig: NotificationConfig = {
     { duration, position }: { duration?: number; position?: Position },
   ): void {
     if (duration !== undefined) {
-      this.defaultDuration = duration;
+      this.defaultDuration = duration
     }
     if (position !== undefined) {
-      this.position = position;
+      this.position = position
     }
   },
-};
+}
 
-export default notificationConfig;
+export default notificationConfig

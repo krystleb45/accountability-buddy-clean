@@ -1,39 +1,41 @@
 // src/app/profile/page.client.tsx
-'use client';
+"use client"
 
-import React, { useEffect } from 'react';
-import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-import { useRouter }  from 'next/navigation';
-import Profile        from '@/components/Profile/Profile';
-import type { ProfileData } from '@/api/profile/profileApi';
+import { useSession } from "next-auth/react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import React, { useEffect } from "react"
+
+import type { ProfileData } from "@/api/profile/profileApi"
+
+import Profile from "@/components/Profile/Profile"
 
 interface ProfileClientProps {
-  initialProfile: ProfileData;
+  initialProfile: ProfileData
 }
 
 export default function ProfileClient({ initialProfile }: ProfileClientProps) {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
   // 1) If unauthenticated, bounce to /login
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.replace('/login');
+    if (status === "unauthenticated") {
+      router.replace("/login")
     }
-  }, [status, router]);
+  }, [status, router])
 
   // 2) While NextAuth is loading, show a full-screen loader
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
         <p>Loading profile…</p>
       </div>
-    );
+    )
   }
 
   // 3) session should now exist—otherwise we’ve redirected
-  if (!session) return null;
+  if (!session) return null
 
   return (
     <div className="min-h-screen bg-black p-6 text-white">
@@ -49,5 +51,5 @@ export default function ProfileClient({ initialProfile }: ProfileClientProps) {
         <Profile initialProfile={initialProfile} />
       </div>
     </div>
-  );
+  )
 }

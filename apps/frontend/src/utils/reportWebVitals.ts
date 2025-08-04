@@ -1,5 +1,7 @@
 // src/utils/reportWebVitals.ts
-import { Metric, onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals';
+import type { Metric } from "web-vitals"
+
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals"
 
 /**
  * Called by Next.js (or manually) to report a single metric.
@@ -8,9 +10,9 @@ import { Metric, onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals';
 export function reportWebVitals(metric: Metric): void {
   try {
     // Example: sendToAnalytics(metric);
-    console.log('[Web Vitals]', metric);
+    console.log("[Web Vitals]", metric)
   } catch (err: unknown) {
-    console.error('[Web Vitals] error reporting metric:', err);
+    console.error("[Web Vitals] error reporting metric:", err)
   }
 }
 
@@ -19,9 +21,9 @@ export function reportWebVitals(metric: Metric): void {
  * to `reportWebVitals`. Call this once on your top‐level (e.g. in _app.tsx).
  */
 export function initWebVitals(): void {
-  onCLS(reportWebVitals); // Cumulative Layout Shift
-  onINP(reportWebVitals); // Interaction to Next Paint (replacement for FID)
-  onFCP(reportWebVitals); // First Contentful Paint
-  onLCP(reportWebVitals); // Largest Contentful Paint
-  onTTFB(reportWebVitals); // Time to First Byte
+  onCLS(reportWebVitals) // Cumulative Layout Shift
+  onINP(reportWebVitals) // Interaction to Next Paint (replacement for FID)
+  onFCP(reportWebVitals) // First Contentful Paint
+  onLCP(reportWebVitals) // Largest Contentful Paint
+  onTTFB(reportWebVitals) // Time to First Byte
 }

@@ -3,9 +3,9 @@
  */
 declare global {
   interface Window {
-    fetch: typeof fetch;
-    MutationObserver: typeof MutationObserver;
-    IntersectionObserver: typeof IntersectionObserver;
+    fetch: typeof fetch
+    MutationObserver: typeof MutationObserver
+    IntersectionObserver: typeof IntersectionObserver
   }
 }
-export {};
+export {}

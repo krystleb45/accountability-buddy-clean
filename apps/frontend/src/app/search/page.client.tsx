@@ -1,41 +1,46 @@
 // src/app/search/page.client.tsx
-'use client';
+"use client"
 
-import React, { useState, FormEvent } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import searchService, { type SearchResult, type SearchType } from '@/services/searchService';
+import type { FormEvent } from "react"
+
+import { motion } from "framer-motion"
+import Link from "next/link"
+import React, { useState } from "react"
+
+import type { SearchResult, SearchType } from "@/services/searchService"
+
+import searchService from "@/services/searchService"
 
 export default function SearchClient() {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("")
+  const [results, setResults] = useState<SearchResult[]>([])
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSearch = async (e: FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-    setError(null);
+    e.preventDefault()
+    setSubmitted(true)
+    setError(null)
 
-    const q = query.trim();
+    const q = query.trim()
     if (!q) {
-      setResults([]);
-      return;
+      setResults([])
+      return
     }
 
     try {
-      const response = await searchService.search(q, 'all' as SearchType);
-      setResults(response.results);
+      const response = await searchService.search(q, "all" as SearchType)
+      setResults(response.results)
     } catch (err: unknown) {
-      console.error('Search error:', err);
+      console.error("Search error:", err)
       setError(
         err instanceof Error
           ? err.message
-          : 'An error occurred while searching. Please try again.'
-      );
-      setResults([]);
+          : "An error occurred while searching. Please try again.",
+      )
+      setResults([])
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-black p-6 text-white">
@@ -75,7 +80,9 @@ export default function SearchClient() {
         transition={{ duration: 0.8 }}
         className="rounded-lg bg-gray-900 p-6 shadow-md"
       >
-        <h2 className="mb-4 text-2xl font-semibold text-kelly-green">Results</h2>
+        <h2 className="mb-4 text-2xl font-semibold text-kelly-green">
+          Results
+        </h2>
 
         {error && <p className="mb-4 text-center text-red-500">{error}</p>}
 
@@ -91,7 +98,9 @@ export default function SearchClient() {
               className="mb-2 rounded-lg bg-gray-900 p-4 shadow-md"
             >
               <p className="font-semibold text-white">{r.title}</p>
-              <p className="mb-2 text-sm capitalize text-gray-400">Type: {r.type}</p>
+              <p className="mb-2 text-sm capitalize text-gray-400">
+                Type: {r.type}
+              </p>
               {r.id && (
                 <Link
                   href={`/${r.type}/${r.id}`}
@@ -103,9 +112,11 @@ export default function SearchClient() {
             </motion.div>
           ))
         ) : (
-          <p className="text-center text-gray-400">No results found for “{query}”.</p>
+          <p className="text-center text-gray-400">
+            No results found for “{query}”.
+          </p>
         )}
       </motion.main>
     </div>
-  );
+  )
 }

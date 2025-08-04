@@ -3,31 +3,38 @@
  */
 export interface Notification {
   /** Unique identifier for the notification. */
-  id: string;
+  id: string
 
   /** Title or subject of the notification. */
-  title: string;
+  title: string
 
   /** Detailed message of the notification. */
-  message: string;
+  message: string
 
   /** Type of notification (restricted to known categories). */
-  type: 'info' | 'success' | 'error' | 'warning' | 'goal' | 'subscription' | 'system';
+  type:
+    | "info"
+    | "success"
+    | "error"
+    | "warning"
+    | "goal"
+    | "subscription"
+    | "system"
 
   /** ISO timestamp or Unix timestamp indicating when the notification was created. */
-  timestamp: string | number;
+  timestamp: string | number
 
   /** Indicates whether the notification has been read. */
-  isRead: boolean;
+  isRead: boolean
 
   /** URL for related action (optional). */
-  actionUrl?: string;
+  actionUrl?: string
 
   /** Additional metadata for the notification (optional). */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>
 
   /** The priority level of the notification. */
-  priority?: 'low' | 'medium' | 'high';
+  priority?: "low" | "medium" | "high"
 }
 
 /**
@@ -35,13 +42,13 @@ export interface Notification {
  */
 export interface NotificationGroup {
   /** Title of the notification group (e.g., "System Alerts", "Achievements"). */
-  groupTitle: string;
+  groupTitle: string
 
   /** Array of notifications in this group. */
-  notifications: Notification[];
+  notifications: Notification[]
 
   /** Indicates whether all notifications in the group are read. */
-  allRead: boolean;
+  allRead: boolean
 }
 
 /**
@@ -49,19 +56,19 @@ export interface NotificationGroup {
  */
 export interface NotificationResponse {
   /** Total number of notifications available. */
-  total: number;
+  total: number
 
   /** Current page of notifications (for paginated responses). */
-  currentPage: number;
+  currentPage: number
 
   /** Number of notifications per page. */
-  perPage: number;
+  perPage: number
 
   /** Array of notifications for the current page. */
-  notifications: Notification[];
+  notifications: Notification[]
 
   /** Total number of unread notifications. */
-  unreadCount: number;
+  unreadCount: number
 }
 
 /**
@@ -69,33 +76,33 @@ export interface NotificationResponse {
  */
 export interface NotificationPreferences {
   /** Whether to receive email notifications. */
-  emailNotifications: boolean;
+  emailNotifications: boolean
 
   /** Whether to receive push notifications. */
-  pushNotifications: boolean;
+  pushNotifications: boolean
 
   /** Whether to receive in-app notifications. */
-  inAppNotifications: boolean;
+  inAppNotifications: boolean
 
   /** Preferred notification types (e.g., "info", "error", "goal"). */
   preferredTypes?: (
-    | 'info'
-    | 'success'
-    | 'error'
-    | 'warning'
-    | 'goal'
-    | 'subscription'
-    | 'system'
-  )[];
+    | "info"
+    | "success"
+    | "error"
+    | "warning"
+    | "goal"
+    | "subscription"
+    | "system"
+  )[]
 
   /** Quiet hours start time (ISO 8601 time format, e.g., "22:00:00" for 10 PM). */
-  quietHoursStart?: string;
+  quietHoursStart?: string
 
   /** Quiet hours end time (ISO 8601 time format, e.g., "07:00:00" for 7 AM). */
-  quietHoursEnd?: string;
+  quietHoursEnd?: string
 
   /** Whether to mute notifications entirely during quiet hours. */
-  muteDuringQuietHours?: boolean;
+  muteDuringQuietHours?: boolean
 }
 
 /**
@@ -103,29 +110,29 @@ export interface NotificationPreferences {
  */
 export interface UpdateNotificationPreferencesRequest {
   /** Whether to enable email notifications. */
-  emailNotifications?: boolean;
+  emailNotifications?: boolean
 
   /** Whether to enable push notifications. */
-  pushNotifications?: boolean;
+  pushNotifications?: boolean
 
   /** Whether to enable in-app notifications. */
-  inAppNotifications?: boolean;
+  inAppNotifications?: boolean
 
   /** Preferred notification types. */
   preferredTypes?: (
-    | 'info'
-    | 'success'
-    | 'error'
-    | 'warning'
-    | 'goal'
-    | 'subscription'
-    | 'system'
-  )[];
+    | "info"
+    | "success"
+    | "error"
+    | "warning"
+    | "goal"
+    | "subscription"
+    | "system"
+  )[]
 
   /** Quiet hours settings. */
-  quietHoursStart?: string;
-  quietHoursEnd?: string;
-  muteDuringQuietHours?: boolean;
+  quietHoursStart?: string
+  quietHoursEnd?: string
+  muteDuringQuietHours?: boolean
 }
 
 /**
@@ -133,14 +140,14 @@ export interface UpdateNotificationPreferencesRequest {
  */
 export interface NotificationDeliveryStatus {
   /** Unique notification ID. */
-  notificationId: string;
+  notificationId: string
 
   /** Status of the delivery attempt. */
-  status: 'delivered' | 'failed' | 'pending';
+  status: "delivered" | "failed" | "pending"
 
   /** Error message if delivery failed (optional). */
-  errorMessage?: string;
+  errorMessage?: string
 
   /** Timestamp of the delivery attempt. */
-  timestamp: string | number;
+  timestamp: string | number
 }

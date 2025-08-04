@@ -3,10 +3,10 @@
  */
 export interface PaginationParams {
   /** The current page number. */
-  page: number;
+  page: number
 
   /** The number of items per page. */
-  limit: number;
+  limit: number
 }
 
 /**
@@ -14,19 +14,19 @@ export interface PaginationParams {
  */
 export interface PaginatedData<T> {
   /** The array of items on the current page. */
-  items: T[];
+  items: T[]
 
   /** The total number of items available. */
-  totalItems: number;
+  totalItems: number
 
   /** The total number of pages available. */
-  totalPages: number;
+  totalPages: number
 
   /** The current page number. */
-  currentPage: number;
+  currentPage: number
 
   /** The number of items per page. */
-  itemsPerPage: number;
+  itemsPerPage: number
 }
 
 /**
@@ -34,10 +34,10 @@ export interface PaginatedData<T> {
  */
 export interface Filter {
   /** The key to filter by. */
-  key: string;
+  key: string
 
   /** The value to filter by. */
-  value: string | number | boolean | null;
+  value: string | number | boolean | null
 }
 
 /**
@@ -45,10 +45,10 @@ export interface Filter {
  */
 export interface SortOption {
   /** The field to sort by. */
-  field: string;
+  field: string
 
   /** The direction to sort in (`asc` for ascending, `desc` for descending). */
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc"
 }
 
 /**
@@ -56,20 +56,20 @@ export interface SortOption {
  */
 export interface Timestamps {
   /** The timestamp of creation. */
-  createdAt: string;
+  createdAt: string
 
   /** The timestamp of the last update. */
-  updatedAt?: string;
+  updatedAt?: string
 
   /** The timestamp of deletion, if applicable. */
-  deletedAt?: string;
+  deletedAt?: string
 }
 
 /**
  * Represents a generic key-value map.
  */
 export interface KeyValueMap {
-  [key: string]: string | number | boolean | null | undefined;
+  [key: string]: string | number | boolean | null | undefined
 }
 
 /**
@@ -77,10 +77,10 @@ export interface KeyValueMap {
  */
 export interface DropdownOption {
   /** The label to display for the option. */
-  label: string;
+  label: string
 
   /** The value associated with the option. */
-  value: string | number | boolean;
+  value: string | number | boolean
 }
 
 /**
@@ -88,13 +88,13 @@ export interface DropdownOption {
  */
 export interface ApiQuery {
   /** Array of filters to apply. */
-  filters?: Filter[];
+  filters?: Filter[]
 
   /** Sorting options for the query. */
-  sort?: SortOption[];
+  sort?: SortOption[]
 
   /** Pagination parameters for the query. */
-  pagination?: PaginationParams;
+  pagination?: PaginationParams
 }
 
 /**
@@ -102,14 +102,14 @@ export interface ApiQuery {
  */
 export interface FileUpload {
   /** The file name. */
-  name: string;
+  name: string
 
   /** The MIME type of the file. */
-  type: string;
+  type: string
 
   /** The size of the file in bytes. */
-  size: number;
+  size: number
 
   /** The actual file data as a `File` object. */
-  file: File;
+  file: File
 }

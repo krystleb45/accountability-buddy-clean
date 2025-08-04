@@ -1,30 +1,30 @@
 // src/app/layout.tsx
 
-import '../styles/global.css'
-import '../styles/themes/light.css'
-import '../styles/themes/dark.css'
+import "../styles/global.css"
+import "../styles/themes/light.css"
+import "../styles/themes/dark.css"
 
-import { ReactNode } from 'react'
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
+import type { ReactNode } from "react"
 
-import Providers from '@/components/Providers'
-import LayoutClient from '@/components/LayoutClient'
+import LayoutClient from "@/components/LayoutClient"
+import Providers from "@/components/Providers"
 
 export const metadata: Metadata = {
-  title: 'Accountability Buddy',
-  description: 'Your goal-tracking accountability partner.',
+  title: "Accountability Buddy",
+  description: "Your goal-tracking accountability partner.",
   openGraph: {
-    title: 'Accountability Buddy',
-    description: 'Your goal-tracking accountability partner.',
+    title: "Accountability Buddy",
+    description: "Your goal-tracking accountability partner.",
     url: process.env.NEXT_PUBLIC_BASE_URL as string,
-    siteName: 'Accountability Buddy',
-    type: 'website',
+    siteName: "Accountability Buddy",
+    type: "website",
     images: [{ url: `${process.env.NEXT_PUBLIC_BASE_URL}/og-default.png` }],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Accountability Buddy',
-    description: 'Your goal-tracking accountability partner.',
+    card: "summary_large_image",
+    title: "Accountability Buddy",
+    description: "Your goal-tracking accountability partner.",
     images: [`${process.env.NEXT_PUBLIC_BASE_URL}/twitter-default.png`],
   },
 }

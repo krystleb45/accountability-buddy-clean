@@ -1,58 +1,61 @@
 // src/app/api/settings/password/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession }        from 'next-auth/next';
-import { authOptions }             from '@/app/api/auth/[...nextauth]/route';
+import type { NextRequest } from "next/server"
 
-const BACKEND_URL = process.env.BACKEND_URL!;
+import { getServerSession } from "next-auth/next"
+import { NextResponse } from "next/server"
+
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+
+const BACKEND_URL = process.env.BACKEND_URL!
 if (!BACKEND_URL) {
-  throw new Error('Missing BACKEND_URL environment variable');
+  throw new Error("Missing BACKEND_URL environment variable")
 }
 
 export async function PUT(req: NextRequest) {
   // 1) Verify NextAuth session + JWT
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
   if (!session?.user?.accessToken) {
     return NextResponse.json(
-      { success: false, message: 'Not authenticated' },
-      { status: 401 }
-    );
+      { success: false, message: "Not authenticated" },
+      { status: 401 },
+    )
   }
 
   // 2) Parse client payload { currentPassword, newPassword }
-  let clientPayload: { currentPassword: string; newPassword: string };
+  let clientPayload: { currentPassword: string; newPassword: string }
   try {
-    clientPayload = await req.json();
+    clientPayload = await req.json()
   } catch {
     return NextResponse.json(
-      { success: false, message: 'Invalid JSON payload' },
-      { status: 400 }
-    );
+      { success: false, message: "Invalid JSON payload" },
+      { status: 400 },
+    )
   }
 
   // 3) Proxy to Express’s PUT /api/settings/password
   const upstream = await fetch(`${BACKEND_URL}/api/settings/password`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type':  'application/json',
-      'Authorization': `Bearer ${session.user.accessToken}`,
-      'cookie':        req.headers.get('cookie') ?? '',
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${session.user.accessToken}`,
+      cookie: req.headers.get("cookie") ?? "",
     },
     body: JSON.stringify(clientPayload),
-  });
+  })
 
-  const text = await upstream.text();
+  const text = await upstream.text()
   if (!upstream.ok) {
-    console.error('[settings/password][PUT] upstream error:', text);
+    console.error("[settings/password][PUT] upstream error:", text)
     return NextResponse.json(
-      { success: false, message: text || 'Upstream error' },
-      { status: upstream.status }
-    );
+      { success: false, message: text || "Upstream error" },
+      { status: upstream.status },
+    )
   }
 
   // 4) Return backend’s JSON verbatim
   return new NextResponse(text, {
-    status:  upstream.status,
-    headers: { 'content-type': 'application/json' },
-  });
+    status: upstream.status,
+    headers: { "content-type": "application/json" },
+  })
 }

@@ -1,12 +1,17 @@
 // src/components/Activities/ActivityList.tsx
-import React, { ReactElement } from 'react';
-import ActivityItem, { Activity } from './ActivityItem';
+import type { ReactElement } from "react"
+
+import React from "react"
+
+import type { Activity } from "./ActivityItem"
+
+import ActivityItem from "./ActivityItem"
 
 export interface ActivityListProps {
-  activities: Activity[];
-  onViewDetails: (id: string) => void;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
+  activities: Activity[]
+  onViewDetails: (id: string) => void
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
 }
 
 export default function ActivityList({
@@ -20,7 +25,7 @@ export default function ActivityList({
       <div className="rounded-lg bg-gray-800 p-6 text-center text-gray-400 shadow-lg">
         No activities found. Start by adding one!
       </div>
-    );
+    )
   }
 
   return (
@@ -35,5 +40,5 @@ export default function ActivityList({
         />
       ))}
     </div>
-  );
+  )
 }

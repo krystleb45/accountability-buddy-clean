@@ -1,12 +1,18 @@
 // src/context/auth/PermissionsContext.tsx
-'use client';
+"use client"
 
-import React, { createContext, useContext, ReactNode, useMemo } from 'react';
+import type { ReactNode } from "react"
+
+import React, { createContext, useMemo } from "react"
 
 // 1️⃣ Import centralized Role & hierarchy helper
-import { ROLES, Role, hasAccess } from '@/constants/roles';
+import type { Role } from "@/constants/roles"
+
+import { hasAccess, ROLES } from "@/constants/roles"
 // 2️⃣ Import Permissions definitions
-import { PERMISSIONS, Permission } from '@/constants/permissions';
+import type { Permission } from "@/constants/permissions"
+
+import { PERMISSIONS } from "@/constants/permissions"
 
 /**
  * Map each role to the set of permissions it should have.
@@ -33,37 +39,42 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     PERMISSIONS.VIEW_ADMIN_PANEL,
   ],
   [ROLES.SUPER_ADMIN]: Object.values(PERMISSIONS),
-};
+}
 
 /** Context shape */
 interface PermissionsContextType {
-  userRole: Role;
+  userRole: Role
   /** Broad check: based on the ROLE_HIERARCHY */
-  hasRoleAccess: (required: Role) => boolean;
+  hasRoleAccess: (required: Role) => boolean
   /** Fine-grained check: based on ROLE_PERMISSIONS mapping */
-  hasPermission: (permission: Permission) => boolean;
+  hasPermission: (permission: Permission) => boolean
 }
 
 /** Create & export the context */
-const PermissionsContext = createContext<PermissionsContextType | undefined>(undefined);
+const PermissionsContext = createContext<PermissionsContextType | undefined>(
+  undefined,
+)
 
 /** Hook to consume it */
-export const usePermissions = (): PermissionsContextType => {
-  const ctx = useContext(PermissionsContext);
+export function usePermissions(): PermissionsContextType {
+  const ctx = use(PermissionsContext)
   if (!ctx) {
-    throw new Error('usePermissions must be inside a PermissionsProvider');
+    throw new Error("usePermissions must be inside a PermissionsProvider")
   }
-  return ctx;
-};
+  return ctx
+}
 
 /** Provider props */
 interface PermissionsProviderProps {
-  children: ReactNode;
-  role: Role;
+  children: ReactNode
+  role: Role
 }
 
 /** The Provider itself */
-export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ children, role }) => {
+export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({
+  children,
+  role,
+}) => {
   // Memoize to avoid re-creating functions each render
   const value = useMemo<PermissionsContextType>(
     () => ({
@@ -73,12 +84,13 @@ export const PermissionsProvider: React.FC<PermissionsProviderProps> = ({ childr
       hasRoleAccess: (required: Role) => hasAccess(role, required),
 
       /** Fine-grained, permission check */
-      hasPermission: (perm: Permission) => (ROLE_PERMISSIONS[role] || []).includes(perm),
+      hasPermission: (perm: Permission) =>
+        (ROLE_PERMISSIONS[role] || []).includes(perm),
     }),
     [role],
-  );
+  )
 
-  return <PermissionsContext.Provider value={value}>{children}</PermissionsContext.Provider>;
-};
+  return <PermissionsContext value={value}>{children}</PermissionsContext>
+}
 
-export default PermissionsProvider;
+export default PermissionsProvider

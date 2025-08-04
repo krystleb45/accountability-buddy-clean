@@ -7,7 +7,7 @@
  * @returns A localized date/time string.
  */
 export function formatTimestamp(timestamp: string): string {
-  return new Date(timestamp).toLocaleString();
+  return new Date(timestamp).toLocaleString()
 }
 
 /**
@@ -18,5 +18,5 @@ export function formatTimestamp(timestamp: string): string {
  * @returns The truncated text, with `…` appended if it was longer than `maxLength`.
  */
 export function truncateText(text: string, maxLength: number): string {
-  return text.length > maxLength ? `${text.substring(0, maxLength)}…` : text;
+  return text.length > maxLength ? `${text.substring(0, maxLength)}…` : text
 }

@@ -1,14 +1,19 @@
 // src/components/PointShop/RewardCard.tsx
-import React from 'react';
-import type { Reward } from '../../types/Rewards.types';
+import React from "react"
+
+import type { Reward } from "../../types/Rewards.types"
 
 interface RewardCardProps {
-  reward: Reward;
-  onRedeem: () => void;
-  disabled: boolean;
+  reward: Reward
+  onRedeem: () => void
+  disabled: boolean
 }
 
-const RewardCard: React.FC<RewardCardProps> = ({ reward, onRedeem, disabled }) => {
+const RewardCard: React.FC<RewardCardProps> = ({
+  reward,
+  onRedeem,
+  disabled,
+}) => {
   return (
     <div
       className="reward-card flex flex-col justify-between rounded-lg bg-gray-800 p-4 shadow-lg"
@@ -25,7 +30,10 @@ const RewardCard: React.FC<RewardCardProps> = ({ reward, onRedeem, disabled }) =
         <div className="reward-image-placeholder mb-4 h-32 w-full rounded bg-gray-700" />
       )}
 
-      <h3 id={`reward-title-${reward._id}`} className="mb-2 text-xl font-bold text-white">
+      <h3
+        id={`reward-title-${reward._id}`}
+        className="mb-2 text-xl font-bold text-white"
+      >
         {reward.title}
       </h3>
 
@@ -42,13 +50,15 @@ const RewardCard: React.FC<RewardCardProps> = ({ reward, onRedeem, disabled }) =
             : `Redeem ${reward.title} for ${reward.pointsRequired} points`
         }
         className={`rounded-lg px-4 py-2 text-white transition ${
-          disabled ? 'cursor-not-allowed bg-gray-600' : 'bg-kelly-green hover:bg-opacity-80'
+          disabled
+            ? "cursor-not-allowed bg-gray-600"
+            : "bg-kelly-green hover:bg-opacity-80"
         }`}
       >
-        {disabled ? 'Insufficient Points' : 'Redeem'}
+        {disabled ? "Insufficient Points" : "Redeem"}
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default RewardCard;
+export default RewardCard

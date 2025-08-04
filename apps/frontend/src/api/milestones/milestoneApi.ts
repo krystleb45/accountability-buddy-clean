@@ -1,16 +1,17 @@
 // src/milestones/milestoneApi.ts
 
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface Milestone {
-  _id: string;
-  user: string;
-  title: string;
-  description?: string;
-  dueDate: string;
-  createdAt: string;
-  updatedAt: string;
+  _id: string
+  user: string
+  title: string
+  description?: string
+  dueDate: string
+  createdAt: string
+  updatedAt: string
 }
 
 /**
@@ -19,14 +20,14 @@ export interface Milestone {
  */
 export async function fetchMilestones(): Promise<Milestone[]> {
   try {
-    const resp = await http.get<Milestone[]>('/milestones');
-    return resp.data;
+    const resp = await http.get<Milestone[]>("/milestones")
+    return resp.data
   } catch (err) {
     console.error(
-      '❌ [milestoneApi::fetchMilestones]',
-      axios.isAxiosError(err) ? err.response?.data || err.message : err
-    );
-    return [];
+      "❌ [milestoneApi::fetchMilestones]",
+      axios.isAxiosError(err) ? err.response?.data || err.message : err,
+    )
+    return []
   }
 }
 
@@ -37,17 +38,21 @@ export async function fetchMilestones(): Promise<Milestone[]> {
 export async function addMilestone(
   title: string,
   dueDate: string,
-  description?: string
+  description?: string,
 ): Promise<Milestone | null> {
   try {
-    const resp = await http.post<Milestone>('/milestones/add', { title, description, dueDate });
-    return resp.data;
+    const resp = await http.post<Milestone>("/milestones/add", {
+      title,
+      description,
+      dueDate,
+    })
+    return resp.data
   } catch (err) {
     console.error(
-      '❌ [milestoneApi::addMilestone]',
-      axios.isAxiosError(err) ? err.response?.data || err.message : err
-    );
-    return null;
+      "❌ [milestoneApi::addMilestone]",
+      axios.isAxiosError(err) ? err.response?.data || err.message : err,
+    )
+    return null
   }
 }
 
@@ -57,17 +62,20 @@ export async function addMilestone(
  */
 export async function updateMilestone(
   milestoneId: string,
-  updates: Partial<{ title: string; description?: string; dueDate: string }>
+  updates: Partial<{ title: string; description?: string; dueDate: string }>,
 ): Promise<Milestone | null> {
   try {
-    const resp = await http.put<Milestone>('/milestones/update', { milestoneId, updates });
-    return resp.data;
+    const resp = await http.put<Milestone>("/milestones/update", {
+      milestoneId,
+      updates,
+    })
+    return resp.data
   } catch (err) {
     console.error(
-      '❌ [milestoneApi::updateMilestone]',
-      axios.isAxiosError(err) ? err.response?.data || err.message : err
-    );
-    return null;
+      "❌ [milestoneApi::updateMilestone]",
+      axios.isAxiosError(err) ? err.response?.data || err.message : err,
+    )
+    return null
   }
 }
 
@@ -77,16 +85,16 @@ export async function updateMilestone(
  */
 export async function deleteMilestone(milestoneId: string): Promise<boolean> {
   try {
-    const resp = await http.delete<{ success: boolean }>('/milestones/delete', {
+    const resp = await http.delete<{ success: boolean }>("/milestones/delete", {
       data: { milestoneId },
-    });
-    return resp.data.success;
+    })
+    return resp.data.success
   } catch (err) {
     console.error(
-      '❌ [milestoneApi::deleteMilestone]',
-      axios.isAxiosError(err) ? err.response?.data || err.message : err
-    );
-    return false;
+      "❌ [milestoneApi::deleteMilestone]",
+      axios.isAxiosError(err) ? err.response?.data || err.message : err,
+    )
+    return false
   }
 }
 
@@ -95,4 +103,4 @@ export default {
   addMilestone,
   updateMilestone,
   deleteMilestone,
-};
+}

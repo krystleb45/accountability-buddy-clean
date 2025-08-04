@@ -23,31 +23,33 @@ export enum HttpStatusCodes {
 // ——————————————————————————————————————————————
 export const ErrorMessages = {
   GENERAL: {
-    UNKNOWN_ERROR: 'An unknown error occurred. Please try again.',
-    NETWORK_ERROR: 'Network error. Please check your connection.',
+    UNKNOWN_ERROR: "An unknown error occurred. Please try again.",
+    NETWORK_ERROR: "Network error. Please check your connection.",
   },
   AUTH: {
-    LOGIN_FAILED: 'Invalid email or password.',
-    UNAUTHORIZED: 'You are not authorized to perform this action.',
-    SESSION_EXPIRED: 'Your session has expired. Please log in again.',
+    LOGIN_FAILED: "Invalid email or password.",
+    UNAUTHORIZED: "You are not authorized to perform this action.",
+    SESSION_EXPIRED: "Your session has expired. Please log in again.",
   },
   USER: {
-    NOT_FOUND: 'User not found.',
-    UPDATE_FAILED: 'Failed to update user information.',
+    NOT_FOUND: "User not found.",
+    UPDATE_FAILED: "Failed to update user information.",
   },
   TASKS: {
-    NOT_FOUND: 'Task not found.',
-    CREATE_FAILED: 'Failed to create task. Please try again.',
-    DELETE_FAILED: 'Failed to delete task. Please try again.',
+    NOT_FOUND: "Task not found.",
+    CREATE_FAILED: "Failed to create task. Please try again.",
+    DELETE_FAILED: "Failed to delete task. Please try again.",
   },
   SERVER: {
-    INTERNAL_ERROR: 'A server error occurred. Please try again later.',
-    MAINTENANCE: 'The system is currently under maintenance. Please try again later.',
+    INTERNAL_ERROR: "A server error occurred. Please try again later.",
+    MAINTENANCE:
+      "The system is currently under maintenance. Please try again later.",
   },
-} as const;
+} as const
 
-export type ErrorMessagesKey = keyof typeof ErrorMessages;
-export type ErrorMessagesGroupKey<K extends ErrorMessagesKey> = keyof (typeof ErrorMessages)[K];
+export type ErrorMessagesKey = keyof typeof ErrorMessages
+export type ErrorMessagesGroupKey<K extends ErrorMessagesKey> =
+  keyof (typeof ErrorMessages)[K]
 
 // ——————————————————————————————————————————————
 // Map an HTTP status to one of our standardized messages.
@@ -59,20 +61,20 @@ export function getErrorMessage(
 ): string {
   switch (statusCode) {
     case HttpStatusCodes.BAD_REQUEST:
-      return 'The request was invalid. Please check your input.';
+      return "The request was invalid. Please check your input."
     case HttpStatusCodes.UNAUTHORIZED:
-      return ErrorMessages.AUTH.UNAUTHORIZED;
+      return ErrorMessages.AUTH.UNAUTHORIZED
     case HttpStatusCodes.FORBIDDEN:
-      return ErrorMessages.AUTH.UNAUTHORIZED;
+      return ErrorMessages.AUTH.UNAUTHORIZED
     case HttpStatusCodes.NOT_FOUND:
-      return ErrorMessages.GENERAL.UNKNOWN_ERROR; // or a more specific text
+      return ErrorMessages.GENERAL.UNKNOWN_ERROR // or a more specific text
     case HttpStatusCodes.CONFLICT:
-      return 'A conflict occurred. Please try again.';
+      return "A conflict occurred. Please try again."
     case HttpStatusCodes.INTERNAL_SERVER_ERROR:
-      return ErrorMessages.SERVER.INTERNAL_ERROR;
+      return ErrorMessages.SERVER.INTERNAL_ERROR
     case HttpStatusCodes.SERVICE_UNAVAILABLE:
-      return ErrorMessages.SERVER.MAINTENANCE;
+      return ErrorMessages.SERVER.MAINTENANCE
     default:
-      return defaultMessage;
+      return defaultMessage
   }
 }

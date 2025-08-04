@@ -1,30 +1,30 @@
 // src/app/auth-pages/forgot-password/page.client.tsx
-'use client';
+"use client"
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion"
+import React, { useState } from "react"
 
 export default function ForgotPasswordForm() {
-  const [email, setEmail] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState("")
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
+    e.preventDefault()
+    setError(null)
     try {
-      const res = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
-      });
+      })
       if (!res.ok) {
-        const body = await res.json();
-        throw new Error(body.message || 'Failed to send reset link');
+        const body = await res.json()
+        throw new Error(body.message || "Failed to send reset link")
       }
-      setSubmitted(true);
+      setSubmitted(true)
     } catch (err) {
-      setError((err as Error).message);
+      setError((err as Error).message)
     }
   }
 
@@ -48,7 +48,10 @@ export default function ForgotPasswordForm() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <p className="text-center text-red-500">{error}</p>}
             <div>
-              <label htmlFor="email" className="mb-1 block font-medium text-gray-300">
+              <label
+                htmlFor="email"
+                className="mb-1 block font-medium text-gray-300"
+              >
                 Enter your email:
               </label>
               <input
@@ -57,7 +60,7 @@ export default function ForgotPasswordForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-lg border bg-gray-800 p-3 text-white placeholder-gray-400 focus:border-kelly-green focus:outline-none focus:ring focus:ring-green-200"
+                className="w-full rounded-lg border bg-gray-800 p-3 text-white placeholder:text-gray-400 focus:border-kelly-green focus:outline-none focus:ring focus:ring-green-200"
                 placeholder="you@example.com"
               />
             </div>
@@ -74,5 +77,5 @@ export default function ForgotPasswordForm() {
         )}
       </motion.div>
     </div>
-  );
+  )
 }

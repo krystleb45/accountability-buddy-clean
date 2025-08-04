@@ -3,7 +3,7 @@ import { logger } from "../utils/winstonLogger"
 // Create a single client variable that will be exported
 let rClient: any
 
-// Check if Redis is disabled BEFORE importing anything Redis-related
+  // Check if Redis is disabled BEFORE importing anything Redis-related
 ;(async () => {
   if (
     process.env.DISABLE_REDIS === "true" ||

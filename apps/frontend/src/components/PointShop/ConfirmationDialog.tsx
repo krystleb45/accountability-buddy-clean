@@ -1,13 +1,13 @@
 // src/components/PointShop/ConfirmationDialog.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react"
 
 interface ConfirmationDialogProps {
-  isOpen: boolean;
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-  confirmLabel?: string;
-  cancelLabel?: string;
+  isOpen: boolean
+  message: string
+  onConfirm: () => void
+  onCancel: () => void
+  confirmLabel?: string
+  cancelLabel?: string
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -15,16 +15,16 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   message,
   onConfirm,
   onCancel,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
 }) => {
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (isOpen && panelRef.current) panelRef.current.focus();
-  }, [isOpen]);
+    if (isOpen && panelRef.current) panelRef.current.focus()
+  }, [isOpen])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div
@@ -35,9 +35,9 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       className="confirmation-dialog-overlay fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
       onClick={onCancel}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onCancel();
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onCancel()
         }
       }}
     >
@@ -48,7 +48,10 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         className="confirmation-dialog-content w-full max-w-sm rounded-lg bg-white p-6 shadow-lg"
         ref={panelRef}
       >
-        <h2 id="confirmation-dialog-label" className="mb-4 text-lg font-semibold">
+        <h2
+          id="confirmation-dialog-label"
+          className="mb-4 text-lg font-semibold"
+        >
           Confirmation
         </h2>
         <p className="mb-6">{message}</p>
@@ -71,7 +74,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ConfirmationDialog;
+export default ConfirmationDialog

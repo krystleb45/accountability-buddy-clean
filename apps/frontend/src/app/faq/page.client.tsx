@@ -1,49 +1,55 @@
 // src/app/faq/page.client.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState, ChangeEvent } from 'react';
-import Card, { CardContent } from '@/components/cards/Card';
-import Input from '@/components/UtilityComponents/Input';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { FAQItem } from '@/types/faq';
-import { fetchFaqs } from '@/api/faq/faqApi';
+import type { ChangeEvent } from "react"
+
+import { AnimatePresence, motion } from "framer-motion"
+import React, { useEffect, useState } from "react"
+
+import type { FAQItem } from "@/types/faq"
+
+import { fetchFaqs } from "@/api/faq/faqApi"
+import Card, { CardContent } from "@/components/cards/Card"
+import Input from "@/components/UtilityComponents/Input"
 
 export default function FaqClient() {
-  const [faqs, setFaqs] = useState<FAQItem[]>([]);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [faqs, setFaqs] = useState<FAQItem[]>([])
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
-        const data = await fetchFaqs();
-        setFaqs(data);
+        const data = await fetchFaqs()
+        setFaqs(data)
       } catch (err) {
-        console.error(err);
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+        console.error(err)
+        setError(
+          err instanceof Error ? err.message : "An unexpected error occurred",
+        )
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   const filteredFaqs = faqs.filter(
     (faq) =>
       faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      faq.answer.toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   const toggleFaq = (index: number) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
+    setActiveIndex(activeIndex === index ? null : index)
+  }
 
   if (loading) {
-    return <p className="text-center p-4">Loading FAQs…</p>;
+    return <p className="p-4 text-center">Loading FAQs…</p>
   }
   if (error) {
-    return <p className="text-center text-red-500 p-4">{error}</p>;
+    return <p className="p-4 text-center text-red-500">{error}</p>
   }
 
   return (
@@ -55,7 +61,9 @@ export default function FaqClient() {
         <Input
           placeholder="Search FAQs..."
           value={searchTerm}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setSearchTerm(e.target.value)
+          }
           className="bg-white"
         />
       </div>
@@ -72,7 +80,7 @@ export default function FaqClient() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') toggleFaq(index);
+                    if (e.key === "Enter" || e.key === " ") toggleFaq(index)
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -92,7 +100,7 @@ export default function FaqClient() {
                       <motion.p
                         className="mt-3 text-gray-700"
                         initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
+                        animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3 }}
                       >
@@ -105,9 +113,11 @@ export default function FaqClient() {
             </Card>
           ))
         ) : (
-          <p className="text-center text-gray-500">No FAQs match your search.</p>
+          <p className="text-center text-gray-500">
+            No FAQs match your search.
+          </p>
         )}
       </div>
     </div>
-  );
+  )
 }

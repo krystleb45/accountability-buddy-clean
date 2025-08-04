@@ -1,12 +1,15 @@
 // src/files/fileApi.ts
 
-import axios, { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
-import { http } from '@/utils/http';
+import type { AxiosProgressEvent, AxiosRequestConfig } from "axios"
+
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface FileApiResponse {
-  success: boolean;
-  message: string;
-  fileUrl?: string;
+  success: boolean
+  message: string
+  fileUrl?: string
 }
 
 /**
@@ -18,24 +21,34 @@ export async function uploadFile(
   file: File,
   onUploadProgress?: (progress: AxiosProgressEvent) => void,
 ): Promise<FileApiResponse> {
-  const formData = new FormData();
-  formData.append('file', file);
+  const formData = new FormData()
+  formData.append("file", file)
 
   const config: AxiosRequestConfig = {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: { "Content-Type": "multipart/form-data" },
     ...(onUploadProgress ? { onUploadProgress } : {}),
-  };
+  }
 
   try {
-    const response = await http.post<FileApiResponse>('/files/upload', formData, config);
-    return response.data;
+    const response = await http.post<FileApiResponse>(
+      "/files/upload",
+      formData,
+      config,
+    )
+    return response.data
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-      console.error('❌ [fileApi::uploadFile]', error.response?.data || error.message);
-      return { success: false, message: (error.response?.data as any)?.message || error.message };
+      console.error(
+        "❌ [fileApi::uploadFile]",
+        error.response?.data || error.message,
+      )
+      return {
+        success: false,
+        message: (error.response?.data as any)?.message || error.message,
+      }
     }
-    console.error('❌ [fileApi::uploadFile]', error);
-    return { success: false, message: 'An unknown error occurred.' };
+    console.error("❌ [fileApi::uploadFile]", error)
+    return { success: false, message: "An unknown error occurred." }
   }
 }
 
@@ -45,16 +58,16 @@ export async function uploadFile(
  */
 export async function deleteFile(fileName: string): Promise<boolean> {
   if (!fileName) {
-    console.error('❌ [fileApi::deleteFile] fileName is required.');
-    return false;
+    console.error("❌ [fileApi::deleteFile] fileName is required.")
+    return false
   }
   try {
-    await http.delete(`/files/${encodeURIComponent(fileName)}`);
-    return true;
+    await http.delete(`/files/${encodeURIComponent(fileName)}`)
+    return true
   } catch (error) {
-    console.error('❌ [fileApi::deleteFile]', error);
-    return false;
+    console.error("❌ [fileApi::deleteFile]", error)
+    return false
   }
 }
 
-export default { uploadFile, deleteFile };
+export default { uploadFile, deleteFile }

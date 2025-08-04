@@ -1,29 +1,36 @@
 // src/components/Sidebar/Sidebar.tsx
-'use client';
+"use client"
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import styles from './Sidebar.module.css';
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import React from "react"
+
+import styles from "./Sidebar.module.css"
 
 interface SidebarProps {
-  isVisible: boolean;
+  isVisible: boolean
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
-  const pathname = usePathname();
+  const pathname = usePathname()
 
-  if (!isVisible) return null;
+  if (!isVisible) return null
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => pathname === path
 
   return (
-    <aside className={styles.sidebar} role="navigation" aria-label="Sidebar Navigation">
+    <aside
+      className={styles.sidebar}
+      role="navigation"
+      aria-label="Sidebar Navigation"
+    >
       <ul className={styles.list}>
         <li className={styles.item}>
           <Link
             href="/"
-            className={[styles.link, isActive('/') ? styles.active : ''].join(' ')}
+            className={[styles.link, isActive("/") ? styles.active : ""].join(
+              " ",
+            )}
             aria-label="Dashboard"
           >
             Dashboard
@@ -32,7 +39,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
         <li className={styles.item}>
           <Link
             href="/goals"
-            className={[styles.link, isActive('/goals') ? styles.active : ''].join(' ')}
+            className={[
+              styles.link,
+              isActive("/goals") ? styles.active : "",
+            ].join(" ")}
             aria-label="Goals"
           >
             Goals
@@ -41,7 +51,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
         <li className={styles.item}>
           <Link
             href="/collaborations"
-            className={[styles.link, isActive('/collaborations') ? styles.active : ''].join(' ')}
+            className={[
+              styles.link,
+              isActive("/collaborations") ? styles.active : "",
+            ].join(" ")}
             aria-label="Collaborations"
           >
             Collaborations
@@ -50,7 +63,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
         <li className={styles.item}>
           <Link
             href="/profile"
-            className={[styles.link, isActive('/profile') ? styles.active : ''].join(' ')}
+            className={[
+              styles.link,
+              isActive("/profile") ? styles.active : "",
+            ].join(" ")}
             aria-label="Profile"
           >
             Profile
@@ -58,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isVisible }) => {
         </li>
       </ul>
     </aside>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

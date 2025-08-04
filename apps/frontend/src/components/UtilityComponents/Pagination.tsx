@@ -1,37 +1,42 @@
-import React from 'react';
-import './Pagination.css'; // CSS for styling the pagination
+import React from "react"
+
+import "./Pagination.css" // CSS for styling the pagination
 
 interface PaginationProps {
-  currentPage: number; // The current active page
-  totalPages: number; // The total number of pages
-  onPageChange: (page: number) => void; // Callback for changing the page
+  currentPage: number // The current active page
+  totalPages: number // The total number of pages
+  onPageChange: (page: number) => void // Callback for changing the page
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-  if (totalPages <= 1) return null; // Hide pagination if there's only one page
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
+  if (totalPages <= 1) return null // Hide pagination if there's only one page
 
   // Generate an array of page numbers
   const getPageNumbers = (): number[] => {
-    const pages: number[] = []; // Explicitly type the array to accept numbers
+    const pages: number[] = [] // Explicitly type the array to accept numbers
     for (let i = 1; i <= totalPages; i++) {
-      pages.push(i); // Now TypeScript knows that 'i' (a number) can be pushed into 'pages'
+      pages.push(i) // Now TypeScript knows that 'i' (a number) can be pushed into 'pages'
     }
-    return pages;
-  };
+    return pages
+  }
 
   // Navigate to the previous page
   const handlePrevious = (): void => {
     if (currentPage > 1) {
-      onPageChange(currentPage - 1);
+      onPageChange(currentPage - 1)
     }
-  };
+  }
 
   // Navigate to the next page
   const handleNext = (): void => {
     if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
+      onPageChange(currentPage + 1)
     }
-  };
+  }
 
   return (
     <nav className="pagination" aria-label="Pagination Navigation">
@@ -50,9 +55,9 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         {getPageNumbers().map((page) => (
           <li key={page} className="pagination-item">
             <button
-              className={`pagination-button ${page === currentPage ? 'active' : ''}`}
+              className={`pagination-button ${page === currentPage ? "active" : ""}`}
               onClick={() => onPageChange(page)}
-              aria-current={page === currentPage ? 'page' : undefined}
+              aria-current={page === currentPage ? "page" : undefined}
               aria-label={`Go to page ${page}`}
             >
               {page}
@@ -71,7 +76,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         Next &raquo;
       </button>
     </nav>
-  );
-};
+  )
+}
 
-export default Pagination;
+export default Pagination

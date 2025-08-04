@@ -1,24 +1,26 @@
 // src/components/Activities/EditActivityForm.tsx
-'use client';
+"use client"
 
-import React, { ReactElement, useState, useEffect, useCallback } from 'react';
+import type { ReactElement } from "react"
 
-export type ActivityStatus = 'pending' | 'in-progress' | 'completed';
+import React, { useCallback, useEffect, useState } from "react"
+
+export type ActivityStatus = "pending" | "in-progress" | "completed"
 
 export interface ActivityData {
-  id: string;
-  title: string;
-  description: string;
-  status: ActivityStatus;
+  id: string
+  title: string
+  description: string
+  status: ActivityStatus
 }
 
 export interface EditActivityFormProps {
   /** The activity to load into the form */
-  activity: ActivityData;
+  activity: ActivityData
   /** Called with the updated values */
-  onSubmit: (updated: ActivityData) => void;
+  onSubmit: (updated: ActivityData) => void
   /** Optional cancel handler */
-  onCancel?: () => void;
+  onCancel?: () => void
 }
 
 export default function EditActivityForm({
@@ -26,39 +28,46 @@ export default function EditActivityForm({
   onSubmit,
   onCancel,
 }: EditActivityFormProps): ReactElement {
-  const [title, setTitle] = useState<string>(activity.title);
-  const [description, setDescription] = useState<string>(activity.description);
-  const [status, setStatus] = useState<ActivityStatus>(activity.status);
-  const [error, setError] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>(activity.title)
+  const [description, setDescription] = useState<string>(activity.description)
+  const [status, setStatus] = useState<ActivityStatus>(activity.status)
+  const [error, setError] = useState<string | null>(null)
 
   // Keep local state in sync if `activity` prop changes
   useEffect(() => {
-    setTitle(activity.title);
-    setDescription(activity.description);
-    setStatus(activity.status);
-  }, [activity]);
+    setTitle(activity.title)
+    setDescription(activity.description)
+    setStatus(activity.status)
+  }, [activity])
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>): void => {
-      e.preventDefault();
-      const trimmedTitle = title.trim();
-      const trimmedDesc = description.trim();
+      e.preventDefault()
+      const trimmedTitle = title.trim()
+      const trimmedDesc = description.trim()
       if (!trimmedTitle || !trimmedDesc) {
-        setError('Title and Description are required.');
-        return;
+        setError("Title and Description are required.")
+        return
       }
-      setError(null);
-      onSubmit({ id: activity.id, title: trimmedTitle, description: trimmedDesc, status });
+      setError(null)
+      onSubmit({
+        id: activity.id,
+        title: trimmedTitle,
+        description: trimmedDesc,
+        status,
+      })
     },
     [title, description, status, activity.id, onSubmit],
-  );
+  )
 
   return (
     <form
       onSubmit={handleSubmit}
       className="mx-auto max-w-lg rounded-lg bg-gray-900 p-6 text-white shadow-lg"
     >
-      <h2 className="mb-4 text-2xl font-semibold text-kelly-green">Edit Activity</h2>
+      <h2 className="mb-4 text-2xl font-semibold text-kelly-green">
+        Edit Activity
+      </h2>
 
       {error && (
         <p className="mb-3 text-sm text-red-500" role="alert">
@@ -130,5 +139,5 @@ export default function EditActivityForm({
         )}
       </div>
     </form>
-  );
+  )
 }

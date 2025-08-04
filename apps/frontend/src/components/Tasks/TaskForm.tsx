@@ -1,47 +1,52 @@
 // src/components/Tasks/TaskForm.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import styles from './TaskForm.module.css';
+import React, { useEffect, useState } from "react"
 
-export type Priority = 'low' | 'medium' | 'high';
-export type Status = 'pending' | 'in_progress' | 'completed';
+import styles from "./TaskForm.module.css"
+
+export type Priority = "low" | "medium" | "high"
+export type Status = "pending" | "in_progress" | "completed"
 
 export interface Task {
-  id?: string;
-  name: string;
-  description: string;
-  dueDate: string;
-  priority: Priority;
-  status: Status;
+  id?: string
+  name: string
+  description: string
+  dueDate: string
+  priority: Priority
+  status: Status
 }
 
 export interface TaskFormProps {
-  initialValues?: Task;
-  onSubmit: (task: Task) => void;
-  onCancel?: () => void;
+  initialValues?: Task
+  onSubmit: (task: Task) => void
+  onCancel?: () => void
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ initialValues, onSubmit, onCancel }) => {
-  const [name, setName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [dueDate, setDueDate] = useState<string>('');
-  const [priority, setPriority] = useState<Priority>('medium');
-  const [status, setStatus] = useState<Status>('pending');
+const TaskForm: React.FC<TaskFormProps> = ({
+  initialValues,
+  onSubmit,
+  onCancel,
+}) => {
+  const [name, setName] = useState<string>("")
+  const [description, setDescription] = useState<string>("")
+  const [dueDate, setDueDate] = useState<string>("")
+  const [priority, setPriority] = useState<Priority>("medium")
+  const [status, setStatus] = useState<Status>("pending")
 
   // Load initialValues when they change
   useEffect(() => {
     if (initialValues) {
-      setName(initialValues.name);
-      setDescription(initialValues.description);
-      setDueDate(initialValues.dueDate);
-      setPriority(initialValues.priority);
-      setStatus(initialValues.status);
+      setName(initialValues.name)
+      setDescription(initialValues.description)
+      setDueDate(initialValues.dueDate)
+      setPriority(initialValues.priority)
+      setStatus(initialValues.status)
     }
-  }, [initialValues]);
+  }, [initialValues])
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     onSubmit({
       id: initialValues?.id as string,
       name,
@@ -49,20 +54,22 @@ const TaskForm: React.FC<TaskFormProps> = ({ initialValues, onSubmit, onCancel }
       dueDate,
       priority,
       status,
-    });
+    })
     // Reset only if creating a new task
     if (!initialValues) {
-      setName('');
-      setDescription('');
-      setDueDate('');
-      setPriority('medium');
-      setStatus('pending');
+      setName("")
+      setDescription("")
+      setDueDate("")
+      setPriority("medium")
+      setStatus("pending")
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      <h3 className={styles.title}>{initialValues ? 'Edit Task' : 'Create Task'}</h3>
+      <h3 className={styles.title}>
+        {initialValues ? "Edit Task" : "Create Task"}
+      </h3>
 
       <div className={styles.formGroup}>
         <label htmlFor="task-name">Task Name</label>
@@ -129,16 +136,20 @@ const TaskForm: React.FC<TaskFormProps> = ({ initialValues, onSubmit, onCancel }
 
       <div className={styles.actions}>
         <button type="submit" className={styles.submitButton}>
-          {initialValues ? 'Update' : 'Create'}
+          {initialValues ? "Update" : "Create"}
         </button>
         {onCancel && (
-          <button type="button" onClick={onCancel} className={styles.cancelButton}>
+          <button
+            type="button"
+            onClick={onCancel}
+            className={styles.cancelButton}
+          >
             Cancel
           </button>
         )}
       </div>
     </form>
-  );
-};
+  )
+}
 
-export default TaskForm;
+export default TaskForm

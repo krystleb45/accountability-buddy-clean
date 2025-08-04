@@ -1,15 +1,15 @@
 // src/app/not-found/page.client.tsx
-'use client'
+"use client"
 
-import React from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import React from "react"
 
 export default function NotFoundClient() {
   const router = useRouter()
 
   const handleRedirect = () => {
-    router.replace('/') // client‐side redirect
+    router.replace("/") // client‐side redirect
   }
 
   return (

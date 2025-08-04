@@ -1,34 +1,35 @@
 // src/components/Tasks/TaskFilters.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import styles from './TaskFilters.module.css';
+import React, { useEffect, useState } from "react"
+
+import styles from "./TaskFilters.module.css"
 
 export interface TaskFilterValues {
-  status?: string;
-  priority?: string;
-  searchTerm?: string;
+  status?: string
+  priority?: string
+  searchTerm?: string
 }
 
 export interface TaskFiltersProps {
-  onFilterChange: (filters: TaskFilterValues) => void;
+  onFilterChange: (filters: TaskFilterValues) => void
 }
 
 const TaskFilters: React.FC<TaskFiltersProps> = ({ onFilterChange }) => {
-  const [status, setStatus] = useState<string>('');
-  const [priority, setPriority] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [status, setStatus] = useState<string>("")
+  const [priority, setPriority] = useState<string>("")
+  const [searchTerm, setSearchTerm] = useState<string>("")
 
   // Whenever any filter value changes, notify the parent
   useEffect(() => {
-    onFilterChange({ status, priority, searchTerm });
-  }, [status, priority, searchTerm, onFilterChange]);
+    onFilterChange({ status, priority, searchTerm })
+  }, [status, priority, searchTerm, onFilterChange])
 
   const resetFilters = (): void => {
-    setStatus('');
-    setPriority('');
-    setSearchTerm('');
-  };
+    setStatus("")
+    setPriority("")
+    setSearchTerm("")
+  }
 
   return (
     <div className={styles.taskFilters}>
@@ -76,11 +77,15 @@ const TaskFilters: React.FC<TaskFiltersProps> = ({ onFilterChange }) => {
         />
       </div>
 
-      <button type="button" className={styles.resetButton} onClick={resetFilters}>
+      <button
+        type="button"
+        className={styles.resetButton}
+        onClick={resetFilters}
+      >
         Reset Filters
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default TaskFilters;
+export default TaskFilters

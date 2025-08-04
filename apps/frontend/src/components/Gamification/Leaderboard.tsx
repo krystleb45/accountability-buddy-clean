@@ -1,73 +1,86 @@
 // src/components/Gamification/Leaderboard.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect, useCallback } from 'react';
-import type { LeaderboardEntry } from '@/types/Gamification.types';
-import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
-import styles from './LeaderboardCard.module.css';
-import { http } from '@/utils/http';
-import { getAvatarUrl } from '@/utils/avatarUtils';
+import React, { useCallback, useEffect, useState } from "react"
+
+import type { LeaderboardEntry } from "@/types/Gamification.types"
+
+import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner"
+import { getAvatarUrl } from "@/utils/avatarUtils"
+import { http } from "@/utils/http"
+
+import styles from "./LeaderboardCard.module.css"
 
 interface LeaderboardProps {
-  userId: string;
-  entries?: LeaderboardEntry[];
-  type?: 'global' | 'challenge';
-  challengeId?: string;
+  userId: string
+  entries?: LeaderboardEntry[]
+  type?: "global" | "challenge"
+  challengeId?: string
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({
   userId,
   entries,
-  type = 'global',
+  type = "global",
   challengeId,
 }) => {
   // Initialize
-  const defaultEntries = entries ?? [];
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(defaultEntries);
-  const [loading, setLoading] = useState<boolean>(defaultEntries.length === 0);
-  const [error, setError] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'points' | 'completedGoals' | 'streakCount'>('points');
-  const [timeRange, setTimeRange] = useState<'all' | 'weekly' | 'monthly'>('all');
+  const defaultEntries = entries ?? []
+  const [leaderboard, setLeaderboard] =
+    useState<LeaderboardEntry[]>(defaultEntries)
+  const [loading, setLoading] = useState<boolean>(defaultEntries.length === 0)
+  const [error, setError] = useState<string>("")
+  const [sortBy, setSortBy] = useState<
+    "points" | "completedGoals" | "streakCount"
+  >("points")
+  const [timeRange, setTimeRange] = useState<"all" | "weekly" | "monthly">(
+    "all",
+  )
 
   // Fetch leaderboard from API
   const loadLeaderboard = useCallback(async () => {
-    setLoading(true);
-    setError('');
+    setLoading(true)
+    setError("")
     try {
-      const resp = await http.get<LeaderboardEntry[]>('/leaderboard', {
-        params: { sortBy, timeRange, type, challengeId }
-      });
-      setLeaderboard(resp.data);
+      const resp = await http.get<LeaderboardEntry[]>("/leaderboard", {
+        params: { sortBy, timeRange, type, challengeId },
+      })
+      setLeaderboard(resp.data)
     } catch (err) {
-      console.error('❌ [Leaderboard] fetch error:', err);
-      setError('Failed to load leaderboard. Please try again later.');
+      console.error("❌ [Leaderboard] fetch error:", err)
+      setError("Failed to load leaderboard. Please try again later.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [sortBy, timeRange, type, challengeId]);
+  }, [sortBy, timeRange, type, challengeId])
 
   // on mount or when controls change
   useEffect(() => {
     if (entries && entries.length > 0) {
-      setLeaderboard(entries);
-      setLoading(false);
+      setLeaderboard(entries)
+      setLoading(false)
     } else {
-      loadLeaderboard();
+      loadLeaderboard()
     }
-  }, [entries, loadLeaderboard]);
+  }, [entries, loadLeaderboard])
 
-  const renderMedal = (idx: number) => idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1;
+  const renderMedal = (idx: number) =>
+    idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1
 
   return (
     <div className={styles.container} data-testid="leaderboard">
       <h2 className={styles.title}>
-        {type === 'challenge' ? 'Challenge Leaderboard' : 'Global Leaderboard'}
+        {type === "challenge" ? "Challenge Leaderboard" : "Global Leaderboard"}
       </h2>
 
       <div className={styles.controls}>
         <div className={styles.controlGroup}>
           <label htmlFor="sort-by">Sort By:</label>
-          <select id="sort-by" value={sortBy} onChange={e => setSortBy(e.target.value as any)}>
+          <select
+            id="sort-by"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as any)}
+          >
             <option value="points">XP</option>
             <option value="completedGoals">Goals</option>
             <option value="streakCount">Streaks</option>
@@ -76,14 +89,22 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
 
         <div className={styles.controlGroup}>
           <label htmlFor="time-range">Time Range:</label>
-          <select id="time-range" value={timeRange} onChange={e => setTimeRange(e.target.value as any)}>
+          <select
+            id="time-range"
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value as any)}
+          >
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
             <option value="all">All Time</option>
           </select>
         </div>
 
-        <button className={styles.refreshButton} onClick={loadLeaderboard} aria-label="Refresh leaderboard">
+        <button
+          className={styles.refreshButton}
+          onClick={loadLeaderboard}
+          aria-label="Refresh leaderboard"
+        >
           🔄 Refresh
         </button>
       </div>
@@ -105,12 +126,15 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
               <th>Avatar</th>
               <th>Name</th>
               <th>Score</th>
-              {type === 'challenge' && <th>Milestone</th>}
+              {type === "challenge" && <th>Milestone</th>}
             </tr>
           </thead>
           <tbody>
             {leaderboard.map((entry, idx) => (
-              <tr key={entry.userId} className={entry.userId === userId ? styles.currentUser : ''}>
+              <tr
+                key={entry.userId}
+                className={entry.userId === userId ? styles.currentUser : ""}
+              >
                 <td className={styles.rank}>{renderMedal(idx)}</td>
                 <td>
                   <img
@@ -121,20 +145,23 @@ const Leaderboard: React.FC<LeaderboardProps> = ({
                 </td>
                 <td>{entry.displayName}</td>
                 <td className={styles.score}>{entry.score}</td>
-                {type === 'challenge' && <td>{entry.metadata?.milestone ?? '—'}</td>}
+                {type === "challenge" && (
+                  <td>{entry.metadata?.milestone ?? "—"}</td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        !loading && !error && (
+        !loading &&
+        !error && (
           <p className={styles.noData} data-testid="no-data-message">
             No leaderboard data available.
           </p>
         )
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Leaderboard;
+export default Leaderboard

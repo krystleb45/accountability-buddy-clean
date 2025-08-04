@@ -3,37 +3,37 @@
  */
 export interface SubscriptionPlan {
   /** Unique identifier for the subscription plan. */
-  id: string;
+  id: string
 
   /** Name of the subscription plan (e.g., "Basic", "Pro", "Premium"). */
-  name: string;
+  name: string
 
   /** Description of the subscription plan. */
-  description: string;
+  description: string
 
   /** Monthly cost of the subscription plan (in cents). */
-  monthlyCost: number;
+  monthlyCost: number
 
   /** Annual cost of the subscription plan (in cents, optional). */
-  annualCost?: number;
+  annualCost?: number
 
   /** List of features included in the subscription plan. */
-  features: string[];
+  features: string[]
 
   /** Indicates if the plan is currently active or deprecated. */
-  isActive: boolean;
+  isActive: boolean
 
   /** Indicates whether a free trial is available for this plan. */
-  hasTrial?: boolean;
+  hasTrial?: boolean
 
   /** Number of trial days available (if applicable). */
-  trialDays?: number;
+  trialDays?: number
 
   /** Date when the plan was created (ISO format or Unix timestamp). */
-  createdAt: string | number;
+  createdAt: string | number
 
   /** Date when the plan was last updated (ISO format or Unix timestamp, optional). */
-  updatedAt?: string | number;
+  updatedAt?: string | number
 }
 
 /**
@@ -41,34 +41,34 @@ export interface SubscriptionPlan {
  */
 export interface SubscriptionStatus {
   /** Status of the subscription. */
-  status: 'active' | 'inactive' | 'canceled' | 'trial' | 'expired';
+  status: "active" | "inactive" | "canceled" | "trial" | "expired"
 
   /** Unique identifier for the current subscription plan. */
-  planId: string;
+  planId: string
 
   /** Name of the current subscription plan. */
-  planName: string;
+  planName: string
 
   /** Start date of the subscription (ISO format or Unix timestamp). */
-  startDate: string | number;
+  startDate: string | number
 
   /** End date of the subscription (ISO format or Unix timestamp, optional for recurring). */
-  endDate?: string | number;
+  endDate?: string | number
 
   /** Indicates if the subscription is currently in a trial period. */
-  isTrial: boolean;
+  isTrial: boolean
 
   /** Number of days remaining in the trial period (optional). */
-  trialDaysRemaining?: number;
+  trialDaysRemaining?: number
 
   /** Whether auto-renewal is enabled for this subscription. */
-  autoRenew: boolean;
+  autoRenew: boolean
 
   /** Date when the subscription was last updated (ISO format or Unix timestamp). */
-  updatedAt?: string | number;
+  updatedAt?: string | number
 
   /** Next billing date (ISO format or Unix timestamp, optional). */
-  nextBillingDate?: string | number;
+  nextBillingDate?: string | number
 }
 
 /**
@@ -76,16 +76,16 @@ export interface SubscriptionStatus {
  */
 export interface SubscriptionPreferences {
   /** Indicates if the user has opted for auto-renewal. */
-  autoRenew: boolean;
+  autoRenew: boolean
 
   /** Preferred payment method for the subscription. */
-  paymentMethod: 'credit_card' | 'paypal' | 'bank_transfer' | 'crypto';
+  paymentMethod: "credit_card" | "paypal" | "bank_transfer" | "crypto"
 
   /** List of email notifications the user has opted into (optional). */
-  emailNotifications?: string[];
+  emailNotifications?: string[]
 
   /** Metadata for storing additional preferences or data. */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -93,13 +93,13 @@ export interface SubscriptionPreferences {
  */
 export interface SubscriptionResponse {
   /** Total number of subscription plans available. */
-  totalPlans: number;
+  totalPlans: number
 
   /** Array of available subscription plans. */
-  plans: SubscriptionPlan[];
+  plans: SubscriptionPlan[]
 
   /** Current subscription status of the user. */
-  userSubscriptionStatus?: SubscriptionStatus;
+  userSubscriptionStatus?: SubscriptionStatus
 }
 
 /**
@@ -107,13 +107,13 @@ export interface SubscriptionResponse {
  */
 export interface UpdateSubscriptionRequest {
   /** The new plan ID to switch to (if upgrading/downgrading). */
-  newPlanId: string;
+  newPlanId: string
 
   /** Whether to enable auto-renewal for the new plan. */
-  autoRenew?: boolean;
+  autoRenew?: boolean
 
   /** The payment method to use for the new plan. */
-  paymentMethod: 'credit_card' | 'paypal' | 'bank_transfer' | 'crypto';
+  paymentMethod: "credit_card" | "paypal" | "bank_transfer" | "crypto"
 }
 
 /**
@@ -121,10 +121,10 @@ export interface UpdateSubscriptionRequest {
  */
 export interface CancelSubscriptionRequest {
   /** Indicates whether to cancel immediately or at the end of the billing cycle. */
-  cancelImmediately: boolean;
+  cancelImmediately: boolean
 
   /** Reason for cancellation (optional). */
-  reason?: string;
+  reason?: string
 }
 
 /**
@@ -132,25 +132,25 @@ export interface CancelSubscriptionRequest {
  */
 export interface BillingHistory {
   /** Unique transaction ID. */
-  transactionId: string;
+  transactionId: string
 
   /** Date of the transaction (ISO format or Unix timestamp). */
-  date: string | number;
+  date: string | number
 
   /** Amount paid (in cents). */
-  amount: number;
+  amount: number
 
   /** Currency used for the transaction. */
-  currency: string;
+  currency: string
 
   /** Payment method used for this transaction. */
-  paymentMethod: 'credit_card' | 'paypal' | 'bank_transfer' | 'crypto';
+  paymentMethod: "credit_card" | "paypal" | "bank_transfer" | "crypto"
 
   /** Status of the payment (e.g., "completed", "pending", "failed"). */
-  status: 'completed' | 'pending' | 'failed';
+  status: "completed" | "pending" | "failed"
 
   /** Additional metadata related to the transaction (optional). */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>
 }
 
 /**
@@ -158,14 +158,14 @@ export interface BillingHistory {
  */
 export interface BillingHistoryResponse {
   /** Total number of transactions in the billing history. */
-  totalTransactions: number;
+  totalTransactions: number
 
   /** Array of billing history entries. */
-  transactions: BillingHistory[];
+  transactions: BillingHistory[]
 
   /** Current page of billing history (for pagination). */
-  currentPage: number;
+  currentPage: number
 
   /** Number of transactions per page. */
-  transactionsPerPage: number;
+  transactionsPerPage: number
 }

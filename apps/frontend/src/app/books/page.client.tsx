@@ -1,52 +1,54 @@
 // src/app/book/page.client.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { fetchBooks } from '@/api/book/bookApi';
+import type { ChangeEvent } from "react"
+
+import React, { useEffect, useState } from "react"
+
+import { fetchBooks } from "@/api/book/bookApi"
 
 interface Book {
-  id: number;
-  title: string;
-  author: string;
-  category: string;
-  summary: string;
-  imageUrl?: string;
-  purchaseLink?: string;
+  id: number
+  title: string
+  author: string
+  category: string
+  summary: string
+  imageUrl?: string
+  purchaseLink?: string
 }
 
 export default function BookListClient() {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [featuredBook, setFeaturedBook] = useState<Book | null>(null);
+  const [books, setBooks] = useState<Book[]>([])
+  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [selectedCategory, setSelectedCategory] = useState<string>("All")
+  const [featuredBook, setFeaturedBook] = useState<Book | null>(null)
 
- useEffect(() => {
-  (async () => {
-    try {
-      const data = await fetchBooks();
-      setBooks(data);
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const data = await fetchBooks()
+        setBooks(data)
 
-      // pick a random book, or null if none
-      if (data.length > 0) {
-        const idx = Math.floor(Math.random() * data.length);
-        // assert non-undefined since length > 0
-        setFeaturedBook(data[idx]!);
-      } else {
-        setFeaturedBook(null);
+        // pick a random book, or null if none
+        if (data.length > 0) {
+          const idx = Math.floor(Math.random() * data.length)
+          // assert non-undefined since length > 0
+          setFeaturedBook(data[idx]!)
+        } else {
+          setFeaturedBook(null)
+        }
+      } catch (err) {
+        console.error("Failed to fetch books:", err)
       }
-    } catch (err) {
-      console.error('Failed to fetch books:', err);
-    }
-  })();
-}, []);
-
+    })()
+  }, [])
 
   const filteredBooks = books.filter(
     (book) =>
-      (selectedCategory === 'All' || book.category === selectedCategory) &&
+      (selectedCategory === "All" || book.category === selectedCategory) &&
       (book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+        book.author.toLowerCase().includes(searchQuery.toLowerCase())),
+  )
 
   return (
     <div className="min-h-screen bg-black p-8 text-white">
@@ -63,7 +65,9 @@ export default function BookListClient() {
 
       {featuredBook && (
         <div className="mb-8 rounded-lg bg-gray-900 p-6 text-center shadow-lg">
-          <h2 className="text-2xl font-semibold text-yellow-400">📖 Book of the Day</h2>
+          <h2 className="text-2xl font-semibold text-yellow-400">
+            📖 Book of the Day
+          </h2>
           <p className="mt-2 text-lg text-green-300">
             {featuredBook.title} by {featuredBook.author}
           </p>
@@ -93,12 +97,16 @@ export default function BookListClient() {
           type="text"
           placeholder="🔎 Search books..."
           value={searchQuery}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setSearchQuery(e.target.value)
+          }
           className="flex-1 rounded-lg border border-gray-600 bg-gray-900 p-3 text-white"
         />
         <select
           value={selectedCategory}
-          onChange={(e: ChangeEvent<HTMLSelectElement>) => setSelectedCategory(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+            setSelectedCategory(e.target.value)
+          }
           className="rounded-lg border border-gray-600 bg-gray-900 p-3 text-white"
         >
           <option value="All">📂 All Categories</option>
@@ -116,7 +124,7 @@ export default function BookListClient() {
           filteredBooks.map((book) => (
             <div
               key={book.id}
-              className="transform rounded-lg bg-gray-900 p-4 shadow-lg transition hover:scale-105 hover:shadow-xl"
+              className="rounded-lg bg-gray-900 p-4 shadow-lg transition hover:scale-105 hover:shadow-xl"
             >
               {book.imageUrl && (
                 <img
@@ -146,5 +154,5 @@ export default function BookListClient() {
         )}
       </div>
     </div>
-  );
+  )
 }

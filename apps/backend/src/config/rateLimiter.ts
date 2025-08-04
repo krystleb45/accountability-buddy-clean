@@ -20,7 +20,6 @@ const useRedis = process.env.USE_REDIS_RATE_LIMIT === "true" && !isRedisDisabled
 
 // Redis store setup (only if enabled)
 let store: any
-
 ;(async () => {
   if (useRedis) {
     try {

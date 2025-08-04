@@ -1,103 +1,115 @@
 // src/context/settings/SettingsContext.tsx
-'use client';
+"use client"
 
-import React, { createContext, useState, useCallback, ReactNode } from 'react';
+import type { ReactNode } from "react"
 
-const STORAGE_KEY = 'appSettings';
-const SUPPORTED_LANGUAGES = ['en', 'es', 'fr', 'de', 'zh', 'ar'] as const;
-type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+import React, { createContext, useCallback, useState } from "react"
+
+const STORAGE_KEY = "appSettings"
+const SUPPORTED_LANGUAGES = ["en", "es", "fr", "de", "zh", "ar"] as const
+type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]
 
 interface Settings {
-  darkMode: boolean;
-  notificationsEnabled: boolean;
-  language: SupportedLanguage;
-  autoSave: boolean;
-  saveFrequency: number;
+  darkMode: boolean
+  notificationsEnabled: boolean
+  language: SupportedLanguage
+  autoSave: boolean
+  saveFrequency: number
 }
 
 interface SettingsContextType {
-  settings: Settings;
-  updateSettings: (newSettings: Partial<Settings>) => void;
-  resetSettings: () => void;
-  toggleDarkMode: () => void;
-  enableNotifications: (enabled: boolean) => void;
+  settings: Settings
+  updateSettings: (newSettings: Partial<Settings>) => void
+  resetSettings: () => void
+  toggleDarkMode: () => void
+  enableNotifications: (enabled: boolean) => void
 }
 
-export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+export const SettingsContext = createContext<SettingsContextType | undefined>(
+  undefined,
+)
 
 const defaultSettings: Settings = {
   darkMode: false,
   notificationsEnabled: true,
-  language: 'en',
+  language: "en",
   autoSave: false,
   saveFrequency: 10,
-};
+}
 
 function getInitialSettings(): Settings {
-  if (typeof window === 'undefined') return defaultSettings;
+  if (typeof window === "undefined") return defaultSettings
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
-      const parsed = JSON.parse(raw) as Partial<Settings>;
-      return sanitizeSettings({ ...defaultSettings, ...parsed });
+      const parsed = JSON.parse(raw) as Partial<Settings>
+      return sanitizeSettings({ ...defaultSettings, ...parsed })
     }
   } catch {
     /* ignore */
   }
-  return defaultSettings;
+  return defaultSettings
 }
 
 function sanitizeSettings(input: Settings): Settings {
-  const out = { ...input };
+  const out = { ...input }
   if (!SUPPORTED_LANGUAGES.includes(out.language as SupportedLanguage)) {
-    out.language = defaultSettings.language;
+    out.language = defaultSettings.language
   }
   if (out.saveFrequency < 1 || out.saveFrequency > 60) {
-    out.saveFrequency = defaultSettings.saveFrequency;
+    out.saveFrequency = defaultSettings.saveFrequency
   }
-  return out;
+  return out
 }
 
-export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [settings, setSettings] = useState<Settings>(getInitialSettings);
+export const SettingsProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [settings, setSettings] = useState<Settings>(getInitialSettings)
 
   const persist = useCallback((s: Settings) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(s));
-    return s;
-  }, []);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(s))
+    return s
+  }, [])
 
   const updateSettings = useCallback(
     (newSettings: Partial<Settings>) => {
       setSettings((prev) => {
-        const merged = sanitizeSettings({ ...prev, ...newSettings });
-        return persist(merged);
-      });
+        const merged = sanitizeSettings({ ...prev, ...newSettings })
+        return persist(merged)
+      })
     },
     [persist],
-  );
+  )
 
   const resetSettings = useCallback(() => {
-    setSettings(persist(defaultSettings));
-  }, [persist]);
+    setSettings(persist(defaultSettings))
+  }, [persist])
 
   const toggleDarkMode = useCallback(() => {
-    setSettings((prev) => persist({ ...prev, darkMode: !prev.darkMode }));
-  }, [persist]);
+    setSettings((prev) => persist({ ...prev, darkMode: !prev.darkMode }))
+  }, [persist])
 
   const enableNotifications = useCallback(
     (enabled: boolean) => {
-      setSettings((prev) => persist({ ...prev, notificationsEnabled: enabled }));
+      setSettings((prev) => persist({ ...prev, notificationsEnabled: enabled }))
     },
     [persist],
-  );
+  )
 
   return (
-    <SettingsContext.Provider
-      value={{ settings, updateSettings, resetSettings, toggleDarkMode, enableNotifications }}
+    <SettingsContext
+      value={{
+        settings,
+        updateSettings,
+        resetSettings,
+        toggleDarkMode,
+        enableNotifications,
+      }}
     >
       {children}
-    </SettingsContext.Provider>
-  );
-};
+    </SettingsContext>
+  )
+}
 
-export default SettingsContext;
+export default SettingsContext

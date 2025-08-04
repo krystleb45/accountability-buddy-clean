@@ -1,5 +1,5 @@
-import antfu from "@antfu/eslint-config";
-import prettierConflicts from "eslint-config-prettier";
+import antfu from "@antfu/eslint-config"
+import prettierConflicts from "eslint-config-prettier"
 
 const baseConfig = antfu({}, prettierConflicts).overrideRules({
   "perfectionist/sort-imports": [
@@ -10,6 +10,7 @@ const baseConfig = antfu({}, prettierConflicts).overrideRules({
   ],
   "node/prefer-global/process": "off",
   "node/prefer-global/buffer": "off",
-});
+  "antfu/if-newline": "warn",
+})
 
-export default baseConfig;
+export default baseConfig

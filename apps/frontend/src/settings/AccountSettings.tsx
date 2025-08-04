@@ -1,34 +1,35 @@
 // src/settings/AccountSettings.tsx
-import React, { useState } from 'react';
-import styles from './AccountSettings.module.css';
+import React, { useState } from "react"
+
+import styles from "./AccountSettings.module.css"
 
 const AccountSettings: React.FC = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handlePasswordChange = (): void => {
     if (newPassword !== confirmPassword) {
-      alert('New password and confirmation do not match.');
-      return;
+      // alert('New password and confirmation do not match.');
+      return
     }
-    alert('Password changed successfully!');
+    // alert('Password changed successfully!');
     // TODO: Hook up real API call here
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-  };
+    setCurrentPassword("")
+    setNewPassword("")
+    setConfirmPassword("")
+  }
 
   const handleAccountDeletion = (): void => {
-    if (
-      window.confirm('Are you sure you want to delete your account? This action is irreversible.')
-    ) {
-      alert('Account deleted successfully!');
-      // TODO: Hook up real API call here
-    }
-    setShowDeleteConfirm(false);
-  };
+    // if (
+    //   window.confirm('Are you sure you want to delete your account? This action is irreversible.')
+    // ) {
+    //   alert('Account deleted successfully!');
+    // TODO: Hook up real API call here
+    // }
+    setShowDeleteConfirm(false)
+  }
 
   return (
     <div className={styles.container}>
@@ -40,8 +41,8 @@ const AccountSettings: React.FC = () => {
         <form
           className={styles.form}
           onSubmit={(e) => {
-            e.preventDefault();
-            handlePasswordChange();
+            e.preventDefault()
+            handlePasswordChange()
           }}
         >
           <label>
@@ -74,7 +75,10 @@ const AccountSettings: React.FC = () => {
             />
           </label>
 
-          <button type="submit" className={`${styles.button} ${styles.saveButton}`}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.saveButton}`}
+          >
             Change Password
           </button>
         </form>
@@ -110,7 +114,7 @@ const AccountSettings: React.FC = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AccountSettings;
+export default AccountSettings

@@ -1,41 +1,42 @@
 // src/components/Dashboard/Dashboard.tsx
-'use client';
+"use client"
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import React from "react"
 
-import type { UserProgress, Badge } from '@/types/Gamification.types';
-import PointsBalance from './PointsBalance';
-import LeaderboardPreview from '@/components/Gamification/LeaderboardPreview';
+import type { Badge, UserProgress } from "@/types/Gamification.types"
 
-import styles from './Dashboard.module.css';
+import LeaderboardPreview from "@/components/Gamification/LeaderboardPreview"
+
+import styles from "./Dashboard.module.css"
+import PointsBalance from "./PointsBalance"
 
 interface Card {
-  label: string;
-  emoji: string;
-  subtitle: string;
-  onClick: () => void;
-  content: React.ReactNode;
+  label: string
+  emoji: string
+  subtitle: string
+  onClick: () => void
+  content: React.ReactNode
 }
 
 export interface DashboardProps {
-  userName: string;
+  userName: string
   userStats: {
-    totalGoals: number;
-    completedGoals: number;
-    collaborations: number;
-  };
-  recentActivities: string[];
-  userProgress: UserProgress;
-  recentBadges: Badge[];
-  points: number;
+    totalGoals: number
+    completedGoals: number
+    collaborations: number
+  }
+  recentActivities: string[]
+  userProgress: UserProgress
+  recentBadges: Badge[]
+  points: number
   streakData: {
-    currentStreak: number;
-    goalProgress: number;
-  };
-  onAction?: (action: string) => void;
+    currentStreak: number
+    goalProgress: number
+  }
+  onAction?: (action: string) => void
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -48,16 +49,16 @@ const Dashboard: React.FC<DashboardProps> = ({
   streakData,
   onAction = () => {},
 }) => {
-  const router = useRouter();
+  const router = useRouter()
   const pct =
-    typeof streakData.goalProgress === 'number' ? streakData.goalProgress : 0;
+    typeof streakData.goalProgress === "number" ? streakData.goalProgress : 0
 
   // top‐level Goals card
   const goalsCard: Card = {
-    label: 'Goals',
-    emoji: '🎯',
-    subtitle: 'Track your progress and explore suggested goals.',
-    onClick: () => router.push('/goals'),
+    label: "Goals",
+    emoji: "🎯",
+    subtitle: "Track your progress and explore suggested goals.",
+    onClick: () => router.push("/goals"),
     content: (
       <>
         <p className="mt-2 text-lg font-bold text-yellow-400 sm:text-xl">
@@ -74,31 +75,31 @@ const Dashboard: React.FC<DashboardProps> = ({
         </p>
       </>
     ),
-  };
+  }
 
   // the other fixed cards
   const otherCards: Card[] = [
     {
-      label: 'Community',
-      emoji: '🤝',
-      subtitle: 'Connect with friends, join groups, and collaborate.',
-      onClick: () => router.push('/community'),
+      label: "Community",
+      emoji: "🤝",
+      subtitle: "Connect with friends, join groups, and collaborate.",
+      onClick: () => router.push("/community"),
       content: (
         <div className="flex justify-center space-x-4">
-          <span className="px-3 py-1 bg-green-600 text-white rounded">
+          <span className="rounded bg-green-600 px-3 py-1 text-white">
             Friends
           </span>
-          <span className="px-3 py-1 bg-green-600 text-white rounded">
+          <span className="rounded bg-green-600 px-3 py-1 text-white">
             Groups
           </span>
         </div>
       ),
     },
     {
-      label: 'Your Stats',
-      emoji: '📊',
-      subtitle: 'Stats Overview',
-      onClick: () => router.push('/statistics'),
+      label: "Your Stats",
+      emoji: "📊",
+      subtitle: "Stats Overview",
+      onClick: () => router.push("/statistics"),
       content: (
         <>
           <p className="mt-2 text-lg font-bold text-yellow-400 sm:text-xl">
@@ -113,7 +114,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         </>
       ),
     },
-  ];
+  ]
 
   return (
     <div
@@ -131,8 +132,8 @@ const Dashboard: React.FC<DashboardProps> = ({
           aria-label="View goals and streak"
           whileHover={{ scale: 1.05 }}
           onTap={() => {
-            onAction('goals');
-            goalsCard.onClick();
+            onAction("goals")
+            goalsCard.onClick()
           }}
           className="block w-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
         >
@@ -145,7 +146,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Main Tiles Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {otherCards.map((c) => (
           <motion.div
             key={c.label}
@@ -153,15 +154,15 @@ const Dashboard: React.FC<DashboardProps> = ({
             aria-label={`View ${c.label.toLowerCase()}`}
             whileHover={{ scale: 1.05 }}
             onTap={() => {
-              onAction(c.label.toLowerCase());
-              c.onClick();
+              onAction(c.label.toLowerCase())
+              c.onClick()
             }}
-            className="block w-full h-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
+            className="block size-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
           >
             <h2 className="text-2xl font-semibold text-kelly-green sm:text-3xl">
               {c.emoji} {c.label}
             </h2>
-            <p className="text-gray-400 mb-4">{c.subtitle}</p>
+            <p className="mb-4 text-gray-400">{c.subtitle}</p>
             {c.content}
           </motion.div>
         ))}
@@ -223,10 +224,10 @@ const Dashboard: React.FC<DashboardProps> = ({
           aria-label="Read the blog"
           whileHover={{ scale: 1.05 }}
           onTap={() => {
-            onAction('blog');
-            router.push('/blog');
+            onAction("blog")
+            router.push("/blog")
           }}
-          className="block w-full h-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
+          className="block size-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
         >
           <h2 className="text-2xl font-semibold text-kelly-green sm:text-3xl">
             📝 Blog
@@ -240,10 +241,10 @@ const Dashboard: React.FC<DashboardProps> = ({
           aria-label="View book recommendations"
           whileHover={{ scale: 1.05 }}
           onTap={() => {
-            onAction('books');
-            router.push('/books');
+            onAction("books")
+            router.push("/books")
           }}
-          className="block w-full h-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
+          className="block size-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
         >
           <h2 className="text-2xl font-semibold text-kelly-green sm:text-3xl">
             📚 Books
@@ -257,10 +258,10 @@ const Dashboard: React.FC<DashboardProps> = ({
           aria-label="View full leaderboard"
           whileHover={{ scale: 1.02 }}
           onTap={() => {
-            onAction('leaderboard');
-            router.push('/leaderboard');
+            onAction("leaderboard")
+            router.push("/leaderboard")
           }}
-          className="block w-full h-full cursor-pointer rounded-lg bg-gray-900 p-4 text-center shadow-lg transition hover:shadow-xl"
+          className="block size-full cursor-pointer rounded-lg bg-gray-900 p-4 text-center shadow-lg transition hover:shadow-xl"
         >
           <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
             🏆 Leaderboard
@@ -287,7 +288,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               {recentBadges.slice(0, 3).map((b) => (
                 <div key={b.id} className="text-sm text-white">
                   <Image
-                    src={b.imageUrl || '/placeholder-badge.png'}
+                    src={b.imageUrl || "/placeholder-badge.png"}
                     alt={b.name}
                     width={48}
                     height={48}
@@ -301,7 +302,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

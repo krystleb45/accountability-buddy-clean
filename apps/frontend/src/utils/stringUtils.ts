@@ -6,8 +6,10 @@
  * @returns The string with its first letter uppercased (or '' if input is falsy).
  */
 export function capitalizeFirstLetter(str: string): string {
-  if (!str) return '';
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  if (!str) {
+    return ""
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 /**
@@ -16,7 +18,7 @@ export function capitalizeFirstLetter(str: string): string {
  * @returns The title-cased string.
  */
 export function toTitleCase(str: string): string {
-  return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  return str.replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
 /**
@@ -27,7 +29,7 @@ export function toTitleCase(str: string): string {
 export function toCamelCase(str: string): string {
   return str
     .replace(/[\s-]+(.)/g, (_, group1) => group1.toUpperCase())
-    .replace(/^\w/, (c) => c.toLowerCase());
+    .replace(/^\w/, (c) => c.toLowerCase())
 }
 
 /**
@@ -37,9 +39,9 @@ export function toCamelCase(str: string): string {
  */
 export function toKebabCase(str: string): string {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
-    .toLowerCase();
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
+    .toLowerCase()
 }
 
 /**
@@ -49,9 +51,9 @@ export function toKebabCase(str: string): string {
  */
 export function toSnakeCase(str: string): string {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1_$2')
-    .replace(/[\s-]+/g, '_')
-    .toLowerCase();
+    .replace(/([a-z])([A-Z])/g, "$1_$2")
+    .replace(/[\s-]+/g, "_")
+    .toLowerCase()
 }
 
 /**
@@ -61,8 +63,10 @@ export function toSnakeCase(str: string): string {
  * @returns The truncated (or original) string.
  */
 export function truncateString(str: string, length: number): string {
-  if (length < 0) throw new Error('truncateString: length must be non-negative');
-  return str.length > length ? `${str.slice(0, length)}...` : str;
+  if (length < 0) {
+    throw new Error("truncateString: length must be non-negative")
+  }
+  return str.length > length ? `${str.slice(0, length)}...` : str
 }
 
 /**
@@ -71,7 +75,7 @@ export function truncateString(str: string, length: number): string {
  * @returns The reversed string.
  */
 export function reverseString(str: string): string {
-  return str.split('').reverse().join('');
+  return str.split("").reverse().join("")
 }
 
 /**
@@ -80,7 +84,7 @@ export function reverseString(str: string): string {
  * @returns The cleaned string.
  */
 export function removeNonAlphanumeric(str: string): string {
-  return str.replace(/[^A-Za-z0-9]/g, '');
+  return str.replace(/[^A-Z0-9]/gi, "")
 }
 
 /**
@@ -89,8 +93,8 @@ export function removeNonAlphanumeric(str: string): string {
  * @returns True if palindrome.
  */
 export function isPalindrome(str: string): boolean {
-  const cleaned = removeNonAlphanumeric(str).toLowerCase();
-  return cleaned === reverseString(cleaned);
+  const cleaned = removeNonAlphanumeric(str).toLowerCase()
+  return cleaned === reverseString(cleaned)
 }
 
 /**
@@ -99,8 +103,8 @@ export function isPalindrome(str: string): boolean {
  * @returns The number of words.
  */
 export function wordCount(str: string): number {
-  const trimmed = str.trim();
-  return trimmed ? trimmed.split(/\s+/).length : 0;
+  const trimmed = str.trim()
+  return trimmed ? trimmed.split(/\s+/).length : 0
 }
 
 /**
@@ -110,8 +114,10 @@ export function wordCount(str: string): number {
  * @returns Number of times `sub` appears in `str`.
  */
 export function countOccurrences(str: string, sub: string): number {
-  if (sub === '') return str.length + 1;
-  return str.split(sub).length - 1;
+  if (sub === "") {
+    return str.length + 1
+  }
+  return str.split(sub).length - 1
 }
 
 /**
@@ -121,8 +127,12 @@ export function countOccurrences(str: string, sub: string): number {
  * @param replacement - The replacement text.
  * @returns The resulting string.
  */
-export function replaceAll(str: string, search: string, replacement: string): string {
-  return str.split(search).join(replacement);
+export function replaceAll(
+  str: string,
+  search: string,
+  replacement: string,
+): string {
+  return str.split(search).join(replacement)
 }
 
 /**
@@ -131,13 +141,14 @@ export function replaceAll(str: string, search: string, replacement: string): st
  * @returns A random string of that length.
  */
 export function generateRandomString(length: number): string {
-  if (length < 0) throw new Error('generateRandomString: length must be non-negative');
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  if (length < 0)
+    throw new Error("generateRandomString: length must be non-negative")
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  let result = ""
   for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
-  return result;
+  return result
 }
 
 /**
@@ -145,7 +156,7 @@ export function generateRandomString(length: number): string {
  * @param str - The string to parse.
  */
 export function stringToBoolean(str: string): boolean {
-  return /^(true|yes|1)$/i.test(str.trim());
+  return /^(?:true|yes|1)$/i.test(str.trim())
 }
 
 /**
@@ -153,7 +164,7 @@ export function stringToBoolean(str: string): boolean {
  * @param str - The string to clean.
  */
 export function cleanString(str: string): string {
-  return str.trim().replace(/\s+/g, ' ');
+  return str.trim().replace(/\s+/g, " ")
 }
 
 export default {
@@ -172,4 +183,4 @@ export default {
   generateRandomString,
   stringToBoolean,
   cleanString,
-};
+}

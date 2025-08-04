@@ -55,17 +55,20 @@ export async function handleStripeWebhook(
     const event = stripe.webhooks.constructEvent(payload, sig, endpointSecret)
 
     switch (event.type) {
-      case "customer.subscription.created": { // Handle new subscription creation
+      case "customer.subscription.created": {
+        // Handle new subscription creation
         const subscription = event.data.object as Stripe.Subscription
         console.warn("Subscription created:", subscription)
         break
       }
-      case "customer.subscription.updated": { // Handle subscription update (e.g., plan change)
+      case "customer.subscription.updated": {
+        // Handle subscription update (e.g., plan change)
         const updatedSubscription = event.data.object as Stripe.Subscription
         console.warn("Subscription updated:", updatedSubscription)
         break
       }
-      case "customer.subscription.deleted": { // Handle subscription cancellation
+      case "customer.subscription.deleted": {
+        // Handle subscription cancellation
         const deletedSubscription = event.data.object as Stripe.Subscription
         console.warn("Subscription canceled:", deletedSubscription)
         break

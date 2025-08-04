@@ -1,13 +1,14 @@
 // src/api/feedback/feedbackApi.ts
 
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface FeedbackItem {
-  id: string;
-  feedback: string;
-  userId?: string;
-  createdAt: string;
+  id: string
+  feedback: string
+  userId?: string
+  createdAt: string
 }
 
 /**
@@ -17,26 +18,29 @@ export interface FeedbackItem {
  */
 export async function submitFeedback(feedback: string): Promise<boolean> {
   if (!feedback.trim()) {
-    console.error('[feedbackApi::submitFeedback] Feedback cannot be empty.');
-    return false;
+    console.error("[feedbackApi::submitFeedback] Feedback cannot be empty.")
+    return false
   }
 
   try {
     // 1) Call our Next.js proxy at /api/feedback/submit,
     //    sending { feedback }. The proxy re-shapes to { message, type }.
     const { data } = await http.post<{ success: boolean; message?: string }>(
-      '/feedback/submit',
-      { feedback }
-    );
+      "/feedback/submit",
+      { feedback },
+    )
 
-    return data.success;
+    return data.success
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error('[feedbackApi::submitFeedback]', error.response?.data || error.message);
+      console.error(
+        "[feedbackApi::submitFeedback]",
+        error.response?.data || error.message,
+      )
     } else {
-      console.error('[feedbackApi::submitFeedback]', error);
+      console.error("[feedbackApi::submitFeedback]", error)
     }
-    return false;
+    return false
   }
 }
 
@@ -46,11 +50,13 @@ export async function submitFeedback(feedback: string): Promise<boolean> {
  */
 export async function fetchFeedbackFeed(): Promise<FeedbackItem[]> {
   try {
-    const { data } = await http.get<{ success: boolean; data: FeedbackItem[] }>('/feedback/feed');
-    return data.success ? data.data : [];
+    const { data } = await http.get<{ success: boolean; data: FeedbackItem[] }>(
+      "/feedback/feed",
+    )
+    return data.success ? data.data : []
   } catch (error) {
-    console.error('[feedbackApi::fetchFeedbackFeed]', error);
-    return [];
+    console.error("[feedbackApi::fetchFeedbackFeed]", error)
+    return []
   }
 }
 
@@ -60,17 +66,17 @@ export async function fetchFeedbackFeed(): Promise<FeedbackItem[]> {
  */
 export async function deleteFeedback(feedbackId: string): Promise<boolean> {
   if (!feedbackId) {
-    console.error('[feedbackApi::deleteFeedback] feedbackId is required.');
-    return false;
+    console.error("[feedbackApi::deleteFeedback] feedbackId is required.")
+    return false
   }
   try {
     const { data } = await http.delete<{ success: boolean; message?: string }>(
-      `/feedback/${encodeURIComponent(feedbackId)}`
-    );
-    return data.success;
+      `/feedback/${encodeURIComponent(feedbackId)}`,
+    )
+    return data.success
   } catch (error) {
-    console.error('[feedbackApi::deleteFeedback]', error);
-    return false;
+    console.error("[feedbackApi::deleteFeedback]", error)
+    return false
   }
 }
 
@@ -78,4 +84,4 @@ export default {
   submitFeedback,
   fetchFeedbackFeed,
   deleteFeedback,
-};
+}

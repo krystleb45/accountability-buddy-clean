@@ -1,53 +1,61 @@
 // src/services/achievementService.ts
-import { getAuthHeader } from './authService';
-import { http } from '@/utils/http';
-import { AxiosHeaders } from 'axios';
+import { AxiosHeaders } from "axios"
+
+import { http } from "@/utils/http"
+
+import { getAuthHeader } from "./authService"
 
 export interface Achievement {
-  id: string;
-  name: string;
-  description: string;
-  requirements: number;
-  createdAt: string;
+  id: string
+  name: string
+  description: string
+  requirements: number
+  createdAt: string
 }
 
 interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
+  success: boolean
+  data?: T
+  message?: string
 }
 
 // Attach auth header
 http.interceptors.request.use(
   (config) => {
     // pull out just the Authorization value (if any)
-    const { Authorization } = getAuthHeader();
+    const { Authorization } = getAuthHeader()
     if (Authorization) {
       // normalize existing headers into an AxiosHeaders instance, then set our token
-      config.headers = AxiosHeaders.from(config.headers).set('Authorization', Authorization);
+      config.headers = AxiosHeaders.from(config.headers).set(
+        "Authorization",
+        Authorization,
+      )
     }
-    return config;
+    return config
   },
   (err) => Promise.reject(err),
-);
+)
 
-const handleError = <T>(fn: string, err: unknown, fallback: T): T => {
-  console.error(`[achievementService.${fn}]`, err);
-  return fallback;
-};
+function handleError<T>(fn: string, err: unknown, fallback: T): T {
+  console.error(`[achievementService.${fn}]`, err)
+  return fallback
+}
 
 const achievementService = {
   /** GET /api/achievements */
   async fetchAll(): Promise<ApiResponse<{ achievements: Achievement[] }>> {
     try {
-      const res = await http.get<ApiResponse<{ achievements: Achievement[] }>>('/achievements');
-      return res.data;
+      const res =
+        await http.get<ApiResponse<{ achievements: Achievement[] }>>(
+          "/achievements",
+        )
+      return res.data
     } catch (err) {
       return {
         success: false,
-        data: { achievements: handleError('fetchAll', err, []) },
-        message: 'Failed to load achievements',
-      };
+        data: { achievements: handleError("fetchAll", err, []) },
+        message: "Failed to load achievements",
+      }
     }
   },
 
@@ -59,22 +67,24 @@ const achievementService = {
   ): Promise<ApiResponse<{ achievement: Achievement }>> {
     try {
       const res = await http.post<ApiResponse<{ achievement: Achievement }>>(
-        '/achievements/add',
+        "/achievements/add",
         { name, description, requirements },
-      );
-      return res.data;
+      )
+      return res.data
+      // eslint-disable-next-line unused-imports/no-unused-vars
     } catch (err) {
-      return { success: false, message: 'Failed to create achievement' };
+      return { success: false, message: "Failed to create achievement" }
     }
   },
 
   /** DELETE /api/achievements/:id */
   async remove(id: string): Promise<ApiResponse<null>> {
     try {
-      const res = await http.delete<ApiResponse<null>>(`/achievements/${id}`);
-      return res.data;
+      const res = await http.delete<ApiResponse<null>>(`/achievements/${id}`)
+      return res.data
+      // eslint-disable-next-line unused-imports/no-unused-vars
     } catch (err) {
-      return { success: false, message: 'Failed to delete achievement' };
+      return { success: false, message: "Failed to delete achievement" }
     }
   },
 
@@ -82,17 +92,17 @@ const achievementService = {
   async leaderboard(): Promise<ApiResponse<{ achievements: Achievement[] }>> {
     try {
       const res = await http.get<ApiResponse<{ achievements: Achievement[] }>>(
-        '/achievements/leaderboard',
-      );
-      return res.data;
+        "/achievements/leaderboard",
+      )
+      return res.data
     } catch (err) {
       return {
         success: false,
-        data: { achievements: handleError('leaderboard', err, []) },
-        message: 'Failed to load leaderboard',
-      };
+        data: { achievements: handleError("leaderboard", err, []) },
+        message: "Failed to load leaderboard",
+      }
     }
   },
-};
+}
 
-export default achievementService;
+export default achievementService

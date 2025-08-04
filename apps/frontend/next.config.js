@@ -4,7 +4,7 @@ const nextConfig = {
   poweredByHeader: false,
 
   // Disable static optimization to avoid SSR errors
-  output: 'standalone',
+  output: "standalone",
 
   env: {
     BACKEND_URL: process.env.BACKEND_URL,
@@ -14,25 +14,27 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'localhost',
+        protocol: "https",
+        hostname: "localhost",
       },
     ],
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
   },
 
   async rewrites() {
-    const backend = (process.env.BACKEND_URL || 'http://localhost:5050').replace(/\/$/, '');
+    const backend = (
+      process.env.BACKEND_URL || "http://localhost:5050"
+    ).replace(/\/$/, "")
     return [
       {
-        source: '/api/auth/:path*',
-        destination: '/api/auth/:path*',
+        source: "/api/auth/:path*",
+        destination: "/api/auth/:path*",
       },
       {
-        source: '/api/:path*',
+        source: "/api/:path*",
         destination: `${backend}/api/:path*`,
       },
-    ];
+    ]
   },
 
   webpack(config, { isServer }) {
@@ -40,12 +42,12 @@ const nextConfig = {
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
-      };
+      }
     }
-    return config;
+    return config
   },
 
   trailingSlash: false,
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

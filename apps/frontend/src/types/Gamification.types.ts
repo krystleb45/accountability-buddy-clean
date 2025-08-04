@@ -5,35 +5,35 @@
  * Always includes imageUrl as a string.
  */
 export interface BadgeData {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl: string;
+  id: string
+  name: string
+  description: string
+  imageUrl: string
 
   /**
    * Optional alias for imageUrl — some components refer to `badge.icon`.
    */
-  icon?: string;
+  icon?: string
 
   /**
    * Optional fallback type/name for alt text — some components refer to `badge.badgeType`.
    */
-  badgeType?: string;
+  badgeType?: string
 
   /**
    * Optional category for grouping in the UI (e.g. tabs “Streak”, “Milestone”, “Community”).
    */
-  category?: 'Streak' | 'Milestone' | 'Community';
+  category?: "Streak" | "Milestone" | "Community"
 
   /** Whether the user has unlocked this badge */
-  isEarned: boolean;
+  isEarned: boolean
 
   /** When the badge was earned (if applicable) */
-  dateEarned?: string;
+  dateEarned?: string
 }
 
 /** Alias for backward compatibility */
-export type Badge = BadgeData;
+export type Badge = BadgeData
 
 /**
  * Full user progress payload from the backend.
@@ -41,57 +41,57 @@ export type Badge = BadgeData;
  */
 export interface UserProgress {
   /** User’s unique ID */
-  id: string;
+  id: string
 
   /** User’s display name */
-  name: string;
+  name: string
 
   /** Total XP/points earned */
-  points: number;
+  points: number
 
   /** Current level */
-  level: number;
+  level: number
 
   /** Current day streak */
-  streak: number;
+  streak: number
 
   /** XP needed to reach the next level (if known) */
-  pointsToNextLevel?: number;
+  pointsToNextLevel?: number
 
   /** Percent progress toward the next level (0–100) */
-  progressToNextLevel?: number;
+  progressToNextLevel?: number
 
   /** Any newly-earned badge this session */
-  newBadge?: BadgeData;
+  newBadge?: BadgeData
 
   /** All badges the user owns */
-  badges: BadgeData[];
+  badges: BadgeData[]
 }
 
 /** Supported leaderboard types (for maybe future use) */
-export type LeaderboardType = 'global' | 'challenge';
+export type LeaderboardType = "global" | "challenge"
 
 /** An entry in the gamification leaderboard. */
 export interface LeaderboardEntry {
-  userId: string;
-  displayName: string;
-  score: number;
-  rank: number;
-  avatarUrl?: string;
+  userId: string
+  displayName: string
+  score: number
+  rank: number
+  avatarUrl?: string
   /** Optional metadata (e.g. milestone name or number) */
   metadata?: {
-    milestone?: string | number;
-    [key: string]: unknown;
-  };
-  challengeId?: string;
-  challengeTitle?: string;
-  badgeIcon?: string;
+    milestone?: string | number
+    [key: string]: unknown
+  }
+  challengeId?: string
+  challengeTitle?: string
+  badgeIcon?: string
 }
 
 /** (Optional) full leaderboard response shape */
 export interface LeaderboardResponse {
-  totalUsers: number;
-  currentPage: number;
-  usersPerPage: number;
-  leaderboard: LeaderboardEntry[];
+  totalUsers: number
+  currentPage: number
+  usersPerPage: number
+  leaderboard: LeaderboardEntry[]
 }

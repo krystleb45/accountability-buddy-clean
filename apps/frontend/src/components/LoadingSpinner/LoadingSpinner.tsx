@@ -1,35 +1,38 @@
-'use client';
+"use client"
 
-import React from 'react';
-import styles from './LoadingSpinner.module.css';
+import React from "react"
+
+import styles from "./LoadingSpinner.module.css"
 
 interface LoadingSpinnerProps {
   /** Diameter of spinner in pixels */
-  size?: number;
+  size?: number
   /** CSS color of the spinner border */
-  color?: string;
+  color?: string
   /** Controls visibility */
-  loading?: boolean;
+  loading?: boolean
   /** If true, render full-screen overlay */
-  overlay?: boolean;
+  overlay?: boolean
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 50,
-  color = '#007bff',
+  color = "#007bff",
   loading = true,
   overlay = false,
 }) => {
-  if (!loading) return null;
+  if (!loading) return null
 
   const spinnerStyle: React.CSSProperties = {
     width: size,
     height: size,
     borderWidth: size / 10,
     borderColor: `${color} transparent transparent transparent`,
-  };
+  }
 
-  const containerClass = overlay ? `${styles.container} ${styles.overlay}` : styles.container;
+  const containerClass = overlay
+    ? `${styles.container} ${styles.overlay}`
+    : styles.container
 
   return (
     <div
@@ -42,7 +45,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
       <div className={styles.spinner} style={spinnerStyle} />
       <span className={styles.srOnly}>Loading...</span>
     </div>
-  );
-};
+  )
+}
 
-export default LoadingSpinner;
+export default LoadingSpinner

@@ -1,34 +1,43 @@
 // src/utils/apiUtils.ts
 
-import { http } from './http';
-import { isAxiosError } from 'axios';
-import { getApiUrl, API_ENDPOINTS } from '@/config/api/apiConfig';
+import { isAxiosError } from "axios"
+
 import type {
-  SubscriptionDetails,
   BillingHistoryItem,
+  SubscriptionDetails,
   UpdateSubscriptionPayload,
-} from '@/types/Stripe.types';
+} from "@/types/Stripe.types"
+
+import { API_ENDPOINTS, getApiUrl } from "@/config/api/apiConfig"
+
+import { http } from "./http"
 
 /** Logs the raw error and re-throws a user-friendly one */
 function handleApiError(error: unknown): never {
   if (isAxiosError(error)) {
-    console.error(`API Error [${error.response?.status}]`, error.response?.data ?? error.message);
+    console.error(
+      `API Error [${error.response?.status}]`,
+      error.response?.data ?? error.message,
+    )
   } else {
-    console.error('Unexpected API error', (error as Error).message);
+    console.error("Unexpected API error", (error as Error).message)
   }
-  throw new Error('API request failed. Please try again later.');
+  throw new Error("API request failed. Please try again later.")
 }
 
 /**
  * Generic GET
  */
-export async function fetchData<T>(endpoint: string, params?: Record<string, unknown>): Promise<T> {
+export async function fetchData<T>(
+  endpoint: string,
+  params?: Record<string, unknown>,
+): Promise<T> {
   try {
-    const url = getApiUrl(endpoint);
-    const { data } = await http.get<T>(url, { params });
-    return data;
+    const url = getApiUrl(endpoint)
+    const { data } = await http.get<T>(url, { params })
+    return data
   } catch (err) {
-    handleApiError(err);
+    handleApiError(err)
   }
 }
 
@@ -37,24 +46,27 @@ export async function fetchData<T>(endpoint: string, params?: Record<string, unk
  */
 export async function postData<T>(endpoint: string, body: unknown): Promise<T> {
   try {
-    const url = getApiUrl(endpoint);
-    const { data } = await http.post<T>(url, body);
-    return data;
+    const url = getApiUrl(endpoint)
+    const { data } = await http.post<T>(url, body)
+    return data
   } catch (err) {
-    handleApiError(err);
+    handleApiError(err)
   }
 }
 
 /**
  * Generic PUT
  */
-export async function updateData<T>(endpoint: string, body: unknown): Promise<T> {
+export async function updateData<T>(
+  endpoint: string,
+  body: unknown,
+): Promise<T> {
   try {
-    const url = getApiUrl(endpoint);
-    const { data } = await http.put<T>(url, body);
-    return data;
+    const url = getApiUrl(endpoint)
+    const { data } = await http.put<T>(url, body)
+    return data
   } catch (err) {
-    handleApiError(err);
+    handleApiError(err)
   }
 }
 
@@ -63,10 +75,10 @@ export async function updateData<T>(endpoint: string, body: unknown): Promise<T>
  */
 export async function deleteData(endpoint: string): Promise<void> {
   try {
-    const url = getApiUrl(endpoint);
-    await http.delete(url);
+    const url = getApiUrl(endpoint)
+    await http.delete(url)
   } catch (err) {
-    handleApiError(err);
+    handleApiError(err)
   }
 }
 
@@ -74,7 +86,9 @@ export async function deleteData(endpoint: string): Promise<void> {
  * Fetch the current user’s subscription details.
  */
 export async function fetchSubscriptionDetails(): Promise<SubscriptionDetails> {
-  return await fetchData<SubscriptionDetails>(API_ENDPOINTS.SUBSCRIPTION.GET_DETAILS);
+  return await fetchData<SubscriptionDetails>(
+    API_ENDPOINTS.SUBSCRIPTION.GET_DETAILS,
+  )
 }
 
 /**
@@ -83,22 +97,24 @@ export async function fetchSubscriptionDetails(): Promise<SubscriptionDetails> {
 export async function fetchBillingHistory(): Promise<BillingHistoryItem[]> {
   const resp = await fetchData<{ billingHistory: BillingHistoryItem[] }>(
     API_ENDPOINTS.SUBSCRIPTION.GET_BILLING_HISTORY,
-  );
-  return resp.billingHistory;
+  )
+  return resp.billingHistory
 }
 
 /**
  * Update (change) the user’s subscription plan.
  */
-export async function updateSubscription(payload: UpdateSubscriptionPayload): Promise<void> {
-  await postData<void>(API_ENDPOINTS.SUBSCRIPTION.UPDATE, payload);
+export async function updateSubscription(
+  payload: UpdateSubscriptionPayload,
+): Promise<void> {
+  await postData<void>(API_ENDPOINTS.SUBSCRIPTION.UPDATE, payload)
 }
 
 /**
  * Cancel the user’s subscription.
  */
 export async function cancelSubscription(): Promise<void> {
-  await postData<void>(API_ENDPOINTS.SUBSCRIPTION.CANCEL, {});
+  await postData<void>(API_ENDPOINTS.SUBSCRIPTION.CANCEL, {})
 }
 
 /**
@@ -107,22 +123,22 @@ export async function cancelSubscription(): Promise<void> {
 export function formatSubscriptionStatus(status: string): string {
   return (
     {
-      active: 'Active',
-      canceled: 'Canceled',
-      past_due: 'Past Due',
-      trialing: 'Trialing',
-    }[status] ?? 'Unknown'
-  );
+      active: "Active",
+      canceled: "Canceled",
+      past_due: "Past Due",
+      trialing: "Trialing",
+    }[status] ?? "Unknown"
+  )
 }
 
 export function formatAmount(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
+  return `$${(cents / 100).toFixed(2)}`
 }
 
 export function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
 }

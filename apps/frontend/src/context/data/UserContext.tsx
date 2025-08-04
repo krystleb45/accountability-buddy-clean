@@ -1,71 +1,77 @@
 // src/context/data/UserContext.tsx
-'use client';
+"use client"
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
-import { fetchUserProfile } from '@/api/users/userApi';
-import type { UserProfile } from '@/types/User.types';
+import type { ReactNode } from "react"
+
+import axios from "axios"
+import React, { createContext, useEffect, useState } from "react"
+
+import type { UserProfile } from "@/types/User.types"
+
+import { fetchUserProfile } from "@/api/users/userApi"
 
 interface UserContextType {
   /** Partial because API may omit some properties */
-  user: Partial<UserProfile> | null;
-  loading: boolean;
-  error: string | null;
-  setUser: React.Dispatch<React.SetStateAction<Partial<UserProfile> | null>>;
-  logout: () => void;
+  user: Partial<UserProfile> | null
+  loading: boolean
+  error: string | null
+  setUser: React.Dispatch<React.SetStateAction<Partial<UserProfile> | null>>
+  logout: () => void
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType | undefined>(undefined)
 
-export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<Partial<UserProfile> | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export const UserProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [user, setUser] = useState<Partial<UserProfile> | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const loadProfile = async (): Promise<void> => {
-      setLoading(true);
-      setError(null);
+      setLoading(true)
+      setError(null)
       try {
-        const profile = await fetchUserProfile(); // may return partial
-        setUser(profile as Partial<UserProfile>);
+        const profile = await fetchUserProfile() // may return partial
+        setUser(profile as Partial<UserProfile>)
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.message ?? err.message);
+          setError(err.response?.data?.message ?? err.message)
         } else if (err instanceof Error) {
-          setError(err.message);
+          setError(err.message)
         } else {
-          setError('Failed to load user profile.');
+          setError("Failed to load user profile.")
         }
-        setUser(null);
+        setUser(null)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    loadProfile();
-  }, []);
+    loadProfile()
+  }, [])
 
   const logout = (): void => {
-    setUser(null);
-    sessionStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
-    if (typeof window !== 'undefined') {
-      window.location.href = '/login';
+    setUser(null)
+    sessionStorage.removeItem("authToken")
+    localStorage.removeItem("refreshToken")
+    if (typeof window !== "undefined") {
+      window.location.href = "/login"
     }
-  };
+  }
 
   return (
-    <UserContext.Provider value={{ user, loading, error, setUser, logout }}>
+    <UserContext value={{ user, loading, error, setUser, logout }}>
       {children}
-    </UserContext.Provider>
-  );
-};
+    </UserContext>
+  )
+}
 
-export const useUser = (): UserContextType => {
-  const ctx = useContext(UserContext);
+export function useUser(): UserContextType {
+  const ctx = use(UserContext)
   if (!ctx) {
-    throw new Error('useUser must be used within UserProvider');
+    throw new Error("useUser must be used within UserProvider")
   }
-  return ctx;
-};
+  return ctx
+}

@@ -1,47 +1,56 @@
 // src/components/Activities/RelatedActivities.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect, ReactElement } from 'react';
-import { motion } from 'framer-motion';
-import { http } from '@/utils/http';
-import type { RelatedActivity } from '@/types/Activity.types';
-import styles from './Activities.module.css';
+import type { ReactElement } from "react"
+
+import { motion } from "framer-motion"
+import React, { useEffect, useState } from "react"
+
+import type { RelatedActivity } from "@/types/Activity.types"
+
+import { http } from "@/utils/http"
+
+import styles from "./Activities.module.css"
 
 export interface RelatedActivitiesProps {
-  userId: string;
+  userId: string
 }
 
-export default function RelatedActivities({ userId }: RelatedActivitiesProps): ReactElement {
-  const [activities, setActivities] = useState<RelatedActivity[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export default function RelatedActivities({
+  userId,
+}: RelatedActivitiesProps): ReactElement {
+  const [activities, setActivities] = useState<RelatedActivity[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-    setError(null);
+    let isMounted = true
+    setLoading(true)
+    setError(null)
 
     http
-      .get<{ data: RelatedActivity[] }>('/activity/related', { params: { userId } })
+      .get<{ data: RelatedActivity[] }>("/activity/related", {
+        params: { userId },
+      })
       .then(({ data }) => {
         if (isMounted) {
-          setActivities(data.data || []);
+          setActivities(data.data || [])
         }
       })
       .catch((err) => {
-        console.error('Failed to load related activities:', err);
+        console.error("Failed to load related activities:", err)
         if (isMounted) {
-          setError('Failed to load related activities');
+          setError("Failed to load related activities")
         }
       })
       .finally(() => {
-        if (isMounted) setLoading(false);
-      });
+        if (isMounted) setLoading(false)
+      })
 
     return () => {
-      isMounted = false;
-    };
-  }, [userId]);
+      isMounted = false
+    }
+  }, [userId])
 
   return (
     <motion.div
@@ -76,5 +85,5 @@ export default function RelatedActivities({ userId }: RelatedActivitiesProps): R
         </ul>
       )}
     </motion.div>
-  );
+  )
 }

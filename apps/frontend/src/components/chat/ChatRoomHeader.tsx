@@ -1,16 +1,16 @@
-import React from 'react';
-('use client');
+"use client"
 
-import { FaCog, FaUsers } from 'react-icons/fa';
+import React from "react"
+import { FaCog, FaUsers } from "react-icons/fa"
 
 interface ChatRoomHeaderProps {
-  title?: string;
-  participantCount?: number;
-  onSettingsClick?: () => void;
+  title?: string
+  participantCount?: number
+  onSettingsClick?: () => void
 }
 
 const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
-  title = 'Chat Room',
+  title = "Chat Room",
   participantCount,
   onSettingsClick,
 }) => (
@@ -22,7 +22,7 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
         <div className="flex items-center space-x-1 text-sm text-gray-400">
           <FaUsers />
           <span>
-            {participantCount} participant{participantCount !== 1 ? 's' : ''}
+            {participantCount} participant{participantCount !== 1 ? "s" : ""}
           </span>
         </div>
       )}
@@ -39,6 +39,6 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
       </button>
     )}
   </header>
-);
+)
 
-export default ChatRoomHeader;
+export default ChatRoomHeader

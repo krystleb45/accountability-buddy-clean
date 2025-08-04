@@ -8,10 +8,10 @@
  * @returns A deep copy of the input data.
  */
 export function deepClone<T>(data: T): T {
-  if (typeof structuredClone === 'function') {
-    return structuredClone(data) as T;
+  if (typeof structuredClone === "function") {
+    return structuredClone(data) as T
   }
-  return JSON.parse(JSON.stringify(data)) as T;
+  return JSON.parse(JSON.stringify(data)) as T
 }
 
 /**
@@ -21,7 +21,7 @@ export function deepClone<T>(data: T): T {
  * @returns True if the object is empty, false otherwise.
  */
 export function isEmptyObject(obj: Record<string, unknown>): boolean {
-  return Object.keys(obj).length === 0;
+  return Object.keys(obj).length === 0
 }
 
 /**
@@ -31,8 +31,11 @@ export function isEmptyObject(obj: Record<string, unknown>): boolean {
  * @param key - The key to use as the map identifier.
  * @returns A Map where keys are the specified field, and values are the corresponding objects.
  */
-export function arrayToMap<T, K extends keyof T>(array: T[], key: K): Map<T[K], T> {
-  return new Map(array.map((item) => [item[key], item]));
+export function arrayToMap<T, K extends keyof T>(
+  array: T[],
+  key: K,
+): Map<T[K], T> {
+  return new Map(array.map((item) => [item[key], item]))
 }
 
 /**
@@ -42,13 +45,16 @@ export function arrayToMap<T, K extends keyof T>(array: T[], key: K): Map<T[K], 
  * @param key - The key to group by.
  * @returns An object where each key corresponds to a group, and values are arrays of grouped objects.
  */
-export function groupBy<T, K extends keyof T>(array: T[], key: K): Record<string, T[]> {
+export function groupBy<T, K extends keyof T>(
+  array: T[],
+  key: K,
+): Record<string, T[]> {
   return array.reduce<Record<string, T[]>>((acc, item) => {
-    const groupKey = String(item[key]);
-    acc[groupKey] = acc[groupKey] ?? [];
-    acc[groupKey].push(item);
-    return acc;
-  }, {});
+    const groupKey = String(item[key])
+    acc[groupKey] = acc[groupKey] ?? []
+    acc[groupKey].push(item)
+    return acc
+  }, {})
 }
 
 /**
@@ -58,7 +64,7 @@ export function groupBy<T, K extends keyof T>(array: T[], key: K): Record<string
  * @returns An array of the Map’s values.
  */
 export function mapToArray<K, V>(map: Map<K, V>): V[] {
-  return Array.from(map.values());
+  return Array.from(map.values())
 }
 
 /**
@@ -67,8 +73,10 @@ export function mapToArray<K, V>(map: Map<K, V>): V[] {
  * @param objects - The objects to merge.
  * @returns A new object with all merged properties.
  */
-export function mergeObjects<T extends Record<string, unknown>>(...objects: T[]): T {
-  return Object.assign({}, ...objects);
+export function mergeObjects<T extends Record<string, unknown>>(
+  ...objects: T[]
+): T {
+  return Object.assign({}, ...objects)
 }
 
 /**
@@ -79,12 +87,16 @@ export function mergeObjects<T extends Record<string, unknown>>(...objects: T[])
  * @param ascending - Whether to sort in ascending order (default: true).
  * @returns A new sorted array.
  */
-export function sortByKey<T, K extends keyof T>(array: T[], key: K, ascending = true): T[] {
+export function sortByKey<T, K extends keyof T>(
+  array: T[],
+  key: K,
+  ascending = true,
+): T[] {
   return [...array].sort((a, b) => {
-    const aVal = String(a[key]);
-    const bVal = String(b[key]);
-    return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-  });
+    const aVal = String(a[key])
+    const bVal = String(b[key])
+    return ascending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal)
+  })
 }
 
 /**
@@ -94,16 +106,29 @@ export function sortByKey<T, K extends keyof T>(array: T[], key: K, ascending = 
  * @param prefix - Internal prefix for recursion (default: '').
  * @returns A flattened object.
  */
-export function flattenObject(obj: Record<string, unknown>, prefix = ''): Record<string, unknown> {
-  return Object.entries(obj).reduce<Record<string, unknown>>((acc, [key, value]) => {
-    const newKey = prefix ? `${prefix}.${key}` : key;
-    if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
-      Object.assign(acc, flattenObject(value as Record<string, unknown>, newKey));
-    } else {
-      acc[newKey] = value;
-    }
-    return acc;
-  }, {});
+export function flattenObject(
+  obj: Record<string, unknown>,
+  prefix = "",
+): Record<string, unknown> {
+  return Object.entries(obj).reduce<Record<string, unknown>>(
+    (acc, [key, value]) => {
+      const newKey = prefix ? `${prefix}.${key}` : key
+      if (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value)
+      ) {
+        Object.assign(
+          acc,
+          flattenObject(value as Record<string, unknown>, newKey),
+        )
+      } else {
+        acc[newKey] = value
+      }
+      return acc
+    },
+    {},
+  )
 }
 
 /**
@@ -112,23 +137,25 @@ export function flattenObject(obj: Record<string, unknown>, prefix = ''): Record
  * @param obj - The flattened object.
  * @returns A nested object.
  */
-export function unflattenObject(obj: Record<string, unknown>): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
+export function unflattenObject(
+  obj: Record<string, unknown>,
+): Record<string, unknown> {
+  const result: Record<string, unknown> = {}
   for (const [flatKey, value] of Object.entries(obj)) {
-    const parts = flatKey.split('.');
+    const parts = flatKey.split(".")
     parts.reduce<Record<string, unknown>>((acc, part, idx) => {
       if (idx === parts.length - 1) {
-        acc[part] = value;
+        acc[part] = value
       } else {
-        if (acc[part] === undefined || typeof acc[part] !== 'object') {
-          acc[part] = {};
+        if (acc[part] === undefined || typeof acc[part] !== "object") {
+          acc[part] = {}
         }
-        return acc[part] as Record<string, unknown>;
+        return acc[part] as Record<string, unknown>
       }
-      return acc;
-    }, result);
+      return acc
+    }, result)
   }
-  return result;
+  return result
 }
 
 /**
@@ -137,8 +164,12 @@ export function unflattenObject(obj: Record<string, unknown>): Record<string, un
  * @param obj - The object to clean.
  * @returns A new object without null or undefined values.
  */
-export function cleanObject<T extends Record<string, unknown>>(obj: T): Partial<T> {
-  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v != null)) as Partial<T>;
+export function cleanObject<T extends Record<string, unknown>>(
+  obj: T,
+): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v != null),
+  ) as Partial<T>
 }
 
 /**
@@ -149,14 +180,14 @@ export function cleanObject<T extends Record<string, unknown>>(obj: T): Partial<
  * @returns A URL-encoded query string.
  */
 export function objectToQueryString(obj: Record<string, unknown>): string {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams()
   for (const [key, value] of Object.entries(obj)) {
-    if (value == null) continue;
+    if (value == null) continue
     if (Array.isArray(value)) {
-      value.forEach((v) => params.append(key, String(v)));
+      value.forEach((v) => params.append(key, String(v)))
     } else {
-      params.append(key, String(value));
+      params.append(key, String(value))
     }
   }
-  return params.toString();
+  return params.toString()
 }

@@ -1,24 +1,25 @@
 // components/Progress/AchievementCard.tsx
-'use client';
+"use client"
 
-import React from 'react';
-import Card, { CardContent } from '../cards/Card';
-import clsx from 'clsx';
-import styles from './AchievementCard.module.css';
+import clsx from "clsx"
+import React from "react"
+
+import Card, { CardContent } from "../cards/Card"
+import styles from "./AchievementCard.module.css"
 
 export interface AchievementProps {
   /** Unique identifier (not rendered, but you might use for tracking) */
-  id: string;
+  id: string
   /** Achievement title */
-  title: string;
+  title: string
   /** Short description */
-  description: string;
+  description: string
   /** 0–100 percent progress */
-  progress: number;
+  progress: number
   /** True once unlocked */
-  isUnlocked: boolean;
+  isUnlocked: boolean
   /** Optional icon URL */
-  icon?: string;
+  icon?: string
 }
 
 const AchievementCard: React.FC<AchievementProps> = ({
@@ -29,18 +30,23 @@ const AchievementCard: React.FC<AchievementProps> = ({
   icon,
 }) => {
   // Clamp progress into [0,100]
-  const clamped = Math.max(0, Math.min(progress, 100));
+  const clamped = Math.max(0, Math.min(progress, 100))
 
   return (
     <Card
       // clsx always returns a string, never undefined
-      className={clsx(styles.card, isUnlocked ? styles.unlocked : styles.locked)}
+      className={clsx(
+        styles.card,
+        isUnlocked ? styles.unlocked : styles.locked,
+      )}
       elevated
       bordered
     >
-      <CardContent className={styles.content ?? ''}>
+      <CardContent className={styles.content ?? ""}>
         {/* Optional icon */}
-        {icon && <img src={icon} alt={`${title} icon`} className={styles.icon} />}
+        {icon && (
+          <img src={icon} alt={`${title} icon`} className={styles.icon} />
+        )}
 
         <div className={styles.info}>
           <h3 className={styles.title}>{title}</h3>
@@ -67,11 +73,11 @@ const AchievementCard: React.FC<AchievementProps> = ({
         )}
 
         <div className={styles.status} role="status" aria-live="polite">
-          {isUnlocked ? 'Unlocked' : `${clamped}% Complete`}
+          {isUnlocked ? "Unlocked" : `${clamped}% Complete`}
         </div>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default AchievementCard;
+export default AchievementCard

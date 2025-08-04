@@ -1,62 +1,66 @@
 // src/components/Profile/Profile.tsx
-'use client';
+"use client"
 
-import React, { useState, ChangeEvent } from 'react';
-import { motion } from 'framer-motion';
+import type { ChangeEvent } from "react"
+
+import { motion } from "framer-motion"
+import React, { useState } from "react"
 // Removed unused Link import
-import styles from './Profile.module.css';
+import type { ProfileData } from "@/services/profileService"
 
-import ProfileService, { type ProfileData } from '@/services/profileService';
-import FavoriteBadges from '../BadgeSystem/FavoriteBadges';
+import ProfileService from "@/services/profileService"
+
+import FavoriteBadges from "../BadgeSystem/FavoriteBadges"
+import styles from "./Profile.module.css"
 
 interface ProfileProps {
-  initialProfile: ProfileData;
+  initialProfile: ProfileData
 }
 
 const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
-  const [profile, setProfile]         = useState<ProfileData>(initialProfile);
-  const [editingBio, setEditingBio]   = useState(false);
-  const [draftBio, setDraftBio]       = useState(initialProfile.bio);
-  const [newInterest, setNewInterest] = useState('');
+  const [profile, setProfile] = useState<ProfileData>(initialProfile)
+  const [editingBio, setEditingBio] = useState(false)
+  const [draftBio, setDraftBio] = useState(initialProfile.bio)
+  const [newInterest, setNewInterest] = useState("")
 
   const handleBioSave = async () => {
-    const updated = await ProfileService.updateBio(draftBio);
+    const updated = await ProfileService.updateBio(draftBio)
     if (updated) {
-      setProfile(updated);
-      setEditingBio(false);
+      setProfile(updated)
+      setEditingBio(false)
     }
-  };
+  }
 
   const handleAddInterest = async () => {
-    if (!newInterest.trim()) return;
+    if (!newInterest.trim()) return
     const updated = await ProfileService.updateInterests([
       ...(profile.interests ?? []),
       newInterest.trim(),
-    ]);
+    ])
     if (updated) {
-      setProfile(updated);
-      setNewInterest('');
+      setProfile(updated)
+      setNewInterest("")
     }
-  };
+  }
 
   const handleRemoveInterest = async (i: string) => {
     const updated = await ProfileService.updateInterests(
-      (profile.interests ?? []).filter(x => x !== i)
-    );
-    if (updated) setProfile(updated);
-  };
+      (profile.interests ?? []).filter((x) => x !== i),
+    )
+    if (updated) setProfile(updated)
+  }
 
   const onProfileImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return;
-    const updated = await ProfileService.updateProfileImage(e.target.files[0]);
-    if (updated) setProfile(updated);
-  };
+    if (!e.target.files?.[0]) return
+    const updated = await ProfileService.updateProfileImage(e.target.files[0])
+    if (updated) setProfile(updated)
+  }
 
   const onCoverImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.[0]) return;
-    const updated = await ProfileService.updateCoverImage(e.target.files[0]);
-    if (updated) setProfile(updated);
-  };
+    if (!e.target.files?.[0]) return
+    const updated = await ProfileService.updateCoverImage(e.target.files[0])
+    if (updated) setProfile(updated)
+  }
 
   return (
     <motion.div
@@ -65,12 +69,10 @@ const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-
-
       {/* Cover */}
       <div className={styles.coverContainer}>
         <img
-          src={profile.coverImage || '/default-cover.png'}
+          src={profile.coverImage || "/default-cover.png"}
           alt="Cover"
           className={styles.coverImage}
         />
@@ -88,7 +90,7 @@ const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
       {/* Avatar */}
       <div className={styles.profilePictureContainer}>
         <img
-          src={profile.profileImage || '/default-avatar.png'}
+          src={profile.profileImage || "/default-avatar.png"}
           alt={profile.name}
           className={styles.profilePicture}
         />
@@ -117,21 +119,18 @@ const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
             <textarea
               className={styles.bioInput}
               value={draftBio}
-              onChange={e => setDraftBio(e.target.value)}
+              onChange={(e) => setDraftBio(e.target.value)}
               rows={4}
             />
-            <div className="flex gap-2 justify-center mt-2">
-              <button
-                className={styles.saveButton}
-                onClick={handleBioSave}
-              >
+            <div className="mt-2 flex justify-center gap-2">
+              <button className={styles.saveButton} onClick={handleBioSave}>
                 Save
               </button>
               <button
                 className={styles.cancelButton}
                 onClick={() => {
-                  setDraftBio(profile.bio);
-                  setEditingBio(false);
+                  setDraftBio(profile.bio)
+                  setEditingBio(false)
                 }}
               >
                 Cancel
@@ -140,14 +139,12 @@ const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
           </>
         ) : (
           <>
-            <p className={styles.bioText}>
-              {profile.bio || 'No bio yet.'}
-            </p>
+            <p className={styles.bioText}>{profile.bio || "No bio yet."}</p>
             <button
               className={styles.editButton}
               onClick={() => setEditingBio(true)}
             >
-              {profile.bio ? 'Edit Bio' : 'Add Bio'}
+              {profile.bio ? "Edit Bio" : "Add Bio"}
             </button>
           </>
         )}
@@ -157,7 +154,7 @@ const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
       <section className={styles.interestsSection}>
         <h2 className={styles.sectionTitle}>Interests</h2>
         <div className={styles.interestTags}>
-          {(profile.interests ?? []).map(i => (
+          {(profile.interests ?? []).map((i) => (
             <span key={i} className={styles.interestTag}>
               {i}
               <button
@@ -169,18 +166,15 @@ const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
             </span>
           ))}
         </div>
-        <div className="flex gap-2 justify-center mt-2">
+        <div className="mt-2 flex justify-center gap-2">
           <input
             type="text"
             className={styles.inputField}
             placeholder="Add interest…"
             value={newInterest}
-            onChange={e => setNewInterest(e.target.value)}
+            onChange={(e) => setNewInterest(e.target.value)}
           />
-          <button
-            className={styles.addButton}
-            onClick={handleAddInterest}
-          >
+          <button className={styles.addButton} onClick={handleAddInterest}>
             Add
           </button>
         </div>
@@ -188,13 +182,11 @@ const Profile: React.FC<ProfileProps> = ({ initialProfile }) => {
 
       {/* Achievements & Badges */}
       <section className={styles.pinnedGoalsSection}>
-        <h2 className={styles.sectionTitle}>
-          Achievements & Badges
-        </h2>
+        <h2 className={styles.sectionTitle}>Achievements & Badges</h2>
         <FavoriteBadges />
       </section>
     </motion.div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile

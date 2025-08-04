@@ -1,63 +1,64 @@
-'use client';
+"use client"
 
-import React, { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { validateEmail } from '../../utils/FormsUtils';
-import styles from './NewsletterSignup.module.css';
+import { motion } from "framer-motion"
+import React, { useCallback, useState } from "react"
+
+import { validateEmail } from "../../utils/FormsUtils"
+import styles from "./NewsletterSignup.module.css"
 
 /**
  * Props for NewsletterSignup component.
  */
 export interface NewsletterSignupProps {
   /** Callback invoked when form is submitted with valid data */
-  onSubmit: (data: { email: string; consent: boolean }) => void;
+  onSubmit: (data: { email: string; consent: boolean }) => void
 }
 
 /**
  * NewsletterSignup renders a subscription form with email validation and consent.
  */
 const NewsletterSignup: React.FC<NewsletterSignupProps> = ({ onSubmit }) => {
-  const [email, setEmail] = useState<string>('');
-  const [consent, setConsent] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [successMessage, setSuccessMessage] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [email, setEmail] = useState<string>("")
+  const [consent, setConsent] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [successMessage, setSuccessMessage] = useState<string>("")
+  const [errorMessage, setErrorMessage] = useState<string>("")
 
   /**
    * Handles form submission: validation and invoking onSubmit.
    */
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      setErrorMessage('');
-      setSuccessMessage('');
-      setLoading(true);
+      e.preventDefault()
+      setErrorMessage("")
+      setSuccessMessage("")
+      setLoading(true)
 
       if (!validateEmail(email)) {
-        setErrorMessage('Please enter a valid email address.');
-        setLoading(false);
-        return;
+        setErrorMessage("Please enter a valid email address.")
+        setLoading(false)
+        return
       }
       if (!consent) {
-        setErrorMessage('You must agree to receive newsletters.');
-        setLoading(false);
-        return;
+        setErrorMessage("You must agree to receive newsletters.")
+        setLoading(false)
+        return
       }
 
       try {
-        onSubmit({ email, consent });
-        setSuccessMessage('Thank you for subscribing!');
-        setEmail('');
-        setConsent(false);
+        onSubmit({ email, consent })
+        setSuccessMessage("Thank you for subscribing!")
+        setEmail("")
+        setConsent(false)
       } catch (err) {
-        console.error('Newsletter signup error:', err);
-        setErrorMessage('Failed to subscribe. Please try again later.');
+        console.error("Newsletter signup error:", err)
+        setErrorMessage("Failed to subscribe. Please try again later.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     },
     [email, consent, onSubmit],
-  );
+  )
 
   return (
     <motion.div
@@ -104,7 +105,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({ onSubmit }) => {
           disabled={loading || !email || !consent}
           aria-busy={loading}
         >
-          {loading ? 'Subscribing...' : 'Subscribe'}
+          {loading ? "Subscribing..." : "Subscribe"}
         </button>
       </form>
       {successMessage && (
@@ -118,7 +119,7 @@ const NewsletterSignup: React.FC<NewsletterSignupProps> = ({ onSubmit }) => {
         </p>
       )}
     </motion.div>
-  );
-};
+  )
+}
 
-export default NewsletterSignup;
+export default NewsletterSignup

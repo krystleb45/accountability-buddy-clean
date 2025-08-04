@@ -1,29 +1,35 @@
 // src/components/BadgeSystem/BadgeList.tsx
-'use client';
+"use client"
 
-import React, { useState, FC } from 'react';
-import BadgeItem from './BadgeItem';
-import type { Badge } from '@/types/Gamification.types';
+import type { FC } from "react"
+
+import React, { useState } from "react"
+
+import type { Badge } from "@/types/Gamification.types"
+
+import BadgeItem from "./BadgeItem"
 
 export interface BadgeListProps {
-  badges: (Badge & { isEarned: boolean; dateEarned?: string })[];
-  onBadgeClick: (id: string) => void;
+  badges: (Badge & { isEarned: boolean; dateEarned?: string })[]
+  onBadgeClick: (id: string) => void
 }
 
-const CATEGORIES = ['All', 'Streak', 'Milestone', 'Community'] as const;
-type Category = (typeof CATEGORIES)[number];
+const CATEGORIES = ["All", "Streak", "Milestone", "Community"] as const
+type Category = (typeof CATEGORIES)[number]
 
 const BadgeList: FC<BadgeListProps> = ({ badges, onBadgeClick }) => {
-  const [activeTab, setActiveTab] = useState<Category>('All');
+  const [activeTab, setActiveTab] = useState<Category>("All")
 
   if (badges.length === 0) {
-    return <p className="text-center text-gray-400">No badges to display.</p>;
+    return <p className="text-center text-gray-400">No badges to display.</p>
   }
 
   const filtered =
-    activeTab === 'All'
+    activeTab === "All"
       ? badges
-      : badges.filter((b) => b.category?.toLowerCase() === activeTab.toLowerCase());
+      : badges.filter(
+          (b) => b.category?.toLowerCase() === activeTab.toLowerCase(),
+        )
 
   return (
     <div>
@@ -36,8 +42,8 @@ const BadgeList: FC<BadgeListProps> = ({ badges, onBadgeClick }) => {
             onClick={() => setActiveTab(cat)}
             className={`rounded-full px-4 py-2 font-semibold transition ${
               activeTab === cat
-                ? 'bg-green-500 text-white shadow-md'
-                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                ? "bg-green-500 text-white shadow-md"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
             }`}
           >
             {cat}
@@ -52,7 +58,7 @@ const BadgeList: FC<BadgeListProps> = ({ badges, onBadgeClick }) => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BadgeList;
+export default BadgeList

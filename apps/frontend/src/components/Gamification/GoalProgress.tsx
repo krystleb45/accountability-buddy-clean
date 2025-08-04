@@ -1,22 +1,22 @@
-import React from 'react';
 import {
   Box,
-  LinearProgress,
-  Typography,
+  Button,
   Card,
   CardContent,
   CardHeader,
-  Button,
-} from '@mui/material';
+  LinearProgress,
+  Typography,
+} from "@mui/material"
+import React from "react"
 
 // Define the interface for the goal progress
 interface GoalProgressProps {
-  goalTitle: string;
-  currentProgress: number;
-  targetProgress: number;
-  onEditGoal: () => void;
-  progress?: number; // Add a progress prop with an optional value
-  description?: string; // Add a description prop with an optional value
+  goalTitle: string
+  currentProgress: number
+  targetProgress: number
+  onEditGoal: () => void
+  progress?: number // Add a progress prop with an optional value
+  description?: string // Add a description prop with an optional value
 }
 
 const GoalProgress: React.FC<GoalProgressProps> = ({
@@ -27,19 +27,25 @@ const GoalProgress: React.FC<GoalProgressProps> = ({
 }) => {
   // Calculate the percentage completion safely
   const progressPercentage =
-    targetProgress > 0 ? Math.min((currentProgress / targetProgress) * 100, 100) : 0; // Prevent values over 100%
+    targetProgress > 0
+      ? Math.min((currentProgress / targetProgress) * 100, 100)
+      : 0 // Prevent values over 100%
 
   return (
     <Card data-testid="goal-progress-card">
       <CardHeader
         title={goalTitle}
-        titleTypographyProps={{ variant: 'h6' }}
+        titleTypographyProps={{ variant: "h6" }}
         data-testid="goal-title"
       />
       <CardContent>
         {/* Progress information */}
         <Box mb={2}>
-          <Typography variant="body2" color="textSecondary" data-testid="progress-info">
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            data-testid="progress-info"
+          >
             Progress: {currentProgress}/{targetProgress}
           </Typography>
           {/* Accessible progress bar */}
@@ -51,11 +57,15 @@ const GoalProgress: React.FC<GoalProgressProps> = ({
             aria-valuenow={progressPercentage}
             aria-valuemin={0}
             aria-valuemax={100}
-            style={{ height: '10px', borderRadius: '5px' }}
+            style={{ height: "10px", borderRadius: "5px" }}
           />
         </Box>
         {/* Percentage completion */}
-        <Typography variant="caption" color="textSecondary" data-testid="progress-percentage">
+        <Typography
+          variant="caption"
+          color="textSecondary"
+          data-testid="progress-percentage"
+        >
           {progressPercentage.toFixed(0)}% completed
         </Typography>
         {/* Edit goal button */}
@@ -64,13 +74,13 @@ const GoalProgress: React.FC<GoalProgressProps> = ({
           color="primary"
           onClick={onEditGoal}
           data-testid="edit-goal-button"
-          style={{ marginTop: '16px' }}
+          style={{ marginTop: "16px" }}
         >
           Edit Goal
         </Button>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default GoalProgress;
+export default GoalProgress

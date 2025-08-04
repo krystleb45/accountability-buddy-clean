@@ -1,9 +1,9 @@
 // src/app/api/blog/route.ts
 
-import { NextResponse } from 'next/server'
+import { NextResponse } from "next/server"
 
 const BACKEND = process.env.BACKEND_URL!
-if (!BACKEND) throw new Error('Missing BACKEND_URL')
+if (!BACKEND) throw new Error("Missing BACKEND_URL")
 
 export async function GET(request: Request) {
   // preserve any query string
@@ -13,12 +13,12 @@ export async function GET(request: Request) {
   const body = await upstream.text()
 
   if (!upstream.ok) {
-    console.error('Upstream /blog error:', body)
+    console.error("Upstream /blog error:", body)
     return NextResponse.json({ error: body }, { status: upstream.status })
   }
 
   return new NextResponse(body, {
     status: upstream.status,
-    headers: { 'content-type': 'application/json' },
+    headers: { "content-type": "application/json" },
   })
 }

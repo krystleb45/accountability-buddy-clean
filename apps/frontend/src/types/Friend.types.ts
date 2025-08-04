@@ -1,21 +1,21 @@
 export interface Friend {
-  _id: string;
-  name: string;
-  email: string; // ✅ Add this line
-  profilePicture?: string;
-  online?: boolean;
+  _id: string
+  name: string
+  email: string // ✅ Add this line
+  profilePicture?: string
+  online?: boolean
 
   // Optional raw API fields
-  id?: string;
-  avatar?: string;
+  id?: string
+  avatar?: string
 }
 
 export interface FriendRequest {
-  _id: string;
+  _id: string
   sender: {
-    _id: string;
-    name: string;
-    email: string; // ✅ Add this line
-    profilePicture?: string;
-  };
+    _id: string
+    name: string
+    email: string // ✅ Add this line
+    profilePicture?: string
+  }
 }

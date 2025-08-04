@@ -1,60 +1,65 @@
 // src/components/Activities/ActivityDetails.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState, ReactElement } from 'react';
-import { motion } from 'framer-motion';
-import { useParams } from 'next/navigation';
-import { fetchActivityById } from '@/api/activity/activityApi';
+import type { ReactElement } from "react"
+
+import { motion } from "framer-motion"
+import { useParams } from "next/navigation"
+import React, { useEffect, useState } from "react"
+
+import { fetchActivityById } from "@/api/activity/activityApi"
 
 interface Activity {
-  _id: string;
-  title: string;
-  description?: string;
-  createdAt: string;
-  status?: 'completed' | 'in-progress' | 'pending';
+  _id: string
+  title: string
+  description?: string
+  createdAt: string
+  status?: "completed" | "in-progress" | "pending"
 }
 
 export default function ActivityDetails(): ReactElement {
   // Next.js’s `useParams` can return string | string[] | undefined
-  const params = useParams();
-  const id = typeof params.id === 'string' ? params.id : undefined;
+  const params = useParams()
+  const id = typeof params.id === "string" ? params.id : undefined
 
-  const [activity, setActivity] = useState<Activity | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [activity, setActivity] = useState<Activity | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id) {
-      setError('Invalid activity ID.');
-      setLoading(false);
-      return;
+      setError("Invalid activity ID.")
+      setLoading(false)
+      return
     }
 
     const loadActivity = async (): Promise<void> => {
       try {
-        setLoading(true);
-        const data = await fetchActivityById(id);
-        setActivity(data);
+        setLoading(true)
+        const data = await fetchActivityById(id)
+        setActivity(data)
       } catch {
-        setError('Failed to load activity details.');
+        setError("Failed to load activity details.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    loadActivity();
-  }, [id]);
+    loadActivity()
+  }, [id])
 
   if (loading) {
-    return <p className="text-center text-gray-400">Loading activity details…</p>;
+    return (
+      <p className="text-center text-gray-400">Loading activity details…</p>
+    )
   }
 
   if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
+    return <p className="text-center text-red-500">{error}</p>
   }
 
   if (!activity) {
-    return <p className="text-center text-gray-400">No activity found.</p>;
+    return <p className="text-center text-gray-400">No activity found.</p>
   }
 
   return (
@@ -65,22 +70,24 @@ export default function ActivityDetails(): ReactElement {
       className="mx-auto max-w-2xl rounded-lg bg-gray-900 p-6 text-white shadow-lg"
     >
       <h2 className="text-2xl font-bold text-kelly-green">{activity.title}</h2>
-      <p className="text-gray-400">{activity.description ?? 'No description provided.'}</p>
+      <p className="text-gray-400">
+        {activity.description ?? "No description provided."}
+      </p>
       <p className="text-sm text-gray-500">
         Created: {new Date(activity.createdAt).toLocaleDateString()}
       </p>
       <p
         className={[
-          'mt-2 rounded-lg px-3 py-1 text-sm font-medium text-black',
-          activity.status === 'completed'
-            ? 'bg-green-500'
-            : activity.status === 'in-progress'
-              ? 'bg-yellow-500'
-              : 'bg-red-500',
-        ].join(' ')}
+          "mt-2 rounded-lg px-3 py-1 text-sm font-medium text-black",
+          activity.status === "completed"
+            ? "bg-green-500"
+            : activity.status === "in-progress"
+              ? "bg-yellow-500"
+              : "bg-red-500",
+        ].join(" ")}
       >
         Status: {activity.status}
       </p>
     </motion.div>
-  );
+  )
 }

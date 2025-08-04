@@ -1,54 +1,55 @@
-'use client';
-import React, { useState, useEffect, useRef } from 'react';
-import { FaPlay } from 'react-icons/fa';
-import ChatBubble from '@/components/chat/ChatBubble';
-import { useChat } from '@/context/ChatContext';
-import socket from '@/utils/socket';
+"use client"
+import React, { useEffect, useRef, useState } from "react"
+import { FaPlay } from "react-icons/fa"
+
+import ChatBubble from "@/components/chat/ChatBubble"
+import { useChat } from "@/context/ChatContext"
+import socket from "@/utils/socket"
 
 interface ChatBoxProps {
-  chatId: string;
-  onSendMessage?: (message: string) => void;
-  placeholder?: string;
-  disabled?: boolean;
+  chatId: string
+  onSendMessage?: (message: string) => void
+  placeholder?: string
+  disabled?: boolean
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({
   chatId,
   onSendMessage,
-  placeholder = 'Type a message...',
+  placeholder = "Type a message...",
   disabled = false,
 }) => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("")
   const [messages, setMessages] = useState<
     {
-      id: string;
-      senderName: string;
-      content: string;
-      avatarUrl: string;
-      timestamp: string;
+      id: string
+      senderName: string
+      content: string
+      avatarUrl: string
+      timestamp: string
     }[]
-  >([]);
+  >([])
 
-  const { user } = useChat();
-  const messageEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useChat()
+  const messageEndRef = useRef<HTMLDivElement>(null)
 
   /** Scroll to bottom when messages update */
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   useEffect(() => {
-    if (!chatId || !user) return;
+    if (!chatId || !user) return
 
-    socket.emit('joinRoom', chatId);
+    socket.emit("joinRoom", chatId)
     socket.on(
-      'receiveMessage',
+      "receiveMessage",
       (data: {
-        chatId: string;
-        senderId: string;
-        senderName: string;
-        message: string;
-        timestamp: string;
+        chatId: string
+        senderId: string
+        senderName: string
+        message: string
+        timestamp: string
       }) => {
         setMessages((prev) => [
           ...prev,
@@ -56,37 +57,37 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             id: `${data.senderId}-${new Date(data.timestamp).getTime()}`,
             senderName: data.senderName,
             content: data.message,
-            avatarUrl: '/default-avatar.png',
+            avatarUrl: "/default-avatar.png",
             timestamp: data.timestamp,
           },
-        ]);
+        ])
       },
-    );
+    )
 
     return () => {
-      socket.emit('leaveRoom', chatId);
-      socket.off('receiveMessage');
-    };
-  }, [chatId, user]);
+      socket.emit("leaveRoom", chatId)
+      socket.off("receiveMessage")
+    }
+  }, [chatId, user])
 
   const handleSendMessage = () => {
-    const text = message.trim();
-    if (!text || !user) return;
+    const text = message.trim()
+    if (!text || !user) return
 
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().toISOString()
     const newMsg = {
       id: timestamp,
       senderName: user.name,
       content: text,
-      avatarUrl: user.avatarUrl || '/default-avatar.png',
+      avatarUrl: user.avatarUrl || "/default-avatar.png",
       timestamp,
-    };
+    }
 
-    socket.emit('sendMessage', { chatId, message: text });
-    setMessages((prev) => [...prev, newMsg]);
-    setMessage('');
-    onSendMessage?.(text);
-  };
+    socket.emit("sendMessage", { chatId, message: text })
+    setMessages((prev) => [...prev, newMsg])
+    setMessage("")
+    onSendMessage?.(text)
+  }
 
   return (
     <div className="flex h-full flex-col rounded-2xl bg-black p-4 shadow-md">
@@ -101,8 +102,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
               isSender={msg.senderName === user?.name}
               avatarUrl={msg.avatarUrl}
               timestamp={new Date(msg.timestamp).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
+                hour: "2-digit",
+                minute: "2-digit",
               })}
             />
           ))
@@ -130,7 +131,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ChatBox;
+export default ChatBox

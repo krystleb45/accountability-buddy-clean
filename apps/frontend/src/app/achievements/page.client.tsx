@@ -1,33 +1,33 @@
-"use client";
+"use client"
 
-import React, { useEffect, useState } from "react";
-import AchievementCard from "@/components/Progress/AchievementCard";
-import {
-  fetchUserAchievements,
-  Achievement,
-} from "@/api/achievements/achievementsApi";
+import React, { useEffect, useState } from "react"
+
+import type { Achievement } from "@/api/achievements/achievementsApi"
+
+import { fetchUserAchievements } from "@/api/achievements/achievementsApi"
+import AchievementCard from "@/components/Progress/AchievementCard"
 
 const AchievementsClient: React.FC = () => {
-  const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [achievements, setAchievements] = useState<Achievement[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const load = async (): Promise<void> => {
-      setLoading(true);
-      setError(null);
+      setLoading(true)
+      setError(null)
       try {
-        const items = await fetchUserAchievements();
-        setAchievements(items);
+        const items = await fetchUserAchievements()
+        setAchievements(items)
       } catch (err) {
-        console.error("Error fetching achievements:", err);
-        setError("Failed to load achievements. Please try again.");
+        console.error("Error fetching achievements:", err)
+        setError("Failed to load achievements. Please try again.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
-    load();
-  }, []);
+    }
+    load()
+  }, [])
 
   return (
     <div className="min-h-screen bg-black p-6 text-white">
@@ -63,13 +63,14 @@ const AchievementsClient: React.FC = () => {
             achievements.map((ach) => <AchievementCard key={ach.id} {...ach} />)
           ) : (
             <div className="col-span-full text-center text-gray-300">
-              No achievements yet. Start completing goals to earn achievements! 🚀
+              No achievements yet. Start completing goals to earn achievements!
+              🚀
             </div>
           )}
         </section>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default AchievementsClient;
+export default AchievementsClient

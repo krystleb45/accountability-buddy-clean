@@ -12,7 +12,9 @@ export function filterBySharedGoals<T extends { sharedGoals: string[] }>(
   items: T[],
   userGoals: string[],
 ): T[] {
-  return items.filter((item) => item.sharedGoals.some((goal) => userGoals.includes(goal)));
+  return items.filter((item) =>
+    item.sharedGoals.some((goal) => userGoals.includes(goal)),
+  )
 }
 
 /**
@@ -22,7 +24,7 @@ export function filterBySharedGoals<T extends { sharedGoals: string[] }>(
  * @returns      A new array sorted A→Z by `name`
  */
 export function sortByName<T extends { name: string }>(items: T[]): T[] {
-  return [...items].sort((a, b) => a.name.localeCompare(b.name));
+  return [...items].sort((a, b) => a.name.localeCompare(b.name))
 }
 
 /**
@@ -34,6 +36,6 @@ export function sortByName<T extends { name: string }>(items: T[]): T[] {
  * @returns     A valid URL or a placeholder message
  */
 export function formatRecommendationLink(link?: string): string {
-  if (!link) return 'No link available';
-  return /^https?:\/\//i.test(link) ? link : `https://${link}`;
+  if (!link) return "No link available"
+  return /^https?:\/\//i.test(link) ? link : `https://${link}`
 }

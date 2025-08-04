@@ -1,53 +1,56 @@
 // File: src/app/point-shop/[rewardId]/page.client.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { fetchRewards, type Reward } from '@/api/reward/rewardApi';
-import usePoints from '@/hooks/usePoints';
+import { useRouter } from "next/navigation"
+import React, { useEffect, useState } from "react"
+
+import type { Reward } from "@/api/reward/rewardApi"
+
+import { fetchRewards } from "@/api/reward/rewardApi"
+import usePoints from "@/hooks/usePoints"
 
 interface Props {
-  rewardId: string;
+  rewardId: string
 }
 
 export default function RewardDetailPage({ rewardId }: Props) {
-  const { userPoints, redeem } = usePoints();
-  const [reward, setReward] = useState<Reward | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const { userPoints, redeem } = usePoints()
+  const [reward, setReward] = useState<Reward | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
     if (!rewardId) {
-      setError('Invalid reward ID.');
-      setLoading(false);
-      return;
+      setError("Invalid reward ID.")
+      setLoading(false)
+      return
     }
-    (async () => {
-      setLoading(true);
+    ;(async () => {
+      setLoading(true)
       try {
-        const all = await fetchRewards();
-        const r = all.find((x) => x.id === rewardId);
-        if (!r) throw new Error('Reward not found.');
-        setReward(r);
+        const all = await fetchRewards()
+        const r = all.find((x) => x.id === rewardId)
+        if (!r) throw new Error("Reward not found.")
+        setReward(r)
       } catch (err) {
-        console.error(err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch reward.');
+        console.error(err)
+        setError(err instanceof Error ? err.message : "Failed to fetch reward.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    })();
-  }, [rewardId]);
+    })()
+  }, [rewardId])
 
-  if (loading) return <p className="mt-10 text-center">Loading reward…</p>;
-  if (error)   return <p className="mt-10 text-center text-red-500">{error}</p>;
+  if (loading) return <p className="mt-10 text-center">Loading reward…</p>
+  if (error) return <p className="mt-10 text-center text-red-500">{error}</p>
   if (!reward) {
     // In case metadata was wrong
-    router.replace('/point-shop');
-    return null;
+    router.replace("/point-shop")
+    return null
   }
 
-  const canRedeem = userPoints >= reward.pointsRequired;
+  const canRedeem = userPoints >= reward.pointsRequired
 
   return (
     <div className="reward-detail-page min-h-screen bg-black p-6 text-white">
@@ -60,11 +63,13 @@ export default function RewardDetailPage({ rewardId }: Props) {
         onClick={() => redeem(reward.id, reward.pointsRequired)}
         disabled={!canRedeem}
         className={`rounded-lg px-6 py-3 text-white ${
-          canRedeem ? 'bg-kelly-green hover:bg-opacity-80' : 'cursor-not-allowed bg-gray-700'
+          canRedeem
+            ? "bg-kelly-green hover:bg-opacity-80"
+            : "cursor-not-allowed bg-gray-700"
         }`}
       >
-        {canRedeem ? 'Redeem Now' : 'Not enough points'}
+        {canRedeem ? "Redeem Now" : "Not enough points"}
       </button>
     </div>
-  );
+  )
 }

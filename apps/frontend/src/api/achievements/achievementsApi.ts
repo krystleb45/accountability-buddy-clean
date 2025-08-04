@@ -2,38 +2,39 @@
 // -----------------------------------------------------------------------------
 // Unified HTTP client + Axios error narrowing
 // -----------------------------------------------------------------------------
-import axios from 'axios'; // for the isAxiosError type-guard only
-import { http } from '@/utils/http';
+import axios from "axios" // for the isAxiosError type-guard only
+
+import { http } from "@/utils/http"
 
 // -----------------------------------------------------------------------------
 // Type Definitions
 // -----------------------------------------------------------------------------
 export interface Achievement {
-  featured: boolean;
-  id: string;
-  title: string;
-  description: string;
-  progress: number; // 0-100
-  isUnlocked: boolean;
-  icon?: string;
+  featured: boolean
+  id: string
+  title: string
+  description: string
+  progress: number // 0-100
+  isUnlocked: boolean
+  icon?: string
 }
 
 interface SendResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
+  success: boolean
+  message: string
+  data: T
 }
 
 // -----------------------------------------------------------------------------
 // Helper – uniform error logger
 // -----------------------------------------------------------------------------
-const logApiError = (scope: string, error: unknown): void => {
+function logApiError(scope: string, error: unknown): void {
   if (axios.isAxiosError(error) && error.response) {
-    console.error(`[achievementApi] ${scope}:`, error.response.data);
+    console.error(`[achievementApi] ${scope}:`, error.response.data)
   } else {
-    console.error(`[achievementApi] ${scope}:`, error);
+    console.error(`[achievementApi] ${scope}:`, error)
   }
-};
+}
 
 // -----------------------------------------------------------------------------
 // API Functions
@@ -43,20 +44,20 @@ const logApiError = (scope: string, error: unknown): void => {
  * Fetch the current user's achievements.
  * GET /achievements
  */
-export const fetchUserAchievements = async (): Promise<Achievement[]> => {
+export async function fetchUserAchievements(): Promise<Achievement[]> {
   try {
     const res = await http.get<
       SendResponse<{
-        achievements: Achievement[];
+        achievements: Achievement[]
       }>
-    >('/achievements');
-    return res.data.data.achievements;
+    >("/achievements")
+    return res.data.data.achievements
   } catch (err) {
-    logApiError('fetchUserAchievements', err);
-    return [];
+    logApiError("fetchUserAchievements", err)
+    return []
   }
-};
+}
 
 export default {
   fetchUserAchievements,
-};
+}

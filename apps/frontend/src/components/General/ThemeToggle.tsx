@@ -1,15 +1,17 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { useTheme } from '@/context/ui/ThemeContext';
-import styles from './ThemeToggle.module.css';
+import React from "react"
+
+import { useTheme } from "@/context/ui/ThemeContext"
+
+import styles from "./ThemeToggle.module.css"
 
 /**
  * A button to toggle between light and dark themes.
  */
 const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
-  const isDarkMode = theme === 'dark';
+  const { theme, toggleTheme } = useTheme()
+  const isDarkMode = theme === "dark"
 
   return (
     <div className={styles.container} data-testid="theme-toggle">
@@ -22,12 +24,14 @@ const ThemeToggle: React.FC = () => {
         data-testid="theme-toggle-button"
       >
         <span className={styles.icon} aria-hidden="true">
-          {isDarkMode ? '🌙' : '☀️'}
+          {isDarkMode ? "🌙" : "☀️"}
         </span>
-        <span className={styles.label}>{isDarkMode ? 'Dark Mode' : 'Light Mode'}</span>
+        <span className={styles.label}>
+          {isDarkMode ? "Dark Mode" : "Light Mode"}
+        </span>
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default ThemeToggle;
+export default ThemeToggle

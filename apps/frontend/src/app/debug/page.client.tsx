@@ -1,7 +1,7 @@
 // src/app/debug/page.client.tsx
-'use client';
+"use client"
 
-import React from 'react';
+import React from "react"
 
 export default function DebugClient() {
   const env = {
@@ -13,7 +13,7 @@ export default function DebugClient() {
     NEXT_PUBLIC_APP_VERSION: process.env.NEXT_PUBLIC_APP_VERSION,
     NEXT_PUBLIC_AUTH_PROVIDER_URL: process.env.NEXT_PUBLIC_AUTH_PROVIDER_URL,
     NEXT_PUBLIC_AUTH_CLIENT_ID: process.env.NEXT_PUBLIC_AUTH_CLIENT_ID,
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 p-8 text-white">
@@ -22,5 +22,5 @@ export default function DebugClient() {
         {JSON.stringify(env, null, 2)}
       </pre>
     </div>
-  );
+  )
 }

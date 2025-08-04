@@ -3,13 +3,13 @@
  */
 export interface AuthToken {
   /** The JWT token string used for authentication. */
-  token: string;
+  token: string
 
   /** The expiration timestamp of the token (supports Unix timestamp or ISO date). */
-  expiresAt: number | string;
+  expiresAt: number | string
 
   /** The type of token (currently limited to "Bearer"). */
-  type?: 'Bearer';
+  type?: "Bearer"
 }
 
 /**
@@ -17,22 +17,22 @@ export interface AuthToken {
  */
 export interface DecodedJwtPayload {
   /** The user ID associated with the token. */
-  sub: string;
+  sub: string
 
   /** The expiration timestamp of the token (in Unix format). */
-  exp: number;
+  exp: number
 
   /** The issued-at timestamp (in Unix format, optional). */
-  iat?: number;
+  iat?: number
 
   /** The issuer of the token (optional). */
-  iss?: string;
+  iss?: string
 
   /** The audience for which the token is intended (optional). */
-  aud?: string | string[];
+  aud?: string | string[]
 
   /** Additional claims if needed. */
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 /**
@@ -40,10 +40,10 @@ export interface DecodedJwtPayload {
  */
 export interface LoginCredentials {
   /** The user's email address. */
-  email: string;
+  email: string
 
   /** The user's password. */
-  password: string;
+  password: string
 }
 
 /**
@@ -51,16 +51,16 @@ export interface LoginCredentials {
  */
 export interface RegistrationData {
   /** The user's full name. */
-  name: string;
+  name: string
 
   /** The user's email address. */
-  email: string;
+  email: string
 
   /** The user's password. */
-  password: string;
+  password: string
 
   /** Additional registration fields (optional). */
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 /**
@@ -68,28 +68,28 @@ export interface RegistrationData {
  */
 export interface AuthenticatedUser {
   /** The unique ID of the user. */
-  id: string;
+  id: string
 
   /** The full name of the user. */
-  name: string;
+  name: string
 
   /** The email address of the user. */
-  email: string;
+  email: string
 
   /** The user's assigned role (restricted to known roles). */
-  role: 'admin' | 'user' | 'moderator';
+  role: "admin" | "user" | "moderator"
 
   /** Indicates if the user's email has been verified. */
-  emailVerified: boolean;
+  emailVerified: boolean
 
   /** The timestamp of the last login (ISO format or Unix timestamp). */
-  lastLoginAt?: string | number;
+  lastLoginAt?: string | number
 
   /** The user's profile picture URL (optional). */
-  avatarUrl?: string;
+  avatarUrl?: string
 
   /** Additional user-related fields. */
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 /**
@@ -97,10 +97,10 @@ export interface AuthenticatedUser {
  */
 export interface LoginResponse {
   /** The authentication token issued upon successful login. */
-  token: AuthToken;
+  token: AuthToken
 
   /** The authenticated user's profile information. */
-  user: AuthenticatedUser;
+  user: AuthenticatedUser
 }
 
 /**
@@ -108,10 +108,10 @@ export interface LoginResponse {
  */
 export interface RegistrationResponse {
   /** The registered user's information. */
-  user: AuthenticatedUser;
+  user: AuthenticatedUser
 
   /** The authentication token, if provided upon registration. */
-  token?: AuthToken;
+  token?: AuthToken
 }
 
 /**
@@ -119,7 +119,7 @@ export interface RegistrationResponse {
  */
 export interface TokenRefreshResponse {
   /** The new authentication token. */
-  token: AuthToken;
+  token: AuthToken
 }
 
 /**
@@ -127,7 +127,7 @@ export interface TokenRefreshResponse {
  */
 export interface PasswordResetRequest {
   /** The email address of the user requesting a password reset. */
-  email: string;
+  email: string
 }
 
 /**
@@ -135,10 +135,10 @@ export interface PasswordResetRequest {
  */
 export interface PasswordResetConfirmation {
   /** The reset token sent to the user's email. */
-  resetToken: string;
+  resetToken: string
 
   /** The new password set by the user. */
-  newPassword: string;
+  newPassword: string
 }
 
 /**
@@ -146,13 +146,13 @@ export interface PasswordResetConfirmation {
  */
 export interface TwoFactorAuthSetup {
   /** Indicates whether 2FA is enabled for the user. */
-  isEnabled: boolean;
+  isEnabled: boolean
 
   /** The secret key used for 2FA authentication (optional, only for setup). */
-  secretKey?: string;
+  secretKey?: string
 
   /** The URL for the QR code to scan for authentication apps. */
-  qrCodeUrl?: string;
+  qrCodeUrl?: string
 }
 
 /**
@@ -160,8 +160,8 @@ export interface TwoFactorAuthSetup {
  */
 export interface TwoFactorAuthVerification {
   /** The verification code entered by the user. */
-  code: string;
+  code: string
 
   /** The user's authentication token (if applicable). */
-  token?: string;
+  token?: string
 }

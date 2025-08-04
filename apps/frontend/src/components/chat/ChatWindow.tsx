@@ -1,151 +1,163 @@
-'use client';
+"use client"
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useChat } from '@/context/ChatContext';
-import socket, { markMessageAsRead } from '@/utils/socket';
-import { formatTimestamp } from '../../utils/ChatUtils';
-import EmojiPicker from './EmojiPicker';
-import { FaPlay, FaPause } from 'react-icons/fa';
+import React, { useCallback, useEffect, useRef, useState } from "react"
+import { FaPause, FaPlay } from "react-icons/fa"
+
+import { useChat } from "@/context/ChatContext"
+import socket, { markMessageAsRead } from "@/utils/socket"
+
+import { formatTimestamp } from "../../utils/ChatUtils"
+import EmojiPicker from "./EmojiPicker"
 
 // Define message structure
 interface ChatMessage {
-  id: string;
-  senderId: string;
-  senderName: string;
-  content: string;
-  timestamp: string;
-  status?: 'sent' | 'seen';
-  reactions?: { emoji: string }[];
+  id: string
+  senderId: string
+  senderName: string
+  content: string
+  timestamp: string
+  status?: "sent" | "seen"
+  reactions?: { emoji: string }[]
 }
 
 interface ChatWindowProps {
-  chatId: string;
-  currentUserId: string;
+  chatId: string
+  currentUserId: string
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
-  const { messages, send, notifyTyping, notifyStopTyping } = useChat();
-  const [message, setMessage] = useState<string>('');
-  const [typingStatus, setTypingStatus] = useState<string>('');
-  const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
-  const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const chatWindowRef = useRef<HTMLDivElement | null>(null);
-  const typingTimeoutRef = useRef<number | null>(null);
-  const pickerRef = useRef<HTMLDivElement | null>(null);
+  const { messages, send, notifyTyping, notifyStopTyping } = useChat()
+  const [message, setMessage] = useState<string>("")
+  const [typingStatus, setTypingStatus] = useState<string>("")
+  const [selectedMessage, setSelectedMessage] = useState<string | null>(null)
+  const [playingAudio, setPlayingAudio] = useState<string | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const chatWindowRef = useRef<HTMLDivElement | null>(null)
+  const typingTimeoutRef = useRef<number | null>(null)
+  const pickerRef = useRef<HTMLDivElement | null>(null)
 
   // Get typed messages for current chat
-  const chatMessages = (messages[chatId] || []) as ChatMessage[];
+  const chatMessages = (messages[chatId] || []) as ChatMessage[]
 
   // Auto-scroll when messages update
   useEffect(() => {
     chatWindowRef.current?.scrollTo({
       top: chatWindowRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
-  }, [chatMessages]);
+      behavior: "smooth",
+    })
+  }, [chatMessages])
 
   // Setup socket listeners
   useEffect(() => {
-    if (chatId) socket.emit('joinRoom', chatId);
+    if (chatId) socket.emit("joinRoom", chatId)
 
-    socket.on('userTyping', (typingData: { chatId: string; username: string }) => {
-      if (typingData.chatId === chatId) setTypingStatus(`${typingData.username} is typing...`);
-    });
-    socket.on('userStoppedTyping', (stopData: { chatId: string }) => {
-      if (stopData.chatId === chatId) setTypingStatus('');
-    });
-    socket.on('messageRead', (_readData: { chatId: string; messageId: string; userId: string }) => {
-      // Optional read receipt handling
-    });
+    socket.on(
+      "userTyping",
+      (typingData: { chatId: string; username: string }) => {
+        if (typingData.chatId === chatId)
+          setTypingStatus(`${typingData.username} is typing...`)
+      },
+    )
+    socket.on("userStoppedTyping", (stopData: { chatId: string }) => {
+      if (stopData.chatId === chatId) setTypingStatus("")
+    })
+    socket.on(
+      "messageRead",
+      (_readData: { chatId: string; messageId: string; userId: string }) => {
+        // Optional read receipt handling
+      },
+    )
 
     return () => {
-      if (chatId) socket.emit('leaveRoom', chatId);
-      socket.off('userTyping');
-      socket.off('userStoppedTyping');
-      socket.off('messageRead');
-      audioRef.current?.pause();
-    };
-  }, [chatId]);
+      if (chatId) socket.emit("leaveRoom", chatId)
+      socket.off("userTyping")
+      socket.off("userStoppedTyping")
+      socket.off("messageRead")
+      audioRef.current?.pause()
+    }
+  }, [chatId])
 
   // Close emoji picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
-        setSelectedMessage(null);
+        setSelectedMessage(null)
       }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const scrollToBottom = useCallback(() => {
     chatWindowRef.current?.scrollTo({
       top: chatWindowRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
-  }, []);
+      behavior: "smooth",
+    })
+  }, [])
 
   const handleSendMessage = useCallback((): void => {
-    const text = message.trim();
-    if (!text) return;
-    send(chatId, text);
-    setMessage('');
-    scrollToBottom();
-  }, [chatId, message, send, scrollToBottom]);
+    const text = message.trim()
+    if (!text) return
+    send(chatId, text)
+    setMessage("")
+    scrollToBottom()
+  }, [chatId, message, send, scrollToBottom])
 
   const handleTyping = useCallback((): void => {
-    notifyTyping(chatId);
-    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = window.setTimeout(() => notifyStopTyping(chatId), 2000);
-  }, [chatId, notifyTyping, notifyStopTyping]);
+    notifyTyping(chatId)
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current)
+    typingTimeoutRef.current = window.setTimeout(
+      () => notifyStopTyping(chatId),
+      2000,
+    )
+  }, [chatId, notifyTyping, notifyStopTyping])
 
   const handleViewMessage = useCallback(
     (messageId: string): void => {
-      markMessageAsRead(chatId, messageId, currentUserId);
+      markMessageAsRead(chatId, messageId, currentUserId)
     },
     [chatId, currentUserId],
-  );
+  )
 
   const toggleAudio = useCallback(
     (src: string): void => {
       if (playingAudio === src) {
-        audioRef.current?.pause();
-        setPlayingAudio(null);
+        audioRef.current?.pause()
+        setPlayingAudio(null)
       } else {
-        audioRef.current?.pause();
-        const newAudio = new Audio(src);
-        audioRef.current = newAudio;
-        setPlayingAudio(src);
-        newAudio.play().catch(() => {});
-        newAudio.onended = () => setPlayingAudio(null);
+        audioRef.current?.pause()
+        const newAudio = new Audio(src)
+        audioRef.current = newAudio
+        setPlayingAudio(src)
+        newAudio.play().catch(() => {})
+        newAudio.onended = () => setPlayingAudio(null)
       }
     },
     [playingAudio],
-  );
+  )
 
   const handleAddReaction = useCallback(
     (messageId: string, emoji: string): void => {
-      socket.emit('addReaction', { chatId, messageId, reaction: emoji });
+      socket.emit("addReaction", { chatId, messageId, reaction: emoji })
     },
     [chatId],
-  );
+  )
 
   const highlightMentions = (text: string): React.ReactNode[] => {
     return text.split(/(@\w+)/g).map((part, idx) =>
-      part.startsWith('@') ? (
+      part.startsWith("@") ? (
         <span key={idx} className="font-bold text-blue-400">
           {part}
         </span>
       ) : (
         <span key={idx}>{part}</span>
       ),
-    );
-  };
+    )
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter' && message.trim()) handleSendMessage();
-  };
+    if (e.key === "Enter" && message.trim()) handleSendMessage()
+  }
 
   return (
     <div className="chat-window flex flex-col rounded-2xl bg-gray-900 p-4 shadow-lg">
@@ -158,24 +170,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
       >
         {chatMessages.length > 0 ? (
           chatMessages.map((msg) => {
-            const { content, status, reactions = [] } = msg;
-            const isAudio = content.endsWith('.webm');
-            const isFile = /^https?:\/\//.test(content);
+            const { content, status, reactions = [] } = msg
+            const isAudio = content.endsWith(".webm")
+            const isFile = /^https?:\/\//.test(content)
 
             return (
               <div
                 key={msg.id}
-                className={`mb-3 rounded-lg p-2 ${msg.senderId === currentUserId ? 'bg-green-700 text-right' : 'bg-gray-800 text-left'}`}
+                className={`mb-3 rounded-lg p-2 ${msg.senderId === currentUserId ? "bg-green-700 text-right" : "bg-gray-800 text-left"}`}
                 onMouseEnter={() => handleViewMessage(msg.id)}
               >
-                <strong className="text-green-400">{msg.senderName}:</strong>{' '}
+                <strong className="text-green-400">{msg.senderName}:</strong>{" "}
                 {isAudio ? (
                   <button onClick={() => toggleAudio(content)} className="ml-2">
                     {playingAudio === content ? <FaPause /> : <FaPlay />}
                   </button>
                 ) : isFile ? (
                   content.match(/\.(jpe?g|png|gif)$/i) ? (
-                    <img src={content} alt="attachment" className="h-32 w-32 rounded-lg" />
+                    <img
+                      src={content}
+                      alt="attachment"
+                      className="size-32 rounded-lg"
+                    />
                   ) : content.match(/\.(mp4|webm)$/i) ? (
                     <video controls className="w-32 rounded-lg">
                       <source src={content} type="video/webm" />
@@ -200,10 +216,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
                 </p>
                 {msg.senderId === currentUserId && (
                   <p className="text-xs text-gray-400">
-                    {status === 'seen' ? '✓✓ Seen' : '✓ Sent'}
+                    {status === "seen" ? "✓✓ Seen" : "✓ Sent"}
                   </p>
                 )}
-                <button onClick={() => setSelectedMessage(msg.id)} className="ml-2 text-gray-400">
+                <button
+                  onClick={() => setSelectedMessage(msg.id)}
+                  className="ml-2 text-gray-400"
+                >
                   😊
                 </button>
                 {selectedMessage === msg.id && (
@@ -211,7 +230,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
                     ref={pickerRef}
                     className="absolute bottom-full left-0 z-50 rounded-lg bg-white p-2 shadow-lg"
                   >
-                    <EmojiPicker onSelect={(emoji) => handleAddReaction(msg.id, emoji)} />
+                    <EmojiPicker
+                      onSelect={(emoji) => handleAddReaction(msg.id, emoji)}
+                    />
                   </div>
                 )}
                 {reactions.length > 0 && (
@@ -224,14 +245,16 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
                   </div>
                 )}
               </div>
-            );
+            )
           })
         ) : (
           <p className="text-center text-gray-500">No messages yet.</p>
         )}
       </div>
 
-      {typingStatus && <p className="text-center text-gray-400">{typingStatus}</p>}
+      {typingStatus && (
+        <p className="text-center text-gray-400">{typingStatus}</p>
+      )}
 
       <div className="mt-3 flex items-center space-x-2">
         <input
@@ -252,7 +275,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ChatWindow;
+export default ChatWindow

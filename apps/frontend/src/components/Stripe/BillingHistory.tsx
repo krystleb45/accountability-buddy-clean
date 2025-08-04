@@ -1,42 +1,49 @@
 // src/components/Stripe/BillingHistory.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import { fetchBillingHistory } from '@/utils/apiUtils'; // assuming `@/` maps to `src/`
-import { BillingHistoryItem } from '../../types/Stripe.types';
-import styles from './BillingHistory.module.css';
+import React, { useEffect, useState } from "react"
+
+import { fetchBillingHistory } from "@/utils/apiUtils" // assuming `@/` maps to `src/`
+
+import type { BillingHistoryItem } from "../../types/Stripe.types"
+
+import styles from "./BillingHistory.module.css"
 
 const BillingHistory: React.FC = () => {
-  const [history, setHistory] = useState<BillingHistoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<BillingHistoryItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
-        const data = await fetchBillingHistory(); // fetchBillingHistory(): Promise<BillingHistoryItem[]>
-        setHistory(data);
+        const data = await fetchBillingHistory() // fetchBillingHistory(): Promise<BillingHistoryItem[]>
+        setHistory(data)
       } catch (err: unknown) {
-        console.error(err);
-        setError(err instanceof Error ? err.message : 'Unable to load billing history.');
+        console.error(err)
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unable to load billing history.",
+        )
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   if (loading) {
-    return <p className={styles.loading}>Loading billing history…</p>;
+    return <p className={styles.loading}>Loading billing history…</p>
   }
   if (error) {
     return (
       <p className={styles.error} role="alert" aria-live="assertive">
         {error}
       </p>
-    );
+    )
   }
   if (history.length === 0) {
-    return <p className={styles.noHistory}>No billing history available.</p>;
+    return <p className={styles.noHistory}>No billing history available.</p>
   }
 
   return (
@@ -61,17 +68,21 @@ const BillingHistory: React.FC = () => {
               <td>{description}</td>
               <td>
                 {(amount / 100).toLocaleString(undefined, {
-                  style: 'currency',
-                  currency: 'USD',
+                  style: "currency",
+                  currency: "USD",
                 })}
               </td>
-              <td className={`${styles.status} ${styles[status.toLowerCase()] ?? ''}`}>{status}</td>
+              <td
+                className={`${styles.status} ${styles[status.toLowerCase()] ?? ""}`}
+              >
+                {status}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
     </section>
-  );
-};
+  )
+}
 
-export default BillingHistory;
+export default BillingHistory

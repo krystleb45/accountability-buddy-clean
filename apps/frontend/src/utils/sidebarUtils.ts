@@ -6,8 +6,11 @@
  * @param targetPath - The route you want to check (e.g. '/profile').
  * @returns True if they match exactly.
  */
-export function isActiveRoute(currentPath: string, targetPath: string): boolean {
-  return currentPath === targetPath;
+export function isActiveRoute(
+  currentPath: string,
+  targetPath: string,
+): boolean {
+  return currentPath === targetPath
 }
 
 /**
@@ -17,10 +20,10 @@ export function isActiveRoute(currentPath: string, targetPath: string): boolean 
  */
 export function formatLabel(label: string): string {
   return label
-    .replace(/[-_]/g, ' ')
-    .split(' ')
+    .replace(/[-_]/g, " ")
+    .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .join(" ")
 }
 
 /**
@@ -31,6 +34,6 @@ export function formatLabel(label: string): string {
  */
 export function generateSidebarKey(label: string, index: number): string {
   // reuse formatLabel, then kebab-case it and append index
-  const kebab = formatLabel(label).toLowerCase().replace(/\s+/g, '-');
-  return `${kebab}-${index}`;
+  const kebab = formatLabel(label).toLowerCase().replace(/\s+/g, "-")
+  return `${kebab}-${index}`
 }

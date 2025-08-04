@@ -1,14 +1,14 @@
 // src/search/searchApi.ts
 
-import { http } from '@/utils/http';
+import { http } from "@/utils/http"
 
-export type SearchType = 'all' | 'users' | 'goals'; // extend as needed
+export type SearchType = "all" | "users" | "goals" // extend as needed
 
 export interface SearchResult {
-  id: string;
-  type: SearchType;
-  title: string;
-  snippet?: string;
+  id: string
+  type: SearchType
+  title: string
+  snippet?: string
 }
 
 /**
@@ -16,12 +16,12 @@ export interface SearchResult {
  */
 export async function searchApi(
   query: string,
-  type: SearchType = 'all'
+  type: SearchType = "all",
 ): Promise<{ results: SearchResult[] }> {
-  const resp = await http.get<{ results: SearchResult[] }>('/search', {
+  const resp = await http.get<{ results: SearchResult[] }>("/search", {
     params: { query, type },
-  });
-  return resp.data;
+  })
+  return resp.data
 }
 
-export default { searchApi };
+export default { searchApi }

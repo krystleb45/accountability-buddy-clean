@@ -1,25 +1,26 @@
 // src/components/BadgeSystem/BadgeDetails.tsx
-'use client';
+"use client"
 
-import React from 'react';
-import styles from './BadgeDetails.module.css';
+import React from "react"
+
+import styles from "./BadgeDetails.module.css"
 
 export interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string; // URL or path to the badge icon
-  criteria: string; // Explanation of how to earn the badge
-  dateEarned?: string; // ISO date string of when the badge was earned
+  id: string
+  name: string
+  description: string
+  icon: string // URL or path to the badge icon
+  criteria: string // Explanation of how to earn the badge
+  dateEarned?: string // ISO date string of when the badge was earned
 }
 
 export interface BadgeDetailsProps {
-  badge: Badge;
-  onClose: () => void;
+  badge: Badge
+  onClose: () => void
 }
 
 const BadgeDetails: React.FC<BadgeDetailsProps> = ({ badge, onClose }) => {
-  const { name, description, icon, criteria, dateEarned } = badge;
+  const { name, description, icon, criteria, dateEarned } = badge
 
   return (
     <div
@@ -49,17 +50,23 @@ const BadgeDetails: React.FC<BadgeDetailsProps> = ({ badge, onClose }) => {
           <section className={styles.section}>
             <p className={styles.date}>
               Earned on:&nbsp;
-              <time dateTime={dateEarned}>{new Date(dateEarned).toLocaleDateString()}</time>
+              <time dateTime={dateEarned}>
+                {new Date(dateEarned).toLocaleDateString()}
+              </time>
             </p>
           </section>
         )}
 
-        <button onClick={onClose} className={styles.closeButton} aria-label="Close badge details">
+        <button
+          onClick={onClose}
+          className={styles.closeButton}
+          aria-label="Close badge details"
+        >
           Close
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BadgeDetails;
+export default BadgeDetails

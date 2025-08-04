@@ -1,12 +1,12 @@
-'use client';
+"use client"
 
-import React from 'react';
+import React from "react"
 
 export interface PointsBalanceProps {
   /** Total points to display (optional, defaults to 0) */
-  points?: number;
+  points?: number
   /** Optional user level displayed beneath the points */
-  level?: number;
+  level?: number
 }
 
 /**
@@ -27,6 +27,6 @@ const PointsBalance: React.FC<PointsBalanceProps> = ({ points = 0, level }) => (
       </p>
     )}
   </aside>
-);
+)
 
-export default PointsBalance;
+export default PointsBalance

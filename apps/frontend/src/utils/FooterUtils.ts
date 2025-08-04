@@ -3,16 +3,16 @@
  */
 export interface FooterLink {
   /** Display name of the link */
-  name: string;
+  name: string
   /** Destination URL or path */
-  url: string;
+  url: string
 }
 
 /**
  * Returns the current year as a string.
  * @returns Current year (e.g., "2025").
  */
-export const getCurrentYear = (): string => new Date().getFullYear().toString();
+export const getCurrentYear = (): string => new Date().getFullYear().toString()
 
 /**
  * Generates footer navigation links.
@@ -21,13 +21,13 @@ export const getCurrentYear = (): string => new Date().getFullYear().toString();
  * @param customLinks - Optional array of custom FooterLink.
  * @returns Array of FooterLink objects.
  */
-export const generateFooterLinks = (customLinks?: FooterLink[]): FooterLink[] => {
+export function generateFooterLinks(customLinks?: FooterLink[]): FooterLink[] {
   if (Array.isArray(customLinks) && customLinks.length > 0) {
-    return customLinks;
+    return customLinks
   }
   return [
-    { name: 'Privacy Policy', url: '/privacy' },
-    { name: 'Terms of Service', url: '/terms' },
-    { name: 'Contact Us', url: '/contact' },
-  ];
-};
+    { name: "Privacy Policy", url: "/privacy" },
+    { name: "Terms of Service", url: "/terms" },
+    { name: "Contact Us", url: "/contact" },
+  ]
+}

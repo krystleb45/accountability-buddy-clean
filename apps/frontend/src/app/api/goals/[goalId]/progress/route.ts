@@ -1,10 +1,13 @@
 // src/app/api/goals/[goalId]/progress/route.ts
-import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession }        from 'next-auth/next'
-import { authOptions }             from '@/app/api/auth/[...nextauth]/route'
+import type { NextRequest } from "next/server"
+
+import { getServerSession } from "next-auth/next"
+import { NextResponse } from "next/server"
+
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 const BACKEND_URL = process.env.BACKEND_URL!
-if (!BACKEND_URL) throw new Error('Missing BACKEND_URL')
+if (!BACKEND_URL) throw new Error("Missing BACKEND_URL")
 
 /**
  * PUT /api/goals/:goalId/progress
@@ -12,12 +15,12 @@ if (!BACKEND_URL) throw new Error('Missing BACKEND_URL')
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { goalId: string } }
+  { params }: { params: { goalId: string } },
 ) {
   // 1) Authentication
   const session = await getServerSession(authOptions)
   if (!session?.user.accessToken) {
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
   }
 
   const { goalId } = params
@@ -26,14 +29,14 @@ export async function PUT(
   const upstream = await fetch(
     `${BACKEND_URL}/api/goals/${encodeURIComponent(goalId)}/progress`,
     {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type':  'application/json',
-        Authorization:   `Bearer ${session.user.accessToken}`,
-        cookie:          req.headers.get('cookie') ?? '',
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.user.accessToken}`,
+        cookie: req.headers.get("cookie") ?? "",
       },
       body: bodyText,
-    }
+    },
   )
 
   // 3) Error handling
@@ -41,14 +44,14 @@ export async function PUT(
   if (!upstream.ok) {
     console.error(`🚨 Upstream PUT /goals/${goalId}/progress error:`, text)
     return NextResponse.json(
-      { error: text || 'Upstream error' },
-      { status: upstream.status }
+      { error: text || "Upstream error" },
+      { status: upstream.status },
     )
   }
 
   // 4) Return raw JSON
   return new NextResponse(text, {
     status: upstream.status,
-    headers: { 'content-type': 'application/json' },
+    headers: { "content-type": "application/json" },
   })
 }

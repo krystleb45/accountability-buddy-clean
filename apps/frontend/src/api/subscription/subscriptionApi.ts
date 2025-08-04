@@ -1,53 +1,61 @@
 // src/api/subscription/subscriptionApi.ts
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface SubscriptionPlan {
-  id: string;
-  name: string;
-  price: number;
-  yearlyPrice?: number;
-  currency: string;
-  description: string;
-  interval: 'month' | 'year';
-  features: string[];
-  isPopular?: boolean;
-  trialDays?: number;
-  maxGoals?: number;
-  stripePriceId?: string;
-  stripeYearlyPriceId?: string;
+  id: string
+  name: string
+  price: number
+  yearlyPrice?: number
+  currency: string
+  description: string
+  interval: "month" | "year"
+  features: string[]
+  isPopular?: boolean
+  trialDays?: number
+  maxGoals?: number
+  stripePriceId?: string
+  stripeYearlyPriceId?: string
 }
 
 export interface SubscriptionStatus {
-  isActive: boolean;
-  currentPlan: string;
-  renewalDate: string;
-  cancelAtPeriodEnd?: boolean;
-  trialEnd?: string;
-  status: 'active' | 'canceled' | 'past_due' | 'trialing' | 'incomplete' | 'trial' | 'expired';
-  billingCycle?: 'monthly' | 'yearly';
+  isActive: boolean
+  currentPlan: string
+  renewalDate: string
+  cancelAtPeriodEnd?: boolean
+  trialEnd?: string
+  status:
+    | "active"
+    | "canceled"
+    | "past_due"
+    | "trialing"
+    | "incomplete"
+    | "trial"
+    | "expired"
+  billingCycle?: "monthly" | "yearly"
 }
 
 export interface UserLimits {
-  maxGoals: number;
-  hasUnlimitedGoals: boolean;
-  hasDMMessaging: boolean;
-  hasPrivateRooms: boolean;
-  hasWeeklyMeetings: boolean;
-  hasAdvancedAnalytics: boolean;
-  hasPrioritySupport: boolean;
-  hasEarlyAccess: boolean;
-  hasLeaderboardPerks: boolean;
-  hasCoachMatching: boolean;
-  hasGroupChat: boolean;
-  hasStreakTracker: boolean;
-  hasDailyPrompts: boolean;
-  hasBadgeSystem: boolean;
+  maxGoals: number
+  hasUnlimitedGoals: boolean
+  hasDMMessaging: boolean
+  hasPrivateRooms: boolean
+  hasWeeklyMeetings: boolean
+  hasAdvancedAnalytics: boolean
+  hasPrioritySupport: boolean
+  hasEarlyAccess: boolean
+  hasLeaderboardPerks: boolean
+  hasCoachMatching: boolean
+  hasGroupChat: boolean
+  hasStreakTracker: boolean
+  hasDailyPrompts: boolean
+  hasBadgeSystem: boolean
 }
 
 // Plan limits configuration matching your pricing structure
 export const PLAN_LIMITS: Record<string, UserLimits> = {
-  'free-trial': {
+  "free-trial": {
     maxGoals: -1, // unlimited during trial
     hasUnlimitedGoals: true,
     hasDMMessaging: true,
@@ -61,9 +69,9 @@ export const PLAN_LIMITS: Record<string, UserLimits> = {
     hasGroupChat: true,
     hasStreakTracker: true,
     hasDailyPrompts: true,
-    hasBadgeSystem: true
+    hasBadgeSystem: true,
   },
-  'basic': {
+  basic: {
     maxGoals: 3,
     hasUnlimitedGoals: false,
     hasDMMessaging: false,
@@ -77,9 +85,9 @@ export const PLAN_LIMITS: Record<string, UserLimits> = {
     hasGroupChat: true,
     hasStreakTracker: true,
     hasDailyPrompts: true,
-    hasBadgeSystem: false
+    hasBadgeSystem: false,
   },
-  'pro': {
+  pro: {
     maxGoals: -1, // unlimited
     hasUnlimitedGoals: true,
     hasDMMessaging: true,
@@ -93,9 +101,9 @@ export const PLAN_LIMITS: Record<string, UserLimits> = {
     hasGroupChat: true,
     hasStreakTracker: true,
     hasDailyPrompts: true,
-    hasBadgeSystem: true
+    hasBadgeSystem: true,
   },
-  'elite': {
+  elite: {
     maxGoals: -1, // unlimited
     hasUnlimitedGoals: true,
     hasDMMessaging: true,
@@ -109,200 +117,213 @@ export const PLAN_LIMITS: Record<string, UserLimits> = {
     hasGroupChat: true,
     hasStreakTracker: true,
     hasDailyPrompts: true,
-    hasBadgeSystem: true
-  }
+    hasBadgeSystem: true,
+  },
 }
 
 function logError(fn: string, err: unknown): void {
   if (axios.isAxiosError(err)) {
-    console.error(`❌ [subscriptionApi::${fn}]`, err.response?.data || err.message);
+    console.error(
+      `❌ [subscriptionApi::${fn}]`,
+      err.response?.data || err.message,
+    )
   } else {
-    console.error(`❌ [subscriptionApi::${fn}]`, err);
+    console.error(`❌ [subscriptionApi::${fn}]`, err)
   }
 }
 
 /** GET /api/subscription/plans */
 export async function fetchSubscriptionPlans(): Promise<SubscriptionPlan[]> {
   try {
-    const resp = await http.get<SubscriptionPlan[]>('/api/subscription/plans');
-    return resp.data;
+    const resp = await http.get<SubscriptionPlan[]>("/api/subscription/plans")
+    return resp.data
   } catch (err) {
-    logError('fetchSubscriptionPlans', err);
+    logError("fetchSubscriptionPlans", err)
     // Return default plans if API fails
-    return getDefaultPlans();
+    return getDefaultPlans()
   }
 }
 
 /** POST /api/subscription/create-session */
 export async function createSubscriptionSession(
   planId: string,
-  billingCycle: 'monthly' | 'yearly' = 'monthly'
+  billingCycle: "monthly" | "yearly" = "monthly",
 ): Promise<{ sessionUrl: string; sessionId: string } | null> {
   try {
-    const resp = await http.post<{ sessionUrl: string; sessionId: string }>('/api/subscription/create-session', {
-      planId,
-      billingCycle,
-      successUrl: `${window.location.origin}/subscription/success`,
-      cancelUrl: `${window.location.origin}/subscription`
-    });
-    return resp.data;
+    const resp = await http.post<{ sessionUrl: string; sessionId: string }>(
+      "/api/subscription/create-session",
+      {
+        planId,
+        billingCycle,
+        successUrl: `${window.location.origin}/subscription/success`,
+        cancelUrl: `${window.location.origin}/subscription`,
+      },
+    )
+    return resp.data
   } catch (err) {
-    logError('createSubscriptionSession', err);
-    return null;
+    logError("createSubscriptionSession", err)
+    return null
   }
 }
 
 /** GET /api/subscription/status */
 export async function getSubscriptionStatus(): Promise<SubscriptionStatus | null> {
   try {
-    const resp = await http.get<SubscriptionStatus>('/api/subscription/status');
-    return resp.data;
+    const resp = await http.get<SubscriptionStatus>("/api/subscription/status")
+    return resp.data
   } catch (err) {
-    logError('getSubscriptionStatus', err);
-    return null;
+    logError("getSubscriptionStatus", err)
+    return null
   }
 }
 
 /** POST /api/subscription/cancel */
-export async function cancelSubscription(): Promise<{ message: string } | null> {
+export async function cancelSubscription(): Promise<{
+  message: string
+} | null> {
   try {
-    const resp = await http.post<{ message: string }>('/api/subscription/cancel');
-    return resp.data;
+    const resp = await http.post<{ message: string }>(
+      "/api/subscription/cancel",
+    )
+    return resp.data
   } catch (err) {
-    logError('cancelSubscription', err);
-    return null;
+    logError("cancelSubscription", err)
+    return null
   }
 }
 
 /** GET /api/subscription/limits */
 export async function getUserLimits(): Promise<UserLimits | null> {
   try {
-    const resp = await http.get<UserLimits>('/api/subscription/limits');
-    return resp.data;
+    const resp = await http.get<UserLimits>("/api/subscription/limits")
+    return resp.data
   } catch (err) {
-    logError('getUserLimits', err);
-    return null;
+    logError("getUserLimits", err)
+    return null
   }
 }
 
 /** POST /api/subscription/change-plan */
 export async function changeSubscriptionPlan(
   newPlanId: string,
-  billingCycle: 'monthly' | 'yearly' = 'monthly'
+  billingCycle: "monthly" | "yearly" = "monthly",
 ): Promise<{ message: string } | null> {
   try {
-    const resp = await http.post<{ message: string }>('/api/subscription/change-plan', {
-      newPlanId,
-      billingCycle
-    });
-    return resp.data;
+    const resp = await http.post<{ message: string }>(
+      "/api/subscription/change-plan",
+      {
+        newPlanId,
+        billingCycle,
+      },
+    )
+    return resp.data
   } catch (err) {
-    logError('changeSubscriptionPlan', err);
-    return null;
+    logError("changeSubscriptionPlan", err)
+    return null
   }
 }
 
 // Utility functions
 export function canUserPerformAction(
   userPlan: string,
-  action: keyof UserLimits
+  action: keyof UserLimits,
 ): boolean {
-  const limits = PLAN_LIMITS[userPlan];
-  if (!limits) return false;
+  const limits = PLAN_LIMITS[userPlan]
+  if (!limits) return false
 
-  return limits[action] === true || limits[action] === -1;
+  return limits[action] === true || limits[action] === -1
 }
 
 export function hasReachedGoalLimit(
   userPlan: string,
-  currentGoalCount: number
+  currentGoalCount: number,
 ): boolean {
-  const limits = PLAN_LIMITS[userPlan];
-  if (!limits) return true;
+  const limits = PLAN_LIMITS[userPlan]
+  if (!limits) return true
 
-  if (limits.maxGoals === -1) return false; // unlimited
-  return currentGoalCount >= limits.maxGoals;
+  if (limits.maxGoals === -1) return false // unlimited
+  return currentGoalCount >= limits.maxGoals
 }
 
 export function getPlanFeatureList(planId: string): string[] {
-  const limits = PLAN_LIMITS[planId];
-  if (!limits) return [];
+  const limits = PLAN_LIMITS[planId]
+  if (!limits) return []
 
-  const features: string[] = [];
+  const features: string[] = []
 
   if (limits.hasUnlimitedGoals) {
-    features.push('Unlimited goals');
+    features.push("Unlimited goals")
   } else {
-    features.push(`Up to ${limits.maxGoals} goals`);
+    features.push(`Up to ${limits.maxGoals} goals`)
   }
 
-  if (limits.hasStreakTracker) features.push('Streak tracker');
-  if (limits.hasDailyPrompts) features.push('Daily prompts');
-  if (limits.hasGroupChat) features.push('Group chat access');
-  if (limits.hasDMMessaging) features.push('Direct messaging');
-  if (limits.hasBadgeSystem) features.push('Badge system & XP');
-  if (limits.hasAdvancedAnalytics) features.push('Advanced analytics');
-  if (limits.hasPrivateRooms) features.push('Private chatrooms');
-  if (limits.hasWeeklyMeetings) features.push('Weekly accountability meetings');
-  if (limits.hasPrioritySupport) features.push('Priority support');
-  if (limits.hasEarlyAccess) features.push('Early feature access');
-  if (limits.hasLeaderboardPerks) features.push('Leaderboard perks');
-  if (limits.hasCoachMatching) features.push('Coach matching');
+  if (limits.hasStreakTracker) features.push("Streak tracker")
+  if (limits.hasDailyPrompts) features.push("Daily prompts")
+  if (limits.hasGroupChat) features.push("Group chat access")
+  if (limits.hasDMMessaging) features.push("Direct messaging")
+  if (limits.hasBadgeSystem) features.push("Badge system & XP")
+  if (limits.hasAdvancedAnalytics) features.push("Advanced analytics")
+  if (limits.hasPrivateRooms) features.push("Private chatrooms")
+  if (limits.hasWeeklyMeetings) features.push("Weekly accountability meetings")
+  if (limits.hasPrioritySupport) features.push("Priority support")
+  if (limits.hasEarlyAccess) features.push("Early feature access")
+  if (limits.hasLeaderboardPerks) features.push("Leaderboard perks")
+  if (limits.hasCoachMatching) features.push("Coach matching")
 
-  return features;
+  return features
 }
 
 // Default plans configuration
 function getDefaultPlans(): SubscriptionPlan[] {
   return [
     {
-      id: 'free-trial',
-      name: 'Free Trial',
+      id: "free-trial",
+      name: "Free Trial",
       price: 0,
-      currency: 'USD',
-      description: 'Full access to get you started',
-      interval: 'month',
-      features: getPlanFeatureList('free-trial'),
+      currency: "USD",
+      description: "Full access to get you started",
+      interval: "month",
+      features: getPlanFeatureList("free-trial"),
       trialDays: 14,
-      isPopular: false
+      isPopular: false,
     },
     {
-      id: 'basic',
-      name: 'Basic',
+      id: "basic",
+      name: "Basic",
       price: 5,
       yearlyPrice: 50,
-      currency: 'USD',
-      description: 'Perfect for beginners',
-      interval: 'month',
-      features: getPlanFeatureList('basic'),
+      currency: "USD",
+      description: "Perfect for beginners",
+      interval: "month",
+      features: getPlanFeatureList("basic"),
       maxGoals: 3,
-      isPopular: false
+      isPopular: false,
     },
     {
-      id: 'pro',
-      name: 'Pro',
+      id: "pro",
+      name: "Pro",
       price: 15,
       yearlyPrice: 150,
-      currency: 'USD',
-      description: 'Most popular choice',
-      interval: 'month',
-      features: getPlanFeatureList('pro'),
+      currency: "USD",
+      description: "Most popular choice",
+      interval: "month",
+      features: getPlanFeatureList("pro"),
       maxGoals: -1,
-      isPopular: true
+      isPopular: true,
     },
     {
-      id: 'elite',
-      name: 'Elite',
+      id: "elite",
+      name: "Elite",
       price: 30,
       yearlyPrice: 300,
-      currency: 'USD',
-      description: 'For serious achievers',
-      interval: 'month',
-      features: getPlanFeatureList('elite'),
+      currency: "USD",
+      description: "For serious achievers",
+      interval: "month",
+      features: getPlanFeatureList("elite"),
       maxGoals: -1,
-      isPopular: false
-    }
-  ];
+      isPopular: false,
+    },
+  ]
 }
 
 export default {
@@ -315,5 +336,5 @@ export default {
   canUserPerformAction,
   hasReachedGoalLimit,
   getPlanFeatureList,
-  PLAN_LIMITS
-};
+  PLAN_LIMITS,
+}

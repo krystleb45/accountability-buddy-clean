@@ -1,47 +1,54 @@
 // src/components/Activities/RecentActivities.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect, ReactElement } from 'react';
-import { motion } from 'framer-motion';
-import { http } from '@/utils/http'; // our central axios instance
-import type { RecentActivity } from '@/types/Activity.types';
-import styles from './Activities.module.css';
+import type { ReactElement } from "react"
+
+import { motion } from "framer-motion"
+import React, { useEffect, useState } from "react"
+
+import type { RecentActivity } from "@/types/Activity.types"
+
+import { http } from "@/utils/http" // our central axios instance
+
+import styles from "./Activities.module.css"
 
 export interface RecentActivitiesProps {
-  userId: string;
+  userId: string
 }
 
-export default function RecentActivities({ userId }: RecentActivitiesProps): ReactElement {
-  const [activities, setActivities] = useState<RecentActivity[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export default function RecentActivities({
+  userId,
+}: RecentActivitiesProps): ReactElement {
+  const [activities, setActivities] = useState<RecentActivity[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    let isMounted = true;
-    setLoading(true);
-    setError(null);
+    let isMounted = true
+    setLoading(true)
+    setError(null)
 
     http
-      .get<{ data: RecentActivity[] }>('/activity', { params: { userId } })
+      .get<{ data: RecentActivity[] }>("/activity", { params: { userId } })
       .then(({ data }) => {
         if (isMounted) {
-          setActivities(data.data || []);
+          setActivities(data.data || [])
         }
       })
       .catch((err) => {
-        console.error('Failed to load recent activities:', err);
+        console.error("Failed to load recent activities:", err)
         if (isMounted) {
-          setError('Failed to load recent activities');
+          setError("Failed to load recent activities")
         }
       })
       .finally(() => {
-        if (isMounted) setLoading(false);
-      });
+        if (isMounted) setLoading(false)
+      })
 
     return () => {
-      isMounted = false;
-    };
-  }, [userId]);
+      isMounted = false
+    }
+  }, [userId])
 
   return (
     <motion.div
@@ -66,11 +73,13 @@ export default function RecentActivities({ userId }: RecentActivitiesProps): Rea
               <p>
                 <strong>{activityType}</strong>: {details}
               </p>
-              <span className={styles.timestamp}>{new Date(createdAt).toLocaleString()}</span>
+              <span className={styles.timestamp}>
+                {new Date(createdAt).toLocaleString()}
+              </span>
             </li>
           ))}
         </ul>
       )}
     </motion.div>
-  );
+  )
 }

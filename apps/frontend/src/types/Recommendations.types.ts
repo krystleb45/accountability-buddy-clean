@@ -5,15 +5,15 @@
  */
 export interface BookRecommendation {
   /** Unique ID */
-  id: string;
+  id: string
   /** Title of the book */
-  title: string;
+  title: string
   /** Author name */
-  author: string;
+  author: string
   /** Short description or blurb */
-  description: string;
+  description: string
   /** Optional URL to learn more */
-  link?: string;
+  link?: string
 }
 
 /**
@@ -21,13 +21,13 @@ export interface BookRecommendation {
  */
 export interface GroupRecommendation {
   /** Unique ID */
-  id: string;
+  id: string
   /** Name of the group */
-  name: string;
+  name: string
   /** Brief description of the group */
-  description: string;
+  description: string
   /** Number of members in the group */
-  membersCount: number;
+  membersCount: number
 }
 
 /**
@@ -35,11 +35,11 @@ export interface GroupRecommendation {
  */
 export interface IndividualRecommendation {
   /** Unique ID */
-  id: string;
+  id: string
   /** Person’s name */
-  name: string;
+  name: string
   /** Short bio or headline */
-  bio: string;
+  bio: string
   /** List of shared goal titles */
-  sharedGoals: string[];
+  sharedGoals: string[]
 }

@@ -25,17 +25,20 @@ export const STATUS_CODES = {
   NOT_IMPLEMENTED: 501,
   SERVICE_UNAVAILABLE: 503,
   GATEWAY_TIMEOUT: 504,
-} as const;
+} as const
 
 /** Union of all status-code values (e.g. 200 | 201 | … | 504) */
-export type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES];
+export type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES]
 
 /** Array of all codes for runtime checks */
-export const STATUS_CODE_VALUES = Object.values(STATUS_CODES) as StatusCode[];
+export const STATUS_CODE_VALUES = Object.values(STATUS_CODES) as StatusCode[]
 
 /**
  * Type-guard to check if a value is one of our StatusCode numbers.
  */
 export function isStatusCode(value: unknown): value is StatusCode {
-  return typeof value === 'number' && STATUS_CODE_VALUES.includes(value as StatusCode);
+  return (
+    typeof value === "number" &&
+    STATUS_CODE_VALUES.includes(value as StatusCode)
+  )
 }

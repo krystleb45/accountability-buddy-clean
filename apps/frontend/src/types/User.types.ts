@@ -1,12 +1,12 @@
-import { Achievement } from '../api/achievements/achievementsApi';
-import { Goal } from '../services/goalService';
+import type { Achievement } from "../api/achievements/achievementsApi"
+import type { Goal } from "../services/goalService"
 
 /**
  * Represents a Friend connection.
  */
 export interface Friend {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 
 /**
@@ -14,52 +14,52 @@ export interface Friend {
  */
 export interface UserProfile {
   /** Unique identifier for the user. */
-  id: string;
+  id: string
 
   /** The full name of the user. */
-  fullName: string;
+  fullName: string
 
   /** The user's email address. */
-  email: string;
+  email: string
 
   /** Indicates if the user's email is verified. */
-  emailVerified: boolean;
+  emailVerified: boolean
 
   /** The user's role in the system. */
-  role: 'admin' | 'user' | 'moderator' | 'guest';
+  role: "admin" | "user" | "moderator" | "guest"
 
   /** The URL of the user's profile picture (optional). */
-  avatarUrl?: string;
+  avatarUrl?: string
 
   /** The user's preferred language (e.g., "en", "es", "fr"). */
-  preferredLanguage?: string;
+  preferredLanguage?: string
 
   /** The user's timezone in IANA format (e.g., "America/New_York"). */
-  timeZone?: string;
+  timeZone?: string
 
   /** The timestamp of the last login (ISO format or Unix timestamp). */
-  lastLoginAt?: string | number;
+  lastLoginAt?: string | number
 
   /** The date when the user registered (ISO format or Unix timestamp). */
-  registeredAt: string | number;
+  registeredAt: string | number
 
   /** Indicates if the user is active or banned. */
-  status: 'active' | 'suspended' | 'banned';
+  status: "active" | "suspended" | "banned"
 
   /** Additional metadata related to the user (optional). */
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>
 
   /** ✅ The list of followers (new field). */
-  followers: string[];
+  followers: string[]
 
   /** ✅ The list of users the person follows (new field). */
-  following: string[];
+  following: string[]
 
   /** ✅ The goals pinned by the user (new field). */
-  pinnedGoals: string[];
+  pinnedGoals: string[]
 
   /** ✅ The achievements featured by the user (new field). */
-  featuredAchievements: string[];
+  featuredAchievements: string[]
 }
 
 /**
@@ -67,31 +67,31 @@ export interface UserProfile {
  */
 export interface FullUserProfile extends UserProfile {
   /** Short biography of the user. */
-  bio: string;
+  bio: string
 
   /** User's location. */
-  location: string;
+  location: string
 
   /** List of user interests. */
-  interests: string[];
+  interests: string[]
 
   /** Profile image URL. */
-  profileImage: string;
+  profileImage: string
 
   /** Cover image URL. */
-  coverImage: string;
+  coverImage: string
 
   /** List of achievements earned. */
-  achievements: Achievement[];
+  achievements: Achievement[]
 
   /** ✅ List of user goals (including pinned status). */
-  goals: (Goal & { pinned: boolean })[];
+  goals: (Goal & { pinned: boolean })[]
 
   /** List of user connections (friends). */
-  connections: Friend[];
+  connections: Friend[]
 
   /** Whether the logged-in user is following this user. */
-  isFollowing: boolean;
+  isFollowing: boolean
 }
 
 /**
@@ -99,28 +99,35 @@ export interface FullUserProfile extends UserProfile {
  */
 export interface UserPreferences {
   /** The user's selected theme preference. */
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system"
 
   /** The user's notification settings. */
   notifications: {
-    emailNotifications: boolean;
-    pushNotifications: boolean;
-    inAppNotifications: boolean;
-    preferredTypes?: ('info' | 'success' | 'error' | 'goal' | 'system' | 'subscription')[];
-    quietHoursStart?: string;
-    quietHoursEnd?: string;
-    muteDuringQuietHours?: boolean;
-  };
+    emailNotifications: boolean
+    pushNotifications: boolean
+    inAppNotifications: boolean
+    preferredTypes?: (
+      | "info"
+      | "success"
+      | "error"
+      | "goal"
+      | "system"
+      | "subscription"
+    )[]
+    quietHoursStart?: string
+    quietHoursEnd?: string
+    muteDuringQuietHours?: boolean
+  }
 
   /** Accessibility preferences for the user. */
   accessibilityOptions?: {
-    highContrastMode: boolean;
-    textToSpeech: boolean;
-    reduceMotion: boolean;
-  };
+    highContrastMode: boolean
+    textToSpeech: boolean
+    reduceMotion: boolean
+  }
 
   /** Indicates whether to auto-save settings without confirmation. */
-  autoSave?: boolean;
+  autoSave?: boolean
 }
 
 /**
@@ -128,35 +135,35 @@ export interface UserPreferences {
  */
 export interface UserSecuritySettings {
   /** Indicates whether two-factor authentication (2FA) is enabled. */
-  twoFactorAuthenticationEnabled: boolean;
+  twoFactorAuthenticationEnabled: boolean
 
   /** Indicates whether login alerts are enabled. */
-  loginAlertsEnabled: boolean;
+  loginAlertsEnabled: boolean
 
   /** A list of trusted devices associated with the user. */
   trustedDevices?: {
-    deviceId: string;
-    deviceName: string;
-    lastUsed: string | number; // ISO timestamp or Unix format
-  }[];
+    deviceId: string
+    deviceName: string
+    lastUsed: string | number // ISO timestamp or Unix format
+  }[]
 
   /** Whether the system should automatically log out inactive sessions. */
-  autoLogoutAfterInactivityMinutes?: number;
+  autoLogoutAfterInactivityMinutes?: number
 }
 
 /**
  * Represents the complete user profile with settings and security preferences.
  */
 export interface User {
-  interests: unknown;
+  interests: unknown
   /** Core user information. */
-  profile: UserProfile;
+  profile: UserProfile
 
   /** User preferences and settings. */
-  preferences: UserPreferences;
+  preferences: UserPreferences
 
   /** User security settings. */
-  securitySettings: UserSecuritySettings;
+  securitySettings: UserSecuritySettings
 }
 
 /**
@@ -164,22 +171,22 @@ export interface User {
  */
 export interface UpdateUserProfileRequest {
   /** Updated full name (optional). */
-  fullName?: string;
+  fullName?: string
 
   /** Updated profile picture URL (optional). */
-  avatarUrl?: string;
+  avatarUrl?: string
 
   /** Updated preferred language (optional). */
-  preferredLanguage?: string;
+  preferredLanguage?: string
 
   /** Updated timezone (optional). */
-  timeZone?: string;
+  timeZone?: string
 
   /** ✅ Updated pinned goals list. */
-  pinnedGoals?: string[];
+  pinnedGoals?: string[]
 
   /** ✅ Updated featured achievements list. */
-  featuredAchievements?: string[];
+  featuredAchievements?: string[]
 }
 
 /**
@@ -187,16 +194,16 @@ export interface UpdateUserProfileRequest {
  */
 export interface UpdateUserPreferencesRequest {
   /** Updated theme preference. */
-  theme?: 'light' | 'dark' | 'system';
+  theme?: "light" | "dark" | "system"
 
   /** Updated notification settings. */
-  notifications?: Partial<UserPreferences['notifications']>;
+  notifications?: Partial<UserPreferences["notifications"]>
 
   /** Updated accessibility options. */
-  accessibilityOptions?: Partial<UserPreferences['accessibilityOptions']>;
+  accessibilityOptions?: Partial<UserPreferences["accessibilityOptions"]>
 
   /** Updated auto-save preference. */
-  autoSave?: boolean;
+  autoSave?: boolean
 }
 
 /**
@@ -204,7 +211,7 @@ export interface UpdateUserPreferencesRequest {
  */
 export interface UserResponse {
   /** The user's full profile, preferences, and security settings. */
-  user: User;
+  user: User
 }
 
 /**
@@ -212,16 +219,16 @@ export interface UserResponse {
  */
 export interface UserListResponse {
   /** The total number of users. */
-  totalUsers: number;
+  totalUsers: number
 
   /** The current page number (for pagination). */
-  currentPage: number;
+  currentPage: number
 
   /** The number of users per page. */
-  usersPerPage: number;
+  usersPerPage: number
 
   /** The array of user profiles returned in the response. */
-  users: UserProfile[];
+  users: UserProfile[]
 }
 
 /**
@@ -229,11 +236,11 @@ export interface UserListResponse {
  */
 export interface UpdateUserStatusRequest {
   /** The ID of the user whose status is being updated. */
-  userId: string;
+  userId: string
 
   /** The new status for the user. */
-  status: 'active' | 'suspended' | 'banned';
+  status: "active" | "suspended" | "banned"
 
   /** The reason for the status update (optional). */
-  reason?: string;
+  reason?: string
 }

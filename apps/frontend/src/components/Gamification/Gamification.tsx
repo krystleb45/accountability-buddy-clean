@@ -1,64 +1,71 @@
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import BadgeSystem from '../BadgeSystem/BadgeSystem';
-import ProgressTracker from '../Progress/ProgressTracker';
-import Leaderboard from './Leaderboard';
-import Notification from '../Notifications/Notification';
-import GamificationService from '@/services/gamificationService';
-import type { UserProgress, BadgeData } from '@/types/Gamification.types';
-import styles from './Gamification.module.css';
+import React, { useEffect, useState } from "react"
+
+import type { BadgeData, UserProgress } from "@/types/Gamification.types"
+
+import GamificationService from "@/services/gamificationService"
+
+import BadgeSystem from "../BadgeSystem/BadgeSystem"
+import Notification from "../Notifications/Notification"
+import ProgressTracker from "../Progress/ProgressTracker"
+import styles from "./Gamification.module.css"
+import Leaderboard from "./Leaderboard"
 
 interface User {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 
 export interface GamificationProps {
-  user: User | null;
+  user: User | null
 }
 
 const Gamification: React.FC<GamificationProps> = ({ user }) => {
-  const [progress, setProgress] = useState<number>(0);
-  const [badges, setBadges] = useState<BadgeData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
-  const [newBadge, setNewBadge] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number>(0)
+  const [badges, setBadges] = useState<BadgeData[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>("")
+  const [newBadge, setNewBadge] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) {
-      setError('Please log in to view gamification.');
-      setLoading(false);
-      return;
+      setError("Please log in to view gamification.")
+      setLoading(false)
+      return
     }
 
     const fetchProgress = async (): Promise<void> => {
-      setLoading(true);
-      setError('');
+      setLoading(true)
+      setError("")
       try {
         // Use token-based method since service has no fetchUserProgress
         const userProgress: UserProgress | null =
-          await GamificationService.fetchUserProgressFromToken();
+          await GamificationService.fetchUserProgressFromToken()
         if (userProgress) {
-          setProgress(userProgress.points ?? 0);
-          setBadges(userProgress.badges ?? []);
+          setProgress(userProgress.points ?? 0)
+          setBadges(userProgress.badges ?? [])
           if (userProgress.newBadge?.name) {
-            setNewBadge(userProgress.newBadge.name);
+            setNewBadge(userProgress.newBadge.name)
           }
         }
       } catch (err) {
-        console.error('Failed to fetch user progress:', err);
-        setError('Failed to load progress. Please try again later.');
+        console.error("Failed to fetch user progress:", err)
+        setError("Failed to load progress. Please try again later.")
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchProgress();
-  }, [user]);
+    fetchProgress()
+  }, [user])
 
   if (!user) {
-    return <p className={styles.error}>Please log in to view gamification details.</p>;
+    return (
+      <p className={styles.error}>
+        Please log in to view gamification details.
+      </p>
+    )
   }
 
   return (
@@ -92,7 +99,7 @@ const Gamification: React.FC<GamificationProps> = ({ user }) => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Gamification;
+export default Gamification

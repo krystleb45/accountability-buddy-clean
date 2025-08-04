@@ -16,7 +16,9 @@
   border: 1px solid #ccc;
   border-radius: 0.25rem;
   outline: none;
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  transition:
+    border-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
 }
 
 .search-input:focus {
@@ -32,7 +34,9 @@
   border: 1px solid #007bff;
   border-radius: 0.25rem;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  transition:
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
 }
 
 .search-button:disabled {

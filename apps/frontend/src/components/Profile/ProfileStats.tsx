@@ -1,36 +1,65 @@
 // src/components/Profile/ProfileStats.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { motion } from 'framer-motion';
-import styles from './Profile.module.css';
-import RecentActivities from '../Activities/RecentActivities';
-import RelatedActivities from '../Activities/RelatedActivities';
+import axios from "axios"
+import { motion } from "framer-motion"
+import React, { useEffect, useState } from "react"
 
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://api.example.com';
+import RecentActivities from "../Activities/RecentActivities"
+import RelatedActivities from "../Activities/RelatedActivities"
+import styles from "./Profile.module.css"
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://api.example.com"
 
 interface ProfileStatsProps {
-  userId: string;
+  userId: string
 }
 
 interface Stats {
-  completedGoals: number;
-  streak: number;
-  groupsJoined: number;
-  followers: number;
-  following: number;
-  pinnedGoals: number;
+  completedGoals: number
+  streak: number
+  groupsJoined: number
+  followers: number
+  following: number
+  pinnedGoals: number
 }
 
 interface ProfileStatsResponse {
-  completedGoals?: number;
-  streak?: number;
-  groupsJoined?: number;
-  followers?: unknown[]; // adjust if you know the exact shape
-  following?: unknown[];
-  pinnedGoals?: unknown[];
+  completedGoals?: number
+  streak?: number
+  groupsJoined?: number
+  followers?: unknown[] // adjust if you know the exact shape
+  following?: unknown[]
+  pinnedGoals?: unknown[]
 }
+
+const StatCard: React.FC<{
+  label: string
+  value: number
+  onClick?: () => void
+}> = ({ label, value, onClick }) => (
+  <motion.div
+    className={`rounded-lg bg-gray-800 p-4 shadow-md ${onClick ? "cursor-pointer" : ""}`}
+    whileHover={{ scale: onClick ? 1.05 : 1 }}
+    onClick={onClick}
+    role={onClick ? "button" : undefined}
+    tabIndex={onClick ? 0 : undefined}
+    onKeyDown={
+      onClick
+        ? (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              onClick()
+            }
+          }
+        : undefined
+    }
+  >
+    <strong className="text-xl text-green-400 sm:text-2xl">{value}</strong>
+    <p className="text-sm sm:text-base">{label}</p>
+  </motion.div>
+)
 
 const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
   const [stats, setStats] = useState<Stats>({
@@ -40,47 +69,58 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
     followers: 0,
     following: 0,
     pinnedGoals: 0,
-  });
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+  })
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>("")
 
   useEffect((): void => {
     const fetchStats = async (): Promise<void> => {
-      setLoading(true);
-      setError('');
+      setLoading(true)
+      setError("")
       try {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem("authToken")
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found")
         }
 
-        const response = await axios.get<ProfileStatsResponse>(`${API_URL}/user/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get<ProfileStatsResponse>(
+          `${API_URL}/user/profile`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        )
 
         if (response.status === 200 && response.data) {
-          const data = response.data;
+          const data = response.data
           setStats({
             completedGoals: data.completedGoals ?? 0,
             streak: data.streak ?? 0,
             groupsJoined: data.groupsJoined ?? 0,
-            followers: Array.isArray(data.followers) ? data.followers.length : 0,
-            following: Array.isArray(data.following) ? data.following.length : 0,
-            pinnedGoals: Array.isArray(data.pinnedGoals) ? data.pinnedGoals.length : 0,
-          });
+            followers: Array.isArray(data.followers)
+              ? data.followers.length
+              : 0,
+            following: Array.isArray(data.following)
+              ? data.following.length
+              : 0,
+            pinnedGoals: Array.isArray(data.pinnedGoals)
+              ? data.pinnedGoals.length
+              : 0,
+          })
         } else {
-          setError('Unexpected response from server.');
+          setError("Unexpected response from server.")
         }
       } catch (err: unknown) {
-        console.error('❌ Failed to load profile stats:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load profile stats');
+        console.error("❌ Failed to load profile stats:", err)
+        setError(
+          err instanceof Error ? err.message : "Failed to load profile stats",
+        )
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    void fetchStats();
-  }, [userId]);
+    void fetchStats()
+  }, [userId])
 
   if (loading) {
     return (
@@ -91,7 +131,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
       >
         Loading stats...
       </motion.div>
-    );
+    )
   }
 
   if (error) {
@@ -104,35 +144,8 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
       >
         {error}
       </motion.p>
-    );
+    )
   }
-
-  const StatCard: React.FC<{
-    label: string;
-    value: number;
-    onClick?: () => void;
-  }> = ({ label, value, onClick }) => (
-    <motion.div
-      className={`rounded-lg bg-gray-800 p-4 shadow-md ${onClick ? 'cursor-pointer' : ''}`}
-      whileHover={{ scale: onClick ? 1.05 : 1 }}
-      onClick={onClick}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={
-        onClick
-          ? (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onClick();
-              }
-            }
-          : undefined
-      }
-    >
-      <strong className="text-xl text-green-400 sm:text-2xl">{value}</strong>
-      <p className="text-sm sm:text-base">{label}</p>
-    </motion.div>
-  );
 
   return (
     <motion.div
@@ -141,7 +154,9 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="mb-4 text-2xl font-bold text-green-400 sm:text-3xl">Profile Stats</h2>
+      <h2 className="mb-4 text-2xl font-bold text-green-400 sm:text-3xl">
+        Profile Stats
+      </h2>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard label="Goals Completed" value={stats.completedGoals} />
@@ -151,18 +166,20 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
         <StatCard
           label="Followers"
           value={stats.followers}
-          onClick={() => console.log('Show Followers List')}
+          onClick={() => console.log("Show Followers List")}
         />
         <StatCard
           label="Following"
           value={stats.following}
-          onClick={() => console.log('Show Following List')}
+          onClick={() => console.log("Show Following List")}
         />
         <StatCard label="Pinned Goals" value={stats.pinnedGoals} />
       </div>
 
       <div className="mt-6">
-        <h3 className="text-xl font-semibold text-green-400 sm:text-2xl">Recent Activities</h3>
+        <h3 className="text-xl font-semibold text-green-400 sm:text-2xl">
+          Recent Activities
+        </h3>
         <RecentActivities userId={userId} />
 
         <h3 className="mt-4 text-xl font-semibold text-green-400 sm:text-2xl">
@@ -171,7 +188,7 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
         <RelatedActivities userId={userId} />
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
-export default ProfileStats;
+export default ProfileStats

@@ -1,43 +1,44 @@
-'use client';
+"use client"
 
-import React, { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import styles from './ReminderForm.module.css';
+import { motion } from "framer-motion"
+import React, { useCallback, useState } from "react"
+
+import styles from "./ReminderForm.module.css"
 
 export interface ReminderFormProps {
   /** ID of the goal to set a reminder for */
-  goalId: string;
+  goalId: string
   /** Callback invoked on valid reminder submission */
-  onSave: (goalId: string, date: string, time: string) => void;
+  onSave: (goalId: string, date: string, time: string) => void
 }
 
 /**
  * ReminderForm allows users to pick a date and time for a goal reminder.
  */
 const ReminderForm: React.FC<ReminderFormProps> = ({ goalId, onSave }) => {
-  const [date, setDate] = useState<string>('');
-  const [time, setTime] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [date, setDate] = useState<string>("")
+  const [time, setTime] = useState<string>("")
+  const [error, setError] = useState<string>("")
 
   /**
    * Validates inputs and invokes onSave.
    */
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>): void => {
-      e.preventDefault();
-      setError('');
+      e.preventDefault()
+      setError("")
 
       if (!date || !time) {
-        setError('Please select both a date and time.');
-        return;
+        setError("Please select both a date and time.")
+        return
       }
 
-      onSave(goalId, date, time);
-      setDate('');
-      setTime('');
+      onSave(goalId, date, time)
+      setDate("")
+      setTime("")
     },
     [goalId, onSave, date, time],
-  );
+  )
 
   return (
     <motion.form
@@ -88,7 +89,7 @@ const ReminderForm: React.FC<ReminderFormProps> = ({ goalId, onSave }) => {
         Save Reminder
       </button>
     </motion.form>
-  );
-};
+  )
+}
 
-export default ReminderForm;
+export default ReminderForm

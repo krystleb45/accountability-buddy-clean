@@ -1,14 +1,14 @@
-'use client';
+"use client"
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { FaPaperPlane } from 'react-icons/fa';
+import React, { useCallback, useEffect, useRef, useState } from "react"
+import { FaPaperPlane } from "react-icons/fa"
 
 export interface MessageInputBarProps {
-  placeholder?: string;
-  onSend: (message: string) => void;
-  disabled?: boolean;
-  autoFocus?: boolean;
-  submitLabel?: string;
+  placeholder?: string
+  onSend: (message: string) => void
+  disabled?: boolean
+  autoFocus?: boolean
+  submitLabel?: string
 }
 
 /**
@@ -16,48 +16,48 @@ export interface MessageInputBarProps {
  * It supports Enter-to-send, optional autofocus, and disabled state.
  */
 const MessageInputBar: React.FC<MessageInputBarProps> = ({
-  placeholder = 'Type a message...',
+  placeholder = "Type a message...",
   onSend,
   disabled = false,
   autoFocus = false,
-  submitLabel = 'Send',
+  submitLabel = "Send",
 }) => {
-  const [message, setMessage] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [message, setMessage] = useState<string>("")
+  const inputRef = useRef<HTMLInputElement>(null)
 
   // Autofocus input if requested
   useEffect(() => {
     if (autoFocus) {
-      inputRef.current?.focus();
+      inputRef.current?.focus()
     }
-  }, [autoFocus]);
+  }, [autoFocus])
 
   // Send message if valid
   const handleSend = useCallback((): void => {
-    const trimmed = message.trim();
+    const trimmed = message.trim()
     if (trimmed && !disabled) {
-      onSend(trimmed);
-      setMessage('');
-      inputRef.current?.focus();
+      onSend(trimmed)
+      setMessage("")
+      inputRef.current?.focus()
     }
-  }, [message, disabled, onSend]);
+  }, [message, disabled, onSend])
 
   // Handle Enter key to send
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>): void => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        handleSend();
+      if (e.key === "Enter") {
+        e.preventDefault()
+        handleSend()
       }
     },
     [handleSend],
-  );
+  )
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault();
-        handleSend();
+        e.preventDefault()
+        handleSend()
       }}
       className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 p-2"
     >
@@ -82,7 +82,7 @@ const MessageInputBar: React.FC<MessageInputBarProps> = ({
         <span className="hidden sm:inline">{submitLabel}</span>
       </button>
     </form>
-  );
-};
+  )
+}
 
-export default MessageInputBar;
+export default MessageInputBar

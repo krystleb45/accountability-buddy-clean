@@ -1,23 +1,34 @@
 // src/components/BadgeSystem/BadgeProgress.tsx
-'use client';
+"use client"
 
-import React, { FC } from 'react';
-import './BadgeProgress.css';
+import type { FC } from "react"
+
+import React from "react"
+
+import "./BadgeProgress.css"
 
 export interface BadgeProgressProps {
-  badgeName: string;
+  badgeName: string
   /** Progress percentage (0–100) */
-  progress: number;
+  progress: number
   /** Description of what’s required to earn this badge */
-  criteria: string;
+  criteria: string
 }
 
-const BadgeProgress: FC<BadgeProgressProps> = ({ badgeName, progress, criteria }) => {
+const BadgeProgress: FC<BadgeProgressProps> = ({
+  badgeName,
+  progress,
+  criteria,
+}) => {
   // Clamp progress to [0,100]
-  const pct = Math.max(0, Math.min(100, progress));
+  const pct = Math.max(0, Math.min(100, progress))
 
   return (
-    <div className="badge-progress" role="region" aria-labelledby="badge-progress-title">
+    <div
+      className="badge-progress"
+      role="region"
+      aria-labelledby="badge-progress-title"
+    >
       <h3 id="badge-progress-title" className="badge-progress-title">
         {badgeName}
       </h3>
@@ -34,7 +45,7 @@ const BadgeProgress: FC<BadgeProgressProps> = ({ badgeName, progress, criteria }
       </div>
       <p className="progress-percentage">{pct}% Complete</p>
     </div>
-  );
-};
+  )
+}
 
-export default BadgeProgress;
+export default BadgeProgress

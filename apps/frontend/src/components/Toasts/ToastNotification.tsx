@@ -1,19 +1,21 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { toast, ToastContainer, ToastOptions } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Star, CheckCircle2, Award } from 'lucide-react';
+import type { ToastOptions } from "react-toastify"
+
+import { Award, CheckCircle2, Star } from "lucide-react"
+import "react-toastify/dist/ReactToastify.css"
+import React from "react"
+import { toast, ToastContainer } from "react-toastify"
 
 const baseOptions: ToastOptions = {
-  position: 'top-right',
+  position: "top-right",
   autoClose: 4000,
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,
   draggable: true,
-  theme: 'colored',
-};
+  theme: "colored",
+}
 
 /**
  * 🔔 Show when a new badge is unlocked.
@@ -26,7 +28,7 @@ export function showBadgeUnlockToast(badgeName: string): void {
       <div className="text-sm text-white">🏅 {badgeName}</div>
     </div>,
     { ...baseOptions },
-  );
+  )
 }
 
 /**
@@ -40,7 +42,7 @@ export function showLevelUpToast(level: number): void {
       <div className="text-sm text-white">You reached Level {level} 🚀</div>
     </div>,
     { ...baseOptions },
-  );
+  )
 }
 
 /**
@@ -53,11 +55,13 @@ export function showGenericToast(message: string): void {
       {message}
     </div>,
     baseOptions,
-  );
+  )
 }
 
 /**
  * Place once (usually near the root of your app)
  * to render the toast container.
  */
-export const ToastNotificationContainer: React.FC = () => <ToastContainer limit={3} />;
+export const ToastNotificationContainer: React.FC = () => (
+  <ToastContainer limit={3} />
+)

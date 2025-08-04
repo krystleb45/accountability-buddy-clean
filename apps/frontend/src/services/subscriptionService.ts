@@ -1,36 +1,36 @@
 // src/services/subscriptionService.ts
-import { http } from '@/utils/http';
-import { getAuthHeader } from '@/services/authService';
+import { getAuthHeader } from "@/services/authService"
+import { http } from "@/utils/http"
 
 export interface SubscriptionStatus {
-  hasActiveSubscription: boolean;
+  hasActiveSubscription: boolean
 }
 
 export interface CurrentSubscription {
   subscription: {
-    _id: string;
-    status: string;
-    plan: string;
-    isActive: boolean;
-    [key: string]: unknown;
-  } | null;
+    _id: string
+    status: string
+    plan: string
+    isActive: boolean
+    [key: string]: unknown
+  } | null
 }
 
 export interface TrialResponse {
   trial: {
-    subscriptionId: string;
-    trialEndsAt: string;
-  };
+    subscriptionId: string
+    trialEndsAt: string
+  }
 }
 
 export interface CheckoutSession {
-  sessionId: string;
-  url?: string;
+  sessionId: string
+  url?: string
 }
 
 export interface RealTimeStatus {
-  subscription: unknown | null;
-  status: string;
+  subscription: unknown | null
+  status: string
 }
 
 const SubscriptionService = {
@@ -39,36 +39,36 @@ const SubscriptionService = {
     const resp = await http.get<{ success: boolean; data: SubscriptionStatus }>(
       `/users/${encodeURIComponent(userId)}/subscription`,
       { headers: getAuthHeader() },
-    );
+    )
     if (!resp.data.success) {
-      throw new Error('Failed to fetch subscription status');
+      throw new Error("Failed to fetch subscription status")
     }
-    return resp.data.data!;
+    return resp.data.data!
   },
 
   /** GET /subscription/current */
   async getCurrent(): Promise<CurrentSubscription> {
-    const resp = await http.get<{ success: boolean; data: CurrentSubscription }>(
-      '/subscription/current',
-      { headers: getAuthHeader() },
-    );
+    const resp = await http.get<{
+      success: boolean
+      data: CurrentSubscription
+    }>("/subscription/current", { headers: getAuthHeader() })
     if (!resp.data.success) {
-      throw new Error('Failed to fetch current subscription');
+      throw new Error("Failed to fetch current subscription")
     }
-    return resp.data.data!;
+    return resp.data.data!
   },
 
   /** POST /subscription/start-trial */
   async startTrial(): Promise<TrialResponse> {
     const resp = await http.post<{ success: boolean; data: TrialResponse }>(
-      '/subscription/start-trial',
+      "/subscription/start-trial",
       null,
       { headers: getAuthHeader() },
-    );
+    )
     if (!resp.data.success) {
-      throw new Error('Failed to start trial');
+      throw new Error("Failed to start trial")
     }
-    return resp.data.data!;
+    return resp.data.data!
   },
 
   /** POST /subscription/create */
@@ -78,62 +78,65 @@ const SubscriptionService = {
     cancelUrl: string,
   ): Promise<CheckoutSession> {
     const resp = await http.post<{ success: boolean; data: CheckoutSession }>(
-      '/subscription/create',
+      "/subscription/create",
       { priceId, successUrl, cancelUrl },
       { headers: getAuthHeader() },
-    );
+    )
     if (!resp.data.success) {
-      throw new Error('Failed to create checkout session');
+      throw new Error("Failed to create checkout session")
     }
-    return resp.data.data!;
+    return resp.data.data!
   },
 
   /** DELETE /subscription/cancel */
   async cancelSubscription(refund = false): Promise<void> {
-    const resp = await http.delete<{ success: boolean; message?: string }>('/subscription/cancel', {
-      headers: getAuthHeader(),
-      data: { refund },
-    });
+    const resp = await http.delete<{ success: boolean; message?: string }>(
+      "/subscription/cancel",
+      {
+        headers: getAuthHeader(),
+        data: { refund },
+      },
+    )
     if (!resp.data.success) {
-      throw new Error(resp.data.message || 'Failed to cancel subscription');
+      throw new Error(resp.data.message || "Failed to cancel subscription")
     }
   },
 
   /** POST /subscription/upgrade */
   async upgrade(priceId: string): Promise<void> {
     const resp = await http.post<{ success: boolean; message?: string }>(
-      '/subscription/upgrade',
+      "/subscription/upgrade",
       { newPriceId: priceId },
       { headers: getAuthHeader() },
-    );
+    )
     if (!resp.data.success) {
-      throw new Error(resp.data.message || 'Failed to upgrade subscription');
+      throw new Error(resp.data.message || "Failed to upgrade subscription")
     }
   },
 
   /** GET /subscription/status */
   async getRealTimeStatus(): Promise<RealTimeStatus> {
     const resp = await http.get<{ success: boolean; data: RealTimeStatus }>(
-      '/subscription/status',
+      "/subscription/status",
       { headers: getAuthHeader() },
-    );
+    )
     if (!resp.data.success) {
-      throw new Error('Failed to fetch real-time status');
+      throw new Error("Failed to fetch real-time status")
     }
-    return resp.data.data!;
+    return resp.data.data!
   },
 
   /** POST /subscription/expire-trial */
   async expireTrial(): Promise<void> {
     const resp = await http.post<{ success: boolean; message?: string }>(
-      '/subscription/expire-trial',
+      "/subscription/expire-trial",
       null,
       { headers: getAuthHeader() },
-    );
+    )
     if (!resp.data.success) {
-      throw new Error('Failed to expire trial');
+      throw new Error("Failed to expire trial")
     }
   },
-};
+}
 
-export default SubscriptionService;
+export default SubscriptionService

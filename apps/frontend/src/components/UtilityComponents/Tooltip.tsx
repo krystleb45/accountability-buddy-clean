@@ -1,13 +1,18 @@
-import React from 'react';
-import './Tooltip.css'; // CSS for styling the tooltip
+import React from "react"
+
+import "./Tooltip.css" // CSS for styling the tooltip
 
 interface TooltipProps {
-  content: string; // The text to display inside the tooltip
-  position?: 'top' | 'bottom' | 'left' | 'right'; // The position of the tooltip relative to the target
-  children: React.ReactNode; // The target element that triggers the tooltip
+  content: string // The text to display inside the tooltip
+  position?: "top" | "bottom" | "left" | "right" // The position of the tooltip relative to the target
+  children: React.ReactNode // The target element that triggers the tooltip
 }
 
-const Tooltip: React.FC<TooltipProps> = ({ content, position = 'top', children }) => {
+const Tooltip: React.FC<TooltipProps> = ({
+  content,
+  position = "top",
+  children,
+}) => {
   return (
     <div className="tooltip-container">
       {children}
@@ -15,7 +20,7 @@ const Tooltip: React.FC<TooltipProps> = ({ content, position = 'top', children }
         {content}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Tooltip;
+export default Tooltip

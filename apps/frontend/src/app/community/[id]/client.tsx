@@ -1,39 +1,44 @@
 // src/app/community/[id]/client.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState, useRef, ChangeEvent } from 'react';
-import { useSession } from 'next-auth/react';
-import type { Community } from '@/api/community/communityApi';
-import { fetchMessages, sendMessage, type Message } from '@/api/messages/messageApi';
-import socket from '@/utils/socket';
+import type { ChangeEvent } from "react"
+
+import { useSession } from "next-auth/react"
+import React, { useEffect, useRef, useState } from "react"
+
+import type { Community } from "@/api/community/communityApi"
+import type { Message } from "@/api/messages/messageApi"
+
+import { fetchMessages, sendMessage } from "@/api/messages/messageApi"
+import socket from "@/utils/socket"
 
 interface Props {
-  community: Community;
+  community: Community
 }
 
 export default function ClientCommunityDetail({ community }: Props) {
-  const { data: session } = useSession();
-  const userId = session?.user?.id;
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState<string>('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState<string>("")
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Load initial messages and subscribe to real-time updates
   useEffect(() => {
     async function loadMessages(): Promise<void> {
       try {
-        const msgs = await fetchMessages(community._id);
-        setMessages(msgs);
+        const msgs = await fetchMessages(community._id)
+        setMessages(msgs)
       } catch (err) {
-        console.error('Failed to load messages:', err);
+        console.error("Failed to load messages:", err)
       }
     }
-    loadMessages();
+    loadMessages()
 
     // Ensure we imported socket from '@/utils/socket', not messageApi
-    socket.emit('joinRoom', community._id);
-    socket.on('receiveMessage', (data) => {
+    socket.emit("joinRoom", community._id)
+    socket.on("receiveMessage", (data) => {
       // data already typed via ServerToClientEvents in socket.ts
       const msg: Message = {
         _id: data.timestamp + data.senderId,
@@ -42,54 +47,60 @@ export default function ClientCommunityDetail({ community }: Props) {
         senderName: data.senderName,
         content: data.message,
         createdAt: data.timestamp,
-      };
-      setMessages((prev) => [...prev, msg]);
-    });
+      }
+      setMessages((prev) => [...prev, msg])
+    })
 
     return () => {
-      socket.off('receiveMessage');
-      socket.emit('leaveRoom', community._id);
-    };
-  }, [community._id]);
+      socket.off("receiveMessage")
+      socket.emit("leaveRoom", community._id)
+    }
+  }, [community._id])
 
   // Auto-scroll to bottom when messages update
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value);
-  };
+    setInput(e.target.value)
+  }
 
   const handleSend = async (): Promise<void> => {
-    if (!input.trim() || !userId) return;
+    if (!input.trim() || !userId) return
     try {
-      const newMsg = await sendMessage(community._id, input, userId);
-      setInput('');
-      setMessages((prev) => [...prev, newMsg]);
+      const newMsg = await sendMessage(community._id, input, userId)
+      setInput("")
+      setMessages((prev) => [...prev, newMsg])
     } catch (err) {
-      console.error('Failed to send message:', err);
+      console.error("Failed to send message:", err)
     }
-  };
+  }
 
   return (
     <div className="flex h-full flex-col p-4">
-      <h1 className="mb-4 text-2xl font-bold text-gray-800">{community.name}</h1>
+      <h1 className="mb-4 text-2xl font-bold text-gray-800">
+        {community.name}
+      </h1>
       <p className="mb-6 text-gray-600">{community.description}</p>
 
-      <div className="flex-1 overflow-y-auto space-y-2 bg-white p-4 shadow-inner">
+      <div className="flex-1 space-y-2 overflow-y-auto bg-white p-4 shadow-inner">
         {messages.map((msg) => (
           <div
             key={msg._id}
-            className={`flex items-start ${msg.senderId === userId ? 'justify-end' : ''}`}
+            className={`flex items-start ${msg.senderId === userId ? "justify-end" : ""}`}
           >
             <div
               className={`max-w-xs rounded-lg p-2 ${
-                msg.senderId === userId ? 'bg-blue-200' : 'bg-gray-200'
+                msg.senderId === userId ? "bg-blue-200" : "bg-gray-200"
               }`}
             >
-              <p className="text-sm font-semibold text-gray-800">{msg.senderName}</p>
-              <p className="mt-1 whitespace-pre-wrap text-gray-700">{msg.content}</p>
+              <p className="text-sm font-semibold text-gray-800">
+                {msg.senderName}
+              </p>
+              <p className="mt-1 whitespace-pre-wrap text-gray-700">
+                {msg.content}
+              </p>
               <p className="mt-1 text-right text-xs text-gray-500">
                 {new Date(msg.createdAt).toLocaleTimeString()}
               </p>
@@ -115,5 +126,5 @@ export default function ClientCommunityDetail({ community }: Props) {
         </button>
       </div>
     </div>
-  );
+  )
 }

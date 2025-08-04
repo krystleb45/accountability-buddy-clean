@@ -1,47 +1,47 @@
 // src/app/chats/client.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { connectSocket } from '@/utils/socket';
-import sendMessage from '@/utils/socket';
+import { useSearchParams } from "next/navigation"
+import React, { Suspense, useEffect, useRef, useState } from "react"
+
+import sendMessage, { connectSocket } from "@/utils/socket"
 
 // — Types —
 interface Friend {
-  id: number;
-  name: string;
-  profilePic?: string;
+  id: number
+  name: string
+  profilePic?: string
 }
 interface Message {
-  id: number;
-  sender: string;
-  text: string;
-  timestamp: string;
+  id: number
+  sender: string
+  text: string
+  timestamp: string
 }
 
 // — Parses `?friendId=` for us —
 const SearchParamsHandler: React.FC<{
-  setFriendIdFromURL: (id: string | null) => void;
+  setFriendIdFromURL: (id: string | null) => void
 }> = ({ setFriendIdFromURL }) => {
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams()
   useEffect(() => {
-    setFriendIdFromURL(searchParams.get('friendId'));
-  }, [searchParams, setFriendIdFromURL]);
-  return null;
-};
+    setFriendIdFromURL(searchParams.get("friendId"))
+  }, [searchParams, setFriendIdFromURL])
+  return null
+}
 
 export default function ClientChat() {
-  const [friends, setFriends] = useState<Friend[]>([]);
-  const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [friendIdFromURL, setFriendIdFromURL] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [friends, setFriends] = useState<Friend[]>([])
+  const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [newMessage, setNewMessage] = useState("")
+  const [loading, setLoading] = useState(true)
+  const [friendIdFromURL, setFriendIdFromURL] = useState<string | null>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // 1) connect socket + fetch friends + listen for incoming messages
   useEffect(() => {
-    connectSocket('your_auth_token_here');
+    connectSocket("your_auth_token_here")
 
     // Try one of these event names based on your ServerToClientEvents:
     // sendMessage.on('newMessage', (data) => { ... });
@@ -63,74 +63,74 @@ export default function ClientChat() {
     });
     */
 
-    (async () => {
+    ;(async () => {
       try {
-        const res = await fetch('/api/friends');
-        if (!res.ok) throw new Error('Failed to fetch friends');
-        const data: Friend[] = await res.json();
-        setFriends(data);
+        const res = await fetch("/api/friends")
+        if (!res.ok) throw new Error("Failed to fetch friends")
+        const data: Friend[] = await res.json()
+        setFriends(data)
       } catch (err) {
-        console.error(err);
+        console.error(err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    })();
+    })()
 
     // Cleanup socket listeners on unmount
     return () => {
       // sendMessage.off('message');
-    };
-  }, []);
+    }
+  }, [])
 
   // 2) if `?friendId=`, auto‐select that friend
   useEffect(() => {
     if (friendIdFromURL && friends.length) {
-      const f = friends.find((f) => f.id.toString() === friendIdFromURL);
-      if (f) setSelectedFriend(f);
+      const f = friends.find((f) => f.id.toString() === friendIdFromURL)
+      if (f) setSelectedFriend(f)
     }
-  }, [friendIdFromURL, friends]);
+  }, [friendIdFromURL, friends])
 
   // 3) fetch chat history when a friend is selected
   useEffect(() => {
-    if (!selectedFriend) return;
-    (async () => {
+    if (!selectedFriend) return
+    ;(async () => {
       try {
-        const res = await fetch(`/api/chats/${selectedFriend.id}`);
-        if (!res.ok) throw new Error('Failed to fetch messages');
-        setMessages(await res.json());
+        const res = await fetch(`/api/chats/${selectedFriend.id}`)
+        if (!res.ok) throw new Error("Failed to fetch messages")
+        setMessages(await res.json())
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
-    })();
-  }, [selectedFriend]);
+    })()
+  }, [selectedFriend])
 
   // 4) scroll to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   const handleSendMessage = (): void => {
-    if (!selectedFriend || !newMessage.trim()) return;
+    if (!selectedFriend || !newMessage.trim()) return
 
     // Send via socket using the correct structure expected by your socket types
-    sendMessage.emit('sendMessage', {
+    sendMessage.emit("sendMessage", {
       chatId: selectedFriend.id.toString(),
       content: newMessage,
-      senderId: 'current_user_id' // You'll need to get the actual user ID
+      senderId: "current_user_id", // You'll need to get the actual user ID
       // messageType is handled by the backend, not needed in socket emission
-    });
+    })
 
-    setNewMessage('');
+    setNewMessage("")
     setMessages((ms) => [
       ...ms,
       {
         id: ms.length + 1,
-        sender: 'You',
+        sender: "You",
         text: newMessage,
         timestamp: new Date().toISOString(),
       },
-    ]);
-  };
+    ])
+  }
 
   return (
     <Suspense fallback={<p className="text-gray-400">Loading chat…</p>}>
@@ -148,7 +148,9 @@ export default function ClientChat() {
                 key={f.id}
                 onClick={() => setSelectedFriend(f)}
                 className={`mb-2 block w-full rounded-lg p-3 text-left ${
-                  selectedFriend?.id === f.id ? 'bg-green-600' : 'bg-gray-800 hover:bg-gray-700'
+                  selectedFriend?.id === f.id
+                    ? "bg-green-600"
+                    : "bg-gray-800 hover:bg-gray-700"
                 }`}
               >
                 {f.name}
@@ -175,10 +177,15 @@ export default function ClientChat() {
                     <div
                       key={m.id}
                       className={`mb-3 rounded-lg p-2 ${
-                        m.sender === 'You' ? 'bg-gray-700 text-right' : 'bg-gray-700 text-left'
+                        m.sender === "You"
+                          ? "bg-gray-700 text-right"
+                          : "bg-gray-700 text-left"
                       }`}
                     >
-                      <span className="font-semibold text-green-400">{m.sender}:</span> {m.text}
+                      <span className="font-semibold text-green-400">
+                        {m.sender}:
+                      </span>{" "}
+                      {m.text}
                       <div className="text-xs text-gray-500">
                         {new Date(m.timestamp).toLocaleTimeString()}
                       </div>
@@ -194,7 +201,7 @@ export default function ClientChat() {
                   placeholder="Type a message…"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                 />
                 <button
                   onClick={handleSendMessage}
@@ -205,10 +212,12 @@ export default function ClientChat() {
               </div>
             </>
           ) : (
-            <p className="text-center text-xl text-gray-400">Select a friend to start chatting</p>
+            <p className="text-center text-xl text-gray-400">
+              Select a friend to start chatting
+            </p>
           )}
         </div>
       </div>
     </Suspense>
-  );
+  )
 }

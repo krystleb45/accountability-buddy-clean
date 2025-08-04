@@ -1,26 +1,28 @@
 // src/components/Stripe/StripeCheckout.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
+import type { CardElementProps } from "@stripe/react-stripe-js"
+
 import {
-  Elements,
-  useStripe,
-  useElements,
   CardElement,
-  CardElementProps,
-} from '@stripe/react-stripe-js';
-import styles from './StripeCheckout.module.css';
+  Elements,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js"
+import { loadStripe } from "@stripe/stripe-js"
+import React, { useEffect, useState } from "react"
+
+import styles from "./StripeCheckout.module.css"
 
 // Make sure you expose your key as NEXT_PUBLIC_STRIPE_PUBLIC_KEY
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY ?? 'pk_test_XXXXXXXXXXXXXXXXXXXX',
-);
+  process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY ?? "pk_test_XXXXXXXXXXXXXXXXXXXX",
+)
 
 interface StripeCheckoutFormProps {
-  clientSecret: string;
-  onSuccess: () => void;
-  onError: (error: string) => void;
+  clientSecret: string
+  onSuccess: () => void
+  onError: (error: string) => void
 }
 
 const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
@@ -28,58 +30,61 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
   onSuccess,
   onError,
 }) => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [loading, setLoading] = useState(false);
-  const [cardError, setCardError] = useState<string | null>(null);
+  const stripe = useStripe()
+  const elements = useElements()
+  const [loading, setLoading] = useState(false)
+  const [cardError, setCardError] = useState<string | null>(null)
 
   // Clear any previous card errors when clientSecret changes
   useEffect(() => {
-    setCardError(null);
-  }, [clientSecret]);
+    setCardError(null)
+  }, [clientSecret])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!stripe || !elements) return;
+    e.preventDefault()
+    if (!stripe || !elements) return
 
-    setLoading(true);
-    setCardError(null);
+    setLoading(true)
+    setCardError(null)
 
-    const card = elements.getElement(CardElement);
+    const card = elements.getElement(CardElement)
     if (!card) {
-      setCardError('Payment details are missing.');
-      setLoading(false);
-      return;
+      setCardError("Payment details are missing.")
+      setLoading(false)
+      return
     }
 
-    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: { card },
-    });
+    const { error, paymentIntent } = await stripe.confirmCardPayment(
+      clientSecret,
+      {
+        payment_method: { card },
+      },
+    )
 
     if (error) {
-      onError(error.message ?? 'Payment failed.');
-      setCardError(error.message ?? 'Payment failed.');
-    } else if (paymentIntent?.status === 'succeeded') {
-      onSuccess();
+      onError(error.message ?? "Payment failed.")
+      setCardError(error.message ?? "Payment failed.")
+    } else if (paymentIntent?.status === "succeeded") {
+      onSuccess()
     } else {
-      const msg = 'Payment did not succeed. Please try again.';
-      onError(msg);
-      setCardError(msg);
+      const msg = "Payment did not succeed. Please try again."
+      onError(msg)
+      setCardError(msg)
     }
 
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
-  const cardOptions: CardElementProps['options'] = {
+  const cardOptions: CardElementProps["options"] = {
     style: {
       base: {
-        'fontSize': '16px',
-        'color': '#424770',
-        '::placeholder': { color: '#aab7c4' },
+        fontSize: "16px",
+        color: "#424770",
+        "::placeholder": { color: "#aab7c4" },
       },
-      invalid: { color: '#9e2146' },
+      invalid: { color: "#9e2146" },
     },
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit} className={styles.form} noValidate>
@@ -100,32 +105,40 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
         disabled={!stripe || loading}
         aria-busy={loading}
       >
-        {loading ? 'Processing…' : 'Pay Now'}
+        {loading ? "Processing…" : "Pay Now"}
       </button>
     </form>
-  );
-};
-
-interface StripeCheckoutProps {
-  clientSecret: string;
-  onSuccess: () => void;
-  onError: (error: string) => void;
+  )
 }
 
-const StripeCheckout: React.FC<StripeCheckoutProps> = ({ clientSecret, onSuccess, onError }) => {
+interface StripeCheckoutProps {
+  clientSecret: string
+  onSuccess: () => void
+  onError: (error: string) => void
+}
+
+const StripeCheckout: React.FC<StripeCheckoutProps> = ({
+  clientSecret,
+  onSuccess,
+  onError,
+}) => {
   if (!clientSecret) {
     return (
       <p role="alert" className={styles.error}>
         Unable to process payment: missing client secret.
       </p>
-    );
+    )
   }
 
   return (
     <Elements stripe={stripePromise}>
-      <StripeCheckoutForm clientSecret={clientSecret} onSuccess={onSuccess} onError={onError} />
+      <StripeCheckoutForm
+        clientSecret={clientSecret}
+        onSuccess={onSuccess}
+        onError={onError}
+      />
     </Elements>
-  );
-};
+  )
+}
 
-export default StripeCheckout;
+export default StripeCheckout

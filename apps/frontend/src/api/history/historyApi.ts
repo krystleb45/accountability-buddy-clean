@@ -1,45 +1,56 @@
 // src/history/historyApi.ts
 
-import axios from 'axios';
-import { http } from '@/utils/http';
+import axios from "axios"
+
+import { http } from "@/utils/http"
 
 export interface HistoryRecord {
-  _id: string;
-  userId: string;
-  entity: string;
-  action: string;
-  details?: string;
-  createdAt: string;
+  _id: string
+  userId: string
+  entity: string
+  action: string
+  details?: string
+  createdAt: string
 }
 
 /** Fetch all history records */
 export async function fetchHistory(): Promise<HistoryRecord[]> {
   try {
-    const resp = await http.get<HistoryRecord[]>('/history');
-    return resp.data;
+    const resp = await http.get<HistoryRecord[]>("/history")
+    return resp.data
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      console.error('[historyApi::fetchHistory]', err.response?.data || err.message);
+      console.error(
+        "[historyApi::fetchHistory]",
+        err.response?.data || err.message,
+      )
     } else {
-      console.error('[historyApi::fetchHistory]', err);
+      console.error("[historyApi::fetchHistory]", err)
     }
-    return [];
+    return []
   }
 }
 
 /** Fetch a single history record by ID */
-export async function fetchHistoryById(id: string): Promise<HistoryRecord | null> {
-  if (!id) return null;
+export async function fetchHistoryById(
+  id: string,
+): Promise<HistoryRecord | null> {
+  if (!id) return null
   try {
-    const resp = await http.get<HistoryRecord>(`/history/${encodeURIComponent(id)}`);
-    return resp.data;
+    const resp = await http.get<HistoryRecord>(
+      `/history/${encodeURIComponent(id)}`,
+    )
+    return resp.data
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      console.error('[historyApi::fetchHistoryById]', err.response?.data || err.message);
+      console.error(
+        "[historyApi::fetchHistoryById]",
+        err.response?.data || err.message,
+      )
     } else {
-      console.error('[historyApi::fetchHistoryById]', err);
+      console.error("[historyApi::fetchHistoryById]", err)
     }
-    return null;
+    return null
   }
 }
 
@@ -50,46 +61,59 @@ export async function createHistoryRecord(
   details?: string,
 ): Promise<HistoryRecord | null> {
   try {
-    const resp = await http.post<HistoryRecord>('/history', { entity, action, details });
-    return resp.data;
+    const resp = await http.post<HistoryRecord>("/history", {
+      entity,
+      action,
+      details,
+    })
+    return resp.data
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      console.error('[historyApi::createHistoryRecord]', err.response?.data || err.message);
+      console.error(
+        "[historyApi::createHistoryRecord]",
+        err.response?.data || err.message,
+      )
     } else {
-      console.error('[historyApi::createHistoryRecord]', err);
+      console.error("[historyApi::createHistoryRecord]", err)
     }
-    return null;
+    return null
   }
 }
 
 /** Delete a history record by ID */
 export async function deleteHistoryById(id: string): Promise<boolean> {
-  if (!id) return false;
+  if (!id) return false
   try {
-    await http.delete(`/history/${encodeURIComponent(id)}`);
-    return true;
+    await http.delete(`/history/${encodeURIComponent(id)}`)
+    return true
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      console.error('[historyApi::deleteHistoryById]', err.response?.data || err.message);
+      console.error(
+        "[historyApi::deleteHistoryById]",
+        err.response?.data || err.message,
+      )
     } else {
-      console.error('[historyApi::deleteHistoryById]', err);
+      console.error("[historyApi::deleteHistoryById]", err)
     }
-    return false;
+    return false
   }
 }
 
 /** Clear all history records */
 export async function clearHistory(): Promise<boolean> {
   try {
-    await http.delete('/history/clear');
-    return true;
+    await http.delete("/history/clear")
+    return true
   } catch (err) {
     if (axios.isAxiosError(err)) {
-      console.error('[historyApi::clearHistory]', err.response?.data || err.message);
+      console.error(
+        "[historyApi::clearHistory]",
+        err.response?.data || err.message,
+      )
     } else {
-      console.error('[historyApi::clearHistory]', err);
+      console.error("[historyApi::clearHistory]", err)
     }
-    return false;
+    return false
   }
 }
 
@@ -99,4 +123,4 @@ export default {
   createHistoryRecord,
   deleteHistoryById,
   clearHistory,
-};
+}

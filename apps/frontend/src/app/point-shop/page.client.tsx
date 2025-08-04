@@ -1,19 +1,18 @@
-'use client'
+"use client"
 
-import React, { useEffect, useState } from 'react'
-import RewardCard from '@/components/PointShop/RewardCard'
-import {
-  fetchRewards,
-  redeemReward,
-  type Reward,
-} from '@/api/reward/rewardApi'
-import { getUserPoints } from '@/api/users/userApi'
+import React, { useEffect, useState } from "react"
+
+import type { Reward } from "@/api/reward/rewardApi"
+
+import { fetchRewards, redeemReward } from "@/api/reward/rewardApi"
+import { getUserPoints } from "@/api/users/userApi"
+import RewardCard from "@/components/PointShop/RewardCard"
 
 export default function PointShopClient() {
   const [userPoints, setUserPoints] = useState<number>(0)
-  const [rewards, setRewards]     = useState<Reward[]>([])
-  const [loading, setLoading]     = useState(true)
-  const [error, setError]         = useState<string | null>(null)
+  const [rewards, setRewards] = useState<Reward[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadAll() {
@@ -27,7 +26,7 @@ export default function PointShopClient() {
         setRewards(allRewards)
       } catch (err) {
         console.error(err)
-        setError(err instanceof Error ? err.message : 'Failed to load data.')
+        setError(err instanceof Error ? err.message : "Failed to load data.")
       } finally {
         setLoading(false)
       }
@@ -43,14 +42,14 @@ export default function PointShopClient() {
       setUserPoints((p) => p - cost)
     } catch (err) {
       console.error(err)
-      setError(err instanceof Error ? err.message : 'Redeem failed.')
+      setError(err instanceof Error ? err.message : "Redeem failed.")
     } finally {
       setLoading(false)
     }
   }
 
   if (loading) return <p className="p-6 text-center">Loading…</p>
-  if (error)   return <p className="p-6 text-center text-red-500">{error}</p>
+  if (error) return <p className="p-6 text-center text-red-500">{error}</p>
 
   return (
     <div className="point-shop min-h-screen bg-black p-6 text-white">

@@ -1,1 +1,1 @@
-export { default as SimpleComponent } from './SimpleComponent';
+export { default as SimpleComponent } from "./SimpleComponent"

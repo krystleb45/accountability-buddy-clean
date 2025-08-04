@@ -16,7 +16,10 @@
 
 /* Modal box styles */
 .modal {
-  background: var(--background-light, #ffffff); /* Fallback for custom properties */
+  background: var(
+    --background-light,
+    #ffffff
+  ); /* Fallback for custom properties */
   padding: 2rem;
   border-radius: var(--border-radius, 8px);
   width: 90%;

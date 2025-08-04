@@ -1,6 +1,7 @@
 // src/admin/adminApi.ts
-import axios from 'axios'               // for type‐guarding only
-import { http } from '@/utils/http'     // our shared Axios/HTTP client
+import axios from "axios" // for type‐guarding only
+
+import { http } from "@/utils/http" // our shared Axios/HTTP client
 
 // --------------------------------------------
 // Types (must match your backend response shape)
@@ -26,7 +27,7 @@ export interface Report {
   reporterId: string
   reportedUserId: string
   reason: string
-  status: 'open' | 'resolved' | 'dismissed'
+  status: "open" | "resolved" | "dismissed"
   createdAt: string
   // …etc…
 }
@@ -45,7 +46,7 @@ interface ErrorResponse {
 // --------------------------------------------
 // Helper: uniform error logger
 // --------------------------------------------
-const logApiError = (scope: string, err: unknown): void => {
+function logApiError(scope: string, err: unknown): void {
   if (axios.isAxiosError<ErrorResponse>(err) && err.response) {
     console.error(`[adminApi][${scope}]`, err.response.data)
   } else {
@@ -62,18 +63,18 @@ const logApiError = (scope: string, err: unknown): void => {
  * GET /admin/users?page=…&limit=…
  */
 export async function fetchUsers(
-  page   = 1,
-  limit  = 1000,  // by default, pull “all”
+  page = 1,
+  limit = 1000, // by default, pull “all”
 ): Promise<User[]> {
   try {
     const res = await http.get<SuccessResponse<{ users: User[] }>>(
       `/admin/users`,
-      { params: { page, limit } }
+      { params: { page, limit } },
     )
     return res.data.data.users
   } catch (err) {
-    logApiError('fetchUsers', err)
-    throw new Error('Failed to load users')
+    logApiError("fetchUsers", err)
+    throw new Error("Failed to load users")
   }
 }
 
@@ -84,14 +85,14 @@ export async function fetchUsers(
 export async function blockUser(userId: string): Promise<void> {
   try {
     const res = await http.post<SuccessResponse<Record<string, never>>>(
-      `/admin/users/${encodeURIComponent(userId)}/block`
+      `/admin/users/${encodeURIComponent(userId)}/block`,
     )
     if (!res.data.success) {
-      throw new Error(res.data.message || 'Failed to block user')
+      throw new Error(res.data.message || "Failed to block user")
     }
   } catch (err) {
-    logApiError('blockUser', err)
-    throw new Error('Failed to block user')
+    logApiError("blockUser", err)
+    throw new Error("Failed to block user")
   }
 }
 
@@ -102,14 +103,14 @@ export async function blockUser(userId: string): Promise<void> {
 export async function unblockUser(userId: string): Promise<void> {
   try {
     const res = await http.post<SuccessResponse<Record<string, never>>>(
-      `/admin/users/${encodeURIComponent(userId)}/unblock`
+      `/admin/users/${encodeURIComponent(userId)}/unblock`,
     )
     if (!res.data.success) {
-      throw new Error(res.data.message || 'Failed to unblock user')
+      throw new Error(res.data.message || "Failed to unblock user")
     }
   } catch (err) {
-    logApiError('unblockUser', err)
-    throw new Error('Failed to unblock user')
+    logApiError("unblockUser", err)
+    throw new Error("Failed to unblock user")
   }
 }
 
@@ -119,13 +120,11 @@ export async function unblockUser(userId: string): Promise<void> {
  */
 export async function fetchAnalytics(): Promise<Analytics> {
   try {
-    const res = await http.get<SuccessResponse<Analytics>>(
-      `/admin/analytics`
-    )
+    const res = await http.get<SuccessResponse<Analytics>>(`/admin/analytics`)
     return res.data.data
   } catch (err) {
-    logApiError('fetchAnalytics', err)
-    throw new Error('Failed to fetch analytics')
+    logApiError("fetchAnalytics", err)
+    throw new Error("Failed to fetch analytics")
   }
 }
 
@@ -133,19 +132,16 @@ export async function fetchAnalytics(): Promise<Analytics> {
  * Fetch a paginated list of reports
  * GET /admin/reports?page=…&limit=…
  */
-export async function fetchReports(
-  page   = 1,
-  limit  = 1000,
-): Promise<Report[]> {
+export async function fetchReports(page = 1, limit = 1000): Promise<Report[]> {
   try {
     const res = await http.get<SuccessResponse<{ reports: Report[] }>>(
       `/admin/reports`,
-      { params: { page, limit } }
+      { params: { page, limit } },
     )
     return res.data.data.reports
   } catch (err) {
-    logApiError('fetchReports', err)
-    throw new Error('Failed to load reports')
+    logApiError("fetchReports", err)
+    throw new Error("Failed to load reports")
   }
 }
 
@@ -155,19 +151,19 @@ export async function fetchReports(
  */
 export async function resolveReport(
   reportId: string,
-  action:   'resolve' | 'dismiss'
+  action: "resolve" | "dismiss",
 ): Promise<void> {
   try {
     const res = await http.patch<SuccessResponse<Record<string, never>>>(
       `/admin/reports/${encodeURIComponent(reportId)}`,
-      { action }
+      { action },
     )
     if (!res.data.success) {
-      throw new Error(res.data.message || 'Failed to update report')
+      throw new Error(res.data.message || "Failed to update report")
     }
   } catch (err) {
-    logApiError('resolveReport', err)
-    throw new Error('Failed to handle report')
+    logApiError("resolveReport", err)
+    throw new Error("Failed to handle report")
   }
 }
 

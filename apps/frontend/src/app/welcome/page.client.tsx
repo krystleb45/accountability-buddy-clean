@@ -1,8 +1,8 @@
-'use client';
+"use client"
 
-import React from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion"
+import Link from "next/link"
+import React from "react"
 
 export default function WelcomeClient() {
   return (
@@ -15,8 +15,8 @@ export default function WelcomeClient() {
       >
         <h1 className="mb-6 text-4xl font-bold text-kelly-green">Welcome!</h1>
         <p className="mb-8 text-lg text-gray-300">
-          We’re excited to have you on board. Start setting your goals and connecting with
-          accountability partners today!
+          We’re excited to have you on board. Start setting your goals and
+          connecting with accountability partners today!
         </p>
         <Link
           href="/dashboard"
@@ -26,5 +26,5 @@ export default function WelcomeClient() {
         </Link>
       </motion.div>
     </div>
-  );
+  )
 }

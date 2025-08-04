@@ -1,26 +1,28 @@
 // src/components/Activities/ActivityItem.tsx
-import React, { ReactElement } from 'react';
+import type { ReactElement } from "react"
+
+import React from "react"
 
 export interface Activity {
-  id: string;
-  title: string;
-  description: string;
-  createdAt: string; // ISO date string
-  status: 'pending' | 'in-progress' | 'completed';
+  id: string
+  title: string
+  description: string
+  createdAt: string // ISO date string
+  status: "pending" | "in-progress" | "completed"
 }
 
 interface ActivityItemProps {
-  activity: Activity;
-  onViewDetails: (id: string) => void;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
+  activity: Activity
+  onViewDetails: (id: string) => void
+  onEdit: (id: string) => void
+  onDelete: (id: string) => void
 }
 
-const statusClasses: Record<Activity['status'], string> = {
-  'pending': 'bg-yellow-500 text-black',
-  'in-progress': 'bg-blue-500 text-white',
-  'completed': 'bg-green-500 text-black',
-};
+const statusClasses: Record<Activity["status"], string> = {
+  pending: "bg-yellow-500 text-black",
+  "in-progress": "bg-blue-500 text-white",
+  completed: "bg-green-500 text-black",
+}
 
 export default function ActivityItem({
   activity,
@@ -29,25 +31,25 @@ export default function ActivityItem({
   onDelete,
 }: ActivityItemProps): ReactElement {
   return (
-    <div className="mb-4 transform rounded-lg bg-gray-800 p-6 shadow-lg transition hover:scale-105">
+    <div className="mb-4 rounded-lg bg-gray-800 p-6 shadow-lg transition hover:scale-105">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-bold text-kelly-green">{activity.title}</h3>
         <span
           className={`rounded-lg px-3 py-1 text-sm font-medium ${statusClasses[activity.status]}`}
         >
-          {activity.status.replace('-', ' ')}
+          {activity.status.replace("-", " ")}
         </span>
       </div>
 
       <p className="mt-2 text-gray-300">{activity.description}</p>
 
       <p className="mt-2 text-sm text-gray-400">
-        Created on:{' '}
+        Created on:{" "}
         <strong>
           {new Date(activity.createdAt).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
+            year: "numeric",
+            month: "short",
+            day: "numeric",
           })}
         </strong>
       </p>
@@ -76,5 +78,5 @@ export default function ActivityItem({
         </button>
       </div>
     </div>
-  );
+  )
 }

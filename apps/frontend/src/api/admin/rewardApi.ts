@@ -1,6 +1,7 @@
 // src/admin/rewardApi.ts
-import axios from 'axios'               // for isAxiosError check
-import { http } from '@/utils/http'     // our shared Axios instance
+import axios from "axios" // for isAxiosError check
+
+import { http } from "@/utils/http" // our shared Axios instance
 
 // ----------------------------------------------------------------------------------
 // Type Definitions
@@ -28,7 +29,7 @@ interface ErrorResponse {
 // ----------------------------------------------------------------------------------
 // Helper: uniform error logger
 // ----------------------------------------------------------------------------------
-const logApiError = (scope: string, err: unknown): void => {
+function logApiError(scope: string, err: unknown): void {
   if (axios.isAxiosError<ErrorResponse>(err) && err.response) {
     console.error(`[rewardApi][${scope}]`, err.response.data)
   } else {
@@ -49,13 +50,14 @@ const logApiError = (scope: string, err: unknown): void => {
  */
 export async function fetchAdminRewards(): Promise<AdminReward[]> {
   try {
-    const res = await http.get<SuccessResponse<{ rewards: AdminReward[] }>>(
-      '/admin/rewards'
-    )
+    const res =
+      await http.get<SuccessResponse<{ rewards: AdminReward[] }>>(
+        "/admin/rewards",
+      )
     return res.data.data.rewards
   } catch (err) {
-    logApiError('fetchAdminRewards', err)
-    return []    // return empty list on error
+    logApiError("fetchAdminRewards", err)
+    return [] // return empty list on error
   }
 }
 
@@ -74,12 +76,12 @@ export async function createAdminReward(data: {
 }): Promise<AdminReward | null> {
   try {
     const res = await http.post<SuccessResponse<{ reward: AdminReward }>>(
-      '/admin/rewards',
-      data
+      "/admin/rewards",
+      data,
     )
     return res.data.data.reward
   } catch (err) {
-    logApiError('createAdminReward', err)
+    logApiError("createAdminReward", err)
     return null
   }
 }
@@ -94,11 +96,11 @@ export async function createAdminReward(data: {
 export async function deleteAdminReward(id: string): Promise<boolean> {
   try {
     const res = await http.delete<SuccessResponse<Record<string, never>>>(
-      `/admin/rewards/${encodeURIComponent(id)}`
+      `/admin/rewards/${encodeURIComponent(id)}`,
     )
     return res.data.success
   } catch (err) {
-    logApiError('deleteAdminReward', err)
+    logApiError("deleteAdminReward", err)
     return false
   }
 }

@@ -1,49 +1,54 @@
 // src/components/Notifications/Notification.tsx
-'use client';
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import styles from './Notification.module.css';
+import React, { useEffect, useState } from "react"
 
-export type NotificationType = 'success' | 'info' | 'warning' | 'error';
+import styles from "./Notification.module.css"
+
+export type NotificationType = "success" | "info" | "warning" | "error"
 
 export interface NotificationProps {
-  message: string;
-  type?: NotificationType;
-  duration?: number; // in milliseconds
-  onDismiss?: () => void;
+  message: string
+  type?: NotificationType
+  duration?: number // in milliseconds
+  onDismiss?: () => void
 }
 
 const Notification: React.FC<NotificationProps> = ({
   message,
-  type = 'info',
+  type = "info",
   duration = 5000,
   onDismiss,
 }) => {
-  const [visible, setVisible] = useState<boolean>(true);
+  const [visible, setVisible] = useState<boolean>(true)
 
   useEffect((): (() => void) => {
     const timerId = window.setTimeout((): void => {
-      setVisible(false);
-      onDismiss?.();
-    }, duration);
+      setVisible(false)
+      onDismiss?.()
+    }, duration)
 
     return (): void => {
-      clearTimeout(timerId);
-    };
-  }, [duration, onDismiss]);
+      clearTimeout(timerId)
+    }
+  }, [duration, onDismiss])
 
-  if (!visible) return null;
+  if (!visible) return null
 
   return (
-    <div className={`${styles.notification} ${styles[type]}`} role="alert" aria-live="assertive">
+    <div
+      className={`${styles.notification} ${styles[type]}`}
+      role="alert"
+      aria-live="assertive"
+    >
       <p className={styles.message}>{message}</p>
       {onDismiss && (
         <button
           type="button"
           className={styles.closeButton}
           onClick={(): void => {
-            setVisible(false);
-            onDismiss();
+            setVisible(false)
+            onDismiss()
           }}
           aria-label="Dismiss notification"
         >
@@ -51,7 +56,7 @@ const Notification: React.FC<NotificationProps> = ({
         </button>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Notification;
+export default Notification

@@ -7,7 +7,9 @@
   border-radius: 8px; /* Smooth edges */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Softer shadow */
   padding: 16px;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
   display: flex;
   flex-direction: column;
   justify-content: center; /* Center content */
@@ -37,7 +39,10 @@
 /* Container for Cards */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Flexible layout */
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(250px, 1fr)
+  ); /* Flexible layout */
   gap: 16px;
 }
 

@@ -1,34 +1,40 @@
 // src/components/Profile/StreakReminder.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { BellRing } from 'lucide-react';
-import styles from './StreakReminder.module.css';
+import { motion } from "framer-motion"
+import { BellRing } from "lucide-react"
+import React, { useEffect, useState } from "react"
+
+import styles from "./StreakReminder.module.css"
 
 interface StreakReminderProps {
   /** ISO date string of the last time a goal was completed */
-  lastGoalCompletedAt?: string;
+  lastGoalCompletedAt?: string
   /** Number of consecutive days the user has completed at least one goal */
-  currentStreak: number;
+  currentStreak: number
 }
 
 /**
  * If the user hasn't completed a goal today, show a gentle nudge
  * to keep their streak alive.
  */
-const StreakReminder: React.FC<StreakReminderProps> = ({ lastGoalCompletedAt, currentStreak }) => {
-  const [showReminder, setShowReminder] = useState<boolean>(false);
+const StreakReminder: React.FC<StreakReminderProps> = ({
+  lastGoalCompletedAt,
+  currentStreak,
+}) => {
+  const [showReminder, setShowReminder] = useState<boolean>(false)
 
   useEffect((): void => {
-    const today = new Date().toDateString();
-    const lastCompleted = lastGoalCompletedAt ? new Date(lastGoalCompletedAt).toDateString() : '';
+    const today = new Date().toDateString()
+    const lastCompleted = lastGoalCompletedAt
+      ? new Date(lastGoalCompletedAt).toDateString()
+      : ""
 
-    setShowReminder(lastCompleted !== today);
-  }, [lastGoalCompletedAt]);
+    setShowReminder(lastCompleted !== today)
+  }, [lastGoalCompletedAt])
 
   if (!showReminder) {
-    return null;
+    return null
   }
 
   return (
@@ -44,12 +50,12 @@ const StreakReminder: React.FC<StreakReminderProps> = ({ lastGoalCompletedAt, cu
       <div className={styles.content}>
         <h3 className={styles.title}>Keep Your Streak Alive!</h3>
         <p className={styles.message}>
-          You haven’t completed a goal today. Complete one now to maintain your{' '}
+          You haven’t completed a goal today. Complete one now to maintain your{" "}
           <strong>{currentStreak}-day streak</strong>! ⚡
         </p>
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
-export default StreakReminder;
+export default StreakReminder

@@ -1,46 +1,53 @@
-'use client';
+"use client"
 
-import React, { useState } from 'react';
-import { sanitizeInput } from '@/utils/FormsUtils';
-import styles from './CreateGoalForm.module.css';
+import React, { useState } from "react"
+
+import { sanitizeInput } from "@/utils/FormsUtils"
+
+import styles from "./CreateGoalForm.module.css"
 
 export interface GoalData {
-  title: string;
-  description?: string;
-  dueDate?: string;
-  category?: string;
+  title: string
+  description?: string
+  dueDate?: string
+  category?: string
 }
 
 interface CreateGoalFormProps {
-  onSubmit: (data: GoalData) => void;
-  defaultValues?: Partial<GoalData>;
+  onSubmit: (data: GoalData) => void
+  defaultValues?: Partial<GoalData>
 }
 
-const CreateGoalForm: React.FC<CreateGoalFormProps> = ({ onSubmit, defaultValues = {} }) => {
+const CreateGoalForm: React.FC<CreateGoalFormProps> = ({
+  onSubmit,
+  defaultValues = {},
+}) => {
   const [formData, setFormData] = useState<GoalData>({
-    title: defaultValues.title ?? '',
-    description: defaultValues.description ?? '',
-    dueDate: defaultValues.dueDate ?? '',
-    category: defaultValues.category ?? '',
-  });
-  const [error, setError] = useState<string>('');
+    title: defaultValues.title ?? "",
+    description: defaultValues.description ?? "",
+    dueDate: defaultValues.dueDate ?? "",
+    category: defaultValues.category ?? "",
+  })
+  const [error, setError] = useState<string>("")
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ): void => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: sanitizeInput(value) }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: sanitizeInput(value) }))
+  }
 
   const handleSubmit = (e: React.FormEvent): void => {
-    e.preventDefault();
+    e.preventDefault()
     if (!formData.title.trim()) {
-      setError('Title is required.');
-      return;
+      setError("Title is required.")
+      return
     }
-    setError('');
-    onSubmit(formData);
-  };
+    setError("")
+    onSubmit(formData)
+  }
 
   return (
     <form onSubmit={handleSubmit} className={styles.form} noValidate>
@@ -113,7 +120,7 @@ const CreateGoalForm: React.FC<CreateGoalFormProps> = ({ onSubmit, defaultValues
         Create Goal
       </button>
     </form>
-  );
-};
+  )
+}
 
-export default CreateGoalForm;
+export default CreateGoalForm

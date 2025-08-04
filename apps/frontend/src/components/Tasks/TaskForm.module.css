@@ -4,7 +4,7 @@
   background: var(--bg-secondary, #fafafa);
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: var(--shadow, 0 2px 4px rgba(0,0,0,0.05));
+  box-shadow: var(--shadow, 0 2px 4px rgba(0, 0, 0, 0.05));
   max-width: 600px;
 }
 

@@ -1,23 +1,26 @@
 // src/app/task-creation/page.client.tsx
-'use client'
+"use client"
 
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import taskApi, { Task, TaskInput } from '@/api/tasks/taskApi'
+import { motion } from "framer-motion"
+import React, { useEffect, useState } from "react"
+
+import type { Task, TaskInput } from "@/api/tasks/taskApi"
+
+import taskApi from "@/api/tasks/taskApi"
 
 export default function TaskCreationClient() {
   const [formData, setFormData] = useState<TaskInput>({
-    title: '',
-    description: '',
-    dueDate: '',
-    status: 'pending',
-    priority: 'medium',
+    title: "",
+    description: "",
+    dueDate: "",
+    status: "pending",
+    priority: "medium",
   })
   const [tasks, setTasks] = useState<Task[]>([])
   const [loading, setLoading] = useState(false)
   const [fetchingTasks, setFetchingTasks] = useState(true)
-  const [error, setError] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
+  const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
 
   // Load tasks on mount
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function TaskCreationClient() {
         const data = await taskApi.fetchTasks()
         setTasks(data)
       } catch (err: any) {
-        setError(err.message || 'Failed to load tasks.')
+        setError(err.message || "Failed to load tasks.")
       } finally {
         setFetchingTasks(false)
       }
@@ -34,24 +37,28 @@ export default function TaskCreationClient() {
   }, [])
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
   ) => {
     const { name, value } = e.target
-    setFormData(f => ({ ...f, [name]: value }))
+    setFormData((f) => ({ ...f, [name]: value }))
   }
 
   const validateForm = () => {
-    setError('')
+    setError("")
     if (!formData.title || !formData.description || !formData.dueDate) {
-      setError('All fields are required.')
+      setError("All fields are required.")
       return false
     }
     if (new Date(formData.dueDate) < new Date()) {
-      setError('Due date must be in the future.')
+      setError("Due date must be in the future.")
       return false
     }
-    if (tasks.some(t => t.title.toLowerCase() === formData.title.toLowerCase())) {
-      setError('A task with this title already exists.')
+    if (
+      tasks.some((t) => t.title.toLowerCase() === formData.title.toLowerCase())
+    ) {
+      setError("A task with this title already exists.")
       return false
     }
     return true
@@ -59,17 +66,23 @@ export default function TaskCreationClient() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSuccessMessage('')
+    setSuccessMessage("")
     if (!validateForm()) return
 
     setLoading(true)
     try {
       const newTask = await taskApi.createTask(formData)
-      setTasks(ts => [...ts, newTask])
-      setSuccessMessage('Task created successfully!')
-      setFormData({ title: '', description: '', dueDate: '', status: 'pending', priority: 'medium' })
+      setTasks((ts) => [...ts, newTask])
+      setSuccessMessage("Task created successfully!")
+      setFormData({
+        title: "",
+        description: "",
+        dueDate: "",
+        status: "pending",
+        priority: "medium",
+      })
     } catch (err: any) {
-      setError(err.message || 'Failed to create task.')
+      setError(err.message || "Failed to create task.")
     } finally {
       setLoading(false)
     }
@@ -89,30 +102,47 @@ export default function TaskCreationClient() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Title */}
-          <label htmlFor="title" className="block font-medium text-gray-300">Task Title</label>
+          <label htmlFor="title" className="block font-medium text-gray-300">
+            Task Title
+          </label>
           <input
-            id="title" name="title" type="text"
-            value={formData.title} onChange={handleChange}
+            id="title"
+            name="title"
+            type="text"
+            value={formData.title}
+            onChange={handleChange}
             placeholder="Enter task title"
             className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
             required
           />
 
           {/* Description */}
-          <label htmlFor="description" className="block font-medium text-gray-300">Task Description</label>
+          <label
+            htmlFor="description"
+            className="block font-medium text-gray-300"
+          >
+            Task Description
+          </label>
           <textarea
-            id="description" name="description"
-            value={formData.description} onChange={handleChange}
-            placeholder="Enter task description" rows={4}
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Enter task description"
+            rows={4}
             className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
             required
           />
 
           {/* Priority */}
-          <label htmlFor="priority" className="block font-medium text-gray-300">Priority</label>
+          <label htmlFor="priority" className="block font-medium text-gray-300">
+            Priority
+          </label>
           <select
-            id="priority" name="priority"
-            value={formData.priority} onChange={handleChange}
+            id="priority"
+            name="priority"
+            value={formData.priority}
+            onChange={handleChange}
             className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
           >
             <option value="low">Low</option>
@@ -121,10 +151,15 @@ export default function TaskCreationClient() {
           </select>
 
           {/* Due Date */}
-          <label htmlFor="dueDate" className="block font-medium text-gray-300">Due Date</label>
+          <label htmlFor="dueDate" className="block font-medium text-gray-300">
+            Due Date
+          </label>
           <input
-            id="dueDate" name="dueDate" type="date"
-            value={formData.dueDate} onChange={handleChange}
+            id="dueDate"
+            name="dueDate"
+            type="date"
+            value={formData.dueDate}
+            onChange={handleChange}
             className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
             required
           />
@@ -141,27 +176,32 @@ export default function TaskCreationClient() {
             disabled={loading}
             className="w-full rounded-lg bg-green-500 py-3 text-black disabled:opacity-50"
           >
-            {loading ? 'Creating…' : 'Create Task'}
+            {loading ? "Creating…" : "Create Task"}
           </motion.button>
         </form>
       </motion.div>
 
       {/* Existing Tasks */}
       <div className="mt-10 w-full max-w-lg">
-        <h2 className="mb-4 text-center text-2xl font-semibold text-green-400">Existing Tasks</h2>
+        <h2 className="mb-4 text-center text-2xl font-semibold text-green-400">
+          Existing Tasks
+        </h2>
 
         {fetchingTasks ? (
           <p className="text-center text-gray-400">Loading tasks…</p>
         ) : tasks.length > 0 ? (
           <ul className="space-y-4">
-            {tasks.map(t => (
+            {tasks.map((t) => (
               <li key={t._id} className="rounded-lg bg-gray-800 p-4 shadow-md">
                 <h3 className="text-xl font-semibold text-white">{t.title}</h3>
                 <p className="mb-1 text-gray-400">{t.description}</p>
                 <p className="text-gray-500">
-                  Due: {t.dueDate ? new Date(t.dueDate).toLocaleDateString() : '—'}
+                  Due:{" "}
+                  {t.dueDate ? new Date(t.dueDate).toLocaleDateString() : "—"}
                 </p>
-                <span className="text-sm font-semibold text-yellow-400">{t.priority}</span>
+                <span className="text-sm font-semibold text-yellow-400">
+                  {t.priority}
+                </span>
               </li>
             ))}
           </ul>

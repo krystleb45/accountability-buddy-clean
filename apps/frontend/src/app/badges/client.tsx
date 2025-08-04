@@ -1,36 +1,42 @@
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import GamificationService from '@/services/gamificationService';
-import BadgeList from '@/components/BadgeSystem/BadgeList';
-import type { Badge } from '@/types/Gamification.types';
+import React, { useEffect, useState } from "react"
+
+import type { Badge } from "@/types/Gamification.types"
+
+import BadgeList from "@/components/BadgeSystem/BadgeList"
+import GamificationService from "@/services/gamificationService"
 
 export default function ClientBadgePage() {
-  const [badges, setBadges] = useState<Badge[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [badges, setBadges] = useState<Badge[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchBadges(): Promise<void> {
       try {
-        setLoading(true);
-        const badgeData = await GamificationService.fetchBadges();
-        setBadges(badgeData);
+        setLoading(true)
+        const badgeData = await GamificationService.fetchBadges()
+        setBadges(badgeData)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
+        setError(
+          err instanceof Error ? err.message : "An unexpected error occurred.",
+        )
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
-    fetchBadges();
-  }, []);
+    fetchBadges()
+  }, [])
 
-  const earnedBadges = badges.filter((b) => b.isEarned);
-  const lockedBadges = badges.filter((b) => !b.isEarned);
+  const earnedBadges = badges.filter((b) => b.isEarned)
+  const lockedBadges = badges.filter((b) => !b.isEarned)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white to-slate-100 px-6 py-8">
-      <h1 className="mb-6 text-center text-3xl font-bold text-gray-800">Your Badges</h1>
+      <h1 className="mb-6 text-center text-3xl font-bold text-gray-800">
+        Your Badges
+      </h1>
 
       {loading ? (
         <p className="text-center text-gray-600">Loading badges...</p>
@@ -40,7 +46,9 @@ export default function ClientBadgePage() {
         <>
           {earnedBadges.length > 0 && (
             <section className="mb-10">
-              <h2 className="mb-4 text-xl font-semibold text-gray-700">Unlocked</h2>
+              <h2 className="mb-4 text-xl font-semibold text-gray-700">
+                Unlocked
+              </h2>
               <BadgeList
                 badges={earnedBadges}
                 onBadgeClick={() => {
@@ -52,7 +60,9 @@ export default function ClientBadgePage() {
 
           {lockedBadges.length > 0 && (
             <section>
-              <h2 className="mb-4 text-xl font-semibold text-gray-500">Locked</h2>
+              <h2 className="mb-4 text-xl font-semibold text-gray-500">
+                Locked
+              </h2>
               <BadgeList
                 badges={lockedBadges}
                 onBadgeClick={() => {
@@ -63,10 +73,12 @@ export default function ClientBadgePage() {
           )}
 
           {earnedBadges.length === 0 && lockedBadges.length === 0 && (
-            <p className="text-center text-gray-500">No badges available yet.</p>
+            <p className="text-center text-gray-500">
+              No badges available yet.
+            </p>
           )}
         </>
       )}
     </div>
-  );
+  )
 }

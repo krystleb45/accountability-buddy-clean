@@ -1,54 +1,55 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './SearchBar.css';
+import React, { useEffect, useRef, useState } from "react"
+
+import "./SearchBar.css"
 
 interface SearchBarProps {
-  placeholder?: string;
-  onSearch: (query: string) => void;
-  debounceTime?: number;
+  placeholder?: string
+  onSearch: (query: string) => void
+  debounceTime?: number
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
-  placeholder = 'Search...',
+  placeholder = "Search...",
   onSearch,
   debounceTime = 300,
 }) => {
-  const [query, setQuery] = useState<string>('');
-  const debounceTimer = useRef<number | undefined>(undefined);
+  const [query, setQuery] = useState<string>("")
+  const debounceTimer = useRef<number | undefined>(undefined)
 
   // Clean up timer on unmount
   useEffect(() => {
     return () => {
       if (debounceTimer.current) {
-        window.clearTimeout(debounceTimer.current);
+        window.clearTimeout(debounceTimer.current)
       }
-    };
-  }, []);
+    }
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const value = e.target.value;
-    setQuery(value);
+    const value = e.target.value
+    setQuery(value)
 
     if (debounceTimer.current) {
-      window.clearTimeout(debounceTimer.current);
+      window.clearTimeout(debounceTimer.current)
     }
 
     debounceTimer.current = window.setTimeout(() => {
-      onSearch(value);
-    }, debounceTime);
-  };
+      onSearch(value)
+    }, debounceTime)
+  }
 
   const triggerSearch = (): void => {
     if (debounceTimer.current) {
-      window.clearTimeout(debounceTimer.current);
+      window.clearTimeout(debounceTimer.current)
     }
-    onSearch(query);
-  };
+    onSearch(query)
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter') {
-      triggerSearch();
+    if (e.key === "Enter") {
+      triggerSearch()
     }
-  };
+  }
 
   return (
     <div className="search-bar">
@@ -70,7 +71,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         Search
       </button>
     </div>
-  );
-};
+  )
+}
 
-export default SearchBar;
+export default SearchBar

@@ -1,36 +1,37 @@
 // src/components/charts/UserStatisticsChart.tsx
-'use client';
+"use client"
 
-import React from 'react';
-import '../../styles/global.css';
+import React from "react"
+
+import "../../styles/global.css"
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  Legend,
-} from 'recharts';
+} from "recharts"
 
 interface UserStatisticsChartProps {
-  totalGoals: number;
-  completedGoals: number;
-  collaborations: number;
-  goalTrends: { date: string; progress: number }[];
-  categoryBreakdown: { category: string; value: number }[];
-  currentStreak: number;
-  longestStreak: number;
+  totalGoals: number
+  completedGoals: number
+  collaborations: number
+  goalTrends: { date: string; progress: number }[]
+  categoryBreakdown: { category: string; value: number }[]
+  currentStreak: number
+  longestStreak: number
 }
 
 // Theme colors: black background, kelly green accent
-const COLORS = ['#4CBB17', '#28a745', '#ffcc00', '#ff5733'];
+const COLORS = ["#4CBB17", "#28a745", "#ffcc00", "#ff5733"]
 
 const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
   totalGoals,
@@ -42,15 +43,15 @@ const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
   longestStreak,
 }) => {
   const barChartData = [
-    { name: 'Total Goals', value: totalGoals },
-    { name: 'Completed Goals', value: completedGoals },
-    { name: 'Collaborations', value: collaborations },
-  ];
+    { name: "Total Goals", value: totalGoals },
+    { name: "Completed Goals", value: completedGoals },
+    { name: "Collaborations", value: collaborations },
+  ]
 
   const pieChartData = [
-    { name: 'Completed', value: completedGoals },
-    { name: 'In Progress', value: totalGoals - completedGoals },
-  ];
+    { name: "Completed", value: completedGoals },
+    { name: "In Progress", value: totalGoals - completedGoals },
+  ]
 
   return (
     <div className="rounded-2xl bg-black p-6 shadow-lg">
@@ -71,8 +72,10 @@ const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
             <CartesianGrid strokeDasharray="3 3" stroke="#333" />
             <XAxis dataKey="name" stroke="#fff" />
             <YAxis stroke="#fff" />
-            <Tooltip contentStyle={{ backgroundColor: '#222', border: 'none' }} />
-            <Legend wrapperStyle={{ color: '#fff' }} />
+            <Tooltip
+              contentStyle={{ backgroundColor: "#222", border: "none" }}
+            />
+            <Legend wrapperStyle={{ color: "#fff" }} />
             <Bar dataKey="value" fill="#4CBB17" />
           </BarChart>
         </ResponsiveContainer>
@@ -87,23 +90,25 @@ const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               // Fix for the label function in the Pie chart
-<Pie
-  data={categoryBreakdown}
-  cx="50%"
-  cy="50%"
-  innerRadius={50}
-  outerRadius={90}
-  dataKey="value"
-  label={({ name, percent }) =>
-    `${name}: ${percent ? (percent * 100).toFixed(0) : '0'}%`
-  }
->
+              <Pie
+                data={categoryBreakdown}
+                cx="50%"
+                cy="50%"
+                innerRadius={50}
+                outerRadius={90}
+                dataKey="value"
+                label={({ name, percent }) =>
+                  `${name}: ${percent ? (percent * 100).toFixed(0) : "0"}%`
+                }
+              >
                 {categoryBreakdown.map((_, i) => (
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: '#222', border: 'none' }} />
-              <Legend wrapperStyle={{ color: '#fff' }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: "#222", border: "none" }}
+              />
+              <Legend wrapperStyle={{ color: "#fff" }} />
             </PieChart>
           </ResponsiveContainer>
         ) : (
@@ -121,22 +126,17 @@ const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
             className="h-4 bg-[#4CBB17]"
             style={{
               width: `${
-                longestStreak > 0
-                  ? (currentStreak / longestStreak) * 100
-                  : 0
+                longestStreak > 0 ? (currentStreak / longestStreak) * 100 : 0
               }%`,
-              transition: 'width 0.6s ease',
+              transition: "width 0.6s ease",
             }}
           />
         </div>
         <p className="mt-2 text-center text-white">
-          Current Streak:{' '}
-          <span className="font-bold text-[#4CBB17]">
-            {currentStreak}
-          </span>{' '}
-          days | Longest Streak:{' '}
-          <span className="font-bold text-white">{longestStreak}</span>{' '}
-          days
+          Current Streak:{" "}
+          <span className="font-bold text-[#4CBB17]">{currentStreak}</span> days
+          | Longest Streak:{" "}
+          <span className="font-bold text-white">{longestStreak}</span> days
         </p>
       </section>
 
@@ -161,8 +161,10 @@ const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: '#222', border: 'none' }} />
-              <Legend wrapperStyle={{ color: '#fff' }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: "#222", border: "none" }}
+              />
+              <Legend wrapperStyle={{ color: "#fff" }} />
             </PieChart>
           </ResponsiveContainer>
         ) : (
@@ -184,8 +186,10 @@ const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
               <XAxis dataKey="date" stroke="#fff" />
               <YAxis stroke="#fff" />
-              <Tooltip contentStyle={{ backgroundColor: '#222', border: 'none' }} />
-              <Legend wrapperStyle={{ color: '#fff' }} />
+              <Tooltip
+                contentStyle={{ backgroundColor: "#222", border: "none" }}
+              />
+              <Legend wrapperStyle={{ color: "#fff" }} />
               <Line
                 type="monotone"
                 dataKey="progress"
@@ -201,7 +205,7 @@ const UserStatisticsChart: React.FC<UserStatisticsChartProps> = ({
         )}
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default UserStatisticsChart;
+export default UserStatisticsChart

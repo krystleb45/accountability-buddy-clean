@@ -1,23 +1,34 @@
 // src/components/Toasts/SubscriptionToasts.ts
-'use client';
+"use client"
 
-import { toast, ToastOptions } from 'react-toastify';
-import { CreditCard, AlertTriangle, CheckCircle2, TrendingUp, TrendingDown } from 'lucide-react';
+import type { ToastOptions } from "react-toastify"
+
+import {
+  AlertTriangle,
+  CheckCircle2,
+  CreditCard,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react"
+import { toast } from "react-toastify"
 
 const baseOptions: ToastOptions = {
-  position: 'top-right',
+  position: "top-right",
   autoClose: 5000,
   hideProgressBar: false,
   closeOnClick: true,
   pauseOnHover: true,
   draggable: true,
-  theme: 'colored',
-};
+  theme: "colored",
+}
 
 /**
  * 🎉 Show when user successfully upgrades their plan
  */
-export function showUpgradeSuccessToast(planName: string, prorationAmount?: number): void {
+export function showUpgradeSuccessToast(
+  planName: string,
+  prorationAmount?: number,
+): void {
   toast.success(
     <div>
       <TrendingUp className="mr-2 inline-block text-green-400" size={18} />
@@ -30,39 +41,47 @@ export function showUpgradeSuccessToast(planName: string, prorationAmount?: numb
       </div>
     </div>,
     { ...baseOptions, autoClose: 6000 },
-  );
+  )
 }
 
 /**
  * 📅 Show when user schedules a downgrade
  */
-export function showDowngradeScheduledToast(planName: string, effectiveDate: string): void {
+export function showDowngradeScheduledToast(
+  planName: string,
+  effectiveDate: string,
+): void {
   toast.info(
     <div>
       <TrendingDown className="mr-2 inline-block text-blue-400" size={18} />
       <strong>Downgrade Scheduled</strong>
       <div className="text-sm text-white">
-        Will switch to {planName} on {new Date(effectiveDate).toLocaleDateString()}
+        Will switch to {planName} on{" "}
+        {new Date(effectiveDate).toLocaleDateString()}
       </div>
     </div>,
     { ...baseOptions, autoClose: 6000 },
-  );
+  )
 }
 
 /**
  * 🔄 Show when billing cycle changes
  */
-export function showBillingCycleChangeToast(cycle: string, effectiveDate: string): void {
+export function showBillingCycleChangeToast(
+  cycle: string,
+  effectiveDate: string,
+): void {
   toast.info(
     <div>
       <CreditCard className="mr-2 inline-block text-blue-400" size={18} />
       <strong>Billing Updated</strong>
       <div className="text-sm text-white">
-        Changed to {cycle} billing. Effective {new Date(effectiveDate).toLocaleDateString()}
+        Changed to {cycle} billing. Effective{" "}
+        {new Date(effectiveDate).toLocaleDateString()}
       </div>
     </div>,
     { ...baseOptions },
-  );
+  )
 }
 
 /**
@@ -78,7 +97,7 @@ export function showCancellationSuccessToast(): void {
       </div>
     </div>,
     { ...baseOptions },
-  );
+  )
 }
 
 /**
@@ -92,13 +111,16 @@ export function showSubscriptionErrorToast(message: string): void {
       <div className="text-sm text-white">{message}</div>
     </div>,
     { ...baseOptions, autoClose: 7000 },
-  );
+  )
 }
 
 /**
  * ⚠️ Show when user hits subscription limits
  */
-export function showLimitReachedToast(limitType: string, currentPlan: string): void {
+export function showLimitReachedToast(
+  limitType: string,
+  currentPlan: string,
+): void {
   toast.warning(
     <div>
       <AlertTriangle className="mr-2 inline-block text-yellow-400" size={18} />
@@ -108,5 +130,5 @@ export function showLimitReachedToast(limitType: string, currentPlan: string): v
       </div>
     </div>,
     { ...baseOptions, autoClose: 6000 },
-  );
+  )
 }

@@ -29,6 +29,7 @@ function filterMessageContent(message: string): string {
     let filteredMessage = message
     sensitiveWords.forEach((word) => {
       const regex = new RegExp(`\\b${word}\\b`, "gi") // Match whole words
+      // eslint-disable-next-line antfu/consistent-list-newline
       filteredMessage = filteredMessage.replace(regex, (match) =>
         "*".repeat(match.length),
       ) // Replace with asterisks

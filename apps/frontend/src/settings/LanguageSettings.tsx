@@ -1,23 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import styles from './LanguageSettings.module.css';
+import React, { useEffect, useState } from "react"
+
+import styles from "./LanguageSettings.module.css"
 
 const SUPPORTED_LANGUAGES = [
-  { code: 'en', label: 'English' },
-  { code: 'es', label: 'Español' },
-  { code: 'fr', label: 'Français' },
-  { code: 'de', label: 'Deutsch' },
-  { code: 'zh', label: '中文' },
-];
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
+  { code: "fr", label: "Français" },
+  { code: "de", label: "Deutsch" },
+  { code: "zh", label: "中文" },
+]
 
 const LanguageSettings: React.FC = () => {
   const [language, setLanguage] = useState<string>(
-    localStorage.getItem('language') || navigator.language.split('-')[0] || 'en',
-  );
+    localStorage.getItem("language") ||
+      navigator.language.split("-")[0] ||
+      "en",
+  )
 
   useEffect(() => {
-    localStorage.setItem('language', language);
-    document.documentElement.lang = language;
-  }, [language]);
+    localStorage.setItem("language", language)
+    document.documentElement.lang = language
+  }, [language])
 
   return (
     <div className={styles.container}>
@@ -35,7 +38,7 @@ const LanguageSettings: React.FC = () => {
         ))}
       </select>
     </div>
-  );
-};
+  )
+}
 
-export default LanguageSettings;
+export default LanguageSettings

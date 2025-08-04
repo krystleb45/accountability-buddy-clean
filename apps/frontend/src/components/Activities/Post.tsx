@@ -1,19 +1,25 @@
 // src/components/Activities/Post.tsx
-import React from 'react';
+import React from "react"
 
 interface PostProps {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  timestamp: string; // already formatted, e.g. "9/1/2023, 2:34 PM"
+  id: string
+  title: string
+  content: string
+  author: string
+  timestamp: string // already formatted, e.g. "9/1/2023, 2:34 PM"
 }
 
-const Post: React.FC<PostProps> = ({ id, title, content, author, timestamp }) => {
+const Post: React.FC<PostProps> = ({
+  id,
+  title,
+  content,
+  author,
+  timestamp,
+}) => {
   return (
     <div
       id={`post-${id}`}
-      className="mb-4 transform rounded-lg bg-gray-800 p-6 shadow-lg transition hover:scale-105"
+      className="mb-4 rounded-lg bg-gray-800 p-6 shadow-lg transition hover:scale-105"
     >
       <h2 className="text-xl font-bold text-kelly-green">{title}</h2>
       <p className="mt-2 text-gray-300">{content}</p>
@@ -22,7 +28,7 @@ const Post: React.FC<PostProps> = ({ id, title, content, author, timestamp }) =>
         <span>{timestamp}</span>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Post;
+export default Post

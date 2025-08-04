@@ -1,24 +1,27 @@
-'use client';
-import React from 'react';
-import Image from 'next/image';
-import { Trophy, Medal, User as UserIcon } from 'lucide-react';
-import type { LeaderboardEntry } from '@/types/Gamification.types';
-import styles from './LeaderboardCard.module.css';
+"use client"
+import { Medal, Trophy, User as UserIcon } from "lucide-react"
+import Image from "next/image"
+import React from "react"
+
+import type { LeaderboardEntry } from "@/types/Gamification.types"
+
+import styles from "./LeaderboardCard.module.css"
 
 interface LeaderboardCardProps {
-  user: LeaderboardEntry;
-  index: number;
+  user: LeaderboardEntry
+  index: number
 }
 
-const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ user }) => { // Removed unused index parameter
-  const { rank, displayName, avatarUrl, score } = user;
+const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ user }) => {
+  // Removed unused index parameter
+  const { rank, displayName, avatarUrl, score } = user
 
   const renderIcon = () => {
-    if (rank === 1) return <Trophy aria-hidden />;
-    if (rank === 2) return <Medal aria-hidden className={styles.silver} />;
-    if (rank === 3) return <Medal aria-hidden className={styles.bronze} />;
-    return <Medal aria-hidden className={styles.defaultMedal} />;
-  };
+    if (rank === 1) return <Trophy aria-hidden />
+    if (rank === 2) return <Medal aria-hidden className={styles.silver} />
+    if (rank === 3) return <Medal aria-hidden className={styles.bronze} />
+    return <Medal aria-hidden className={styles.defaultMedal} />
+  }
 
   return (
     <article className={styles.card} role="listitem">
@@ -42,11 +45,9 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ user }) => { // Remov
         <span className={styles.username}>{displayName}</span>
       </div>
 
-      <div className="text-lg font-bold text-green-400">
-        🎯 {score}
-      </div>
+      <div className="text-lg font-bold text-green-400">🎯 {score}</div>
     </article>
-  );
-};
+  )
+}
 
-export default LeaderboardCard;
+export default LeaderboardCard

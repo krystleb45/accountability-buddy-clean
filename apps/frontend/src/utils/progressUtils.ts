@@ -5,22 +5,22 @@
  * @param value - The current progress value.
  * @returns A number between 0 and 100.
  */
-export const calculateProgress = (value: number): number => {
-  return Math.max(0, Math.min(value, 100));
-};
+export function calculateProgress(value: number): number {
+  return Math.max(0, Math.min(value, 100))
+}
 
 /**
  * Formats a date into a readable string.
  * @param date - The date to format.
  * @returns A formatted date string.
  */
-export const formatDate = (date: Date): string => {
+export function formatDate(date: Date): string {
   return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
+}
 
 /**
  * Generates default chart dataset for analytics.
@@ -29,22 +29,22 @@ export const formatDate = (date: Date): string => {
  * @param color - The color for the dataset (optional).
  * @returns A chart dataset object.
  */
-export const generateChartDataset = (
+export function generateChartDataset(
   label: string,
   data: number[],
-  color: string = 'rgba(75, 192, 192, 0.2)',
+  color: string = "rgba(75, 192, 192, 0.2)",
 ): {
-  label: string;
-  data: number[];
-  backgroundColor: string;
-  borderColor: string;
-  fill: boolean;
-} => {
+  label: string
+  data: number[]
+  backgroundColor: string
+  borderColor: string
+  fill: boolean
+} {
   return {
     label,
     data,
     backgroundColor: color,
-    borderColor: color.replace('0.2', '1'),
+    borderColor: color.replace("0.2", "1"),
     fill: true,
-  };
-};
+  }
+}

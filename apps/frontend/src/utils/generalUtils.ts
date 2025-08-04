@@ -9,16 +9,18 @@
  * @returns A string formatted as currency.
  * @throws An error if the amount is not a valid number.
  */
-export const formatCurrency = (
+export function formatCurrency(
   amount: number,
-  currency: string = 'USD',
-  locale: string = 'en-US',
-): string => {
-  if (typeof amount !== 'number' || isNaN(amount)) {
-    throw new Error('Invalid amount provided for currency formatting.');
+  currency: string = "USD",
+  locale: string = "en-US",
+): string {
+  if (typeof amount !== "number" || Number.isNaN(amount)) {
+    throw new TypeError("Invalid amount provided for currency formatting.")
   }
-  return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
-};
+  return new Intl.NumberFormat(locale, { style: "currency", currency }).format(
+    amount,
+  )
+}
 
 /**
  * Creates a debounced version of a function that delays its execution.
@@ -27,21 +29,21 @@ export const formatCurrency = (
  * @param delay - The delay in milliseconds.
  * @returns A debounced version of the function.
  */
-export const debounce = <T extends (...args: unknown[]) => unknown>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number,
-): ((...args: Parameters<T>) => void) => {
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
 
   return (...args: Parameters<T>) => {
     if (timeoutId) {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
     }
     timeoutId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-};
+      func(...args)
+    }, delay)
+  }
+}
 
 /**
  * Fetches data from a given URL and returns the parsed JSON response.
@@ -51,25 +53,30 @@ export const debounce = <T extends (...args: unknown[]) => unknown>(
  * @returns A promise resolving to the parsed JSON response.
  * @throws An error if the fetch request fails.
  */
-export const fetchData = async <T>(url: string, options?: RequestInit): Promise<T> => {
+export async function fetchData<T>(
+  url: string,
+  options?: RequestInit,
+): Promise<T> {
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...options?.headers,
       },
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch data: ${response.status} ${response.statusText}`,
+      )
     }
 
-    return await response.json();
+    return await response.json()
   } catch (error: unknown) {
-    throw new Error(`Error fetching data: ${(error as Error).message}`);
+    throw new Error(`Error fetching data: ${(error as Error).message}`)
   }
-};
+}
 
 /**
  * Validates if the provided email is in a proper format.
@@ -77,13 +84,13 @@ export const fetchData = async <T>(url: string, options?: RequestInit): Promise<
  * @param email - The email string to validate.
  * @returns True if the email is valid, false otherwise.
  */
-export const validateEmail = (email: string): boolean => {
-  if (typeof email !== 'string') {
-    throw new Error('Email must be a string.');
+export function validateEmail(email: string): boolean {
+  if (typeof email !== "string") {
+    throw new TypeError("Email must be a string.")
   }
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+  const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
+  return emailRegex.test(email)
+}
 
 /**
  * Formats a username by trimming unnecessary spaces and ensuring consistent spacing.
@@ -92,12 +99,12 @@ export const validateEmail = (email: string): boolean => {
  * @returns The formatted username.
  * @throws An error if the input is not a string.
  */
-export const formatUserName = (name: string): string => {
-  if (typeof name !== 'string') {
-    throw new Error('Name must be a string.');
+export function formatUserName(name: string): string {
+  if (typeof name !== "string") {
+    throw new TypeError("Name must be a string.")
   }
-  return name.trim().replace(/\s+/g, ' ');
-};
+  return name.trim().replace(/\s+/g, " ")
+}
 
 /**
  * Capitalizes the first letter of each word in a string.
@@ -106,15 +113,15 @@ export const formatUserName = (name: string): string => {
  * @returns The string with each word capitalized.
  * @throws An error if the input is not a string.
  */
-export const capitalizeWords = (str: string): string => {
-  if (typeof str !== 'string') {
-    throw new Error('Input must be a string.');
+export function capitalizeWords(str: string): string {
+  if (typeof str !== "string") {
+    throw new TypeError("Input must be a string.")
   }
   return str
     .trim()
     .toLowerCase()
-    .replace(/\b\w/g, (char) => char.toUpperCase());
-};
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
 
 /**
  * Converts a string to kebab-case.
@@ -123,16 +130,16 @@ export const capitalizeWords = (str: string): string => {
  * @returns The kebab-case string.
  * @throws An error if the input is not a string.
  */
-export const toKebabCase = (str: string): string => {
-  if (typeof str !== 'string') {
-    throw new Error('Input must be a string.');
+export function toKebabCase(str: string): string {
+  if (typeof str !== "string") {
+    throw new TypeError("Input must be a string.")
   }
   return str
     .trim()
     .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '');
-};
+    .replace(/\s+/g, "-")
+    .replace(/[^\w-]+/g, "")
+}
 
 /**
  * Generates a random integer within a specified range.
@@ -142,12 +149,12 @@ export const toKebabCase = (str: string): string => {
  * @returns A random integer between min and max (inclusive).
  * @throws An error if min is greater than max.
  */
-export const getRandomInt = (min: number, max: number): number => {
+export function getRandomInt(min: number, max: number): number {
   if (min > max) {
-    throw new Error('Minimum value cannot be greater than maximum value.');
+    throw new Error("Minimum value cannot be greater than maximum value.")
   }
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
 export default {
   formatCurrency,
@@ -158,4 +165,4 @@ export default {
   capitalizeWords,
   toKebabCase,
   getRandomInt,
-};
+}

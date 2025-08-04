@@ -1,57 +1,61 @@
 // src/components/Activities/AddActivityForm.tsx
-'use client';
+"use client"
 
-import React, { ReactElement, useState, useCallback } from 'react';
+import type { ReactElement } from "react"
 
-export type ActivityStatus = 'pending' | 'in-progress' | 'completed';
+import React, { useCallback, useState } from "react"
+
+export type ActivityStatus = "pending" | "in-progress" | "completed"
 
 export interface AddActivityFormData {
-  title: string;
-  description: string;
-  status: ActivityStatus;
+  title: string
+  description: string
+  status: ActivityStatus
 }
 
 export interface AddActivityFormProps {
   /** Called with validated form data */
-  onSubmit: (data: AddActivityFormData) => void;
+  onSubmit: (data: AddActivityFormData) => void
   /** Optional cancel handler */
-  onCancel?: () => void;
+  onCancel?: () => void
 }
 
 export default function AddActivityForm({
   onSubmit,
   onCancel,
 }: AddActivityFormProps): ReactElement {
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [status, setStatus] = useState<ActivityStatus>('pending');
-  const [error, setError] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("")
+  const [description, setDescription] = useState<string>("")
+  const [status, setStatus] = useState<ActivityStatus>("pending")
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>): void => {
-      e.preventDefault();
-      const trimmedTitle = title.trim();
-      const trimmedDescription = description.trim();
+      e.preventDefault()
+      const trimmedTitle = title.trim()
+      const trimmedDescription = description.trim()
       if (!trimmedTitle || !trimmedDescription) {
-        setError('Title and Description are required.');
-        return;
+        setError("Title and Description are required.")
+        return
       }
-      setError(null);
-      onSubmit({ title: trimmedTitle, description: trimmedDescription, status });
+      setError(null)
+      onSubmit({ title: trimmedTitle, description: trimmedDescription, status })
       // reset
-      setTitle('');
-      setDescription('');
-      setStatus('pending');
+      setTitle("")
+      setDescription("")
+      setStatus("pending")
     },
     [title, description, status, onSubmit],
-  );
+  )
 
   return (
     <form
       onSubmit={handleSubmit}
       className="mx-auto max-w-lg rounded-lg bg-gray-900 p-6 text-white shadow-lg"
     >
-      <h2 className="mb-4 text-2xl font-semibold text-kelly-green">Add New Activity</h2>
+      <h2 className="mb-4 text-2xl font-semibold text-kelly-green">
+        Add New Activity
+      </h2>
 
       {error && (
         <p className="mb-3 text-sm text-red-500" role="alert">
@@ -123,5 +127,5 @@ export default function AddActivityForm({
         )}
       </div>
     </form>
-  );
+  )
 }

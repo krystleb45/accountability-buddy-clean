@@ -12,7 +12,6 @@ const isRedisDisabled =
   process.env.DISABLE_REDIS === "true"
 
 let sessionMiddleware: any
-
 ;(async () => {
   if (isRedisDisabled) {
     logger.info("🚫 Redis disabled - using memory store for sessions")

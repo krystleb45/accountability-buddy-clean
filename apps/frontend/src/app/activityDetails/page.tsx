@@ -1,38 +1,41 @@
 // src/app/activity/page.tsx
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import dynamic from 'next/dynamic';
-import { redirect } from 'next/navigation';
-import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import type { Metadata } from "next"
+import type { ReactNode } from "react"
+
+import { getServerSession } from "next-auth/next"
+import dynamic from "next/dynamic"
+import { redirect } from "next/navigation"
+
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 export const metadata: Metadata = {
-  title: 'Recent Activities • Accountability Buddy',
-  description: 'Track and manage your recent activities efficiently with Accountability Buddy.',
+  title: "Recent Activities • Accountability Buddy",
+  description:
+    "Track and manage your recent activities efficiently with Accountability Buddy.",
   openGraph: {
-    title: 'Recent Activities • Accountability Buddy',
-    description: 'Track and manage your recent activities efficiently with Accountability Buddy.',
-    url: 'https://your-domain.com/activity',
-    siteName: 'Accountability Buddy',
-    type: 'website',
+    title: "Recent Activities • Accountability Buddy",
+    description:
+      "Track and manage your recent activities efficiently with Accountability Buddy.",
+    url: "https://your-domain.com/activity",
+    siteName: "Accountability Buddy",
+    type: "website",
   },
   twitter: {
-    card: 'summary',
-    title: 'Recent Activities • Accountability Buddy',
-    description: 'Track and manage your recent activities efficiently with Accountability Buddy.',
+    card: "summary",
+    title: "Recent Activities • Accountability Buddy",
+    description:
+      "Track and manage your recent activities efficiently with Accountability Buddy.",
   },
-};
+}
 
 // 1) dynamically import client UI
-const ClientActivityList = dynamic(
-  () => import('./client')
-);
+const ClientActivityList = dynamic(() => import("./client"))
 
 // 2) server component to guard auth
 export default async function ServerActivityList(): Promise<ReactNode> {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
   if (!session) {
-    redirect('/login');
+    redirect("/login")
   }
-  return <ClientActivityList />;
+  return <ClientActivityList />
 }

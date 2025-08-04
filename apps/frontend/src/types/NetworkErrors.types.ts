@@ -3,22 +3,22 @@
  */
 export interface NetworkError {
   /** The error message describing the network issue. */
-  message: string;
+  message: string
 
   /** The status code returned by the server (if available). */
-  statusCode?: number;
+  statusCode?: number
 
   /** The URL of the failed network request. */
-  url?: string;
+  url?: string
 
   /** Additional details about the network error (optional). */
-  details?: string;
+  details?: string
 
   /** The HTTP method used in the failed request (optional). */
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"
 
   /** The time when the error occurred (ISO format). */
-  timestamp?: string | Date;
+  timestamp?: string | Date
 }
 
 /**
@@ -26,7 +26,7 @@ export interface NetworkError {
  */
 export interface TimeoutError extends NetworkError {
   /** The duration (in milliseconds) after which the request timed out. */
-  timeoutDuration: number;
+  timeoutDuration: number
 }
 
 /**
@@ -34,5 +34,5 @@ export interface TimeoutError extends NetworkError {
  */
 export interface DnsResolutionError extends NetworkError {
   /** Indicates if the DNS lookup failed. */
-  dnsLookupFailed: boolean;
+  dnsLookupFailed: boolean
 }

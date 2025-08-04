@@ -4,21 +4,21 @@
  * A single chat message
  */
 export interface Message {
-  id: string;
-  senderId: string;
-  senderName: string;
-  text: string;
-  timestamp: string;
+  id: string
+  senderId: string
+  senderName: string
+  text: string
+  timestamp: string
 }
 
 /**
  * A group chat entity
  */
 export interface Group {
-  id: string;
-  name: string;
-  description: string;
-  messages: Message[];
+  id: string
+  name: string
+  description: string
+  messages: Message[]
 }
 
 /**
@@ -29,9 +29,9 @@ export interface Group {
  *   }
  */
 interface Envelope<T> {
-  success: boolean;
-  message: string;
-  data: T;
+  success: boolean
+  message: string
+  data: T
 }
 
 /**
@@ -43,22 +43,22 @@ interface Envelope<T> {
  */
 export async function fetchChatGroups(): Promise<Group[]> {
   try {
-    const res = await fetch('/groups', { cache: 'no-store' });
+    const res = await fetch("/groups", { cache: "no-store" })
     if (!res.ok) {
-      console.error('fetchChatGroups failed:', await res.text());
-      return [];
+      console.error("fetchChatGroups failed:", await res.text())
+      return []
     }
 
-    const envelope = (await res.json()) as Envelope<{ groups: Group[] }>;
+    const envelope = (await res.json()) as Envelope<{ groups: Group[] }>
     if (!envelope.success) {
-      console.error('fetchChatGroups API returned error:', envelope.message);
-      return [];
+      console.error("fetchChatGroups API returned error:", envelope.message)
+      return []
     }
 
-    return envelope.data.groups;
+    return envelope.data.groups
   } catch (err) {
-    console.error('❌ [chatApi::fetchChatGroups]', err);
-    return [];
+    console.error("❌ [chatApi::fetchChatGroups]", err)
+    return []
   }
 }
 
@@ -68,27 +68,29 @@ export async function fetchChatGroups(): Promise<Group[]> {
  */
 export async function fetchGroupMessages(groupId: string): Promise<Message[]> {
   if (!groupId) {
-    console.error('❌ [chatApi::fetchGroupMessages] groupId is required');
-    return [];
+    console.error("❌ [chatApi::fetchGroupMessages] groupId is required")
+    return []
   }
 
   try {
-    const res = await fetch(`/history/${encodeURIComponent(groupId)}`, { cache: 'no-store' });
+    const res = await fetch(`/history/${encodeURIComponent(groupId)}`, {
+      cache: "no-store",
+    })
     if (!res.ok) {
-      console.error('fetchGroupMessages failed:', await res.text());
-      return [];
+      console.error("fetchGroupMessages failed:", await res.text())
+      return []
     }
 
-    const envelope = (await res.json()) as Envelope<{ chatHistory: Message[] }>;
+    const envelope = (await res.json()) as Envelope<{ chatHistory: Message[] }>
     if (!envelope.success) {
-      console.error('fetchGroupMessages API returned error:', envelope.message);
-      return [];
+      console.error("fetchGroupMessages API returned error:", envelope.message)
+      return []
     }
 
-    return envelope.data.chatHistory;
+    return envelope.data.chatHistory
   } catch (err) {
-    console.error('❌ [chatApi::fetchGroupMessages]', err);
-    return [];
+    console.error("❌ [chatApi::fetchGroupMessages]", err)
+    return []
   }
 }
 
@@ -98,37 +100,39 @@ export async function fetchGroupMessages(groupId: string): Promise<Message[]> {
  */
 export async function sendGroupMessage(
   groupId: string,
-  text: string
+  text: string,
 ): Promise<Message | null> {
   if (!groupId || !text) {
-    console.error('❌ [chatApi::sendGroupMessage] groupId and text are required');
-    return null;
+    console.error(
+      "❌ [chatApi::sendGroupMessage] groupId and text are required",
+    )
+    return null
   }
 
   try {
-    const res = await fetch('/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chatId: groupId,
         message: text,
       }),
-    });
+    })
     if (!res.ok) {
-      console.error('sendGroupMessage failed:', await res.text());
-      return null;
+      console.error("sendGroupMessage failed:", await res.text())
+      return null
     }
 
-    const envelope = (await res.json()) as Envelope<{ message: Message }>;
+    const envelope = (await res.json()) as Envelope<{ message: Message }>
     if (!envelope.success) {
-      console.error('sendGroupMessage API returned error:', envelope.message);
-      return null;
+      console.error("sendGroupMessage API returned error:", envelope.message)
+      return null
     }
 
-    return envelope.data.message;
+    return envelope.data.message
   } catch (err) {
-    console.error('❌ [chatApi::sendGroupMessage]', err);
-    return null;
+    console.error("❌ [chatApi::sendGroupMessage]", err)
+    return null
   }
 }
 
@@ -138,37 +142,37 @@ export async function sendGroupMessage(
  */
 export async function createChatGroup(
   groupName: string,
-  members: string[]
+  members: string[],
 ): Promise<Group | null> {
   if (!groupName) {
-    console.error('❌ [chatApi::createChatGroup] groupName is required');
-    return null;
+    console.error("❌ [chatApi::createChatGroup] groupName is required")
+    return null
   }
 
   try {
-    const res = await fetch('/group', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const res = await fetch("/group", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         groupName,
         members,
       }),
-    });
+    })
     if (!res.ok) {
-      console.error('createChatGroup failed:', await res.text());
-      return null;
+      console.error("createChatGroup failed:", await res.text())
+      return null
     }
 
-    const envelope = (await res.json()) as Envelope<{ group: Group }>;
+    const envelope = (await res.json()) as Envelope<{ group: Group }>
     if (!envelope.success) {
-      console.error('createChatGroup API returned error:', envelope.message);
-      return null;
+      console.error("createChatGroup API returned error:", envelope.message)
+      return null
     }
 
-    return envelope.data.group;
+    return envelope.data.group
   } catch (err) {
-    console.error('❌ [chatApi::createChatGroup]', err);
-    return null;
+    console.error("❌ [chatApi::createChatGroup]", err)
+    return null
   }
 }
 
@@ -177,4 +181,4 @@ export default {
   fetchGroupMessages,
   sendGroupMessage,
   createChatGroup,
-};
+}

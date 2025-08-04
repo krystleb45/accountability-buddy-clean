@@ -5,7 +5,7 @@
  */
 export interface FAQItem {
   /** The question text */
-  question: string;
+  question: string
   /** The answer text */
-  answer: string;
+  answer: string
 }

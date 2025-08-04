@@ -1,44 +1,58 @@
 // src/app/blog/create/page.client.tsx
-'use client';
+"use client"
 
-import Link from 'next/link';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import React, { useState } from "react"
 
-const categories = ['Productivity', 'Fitness', 'Self-Improvement', 'Business', 'Tech'];
+const categories = [
+  "Productivity",
+  "Fitness",
+  "Self-Improvement",
+  "Business",
+  "Tech",
+]
 
 export default function CreateBlogPage() {
-  const router = useRouter();
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState(categories[0]);
-  const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter()
+  const [title, setTitle] = useState("")
+  const [category, setCategory] = useState(categories[0])
+  const [content, setContent] = useState("")
+  const [imageUrl, setImageUrl] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
 
     try {
-      const res = await fetch('/api/blogs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, category, content, imageUrl, author: 'Admin' }),
-      });
-      if (!res.ok) throw new Error('Failed to create blog post');
-      router.push('/blog');
+      const res = await fetch("/api/blogs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          category,
+          content,
+          imageUrl,
+          author: "Admin",
+        }),
+      })
+      if (!res.ok) throw new Error("Failed to create blog post")
+      router.push("/blog")
     } catch {
-      setError('Error creating blog post. Please try again.');
+      setError("Error creating blog post. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-black p-8 text-white">
-      <h1 className="mb-6 text-3xl font-bold text-green-400">Create Blog Post</h1>
+      <h1 className="mb-6 text-3xl font-bold text-green-400">
+        Create Blog Post
+      </h1>
 
       {error && <p className="mb-4 text-red-500">{error}</p>}
 
@@ -115,7 +129,7 @@ export default function CreateBlogPage() {
           className="w-full rounded-lg bg-green-500 px-6 py-3 font-semibold text-black transition hover:bg-green-400 disabled:opacity-50"
           disabled={loading}
         >
-          {loading ? 'Creating...' : 'Create Blog Post'}
+          {loading ? "Creating..." : "Create Blog Post"}
         </button>
       </form>
 
@@ -126,5 +140,5 @@ export default function CreateBlogPage() {
         </Link>
       </div>
     </div>
-  );
+  )
 }

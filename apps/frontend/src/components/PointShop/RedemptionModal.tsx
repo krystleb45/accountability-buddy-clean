@@ -1,15 +1,16 @@
 // src/components/PointShop/RedemptionModal.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useRef } from 'react';
-import type { Reward } from '../../types/Rewards.types';
+import React, { useEffect, useRef } from "react"
+
+import type { Reward } from "../../types/Rewards.types"
 
 interface RedemptionModalProps {
-  reward: Reward; // your UI Reward type must have `id: string`
-  isOpen: boolean;
-  onClose: () => void;
-  onRedeem: (rewardId: string, pointsRequired: number) => void;
-  title?: string;
+  reward: Reward // your UI Reward type must have `id: string`
+  isOpen: boolean
+  onClose: () => void
+  onRedeem: (rewardId: string, pointsRequired: number) => void
+  title?: string
 }
 
 const RedemptionModal: React.FC<RedemptionModalProps> = ({
@@ -17,34 +18,33 @@ const RedemptionModal: React.FC<RedemptionModalProps> = ({
   isOpen,
   onClose,
   onRedeem,
-  title = 'Confirm Redemption',
+  title = "Confirm Redemption",
 }) => {
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!isOpen) return;
-    panelRef.current?.focus();
+    if (!isOpen) return
+    panelRef.current?.focus()
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [isOpen, onClose]);
+      if (e.key === "Escape") onClose()
+    }
+    document.addEventListener("keydown", onKey)
+    return () => document.removeEventListener("keydown", onKey)
+  }, [isOpen, onClose])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const handleRedeem = (): void => {
-    onRedeem(reward.id, reward.pointsRequired);
-    onClose();
-  };
+    onRedeem(reward.id, reward.pointsRequired)
+    onClose()
+  }
 
   return (
     <div
-      className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       role="presentation"
       onClick={onClose}
     >
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <div
         role="dialog"
         aria-modal="true"
@@ -59,8 +59,8 @@ const RedemptionModal: React.FC<RedemptionModalProps> = ({
           {title}
         </h2>
         <p className="mb-6">
-          Redeem <strong>{reward.title}</strong> for <strong>{reward.pointsRequired} points</strong>
-          ?
+          Redeem <strong>{reward.title}</strong> for{" "}
+          <strong>{reward.pointsRequired} points</strong>?
         </p>
         <div className="flex justify-end gap-3">
           <button
@@ -80,7 +80,7 @@ const RedemptionModal: React.FC<RedemptionModalProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default RedemptionModal;
+export default RedemptionModal

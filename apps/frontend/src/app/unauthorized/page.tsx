@@ -1,17 +1,18 @@
 // app/unauthorized/page.tsx
 
-import Link from 'next/link';
-import { Metadata } from 'next';
+import type { Metadata } from "next"
+
+import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: 'Access Denied – Accountability Buddy',
-  description: 'You do not have permission to view this page.',
+  title: "Access Denied – Accountability Buddy",
+  description: "You do not have permission to view this page.",
   openGraph: {
-    title: 'Access Denied – Accountability Buddy',
-    description: 'You do not have permission to view this page.',
+    title: "Access Denied – Accountability Buddy",
+    description: "You do not have permission to view this page.",
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/unauthorized`,
   },
-};
+}
 
 export default function UnauthorizedPage() {
   return (
@@ -27,5 +28,5 @@ export default function UnauthorizedPage() {
         Go to Dashboard
       </Link>
     </div>
-  );
+  )
 }

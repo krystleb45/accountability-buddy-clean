@@ -1,23 +1,27 @@
 // src/components/Forms/ForgotPassword.tsx
-'use client';
+"use client"
 
-import React, { FormEvent } from 'react';
-import { motion } from 'framer-motion';
-import styles from './ForgotPassword.module.css';
-import { validateEmail } from '../../utils/FormsUtils';
-import { useForgotPassword } from '@/hooks/useForgotPassword';
+import type { FormEvent } from "react"
+
+import { motion } from "framer-motion"
+import React from "react"
+
+import { useForgotPassword } from "@/hooks/useForgotPassword"
+
+import { validateEmail } from "../../utils/FormsUtils"
+import styles from "./ForgotPassword.module.css"
 
 const ForgotPassword: React.FC = () => {
-  const [email, setEmail] = React.useState('');
-  const { loading, error, success, reset } = useForgotPassword();
+  const [email, setEmail] = React.useState("")
+  const { loading, error, success, reset } = useForgotPassword()
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!validateEmail(email)) {
-      return; // optionally set a local validation message
+      return // optionally set a local validation message
     }
-    await reset(email);
-  };
+    await reset(email)
+  }
 
   return (
     <motion.div
@@ -47,12 +51,17 @@ const ForgotPassword: React.FC = () => {
           />
         </div>
 
-        <button type="submit" className={styles.button} disabled={loading} aria-busy={loading}>
-          {loading ? 'Sending…' : 'Send Instructions'}
+        <button
+          type="submit"
+          className={styles.button}
+          disabled={loading}
+          aria-busy={loading}
+        >
+          {loading ? "Sending…" : "Send Instructions"}
         </button>
       </form>
     </motion.div>
-  );
-};
+  )
+}
 
-export default ForgotPassword;
+export default ForgotPassword

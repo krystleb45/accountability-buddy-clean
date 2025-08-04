@@ -1,20 +1,24 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { FaMoon, FaSignOutAlt } from 'react-icons/fa'; // Removed unused FaSun import
-import styles from './SidebarFooter.module.css';
+import React from "react"
+import { FaMoon, FaSignOutAlt } from "react-icons/fa" // Removed unused FaSun import
+
+import styles from "./SidebarFooter.module.css"
 
 export interface SidebarFooterProps {
   /** Toggle between light and dark theme */
-  onThemeToggle?: () => void;
+  onThemeToggle?: () => void
   /** Handler for user logout */
-  onLogout?: () => void;
+  onLogout?: () => void
 }
 
 /**
  * SidebarFooter provides theme toggle and logout controls.
  */
-const SidebarFooter: React.FC<SidebarFooterProps> = ({ onThemeToggle, onLogout }) => (
+const SidebarFooter: React.FC<SidebarFooterProps> = ({
+  onThemeToggle,
+  onLogout,
+}) => (
   <div className={styles.sidebarFooter}>
     <button
       type="button"
@@ -26,10 +30,15 @@ const SidebarFooter: React.FC<SidebarFooterProps> = ({ onThemeToggle, onLogout }
       <FaMoon aria-hidden="true" />
     </button>
 
-    <button type="button" className={styles.footerButton} onClick={onLogout} aria-label="Log out">
+    <button
+      type="button"
+      className={styles.footerButton}
+      onClick={onLogout}
+      aria-label="Log out"
+    >
       <FaSignOutAlt aria-hidden="true" />
     </button>
   </div>
-);
+)
 
-export default SidebarFooter;
+export default SidebarFooter

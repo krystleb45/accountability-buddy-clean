@@ -1,59 +1,61 @@
-'use client';
+"use client"
 
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import type { ChangeEvent, FormEvent } from "react"
+
+import { motion } from "framer-motion"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import React, { useEffect, useState } from "react"
 
 export default function ResetPasswordForm() {
-  const router = useRouter();
-  const params = useSearchParams();
-  const token = params.get('token');
+  const router = useRouter()
+  const params = useSearchParams()
+  const token = params.get("token")
 
-  const [form, setForm] = useState({ password: '', confirmPassword: '' });
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({ password: "", confirmPassword: "" })
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!token) setError('Invalid or missing reset token.');
-  }, [token]);
+    if (!token) setError("Invalid or missing reset token.")
+  }, [token])
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    setForm(f => ({ ...f, [name]: value }));
+    const { name, value } = e.target
+    setForm((f) => ({ ...f, [name]: value }))
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError(null);
+    e.preventDefault()
+    setError(null)
 
     if (!token) {
-      setError('Invalid or missing reset token.');
-      return;
+      setError("Invalid or missing reset token.")
+      return
     }
     if (form.password !== form.confirmPassword) {
-      setError('Passwords do not match.');
-      return;
+      setError("Passwords do not match.")
+      return
     }
     if (form.password.length < 8) {
-      setError('Password must be at least 8 characters.');
-      return;
+      setError("Password must be at least 8 characters.")
+      return
     }
 
     try {
-      const res = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password: form.password }),
-      });
+      })
       if (!res.ok) {
-        const body = await res.json();
-        throw new Error(body.message || 'Failed to reset password');
+        const body = await res.json()
+        throw new Error(body.message || "Failed to reset password")
       }
-      setSubmitted(true);
-      setTimeout(() => router.push('/login'), 3000);
+      setSubmitted(true)
+      setTimeout(() => router.push("/login"), 3000)
     } catch (err) {
-      setError((err as Error).message);
+      setError((err as Error).message)
     }
   }
 
@@ -78,7 +80,9 @@ export default function ResetPasswordForm() {
           </div>
         ) : submitted ? (
           <div className="text-center text-green-400">
-            <h3 className="text-xl font-semibold">Password Reset Successful!</h3>
+            <h3 className="text-xl font-semibold">
+              Password Reset Successful!
+            </h3>
             <p>Redirecting to login…</p>
           </div>
         ) : (
@@ -86,7 +90,10 @@ export default function ResetPasswordForm() {
             {error && <p className="text-center text-red-500">{error}</p>}
 
             <div>
-              <label htmlFor="password" className="mb-1 block font-medium text-gray-300">
+              <label
+                htmlFor="password"
+                className="mb-1 block font-medium text-gray-300"
+              >
                 New Password
               </label>
               <input
@@ -102,7 +109,10 @@ export default function ResetPasswordForm() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="mb-1 block font-medium text-gray-300">
+              <label
+                htmlFor="confirmPassword"
+                className="mb-1 block font-medium text-gray-300"
+              >
                 Confirm New Password
               </label>
               <input
@@ -128,5 +138,5 @@ export default function ResetPasswordForm() {
         )}
       </motion.div>
     </div>
-  );
+  )
 }

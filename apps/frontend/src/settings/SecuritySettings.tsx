@@ -1,36 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import styles from './SecuritySettings.module.css';
+import React, { useEffect, useState } from "react"
+
+import styles from "./SecuritySettings.module.css"
 
 interface TrustedDevice {
-  id: string;
-  name: string;
-  lastUsed: string;
+  id: string
+  name: string
+  lastUsed: string
 }
 
 const SecuritySettings: React.FC = () => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean>(() =>
-    JSON.parse(localStorage.getItem('twoFactorEnabled') || 'false'),
-  );
+    JSON.parse(localStorage.getItem("twoFactorEnabled") || "false"),
+  )
   const [loginAlerts, setLoginAlerts] = useState<boolean>(() =>
-    JSON.parse(localStorage.getItem('loginAlerts') || 'true'),
-  );
+    JSON.parse(localStorage.getItem("loginAlerts") || "true"),
+  )
   const [devices, setDevices] = useState<TrustedDevice[]>([
-    { id: '1', name: 'Chrome on macOS', lastUsed: '2025-05-10 14:23' },
-    { id: '2', name: 'iPhone 12', lastUsed: '2025-05-09 21:45' },
-  ]);
+    { id: "1", name: "Chrome on macOS", lastUsed: "2025-05-10 14:23" },
+    { id: "2", name: "iPhone 12", lastUsed: "2025-05-09 21:45" },
+  ])
 
   useEffect(() => {
-    localStorage.setItem('twoFactorEnabled', JSON.stringify(twoFactorEnabled));
-  }, [twoFactorEnabled]);
+    localStorage.setItem("twoFactorEnabled", JSON.stringify(twoFactorEnabled))
+  }, [twoFactorEnabled])
 
   useEffect(() => {
-    localStorage.setItem('loginAlerts', JSON.stringify(loginAlerts));
-  }, [loginAlerts]);
+    localStorage.setItem("loginAlerts", JSON.stringify(loginAlerts))
+  }, [loginAlerts])
 
   const revokeDevice = (id: string): void => {
-    setDevices((devs) => devs.filter((d) => d.id !== id));
+    setDevices((devs) => devs.filter((d) => d.id !== id))
     // TODO: call API to revoke trust
-  };
+  }
 
   return (
     <div className={styles.container}>
@@ -68,7 +69,10 @@ const SecuritySettings: React.FC = () => {
               <span>
                 {d.name} <small>(last used {d.lastUsed})</small>
               </span>
-              <button className={styles.revokeButton} onClick={() => revokeDevice(d.id)}>
+              <button
+                className={styles.revokeButton}
+                onClick={() => revokeDevice(d.id)}
+              >
                 Revoke
               </button>
             </li>
@@ -77,7 +81,7 @@ const SecuritySettings: React.FC = () => {
         </ul>
       </section>
     </div>
-  );
-};
+  )
+}
 
-export default SecuritySettings;
+export default SecuritySettings

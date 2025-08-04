@@ -1,55 +1,61 @@
 // src/context/military/MilitarySupportContext.tsx
-'use client';
+"use client"
+
+import type { ReactNode } from "react"
 
 import React, {
   createContext,
-  useState,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
-  ReactNode,
-} from 'react';
+  useState,
+} from "react"
 
 interface MilitaryResource {
-  id: string;
-  title: string;
-  description: string;
-  link: string;
+  id: string
+  title: string
+  description: string
+  link: string
 }
 
 interface MilitarySupportContextType {
-  resources: MilitaryResource[];
-  addResource: (resource: MilitaryResource) => void;
-  removeResource: (id: string) => void;
-  updateResource: (id: string, updated: Partial<MilitaryResource>) => void;
+  resources: MilitaryResource[]
+  addResource: (resource: MilitaryResource) => void
+  removeResource: (id: string) => void
+  updateResource: (id: string, updated: Partial<MilitaryResource>) => void
 }
 
-const MilitarySupportContext = createContext<MilitarySupportContextType | undefined>(undefined);
+const MilitarySupportContext = createContext<
+  MilitarySupportContextType | undefined
+>(undefined)
 
-export const useMilitarySupport = (): MilitarySupportContextType => {
-  const ctx = useContext(MilitarySupportContext);
+export function useMilitarySupport(): MilitarySupportContextType {
+  const ctx = use(MilitarySupportContext)
   if (!ctx) {
-    throw new Error('useMilitarySupport must be used within MilitarySupportProvider');
+    throw new Error(
+      "useMilitarySupport must be used within MilitarySupportProvider",
+    )
   }
-  return ctx;
-};
+  return ctx
+}
 
-export const MilitarySupportProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const MilitarySupportProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [resources, setResources] = useState<MilitaryResource[]>(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       try {
-        return JSON.parse(localStorage.getItem('militaryResources') || '[]');
+        return JSON.parse(localStorage.getItem("militaryResources") || "[]")
       } catch {
-        return [];
+        return []
       }
     }
-    return [];
-  });
+    return []
+  })
 
   useEffect(() => {
-    localStorage.setItem('militaryResources', JSON.stringify(resources));
-  }, [resources]);
+    localStorage.setItem("militaryResources", JSON.stringify(resources))
+  }, [resources])
 
   // Optionally fetch from an API:
   // useEffect(() => {
@@ -60,25 +66,30 @@ export const MilitarySupportProvider: React.FC<{ children: ReactNode }> = ({ chi
   // }, []);
 
   const addResource = useCallback((resource: MilitaryResource) => {
-    setResources((prev) => [...prev, resource]);
-  }, []);
+    setResources((prev) => [...prev, resource])
+  }, [])
 
   const removeResource = useCallback((id: string) => {
-    setResources((prev) => prev.filter((r) => r.id !== id));
-  }, []);
+    setResources((prev) => prev.filter((r) => r.id !== id))
+  }, [])
 
-  const updateResource = useCallback((id: string, updated: Partial<MilitaryResource>) => {
-    setResources((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated } : r)));
-  }, []);
+  const updateResource = useCallback(
+    (id: string, updated: Partial<MilitaryResource>) => {
+      setResources((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, ...updated } : r)),
+      )
+    },
+    [],
+  )
 
   const value = useMemo(
     () => ({ resources, addResource, removeResource, updateResource }),
     [resources, addResource, removeResource, updateResource],
-  );
+  )
 
   return (
-    <MilitarySupportContext.Provider value={value}>{children}</MilitarySupportContext.Provider>
-  );
-};
+    <MilitarySupportContext value={value}>{children}</MilitarySupportContext>
+  )
+}
 
-export default MilitarySupportProvider;
+export default MilitarySupportProvider

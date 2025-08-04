@@ -1,21 +1,23 @@
 // src/app/notifications/page.client.tsx
-'use client'
+"use client"
 
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { motion } from "framer-motion"
+import Link from "next/link"
+import React, { useEffect, useState } from "react"
+
+import type { Notification } from "@/api/notifications/notificationApi"
+
 import {
   fetchNotifications,
   markNotificationsRead,
-  type Notification,
-} from '@/api/notifications/notificationApi'
-import { Skeleton } from '@/components/UtilityComponents/SkeletonComponent'
+} from "@/api/notifications/notificationApi"
+import { Skeleton } from "@/components/UtilityComponents/SkeletonComponent"
 
-const FILTER_TYPES = ['all', 'unread', 'read'] as const
-type FilterType = typeof FILTER_TYPES[number]
+const FILTER_TYPES = ["all", "unread", "read"] as const
+type FilterType = (typeof FILTER_TYPES)[number]
 
 export default function NotificationsClient() {
-  const [filter, setFilter] = useState<FilterType>('all')
+  const [filter, setFilter] = useState<FilterType>("all")
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,7 +29,7 @@ export default function NotificationsClient() {
         const data = await fetchNotifications()
         setNotifications(data)
       } catch {
-        setError('Failed to load notifications.')
+        setError("Failed to load notifications.")
       } finally {
         setLoading(false)
       }
@@ -35,8 +37,8 @@ export default function NotificationsClient() {
   }, [])
 
   const filtered = notifications.filter((n) => {
-    if (filter === 'unread') return !n.read
-    if (filter === 'read')   return n.read
+    if (filter === "unread") return !n.read
+    if (filter === "read") return n.read
     return true
   })
 
@@ -47,9 +49,7 @@ export default function NotificationsClient() {
     const updatedCount = await markNotificationsRead(unreadIds)
     if (updatedCount > 0) {
       setNotifications((prev) =>
-        prev.map((n) =>
-          unreadIds.includes(n.id) ? { ...n, read: true } : n
-        )
+        prev.map((n) => (unreadIds.includes(n.id) ? { ...n, read: true } : n)),
       )
     }
   }
@@ -65,7 +65,7 @@ export default function NotificationsClient() {
   }
 
   if (error) {
-    return <p className="text-center text-red-500 mt-6">{error}</p>
+    return <p className="mt-6 text-center text-red-500">{error}</p>
   }
 
   return (
@@ -104,8 +104,8 @@ export default function NotificationsClient() {
             onClick={() => setFilter(type)}
             className={`mr-2 rounded-lg px-4 py-2 transition ${
               filter === type
-                ? 'bg-kelly-green text-black'
-                : 'bg-gray-700 text-white'
+                ? "bg-kelly-green text-black"
+                : "bg-gray-700 text-white"
             }`}
             aria-label={`Show ${type} notifications`}
           >
@@ -128,7 +128,7 @@ export default function NotificationsClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
               className={`mb-4 rounded-lg p-4 shadow-md transition-colors ${
-                n.read ? 'bg-gray-700' : 'bg-gray-900'
+                n.read ? "bg-gray-700" : "bg-gray-900"
               }`}
             >
               <div className="flex justify-between">

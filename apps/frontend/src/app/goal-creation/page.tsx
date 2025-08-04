@@ -1,17 +1,19 @@
 // src/app/goal-creation/page.tsx
-import GoalCreationClient from './page.client';
-import type { Metadata } from 'next';
+import type { Metadata } from "next"
+
+import GoalCreationClient from "./page.client"
 
 export const metadata: Metadata = {
-  title: 'Create Goals • Accountability Buddy',
-  description: 'Set, track, and manage your goals with customizable reminders.',
+  title: "Create Goals • Accountability Buddy",
+  description: "Set, track, and manage your goals with customizable reminders.",
   openGraph: {
-    title: 'Create Goals • Accountability Buddy',
-    description: 'Set, track, and manage your goals with customizable reminders.',
+    title: "Create Goals • Accountability Buddy",
+    description:
+      "Set, track, and manage your goals with customizable reminders.",
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/goal-creation`,
   },
-};
+}
 
 export default function GoalCreationPage() {
-  return <GoalCreationClient />;
+  return <GoalCreationClient />
 }

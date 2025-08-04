@@ -1,25 +1,27 @@
 // src/app/leaderboard/page.client.tsx
-'use client';
+"use client"
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';                    // ← make sure this is here
-import { motion } from 'framer-motion';
-import type { LeaderboardEntry } from '@/types/Gamification.types';
-import { fetchLeaderboard } from '@/api/leaderboard/leaderboardApi';
-import LeaderboardCard from '@/components/Gamification/LeaderboardCard';
-import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
+import { motion } from "framer-motion"
+import Link from "next/link" // ← make sure this is here
+import React, { useEffect, useState } from "react"
+
+import type { LeaderboardEntry } from "@/types/Gamification.types"
+
+import { fetchLeaderboard } from "@/api/leaderboard/leaderboardApi"
+import LeaderboardCard from "@/components/Gamification/LeaderboardCard"
+import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner"
 
 export default function LeaderboardPage() {
-  const [rows,    setRows]    = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState<string | null>(null);
+  const [rows, setRows] = useState<LeaderboardEntry[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchLeaderboard()
       .then(setRows)
-      .catch(e => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <div className="min-h-screen bg-black px-4 py-10">
@@ -27,22 +29,18 @@ export default function LeaderboardPage() {
       <div className="mb-6">
         <Link
           href="/dashboard"
-          className="text-green-400 hover:underline text-sm"
+          className="text-sm text-green-400 hover:underline"
         >
           ← Back to Dashboard
         </Link>
       </div>
 
-      {loading && (
-        <LoadingSpinner size={60} />
-      )}
+      {loading && <LoadingSpinner size={60} />}
 
-      {error && (
-        <p className="text-red-500 text-center">{error}</p>
-      )}
+      {error && <p className="text-center text-red-500">{error}</p>}
 
       {!loading && !error && rows.length === 0 && (
-        <p className="text-gray-400 text-center">
+        <p className="text-center text-gray-400">
           No leaderboard data available.
         </p>
       )}
@@ -72,5 +70,5 @@ export default function LeaderboardPage() {
         </>
       )}
     </div>
-  );
+  )
 }
