@@ -1,42 +1,35 @@
 // src/api/routes/rewards.ts
-import type { Router } from "express";
+import type { Router } from "express"
 
-import express from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import express from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
-import * as RewardController from "../controllers/RewardController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
+import * as RewardController from "../controllers/RewardController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 // throttling
 const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Too many requests. Please try again later.",
-});
+})
 
 /**
  * GET /api/rewards
  * Public: list all available rewards (optionally filter by maxPoints/page/limit)
  */
-router.get(
-  "/",
-  RewardController.listRewards
-);
+router.get("/", RewardController.listRewards)
 
 /**
  * GET /api/rewards/my
  * Private: list the current user's redeemed rewards
  */
-router.get(
-  "/my",
-  protect,
-  RewardController.getMyRewards
-);
+router.get("/my", protect, RewardController.getMyRewards)
 
 /**
  * POST /api/rewards/redeem
@@ -46,10 +39,10 @@ router.post(
   "/redeem",
   protect,
   rateLimiter,
-  [ check("rewardId").notEmpty().withMessage("Reward ID is required.") ],
+  [check("rewardId").notEmpty().withMessage("Reward ID is required.")],
   handleValidationErrors,
-  RewardController.redeemReward
-);
+  RewardController.redeemReward,
+)
 
 /**
  * POST /api/rewards/create
@@ -68,7 +61,7 @@ router.post(
     check("imageUrl").optional().isURL().withMessage("Must be a valid URL."),
   ],
   handleValidationErrors,
-  RewardController.createReward
-);
+  RewardController.createReward,
+)
 
-export default router;
+export default router

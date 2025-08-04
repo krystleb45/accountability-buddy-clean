@@ -1,21 +1,21 @@
 // src/api/routes/recommendations.ts
-import { Router } from "express";
+import { Router } from "express"
 
-import * as recCtrl from "../controllers/recommendationController";
-import { protect } from "../middleware/authMiddleware";
+import * as recCtrl from "../controllers/recommendationController"
+import { protect } from "../middleware/authMiddleware"
 
-const router = Router();
+const router = Router()
 
 // ensure user is logged in before any recommendations
-router.use(protect);
+router.use(protect)
 
 // Book recommendations
-router.get("/books", recCtrl.getBooks);
+router.get("/books", recCtrl.getBooks)
 // Goal recommendations
-router.get("/goals", recCtrl.getGoals);
+router.get("/goals", recCtrl.getGoals)
 // Blog recommendations
-router.get("/blogs", recCtrl.getBlogs);
+router.get("/blogs", recCtrl.getBlogs)
 // Friend recommendations
-router.get("/friends", recCtrl.getFriends);
+router.get("/friends", recCtrl.getFriends)
 
-export default router;
+export default router

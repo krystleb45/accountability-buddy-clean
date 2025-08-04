@@ -1,40 +1,40 @@
 // src/api/models/Payment.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Payment Status & Method Types ---
-export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
-export type PaymentMethod = "card" | "paypal" | "bank_transfer";
+export type PaymentStatus = "pending" | "completed" | "failed" | "refunded"
+export type PaymentMethod = "card" | "paypal" | "bank_transfer"
 
 // --- Interface for Payment Document ---
 export interface IPayment extends Document {
-  userId: Types.ObjectId;
-  paymentId: string;
-  amount: number;
-  currency: string;
-  status: PaymentStatus;
-  method: PaymentMethod;
-  description?: string;
-  receiptUrl?: string;
-  paymentDate: Date;
-  expiresAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  userId: Types.ObjectId
+  paymentId: string
+  amount: number
+  currency: string
+  status: PaymentStatus
+  method: PaymentMethod
+  description?: string
+  receiptUrl?: string
+  paymentDate: Date
+  expiresAt?: Date
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  isExpired: boolean;
+  isExpired: boolean
 
   // Instance methods
-  markAsCompleted: () => Promise<void>;
-  markAsFailed: (reason: string) => Promise<void>;
+  markAsCompleted: () => Promise<void>
+  markAsFailed: (reason: string) => Promise<void>
 }
 
 // --- Model Interface for Statics ---
 export interface IPaymentModel extends Model<IPayment> {
-  findByUser: (userId: Types.ObjectId) => Promise<IPayment[]>;
-  getTotalPaymentsForUser: (userId: Types.ObjectId) => Promise<number>;
-  refundPayment: (paymentId: string) => Promise<void>;
+  findByUser: (userId: Types.ObjectId) => Promise<IPayment[]>
+  getTotalPaymentsForUser: (userId: Types.ObjectId) => Promise<number>
+  refundPayment: (paymentId: string) => Promise<void>
 }
 
 // --- Schema Definition ---
@@ -54,8 +54,8 @@ const PaymentSchema = new Schema<IPayment, IPaymentModel>(
       type: Number,
       required: true,
       validate: {
-        validator (value: number): boolean {
-          return value > 0;
+        validator(value: number): boolean {
+          return value > 0
         },
         message: "Payment amount must be greater than zero.",
       },
@@ -98,71 +98,85 @@ const PaymentSchema = new Schema<IPayment, IPaymentModel>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-PaymentSchema.index({ userId: 1 });
-PaymentSchema.index({ paymentId: 1 }, { unique: true });
-PaymentSchema.index({ status: 1 });
-PaymentSchema.index({ paymentDate: -1 });
-PaymentSchema.index({ expiresAt: 1 });
+PaymentSchema.index({ userId: 1 })
+PaymentSchema.index({ paymentId: 1 }, { unique: true })
+PaymentSchema.index({ status: 1 })
+PaymentSchema.index({ paymentDate: -1 })
+PaymentSchema.index({ expiresAt: 1 })
 
 // --- Pre-save Hook ---
 PaymentSchema.pre<IPayment>("save", function (next) {
   if (this.amount <= 0) {
-    return next(new Error("Payment amount must be greater than zero."));
+    return next(new Error("Payment amount must be greater than zero."))
   }
   if (this.expiresAt instanceof Date && this.expiresAt < new Date()) {
-    this.status = "failed";
+    this.status = "failed"
   }
-  next();
-});
+  next()
+})
 
 // --- Instance Methods ---
 PaymentSchema.methods.markAsCompleted = async function (): Promise<void> {
-  this.status = "completed";
-  await this.save();
-};
+  this.status = "completed"
+  await this.save()
+}
 
-PaymentSchema.methods.markAsFailed = async function (reason: string): Promise<void> {
-  this.status = "failed";
-  this.description = `Failed: ${reason}`;
-  await this.save();
-};
+PaymentSchema.methods.markAsFailed = async function (
+  reason: string,
+): Promise<void> {
+  this.status = "failed"
+  this.description = `Failed: ${reason}`
+  await this.save()
+}
 
 // --- Static Methods ---
-PaymentSchema.statics.findByUser = function (userId: Types.ObjectId): Promise<IPayment[]> {
-  return this.find({ userId }).sort({ paymentDate: -1 });
-};
+PaymentSchema.statics.findByUser = function (
+  userId: Types.ObjectId,
+): Promise<IPayment[]> {
+  return this.find({ userId }).sort({ paymentDate: -1 })
+}
 
 PaymentSchema.statics.getTotalPaymentsForUser = async function (
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<number> {
   const result = await this.aggregate([
-    { $match: { userId: new mongoose.Types.ObjectId(userId), status: "completed" } },
+    {
+      $match: {
+        userId: new mongoose.Types.ObjectId(userId),
+        status: "completed",
+      },
+    },
     { $group: { _id: "$userId", totalAmount: { $sum: "$amount" } } },
-  ]);
-  return result.length > 0 ? result[0].totalAmount : 0;
-};
+  ])
+  return result.length > 0 ? result[0].totalAmount : 0
+}
 
-PaymentSchema.statics.refundPayment = async function (paymentId: string): Promise<void> {
-  const payment = await this.findOne({ paymentId });
+PaymentSchema.statics.refundPayment = async function (
+  paymentId: string,
+): Promise<void> {
+  const payment = await this.findOne({ paymentId })
   if (!payment) {
-    throw new Error("Payment not found");
+    throw new Error("Payment not found")
   }
   if (payment.status !== "completed") {
-    throw new Error("Only completed payments can be refunded");
+    throw new Error("Only completed payments can be refunded")
   }
-  payment.status = "refunded";
-  await payment.save();
-};
+  payment.status = "refunded"
+  await payment.save()
+}
 
 // --- Virtuals ---
 PaymentSchema.virtual("isExpired").get(function (this: IPayment): boolean {
-  return !!this.expiresAt && this.expiresAt < new Date();
-});
+  return !!this.expiresAt && this.expiresAt < new Date()
+})
 
 // --- Model Export ---
-export const Payment = mongoose.model<IPayment, IPaymentModel>("Payment", PaymentSchema);
-export default Payment;
+export const Payment = mongoose.model<IPayment, IPaymentModel>(
+  "Payment",
+  PaymentSchema,
+)
+export default Payment

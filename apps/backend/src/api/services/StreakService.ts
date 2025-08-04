@@ -1,75 +1,87 @@
 // src/api/services/StreakService.ts
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import type { IStreak } from "../models/Streak";
+import type { IStreak } from "../models/Streak"
 
-import { logger } from "../../utils/winstonLogger";
-import Streak from "../models/Streak";
+import { logger } from "../../utils/winstonLogger"
+import Streak from "../models/Streak"
 
 export interface LeaderboardResult {
-  streaks: IStreak[];
+  streaks: IStreak[]
   pagination: {
-    totalEntries: number;
-    currentPage: number;
-    totalPages: number;
-  };
+    totalEntries: number
+    currentPage: number
+    totalPages: number
+  }
 }
 
-export async function getUserStreak (userId: string): Promise<IStreak> {
+export async function getUserStreak(userId: string): Promise<IStreak> {
   if (!mongoose.isValidObjectId(userId)) {
-    throw new Error("Invalid User ID format.");
+    throw new Error("Invalid User ID format.")
   }
-  const streak = await Streak.findOne({ user: userId }).populate("user", "username");
+  const streak = await Streak.findOne({ user: userId }).populate(
+    "user",
+    "username",
+  )
   if (!streak) {
-    throw new Error("Streak not found for this user.");
+    throw new Error("Streak not found for this user.")
   }
-  return streak;
+  return streak
 }
 
-export async function logDailyCheckIn (userId: string): Promise<IStreak> {
+export async function logDailyCheckIn(userId: string): Promise<IStreak> {
   if (!mongoose.isValidObjectId(userId)) {
-    throw new Error("Invalid User ID format.");
+    throw new Error("Invalid User ID format.")
   }
 
-  let streak = await Streak.findOne({ user: userId });
+  let streak = await Streak.findOne({ user: userId })
 
   if (!streak) {
-    streak = await Streak.create({ user: userId, lastCheckIn: new Date(), streakCount: 1 });
-    logger.info(`✅ New streak started for user ${userId}`);
-    return streak;
+    streak = await Streak.create({
+      user: userId,
+      lastCheckIn: new Date(),
+      streakCount: 1,
+    })
+    logger.info(`✅ New streak started for user ${userId}`)
+    return streak
   }
 
-  const last = streak.lastCheckIn?.toISOString().split("T")[0];
-  const today = new Date().toISOString().split("T")[0];
+  const last = streak.lastCheckIn?.toISOString().split("T")[0]
+  const today = new Date().toISOString().split("T")[0]
 
   if (last === today) {
-    throw new Error("You have already checked in today.");
+    throw new Error("You have already checked in today.")
   }
 
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-  streak.streakCount = (last === yesterday) ? streak.streakCount + 1 : 1;
-  streak.lastCheckIn = new Date();
-  await streak.save();
-  logger.info(`✅ Streak updated for user ${userId}: ${streak.streakCount} days`);
-  return streak;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0]
+  streak.streakCount = last === yesterday ? streak.streakCount + 1 : 1
+  streak.lastCheckIn = new Date()
+  await streak.save()
+  logger.info(
+    `✅ Streak updated for user ${userId}: ${streak.streakCount} days`,
+  )
+  return streak
 }
 
-export async function resetUserStreak (userId: string): Promise<void> {
+export async function resetUserStreak(userId: string): Promise<void> {
   if (!mongoose.isValidObjectId(userId)) {
-    throw new Error("Invalid User ID format.");
+    throw new Error("Invalid User ID format.")
   }
-  const streak = await Streak.findOne({ user: userId });
+  const streak = await Streak.findOne({ user: userId })
   if (!streak) {
-    throw new Error("No streak found for this user.");
+    throw new Error("No streak found for this user.")
   }
-  streak.streakCount = 0;
-  streak.lastCheckIn = null;
-  await streak.save();
-  logger.info(`✅ Streak reset for user: ${userId}`);
+  streak.streakCount = 0
+  streak.lastCheckIn = null
+  await streak.save()
+  logger.info(`✅ Streak reset for user: ${userId}`)
 }
 
-export async function getStreakLeaderboard (limit: number,  page: number): Promise<LeaderboardResult> {
-  const skip = (page - 1) * limit;
+export async function getStreakLeaderboard(
+  limit: number,
+  page: number,
+): Promise<LeaderboardResult> {
+  const skip = (page - 1) * limit
   const [streaks, totalEntries] = await Promise.all([
     Streak.find()
       .sort({ streakCount: -1 })
@@ -79,7 +91,10 @@ export async function getStreakLeaderboard (limit: number,  page: number): Promi
       .lean()
       .exec(),
     Streak.countDocuments(),
-  ]);
-  const totalPages = Math.ceil(totalEntries / limit);
-  return { streaks, pagination: { totalEntries, currentPage: page, totalPages } };
+  ])
+  const totalPages = Math.ceil(totalEntries / limit)
+  return {
+    streaks,
+    pagination: { totalEntries, currentPage: page, totalPages },
+  }
 }

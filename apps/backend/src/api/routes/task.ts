@@ -1,27 +1,30 @@
 // src/api/routes/streaks.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
 import {
   getStreakLeaderboard,
   getUserStreak,
   logDailyCheckIn,
-} from "../controllers/StreakController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+} from "../controllers/StreakController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 // Throttle check-in requests to 5 per 15 minutes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  message: { success: false, message: "Too many requests. Please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  },
+})
 
 /**
  * GET /api/streaks
@@ -30,11 +33,13 @@ const limiter = rateLimit({
 router.get(
   "/",
   protect,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    // call the controller wrapper inside an async function
-    await getUserStreak(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      // call the controller wrapper inside an async function
+      await getUserStreak(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/streaks/check-in
@@ -46,10 +51,12 @@ router.post(
   limiter,
   [check("date").optional().isISO8601().withMessage("Date must be ISO8601")],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await logDailyCheckIn(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await logDailyCheckIn(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/streaks/leaderboard
@@ -58,9 +65,11 @@ router.post(
 router.get(
   "/leaderboard",
   protect,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await getStreakLeaderboard(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await getStreakLeaderboard(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

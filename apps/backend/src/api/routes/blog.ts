@@ -1,15 +1,15 @@
 // src/api/routes/blog.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import { check, param } from "express-validator"
 
-import * as blogController from "../controllers/blogController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+import * as blogController from "../controllers/blogController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 /**
  * POST /api/blog
@@ -24,10 +24,12 @@ router.post(
     check("category", "Category is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.createBlogPost(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.createBlogPost(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/blog
@@ -35,10 +37,12 @@ router.post(
  */
 router.get(
   "/",
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.getAllBlogPosts(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.getAllBlogPosts(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/blog/:id
@@ -48,10 +52,12 @@ router.get(
   "/:id",
   param("id", "Invalid blog ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.getBlogPostById(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.getBlogPostById(req, res, next)
+    },
+  ),
+)
 
 /**
  * PUT /api/blog/:id
@@ -62,15 +68,29 @@ router.put(
   protect,
   [
     param("id", "Invalid blog ID").isMongoId(),
-    check("title").optional().trim().isLength({ min: 1 }).withMessage("Title cannot be empty"),
-    check("content").optional().trim().isLength({ min: 1 }).withMessage("Content cannot be empty"),
-    check("category").optional().trim().isLength({ min: 1 }).withMessage("Category cannot be empty"),
+    check("title")
+      .optional()
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Title cannot be empty"),
+    check("content")
+      .optional()
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Content cannot be empty"),
+    check("category")
+      .optional()
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Category cannot be empty"),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.editBlogPost(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.editBlogPost(req, res, next)
+    },
+  ),
+)
 
 /**
  * DELETE /api/blog/:id
@@ -81,10 +101,12 @@ router.delete(
   protect,
   param("id", "Invalid blog ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.deleteBlogPost(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.deleteBlogPost(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/blog/:id/like
@@ -95,10 +117,12 @@ router.post(
   protect,
   param("id", "Invalid blog ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.toggleLikeBlogPost(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.toggleLikeBlogPost(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/blog/:id/comment
@@ -112,10 +136,12 @@ router.post(
     check("text", "Comment text cannot be empty").notEmpty().trim(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.addComment(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.addComment(req, res, next)
+    },
+  ),
+)
 
 /**
  * DELETE /api/blog/:id/comment/:commentId
@@ -129,9 +155,11 @@ router.delete(
     param("commentId", "Invalid comment ID").isMongoId(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await blogController.removeComment(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await blogController.removeComment(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

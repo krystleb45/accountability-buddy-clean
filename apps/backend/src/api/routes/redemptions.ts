@@ -1,32 +1,19 @@
 // src/api/routes/redemptions.ts
-import { Router } from "express";
+import { Router } from "express"
 
 import {
   createRedemption,
   getMyRedemptions,
   getRedemptionsByDate,
-} from "../controllers/RedemptionController";
-import { protect, restrictTo } from "../middleware/authMiddleware";
+} from "../controllers/RedemptionController"
+import { protect, restrictTo } from "../middleware/authMiddleware"
 
-const router = Router();
+const router = Router()
 
-router.post(
-  "/",
-  protect,
-  createRedemption
-);
+router.post("/", protect, createRedemption)
 
-router.get(
-  "/",
-  protect,
-  getMyRedemptions
-);
+router.get("/", protect, getMyRedemptions)
 
-router.get(
-  "/range",
-  protect,
-  restrictTo("admin"),
-  getRedemptionsByDate
-);
+router.get("/range", protect, restrictTo("admin"), getRedemptionsByDate)
 
-export default router;
+export default router

@@ -1,14 +1,14 @@
 // src/api/routes/notificationTrigger.ts
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
-import * as TriggerController from "../controllers/notificationsTriggersController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as TriggerController from "../controllers/notificationsTriggersController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // throttle trigger endpoints to prevent abuse
 const triggerLimiter = rateLimit({
@@ -18,7 +18,7 @@ const triggerLimiter = rateLimit({
     success: false,
     message: "Too many requests, please try again later.",
   },
-});
+})
 
 /**
  * @swagger
@@ -53,8 +53,8 @@ router.post(
   triggerLimiter,
   [check("userId", "User ID is required").notEmpty().isMongoId()],
   handleValidationErrors,
-  TriggerController.dailyStreakReminder
-);
+  TriggerController.dailyStreakReminder,
+)
 
 /**
  * @swagger
@@ -95,8 +95,8 @@ router.post(
     check("level", "Level must be a positive integer").isInt({ min: 1 }),
   ],
   handleValidationErrors,
-  TriggerController.levelUpNotification
-);
+  TriggerController.levelUpNotification,
+)
 
 /**
  * @swagger
@@ -137,8 +137,8 @@ router.post(
     check("badgeName", "Badge name is required").notEmpty(),
   ],
   handleValidationErrors,
-  TriggerController.badgeUnlockNotification
-);
+  TriggerController.badgeUnlockNotification,
+)
 
 /**
  * @swagger
@@ -184,7 +184,7 @@ router.post(
     check("text", "Text is required").notEmpty(),
   ],
   handleValidationErrors,
-  TriggerController.customEmailNotification
-);
+  TriggerController.customEmailNotification,
+)
 
-export default router;
+export default router

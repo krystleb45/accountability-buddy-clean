@@ -1,10 +1,10 @@
 describe("audit routes", () => {
   it("smoke test runs", () => {
-    expect(true).toBe(true);
-  });
+    expect(true).toBe(true)
+  })
 
   it("GET /api/audit ? 200 OK", async () => {
-    const res = await globalThis.authGet("/api/audit");
-    expect(res.status).toBe(200);
-  });
-});
+    const res = await globalThis.authGet("/api/audit")
+    expect(res.status).toBe(200)
+  })
+})

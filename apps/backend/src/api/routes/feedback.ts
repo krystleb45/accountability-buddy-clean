@@ -1,20 +1,23 @@
 // src/api/routes/feedback.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
-import feedbackController from "../controllers/FeedbackController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import feedbackController from "../controllers/FeedbackController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // 5 submissions per hour
 const feedbackLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 5,
-  message: { success: false, message: "Too many feedback submissions, please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many feedback submissions, please try again later.",
+  },
+})
 
 /**
  * POST /api/feedback
@@ -25,22 +28,24 @@ router.post(
   protect,
   feedbackLimiter,
   [
-    check("message", "Feedback message is required").notEmpty().isLength({ max: 1000 }),
-    check("type", "Invalid feedback type").isIn(["bug", "feature-request", "other"]),
+    check("message", "Feedback message is required")
+      .notEmpty()
+      .isLength({ max: 1000 }),
+    check("type", "Invalid feedback type").isIn([
+      "bug",
+      "feature-request",
+      "other",
+    ]),
   ],
   handleValidationErrors,
-  feedbackController.submitFeedback
-);
+  feedbackController.submitFeedback,
+)
 
 /**
  * GET /api/feedback
  * Get feedback submitted by the authenticated user
  */
-router.get(
-  "/",
-  protect,
-  feedbackController.getUserFeedback
-);
+router.get("/", protect, feedbackController.getUserFeedback)
 
 /**
  * DELETE /api/feedback/:feedbackId
@@ -55,7 +60,7 @@ router.delete(
       .withMessage("Must be a 24-char hex string"),
   ],
   handleValidationErrors,
-  feedbackController.deleteFeedback
-);
+  feedbackController.deleteFeedback,
+)
 
-export default router;
+export default router

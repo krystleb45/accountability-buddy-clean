@@ -1,11 +1,11 @@
 // src/api/models/CheckIn.ts
-import type { Document, Model } from "mongoose";
+import type { Document, Model } from "mongoose"
 
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 export interface CheckInDocument extends Document {
-  user: mongoose.Types.ObjectId;
-  createdAt: Date;
+  user: mongoose.Types.ObjectId
+  createdAt: Date
 }
 
 const checkInSchema = new mongoose.Schema<CheckInDocument>(
@@ -25,12 +25,12 @@ const checkInSchema = new mongoose.Schema<CheckInDocument>(
     // timestamps: true
     // but here we only need createdAt
     versionKey: false,
-  }
-);
+  },
+)
 
 const CheckIn: Model<CheckInDocument> = mongoose.model<CheckInDocument>(
   "CheckIn",
-  checkInSchema
-);
+  checkInSchema,
+)
 
-export default CheckIn;
+export default CheckIn

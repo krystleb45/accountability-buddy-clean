@@ -1,24 +1,24 @@
 // src/api/models/Milestone.ts
-import type { Document, Model } from "mongoose";
+import type { Document, Model } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Milestone Document Interface ---
 export interface IMilestone extends Document {
-  title: string;
-  description: string;
-  dueDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  title: string
+  description: string
+  dueDate: Date
+  createdAt: Date
+  updatedAt: Date
 
   // Instance methods
-  isPastDue: () => boolean;
+  isPastDue: () => boolean
 }
 
 // --- Milestone Model Interface ---
 export interface IMilestoneModel extends Model<IMilestone> {
-  findUpcoming: (daysAhead?: number) => Promise<IMilestone[]>;
-  findOverdue: () => Promise<IMilestone[]>;
+  findUpcoming: (daysAhead?: number) => Promise<IMilestone[]>
+  findOverdue: () => Promise<IMilestone[]>
 }
 
 // --- Schema Definition ---
@@ -45,16 +45,16 @@ const MilestoneSchema = new Schema<IMilestone, IMilestoneModel>(
     timestamps: true,
     toJSON: { virtuals: false },
     toObject: { virtuals: false },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-MilestoneSchema.index({ dueDate: 1 });
+MilestoneSchema.index({ dueDate: 1 })
 
 // --- Instance Methods ---
 MilestoneSchema.methods.isPastDue = function (this: IMilestone): boolean {
-  return this.dueDate.getTime() < Date.now();
-};
+  return this.dueDate.getTime() < Date.now()
+}
 
 // --- Static Methods ---
 /**
@@ -62,29 +62,29 @@ MilestoneSchema.methods.isPastDue = function (this: IMilestone): boolean {
  */
 MilestoneSchema.statics.findUpcoming = function (
   this: IMilestoneModel,
-  daysAhead = 7
+  daysAhead = 7,
 ): Promise<IMilestone[]> {
-  const now = new Date();
-  const cutoff = new Date(now.getTime() + daysAhead * 24 * 60 * 60 * 1000);
+  const now = new Date()
+  const cutoff = new Date(now.getTime() + daysAhead * 24 * 60 * 60 * 1000)
   return this.find({ dueDate: { $gte: now, $lte: cutoff } })
     .sort({ dueDate: 1 })
-    .exec();
-};
+    .exec()
+}
 
 /**
  * Find milestones that are overdue
  */
 MilestoneSchema.statics.findOverdue = function (
-  this: IMilestoneModel
+  this: IMilestoneModel,
 ): Promise<IMilestone[]> {
   return this.find({ dueDate: { $lt: new Date() } })
     .sort({ dueDate: 1 })
-    .exec();
-};
+    .exec()
+}
 
 // --- Model Export ---
 export const Milestone = mongoose.model<IMilestone, IMilestoneModel>(
   "Milestone",
-  MilestoneSchema
-);
-export default Milestone;
+  MilestoneSchema,
+)
+export default Milestone

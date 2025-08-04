@@ -1,51 +1,54 @@
 // src/api/models/MilitaryMessage.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Interface for MilitaryMessage Document ---
 export interface IMilitaryMessage extends Document {
-  chatroom: Types.ObjectId;      // Reference to MilitarySupportChatroom
-  user: Types.ObjectId;          // Sender User
-  text: string;                  // Message text
-  timestamp: Date;               // Original send time
-  isDeleted: boolean;            // Soft-delete flag
-  attachments: string[];         // URLs to media files
-  createdAt: Date;               // Auto-generated
-  updatedAt: Date;               // Auto-generated
+  chatroom: Types.ObjectId // Reference to MilitarySupportChatroom
+  user: Types.ObjectId // Sender User
+  text: string // Message text
+  timestamp: Date // Original send time
+  isDeleted: boolean // Soft-delete flag
+  attachments: string[] // URLs to media files
+  createdAt: Date // Auto-generated
+  updatedAt: Date // Auto-generated
 
   // Virtuals
-  attachmentCount: number;
+  attachmentCount: number
 
   // Instance methods
-  softDelete: () => Promise<IMilitaryMessage>;
-  addAttachment: (url: string) => Promise<IMilitaryMessage>;
+  softDelete: () => Promise<IMilitaryMessage>
+  addAttachment: (url: string) => Promise<IMilitaryMessage>
 }
 
 // --- Model Interface for Statics ---
 export interface IMilitaryMessageModel extends Model<IMilitaryMessage> {
   getByChatroom: (
     chatroomId: Types.ObjectId,
-    limit?: number
-  ) => Promise<IMilitaryMessage[]>;
+    limit?: number,
+  ) => Promise<IMilitaryMessage[]>
   searchText: (
     query: string,
-    chatroomId?: Types.ObjectId
-  ) => Promise<IMilitaryMessage[]>;
+    chatroomId?: Types.ObjectId,
+  ) => Promise<IMilitaryMessage[]>
 }
 
 // --- Schema Definition ---
-const MilitaryMessageSchema = new Schema<IMilitaryMessage, IMilitaryMessageModel>(
+const MilitaryMessageSchema = new Schema<
+  IMilitaryMessage,
+  IMilitaryMessageModel
+>(
   {
     chatroom: {
       type: Schema.Types.ObjectId,
       ref: "MilitarySupportChatroom",
-      required: true
+      required: true,
     },
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
     text: {
       type: String,
@@ -55,36 +58,36 @@ const MilitaryMessageSchema = new Schema<IMilitaryMessage, IMilitaryMessageModel
     },
     timestamp: {
       type: Date,
-      default: (): Date => new Date()
+      default: (): Date => new Date(),
     },
     isDeleted: {
       type: Boolean,
-      default: false
+      default: false,
     },
     attachments: {
       type: [String],
-      default: []
+      default: [],
     },
   },
   {
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-MilitaryMessageSchema.index({ chatroom: 1, timestamp: -1 });
-MilitaryMessageSchema.index({ user: 1, timestamp: -1 });
-MilitaryMessageSchema.index({ isDeleted: 1 });
-MilitaryMessageSchema.index({ text: "text" }); // full-text search
+MilitaryMessageSchema.index({ chatroom: 1, timestamp: -1 })
+MilitaryMessageSchema.index({ user: 1, timestamp: -1 })
+MilitaryMessageSchema.index({ isDeleted: 1 })
+MilitaryMessageSchema.index({ text: "text" }) // full-text search
 
 // --- Virtuals ---
 MilitaryMessageSchema.virtual("attachmentCount").get(function (
-  this: IMilitaryMessage
+  this: IMilitaryMessage,
 ): number {
-  return this.attachments.length;
-});
+  return this.attachments.length
+})
 
 // --- Static Methods ---
 /**
@@ -93,14 +96,14 @@ MilitaryMessageSchema.virtual("attachmentCount").get(function (
 MilitaryMessageSchema.statics.getByChatroom = function (
   this: IMilitaryMessageModel,
   chatroomId: Types.ObjectId,
-  limit = 50
+  limit = 50,
 ): Promise<IMilitaryMessage[]> {
   return this.find({ chatroom: chatroomId, isDeleted: false })
     .sort({ timestamp: -1 })
     .limit(limit)
     .populate("user", "username rank")
-    .exec();
-};
+    .exec()
+}
 
 /**
  * Full‑text search in messages, optionally within a chatroom
@@ -108,45 +111,47 @@ MilitaryMessageSchema.statics.getByChatroom = function (
 MilitaryMessageSchema.statics.searchText = function (
   this: IMilitaryMessageModel,
   query: string,
-  chatroomId?: Types.ObjectId
+  chatroomId?: Types.ObjectId,
 ): Promise<IMilitaryMessage[]> {
-  const filter: Record<string, any> = { $text: { $search: query }, isDeleted: false };
-  if (chatroomId) 
-filter.chatroom = chatroomId;
+  const filter: Record<string, any> = {
+    $text: { $search: query },
+    isDeleted: false,
+  }
+  if (chatroomId) filter.chatroom = chatroomId
 
   return this.find(filter, { score: { $meta: "textScore" } })
     .sort({ score: { $meta: "textScore" } })
-    .exec();
-};
+    .exec()
+}
 
 // --- Instance Methods ---
 /**
  * Soft‑delete this message
  */
 MilitaryMessageSchema.methods.softDelete = async function (
-  this: IMilitaryMessage
+  this: IMilitaryMessage,
 ): Promise<IMilitaryMessage> {
-  this.isDeleted = true;
-  await this.save();
-  return this;
-};
+  this.isDeleted = true
+  await this.save()
+  return this
+}
 
 /**
  * Add an attachment URL
  */
 MilitaryMessageSchema.methods.addAttachment = async function (
   this: IMilitaryMessage,
-  url: string
+  url: string,
 ): Promise<IMilitaryMessage> {
-  this.attachments.push(url);
-  await this.save();
-  return this;
-};
+  this.attachments.push(url)
+  await this.save()
+  return this
+}
 
 // --- Model Export ---
 export const MilitaryMessage = mongoose.model<
   IMilitaryMessage,
   IMilitaryMessageModel
->("MilitaryMessage", MilitaryMessageSchema);
+>("MilitaryMessage", MilitaryMessageSchema)
 
-export default MilitaryMessage;
+export default MilitaryMessage

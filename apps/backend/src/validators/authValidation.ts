@@ -1,10 +1,10 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 interface CustomValidationError {
-  field: string;
-  message: string;
+  field: string
+  message: string
 }
 
 /**
@@ -13,30 +13,36 @@ interface CustomValidationError {
  * @param {Response} res - The outgoing response object.
  * @param {NextFunction} next - The next middleware function.
  */
-export function authValidationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function authValidationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    const formattedErrors: CustomValidationError[] = errors.array().map((error) => {
-      if ("param" in error && typeof error.param === "string") {
+    const formattedErrors: CustomValidationError[] = errors
+      .array()
+      .map((error) => {
+        if ("param" in error && typeof error.param === "string") {
+          return {
+            field: error.param,
+            message: error.msg,
+          }
+        }
         return {
-          field: error.param,
+          field: "unknown",
           message: error.msg,
-        };
-      }
-      return {
-        field: "unknown",
-        message: error.msg,
-      };
-    });
+        }
+      })
 
     res.status(400).json({
       success: false,
       errors: formattedErrors,
-    });
-    return;
+    })
+    return
   }
 
-  next();
+  next()
 }
 
 // Common password validation rule for reuse
@@ -48,7 +54,7 @@ const passwordRule = [
     .withMessage(
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
     ),
-];
+]
 
 // Validation rules for user registration
 export const registerValidation = [
@@ -68,7 +74,7 @@ export const registerValidation = [
     .normalizeEmail(),
   ...passwordRule,
   authValidationMiddleware,
-];
+]
 
 // Validation rules for user login
 export const loginValidation = [
@@ -78,7 +84,7 @@ export const loginValidation = [
     .normalizeEmail(),
   check("password").notEmpty().withMessage("Password is required"),
   authValidationMiddleware,
-];
+]
 
 // Validation rules for password reset request
 export const forgotPasswordValidation = [
@@ -87,7 +93,10 @@ export const forgotPasswordValidation = [
     .withMessage("Please provide a valid email address")
     .normalizeEmail(),
   authValidationMiddleware,
-];
+]
 
 // Validation rules for resetting the password
-export const resetPasswordValidation = [...passwordRule, authValidationMiddleware];
+export const resetPasswordValidation = [
+  ...passwordRule,
+  authValidationMiddleware,
+]

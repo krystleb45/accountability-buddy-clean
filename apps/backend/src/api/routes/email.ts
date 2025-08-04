@@ -1,20 +1,23 @@
 // src/api/routes/email.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
-import * as emailController from "../controllers/emailController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as emailController from "../controllers/emailController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // Throttle email sends to 5 per 15 minutes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  message: { success: false, message: "Too many email requests, please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many email requests, please try again later.",
+  },
+})
 
 /**
  * POST /api/email/send
@@ -35,7 +38,7 @@ router.post(
   // 4) Return 400 if any checks failed
   handleValidationErrors,
   // 5) Forward to your catchAsync-wrapped controller
-  emailController.sendEmail
-);
+  emailController.sendEmail,
+)
 
-export default router;
+export default router

@@ -1,12 +1,16 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 /**
  * Middleware to handle validation results and send structured errors.
  */
-export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function validationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     // Format validation errors into a structured response
@@ -15,24 +19,24 @@ export function validationMiddleware (req: Request,  res: Response,  next: NextF
         return {
           field: error.param,
           message: error.msg,
-        };
+        }
       }
       return {
         field: "unknown",
         message: error.msg,
-      };
-    });
+      }
+    })
 
     res.status(400).json({
       success: false,
       message: "Validation failed",
       errors: formattedErrors,
-    });
+    })
 
-    return; // Terminate middleware execution
+    return // Terminate middleware execution
   }
 
-  next(); // Proceed to the next middleware
+  next() // Proceed to the next middleware
 }
 
 /**
@@ -64,10 +68,10 @@ export const validateReminder = [
     .toDate()
     .custom((value: Date) => {
       if (value <= new Date()) {
-        throw new Error("Reminder date must be in the future");
+        throw new Error("Reminder date must be in the future")
       }
-      return true;
+      return true
     }),
 
   validationMiddleware, // Apply the validation middleware
-];
+]

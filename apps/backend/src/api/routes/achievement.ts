@@ -1,13 +1,13 @@
-import type { NextFunction, Request, Response, Router } from "express";
+import type { NextFunction, Request, Response, Router } from "express"
 
-import express from "express";
-import rateLimit from "express-rate-limit";
-import mongoose from "mongoose";
+import express from "express"
+import rateLimit from "express-rate-limit"
+import mongoose from "mongoose"
 
-import * as AchievementController from "../controllers/AchievementController";
-import { protect } from "../middleware/authMiddleware";
+import * as AchievementController from "../controllers/AchievementController"
+import { protect } from "../middleware/authMiddleware"
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -16,20 +16,20 @@ const rateLimiter = rateLimit({
     success: false,
     message: "Too many requests. Please try again later.",
   },
-});
+})
 
-function validateBody (fields: string[]) {
+function validateBody(fields: string[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
-      const missingFields = fields.filter((field) => !req.body[field]);
-      if (missingFields.length > 0) {
-        res.status(400).json({
-          success: false,
-          message: `Missing required fields: ${missingFields.join(", ")}`,
-        });
-        return;
-      }
-      next();
+    const missingFields = fields.filter((field) => !req.body[field])
+    if (missingFields.length > 0) {
+      res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(", ")}`,
+      })
+      return
     }
+    next()
+  }
 }
 
 /**
@@ -55,11 +55,11 @@ function validateBody (fields: string[]) {
  */
 router.get("/", protect, async (req, res, next) => {
   try {
-    await AchievementController.getAllAchievements(req, res, next);
+    await AchievementController.getAllAchievements(req, res, next)
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
+})
 
 /**
  * @swagger
@@ -101,12 +101,12 @@ router.post(
   validateBody(["name", "description", "requirements"]),
   async (req, res, next) => {
     try {
-      await AchievementController.addAchievement(req, res, next);
+      await AchievementController.addAchievement(req, res, next)
     } catch (error) {
-      next(error);
+      next(error)
     }
-  }
-);
+  },
+)
 
 /**
  * @swagger
@@ -133,19 +133,19 @@ router.post(
  */
 router.delete("/:id", protect, async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params
     if (!mongoose.isValidObjectId(id)) {
       res.status(400).json({
         success: false,
         message: "Invalid achievement ID format.",
-      });
-      return;
+      })
+      return
     }
-    await AchievementController.deleteAchievement(req, res, next);
+    await AchievementController.deleteAchievement(req, res, next)
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
+})
 
 /**
  * @swagger
@@ -163,10 +163,10 @@ router.delete("/:id", protect, async (req, res, next) => {
  */
 router.get("/leaderboard", protect, async (req, res, next) => {
   try {
-    await AchievementController.getLeaderboardAchievements(req, res, next);
+    await AchievementController.getLeaderboardAchievements(req, res, next)
   } catch (error) {
-    next(error);
+    next(error)
   }
-});
+})
 
-export default router;
+export default router

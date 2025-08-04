@@ -1,36 +1,39 @@
 // src/api/routes/partner.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
 import {
   addPartnerNotification,
   getPartnerNotifications,
   notifyPartner,
-} from "../controllers/partnerController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+} from "../controllers/partnerController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // ─── Rate limiter ───────────────────────────────────────────────────────────────
 const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { success: false, message: "Too many requests. Please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  },
+})
 
 // ─── Validators ─────────────────────────────────────────────────────────────────
 const validateNotify = [
   check("partnerId", "Partner ID is required").notEmpty().isMongoId(),
-  check("goal",      "Goal title is required").notEmpty(),
-  check("milestone","Milestone title is required").notEmpty(),
-];
+  check("goal", "Goal title is required").notEmpty(),
+  check("milestone", "Milestone title is required").notEmpty(),
+]
 
 const validateAdd = [
   check("partnerId", "Partner ID is required").notEmpty().isMongoId(),
-  check("userId",    "User ID is required").notEmpty().isMongoId(),
-];
+  check("userId", "User ID is required").notEmpty().isMongoId(),
+]
 
 // ─── Routes ─────────────────────────────────────────────────────────────────────
 
@@ -44,8 +47,8 @@ router.post(
   rateLimiter,
   validateNotify,
   handleValidationErrors,
-  notifyPartner
-);
+  notifyPartner,
+)
 
 /**
  * POST /api/partner/add
@@ -57,17 +60,13 @@ router.post(
   rateLimiter,
   validateAdd,
   handleValidationErrors,
-  addPartnerNotification
-);
+  addPartnerNotification,
+)
 
 /**
  * GET /api/partner/notifications
  * Get paginated partner notifications for the current user
  */
-router.get(
-  "/notifications",
-  protect,
-  getPartnerNotifications
-);
+router.get("/notifications", protect, getPartnerNotifications)
 
-export default router;
+export default router

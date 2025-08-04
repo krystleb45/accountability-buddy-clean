@@ -1,4 +1,4 @@
-import { body, param, query } from "express-validator";
+import { body, param, query } from "express-validator"
 
 const validateLeaderboardEntryCreation = [
   body("userId")
@@ -24,7 +24,7 @@ const validateLeaderboardEntryCreation = [
     .optional()
     .isISO8601()
     .withMessage("Timestamp must be a valid ISO8601 date format."),
-];
+]
 
 const validateLeaderboardUpdate = [
   param("entryId")
@@ -44,7 +44,7 @@ const validateLeaderboardUpdate = [
     .withMessage("Category must be a string.")
     .isLength({ max: 50 })
     .withMessage("Category cannot exceed 50 characters."),
-];
+]
 
 const validateLeaderboardId = [
   param("leaderboardId")
@@ -52,7 +52,7 @@ const validateLeaderboardId = [
     .withMessage("Leaderboard ID is required.")
     .isUUID()
     .withMessage("Leaderboard ID must be a valid UUID."),
-];
+]
 
 const validateLeaderboardQuery = [
   query("category")
@@ -72,8 +72,8 @@ const validateLeaderboardQuery = [
   query("sortOrder")
     .optional()
     .isIn(["asc", "desc"])
-    .withMessage("Sort order must be either \"asc\" or \"desc\"."),
-];
+    .withMessage('Sort order must be either "asc" or "desc".'),
+]
 
 const validateLeaderboardRankRequest = [
   body("userId")
@@ -87,7 +87,7 @@ const validateLeaderboardRankRequest = [
     .withMessage("Category must be a string.")
     .isLength({ max: 50 })
     .withMessage("Category cannot exceed 50 characters."),
-];
+]
 
 export default {
   validateLeaderboardEntryCreation,
@@ -95,4 +95,4 @@ export default {
   validateLeaderboardId,
   validateLeaderboardQuery,
   validateLeaderboardRankRequest,
-};
+}

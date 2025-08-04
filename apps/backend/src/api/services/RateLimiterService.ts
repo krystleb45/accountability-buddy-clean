@@ -1,13 +1,13 @@
 // src/api/services/RateLimiterService.ts
-import type { Request } from "express";
-import type { RateLimitRequestHandler } from "express-rate-limit";
+import type { Request } from "express"
+import type { RateLimitRequestHandler } from "express-rate-limit"
 
-import rateLimit from "express-rate-limit";
+import rateLimit from "express-rate-limit"
 
 export interface RateLimitStatus {
-  remaining: string | number | undefined;
-  limit: string | number | undefined;
-  reset: string | number | undefined;
+  remaining: string | number | undefined
+  limit: string | number | undefined
+  reset: string | number | undefined
 }
 
 class RateLimiterService {
@@ -21,7 +21,7 @@ class RateLimiterService {
         message: "Too many requests from this IP, please try again later",
       },
       headers: true, // send X-RateLimit headers
-    });
+    })
   }
 
   /**
@@ -33,8 +33,8 @@ class RateLimiterService {
       remaining: req.header("x-ratelimit-remaining"),
       limit: req.header("x-ratelimit-limit"),
       reset: req.header("x-ratelimit-reset"),
-    };
+    }
   }
 }
 
-export default RateLimiterService;
+export default RateLimiterService

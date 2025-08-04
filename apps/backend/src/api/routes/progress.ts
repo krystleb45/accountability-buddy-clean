@@ -1,30 +1,30 @@
 // src/api/routes/progress.ts
-import { Router } from "express";
-import { check } from "express-validator";
+import { Router } from "express"
+import { check } from "express-validator"
 
 import {
   getProgress,
   getProgressDashboard,
   resetProgress,
   updateProgress,
-} from "../controllers/ProgressController";
-import { protect } from "../middleware/authJwt";            // ← fix this import
-import handleValidationErrors from "../middleware/handleValidationErrors";
+} from "../controllers/ProgressController"
+import { protect } from "../middleware/authJwt" // ← fix this import
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // apply protect to *all* progress routes
-router.use(protect);
+router.use(protect)
 
 /**
  * GET  /api/progress/dashboard
  */
-router.get("/dashboard", getProgressDashboard);
+router.get("/dashboard", getProgressDashboard)
 
 /**
  * GET  /api/progress
  */
-router.get("/", getProgress);
+router.get("/", getProgress)
 
 /**
  * PUT  /api/progress/update
@@ -36,12 +36,12 @@ router.put(
     check("progress", "Progress must be a number").isNumeric(),
     handleValidationErrors,
   ],
-  updateProgress
-);
+  updateProgress,
+)
 
 /**
  * DELETE /api/progress/reset
  */
-router.delete("/reset", resetProgress);
+router.delete("/reset", resetProgress)
 
-export default router;
+export default router

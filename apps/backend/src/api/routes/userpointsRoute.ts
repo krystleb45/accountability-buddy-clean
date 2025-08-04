@@ -1,22 +1,18 @@
 // src/api/routes/userpointsRoute.ts
-import { Router } from "express";
-import { check } from "express-validator";
+import { Router } from "express"
+import { check } from "express-validator"
 
-import * as PointController from "../controllers/pointController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as PointController from "../controllers/pointController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 /**
  * GET /api/users/points
  * (fetch current user’s points)
  */
-router.get(
-  "/points",
-  protect,
-  PointController.getUserPoints
-);
+router.get("/points", protect, PointController.getUserPoints)
 
 /**
  * POST /api/users/points/add
@@ -25,10 +21,10 @@ router.get(
 router.post(
   "/points/add",
   protect,
-  [ check("points", "Points must be a positive number").isInt({ gt: 0 }) ],
+  [check("points", "Points must be a positive number").isInt({ gt: 0 })],
   handleValidationErrors,
-  PointController.addPoints
-);
+  PointController.addPoints,
+)
 
 /**
  * POST /api/users/points/subtract
@@ -37,10 +33,10 @@ router.post(
 router.post(
   "/points/subtract",
   protect,
-  [ check("points", "Points must be a positive number").isInt({ gt: 0 }) ],
+  [check("points", "Points must be a positive number").isInt({ gt: 0 })],
   handleValidationErrors,
-  PointController.subtractPoints
-);
+  PointController.subtractPoints,
+)
 
 /**
  * POST /api/users/points/redeem
@@ -49,9 +45,9 @@ router.post(
 router.post(
   "/points/redeem",
   protect,
-  [ check("rewardId", "Reward ID is required").notEmpty() ],
+  [check("rewardId", "Reward ID is required").notEmpty()],
   handleValidationErrors,
-  PointController.redeemPoints
-);
+  PointController.redeemPoints,
+)
 
-export default router;
+export default router

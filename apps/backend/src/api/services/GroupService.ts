@@ -1,39 +1,38 @@
-// src/api/services/GroupService.ts - Updated with new methods
-import type { Server } from "socket.io";
+import type { Server } from "socket.io"
 
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import type { IGroup } from "../models/Group";
-import type { IGroupMessage } from "../models/GroupMessage";
+import type { IGroup } from "../models/Group"
+import type { IGroupMessage } from "../models/GroupMessage"
 
-import { logger } from "../../utils/winstonLogger";
-import Group from "../models/Group";
-import GroupMessage from "../models/GroupMessage";
-import Notification from "../models/Notification";
+import { logger } from "../../utils/winstonLogger"
+import Group from "../models/Group"
+import GroupMessage from "../models/GroupMessage"
+import Notification from "../models/Notification"
 
 interface FormattedGroup {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  memberCount: number;
-  isPublic: boolean;
-  isJoined: boolean;
-  lastActivity: string;
-  avatar: string | null;
-  tags: string[];
-  createdBy: string;
-  createdAt: string;
+  id: string
+  name: string
+  description: string
+  category: string
+  memberCount: number
+  isPublic: boolean
+  isJoined: boolean
+  lastActivity: string
+  avatar: string | null
+  tags: string[]
+  createdBy: string
+  createdAt: string
 }
 
 interface FormattedMember {
-  id: string;
-  name: string;
-  email: string;
-  profilePicture: string | null;
-  role: "admin" | "member";
-  joinedAt: string;
-  isOnline: boolean;
+  id: string
+  name: string
+  email: string
+  profilePicture: string | null
+  role: "admin" | "member"
+  joinedAt: string
+  isOnline: boolean
 }
 
 class GroupService {
@@ -43,47 +42,50 @@ class GroupService {
   async getGroups(
     userId: string,
     category?: string,
-    search?: string
+    search?: string,
   ): Promise<FormattedGroup[]> {
     const filter: any = {
-      isPublic: true // Only show public groups in general listing
-    };
+      isPublic: true, // Only show public groups in general listing
+    }
 
     if (category && category !== "all") {
-      filter.category = category;
+      filter.category = category
     }
 
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } },
-        { tags: { $in: [new RegExp(search, "i")] } }
-      ];
+        { tags: { $in: [new RegExp(search, "i")] } },
+      ]
     }
 
     const groups = await Group.find(filter)
       .populate("createdBy", "name")
       .sort({ lastActivity: -1 })
       .limit(20)
-      .lean();
+      .lean()
 
     // Check which groups the user has joined
-    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const userObjectId = new mongoose.Types.ObjectId(userId)
 
-    return groups.map(group => ({
+    return groups.map((group) => ({
       id: group._id.toString(),
       name: group.name,
       description: group.description || "",
       category: group.category || "general",
       memberCount: group.members?.length || 0,
       isPublic: group.isPublic ?? true,
-      isJoined: group.members?.some((memberId: any) => memberId.equals(userObjectId)) || false,
-      lastActivity: group.lastActivity?.toISOString() || group.createdAt.toISOString(),
+      isJoined:
+        group.members?.some((memberId: any) => memberId.equals(userObjectId)) ||
+        false,
+      lastActivity:
+        group.lastActivity?.toISOString() || group.createdAt.toISOString(),
       avatar: group.avatar || null,
       tags: group.tags || [],
       createdBy: (group.createdBy as any)?.name || "Unknown",
-      createdAt: group.createdAt.toISOString()
-    }));
+      createdAt: group.createdAt.toISOString(),
+    }))
   }
 
   /**
@@ -102,29 +104,31 @@ class GroupService {
     category: string,
     creatorId: string,
     privacy?: string,
-    tags?: string[]
+    tags?: string[],
   ): Promise<FormattedGroup> {
-    console.log("=== GroupService.createGroup DEBUG ===");
-    console.log("Parameters received:");
-    console.log("- name:", name);
-    console.log("- description:", description);
-    console.log("- category:", category);
-    console.log("- creatorId:", creatorId);
-    console.log("- privacy:", privacy);
-    console.log("- tags:", tags);
+    // console.log("=== GroupService.createGroup DEBUG ===");
+    // console.log("Parameters received:");
+    // console.log("- name:", name);
+    // console.log("- description:", description);
+    // console.log("- category:", category);
+    // console.log("- creatorId:", creatorId);
+    // console.log("- privacy:", privacy);
+    // console.log("- tags:", tags);
 
     if (!name || !description || !category || !creatorId) {
-      const error = "Missing required fields: name, description, category, or creatorId";
-      console.error(error);
-      throw new Error(error);
+      const error =
+        "Missing required fields: name, description, category, or creatorId"
+      console.error(error)
+      throw new Error(error)
     }
 
     try {
-      const isPublic = privacy === "public" || privacy === "Public Group" || !privacy;
+      const isPublic =
+        privacy === "public" || privacy === "Public Group" || !privacy
 
-      console.log("Creating group with isPublic:", isPublic);
+      // console.log("Creating group with isPublic:", isPublic);
 
-      const creatorObjectId = new mongoose.Types.ObjectId(creatorId);
+      const creatorObjectId = new mongoose.Types.ObjectId(creatorId)
 
       const groupData = {
         name: name.trim(),
@@ -138,24 +142,24 @@ class GroupService {
         members: [creatorObjectId], // IMPORTANT: Creator is automatically a member
         lastActivity: new Date(),
         unreadMessages: [],
-      };
+      }
 
-      console.log("Group data being saved:", groupData);
+      // console.log("Group data being saved:", groupData);
 
-      const group = await Group.create(groupData);
+      const group = await Group.create(groupData)
 
-      console.log("Group created successfully in database:", {
-        id: group._id.toString(),
-        name: group.name,
-        category: group.category,
-        isPublic: group.isPublic,
-        createdBy: group.createdBy.toString(),
-        members: group.members.length
-      });
+      // console.log("Group created successfully in database:", {
+      //   id: group._id.toString(),
+      //   name: group.name,
+      //   category: group.category,
+      //   isPublic: group.isPublic,
+      //   createdBy: group.createdBy.toString(),
+      //   members: group.members.length
+      // });
 
-      await group.populate("createdBy", "name");
+      await group.populate("createdBy", "name")
 
-      logger.info(`Group ${group._id} created by ${creatorId}`);
+      logger.info(`Group ${group._id} created by ${creatorId}`)
 
       const result = {
         id: group._id.toString(),
@@ -169,36 +173,39 @@ class GroupService {
         avatar: group.avatar || null,
         tags: group.tags || [],
         createdBy: (group.createdBy as any)?.name || "Unknown",
-        createdAt: group.createdAt.toISOString()
-      };
+        createdAt: group.createdAt.toISOString(),
+      }
 
-      console.log("Returning formatted group:", result);
-      return result;
-
+      // console.log("Returning formatted group:", result);
+      return result
     } catch (error) {
-      console.error("Error creating group in database:", error);
-      logger.error(`Failed to create group: ${error}`);
-      throw error;
+      console.error("Error creating group in database:", error)
+      logger.error(`Failed to create group: ${error}`)
+      throw error
     }
   }
 
   /**
    * Get specific group details
    */
-  async getGroupDetails(groupId: string, userId: string): Promise<FormattedGroup | null> {
+  async getGroupDetails(
+    groupId: string,
+    userId: string,
+  ): Promise<FormattedGroup | null> {
     const group = await Group.findById(groupId)
       .populate("createdBy", "name")
-      .lean();
+      .lean()
 
-    if (!group) 
-return null;
+    if (!group) return null
 
-    const userObjectId = new mongoose.Types.ObjectId(userId);
-    const isJoined = group.members?.some((memberId: any) => memberId.equals(userObjectId)) || false;
+    const userObjectId = new mongoose.Types.ObjectId(userId)
+    const isJoined =
+      group.members?.some((memberId: any) => memberId.equals(userObjectId)) ||
+      false
 
     // For private groups, only return details if user is a member
     if (!group.isPublic && !isJoined) {
-      return null;
+      return null
     }
 
     return {
@@ -209,63 +216,54 @@ return null;
       memberCount: group.members?.length || 0,
       isPublic: group.isPublic ?? true,
       isJoined,
-      lastActivity: group.lastActivity?.toISOString() || group.createdAt.toISOString(),
+      lastActivity:
+        group.lastActivity?.toISOString() || group.createdAt.toISOString(),
       avatar: group.avatar || null,
       tags: group.tags || [],
       createdBy: (group.createdBy as any)?.name || "Unknown",
-      createdAt: group.createdAt.toISOString()
-    };
+      createdAt: group.createdAt.toISOString(),
+    }
   }
 
   /**
    * Add a member to a group
    */
-  async joinGroup(
-    groupId: string,
-    userId: string,
-    io: Server
-  ): Promise<void> {
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+  async joinGroup(groupId: string, userId: string, io: Server): Promise<void> {
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
     // Check if group is private and requires invitation
     if (!group.isPublic && group.inviteOnly) {
-      throw new Error("This group requires an invitation");
+      throw new Error("This group requires an invitation")
     }
 
-    const uid = new mongoose.Types.ObjectId(userId);
-    if (group.members.some(m => m.equals(uid))) {
-      throw new Error("Already a member");
+    const uid = new mongoose.Types.ObjectId(userId)
+    if (group.members.some((m) => m.equals(uid))) {
+      throw new Error("Already a member")
     }
 
-    group.members.push(uid);
-    group.lastActivity = new Date();
-    await group.save();
+    group.members.push(uid)
+    group.lastActivity = new Date()
+    await group.save()
 
     // Notify everyone in the group room
-    io.in(groupId).emit("userJoined", { userId });
+    io.in(groupId).emit("userJoined", { userId })
 
-    logger.info(`User ${userId} joined group ${groupId}`);
+    logger.info(`User ${userId} joined group ${groupId}`)
   }
 
   /**
    * Remove a member from a group
    */
-  async leaveGroup(
-    groupId: string,
-    userId: string,
-    io: Server
-  ): Promise<void> {
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+  async leaveGroup(groupId: string, userId: string, io: Server): Promise<void> {
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
-    const uid = new mongoose.Types.ObjectId(userId);
+    const uid = new mongoose.Types.ObjectId(userId)
 
     // Check if user is a member
-    if (!group.members.some(m => m.equals(uid))) {
-      throw new Error("Not a member of this group");
+    if (!group.members.some((m) => m.equals(uid))) {
+      throw new Error("Not a member of this group")
     }
 
     // Prevent creator from leaving if they're the only admin
@@ -274,14 +272,14 @@ throw new Error("Group not found");
       // For now, we'll allow it but could add admin count check
     }
 
-    group.members = group.members.filter(m => !m.equals(uid));
-    group.lastActivity = new Date();
-    await group.save();
+    group.members = group.members.filter((m) => !m.equals(uid))
+    group.lastActivity = new Date()
+    await group.save()
 
     // Broadcast to the group room
-    io.in(groupId).emit("userLeft", { userId });
+    io.in(groupId).emit("userLeft", { userId })
 
-    logger.info(`User ${userId} left group ${groupId}`);
+    logger.info(`User ${userId} left group ${groupId}`)
   }
 
   /**
@@ -290,31 +288,40 @@ throw new Error("Group not found");
   async updateGroup(
     groupId: string,
     userId: string,
-    updates: Partial<IGroup>
+    updates: Partial<IGroup>,
   ): Promise<FormattedGroup> {
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
     // Check if user is admin (creator or has admin role)
-    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const userObjectId = new mongoose.Types.ObjectId(userId)
     if (!group.createdBy.equals(userObjectId)) {
-      throw new Error("Only group admin can update group details");
+      throw new Error("Only group admin can update group details")
     }
 
     // Update allowed fields
-    const allowedUpdates = ["name", "description", "category", "tags", "isPublic", "avatar"];
-    Object.keys(updates).forEach(key => {
-      if (allowedUpdates.includes(key) && updates[key as keyof IGroup] !== undefined) {
-        (group as any)[key] = updates[key as keyof IGroup];
+    const allowedUpdates = [
+      "name",
+      "description",
+      "category",
+      "tags",
+      "isPublic",
+      "avatar",
+    ]
+    Object.keys(updates).forEach((key) => {
+      if (
+        allowedUpdates.includes(key) &&
+        updates[key as keyof IGroup] !== undefined
+      ) {
+        ;(group as any)[key] = updates[key as keyof IGroup]
       }
-    });
+    })
 
-    group.lastActivity = new Date();
-    await group.save();
-    await group.populate("createdBy", "name");
+    group.lastActivity = new Date()
+    await group.save()
+    await group.populate("createdBy", "name")
 
-    logger.info(`Group ${groupId} updated by ${userId}`);
+    logger.info(`Group ${groupId} updated by ${userId}`)
 
     return {
       id: group._id.toString(),
@@ -328,8 +335,8 @@ throw new Error("Group not found");
       avatar: group.avatar || null,
       tags: group.tags || [],
       createdBy: (group.createdBy as any).name,
-      createdAt: group.createdAt.toISOString()
-    };
+      createdAt: group.createdAt.toISOString(),
+    }
   }
 
   /**
@@ -338,35 +345,36 @@ throw new Error("Group not found");
   async deleteGroup(
     groupId: string,
     requesterId: string,
-    isAdmin = false
+    isAdmin = false,
   ): Promise<void> {
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
     if (!isAdmin && group.createdBy.toString() !== requesterId) {
-      throw new Error("Not authorized");
+      throw new Error("Not authorized")
     }
 
     // Delete associated messages
-    await GroupMessage.deleteMany({ groupId: new mongoose.Types.ObjectId(groupId) });
+    await GroupMessage.deleteMany({
+      groupId: new mongoose.Types.ObjectId(groupId),
+    })
 
-    await group.deleteOne();
-    logger.info(`Group ${groupId} deleted by ${requesterId}`);
+    await group.deleteOne()
+    logger.info(`Group ${groupId} deleted by ${requesterId}`)
   }
 
   /**
    * List groups the user has joined
    */
   async getMyGroups(userId: string): Promise<FormattedGroup[]> {
-    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const userObjectId = new mongoose.Types.ObjectId(userId)
 
     const groups = await Group.find({ members: userObjectId })
       .populate("createdBy", "name")
       .sort({ lastActivity: -1 })
-      .lean();
+      .lean()
 
-    return groups.map(group => ({
+    return groups.map((group) => ({
       id: group._id.toString(),
       name: group.name,
       description: group.description || "",
@@ -374,40 +382,45 @@ throw new Error("Group not found");
       memberCount: group.members?.length || 0,
       isPublic: group.isPublic ?? true,
       isJoined: true,
-      lastActivity: group.lastActivity?.toISOString() || group.createdAt.toISOString(),
+      lastActivity:
+        group.lastActivity?.toISOString() || group.createdAt.toISOString(),
       avatar: group.avatar || null,
       tags: group.tags || [],
       createdBy: (group.createdBy as any)?.name || "Unknown",
-      createdAt: group.createdAt.toISOString()
-    }));
+      createdAt: group.createdAt.toISOString(),
+    }))
   }
 
   /**
    * Get group members
    */
-  async getGroupMembers(groupId: string, userId: string): Promise<FormattedMember[]> {
+  async getGroupMembers(
+    groupId: string,
+    userId: string,
+  ): Promise<FormattedMember[]> {
     const group = await Group.findById(groupId)
       .populate("members", "name email profilePicture lastActive")
-      .populate("createdBy", "_id");
+      .populate("createdBy", "_id")
 
-    if (!group) 
-throw new Error("Group not found");
+    if (!group) throw new Error("Group not found")
 
     // Check if user is a member
-    const userObjectId = new mongoose.Types.ObjectId(userId);
+    const userObjectId = new mongoose.Types.ObjectId(userId)
     if (!group.members.some((member: any) => member._id.equals(userObjectId))) {
-      throw new Error("Not authorized to view members");
+      throw new Error("Not authorized to view members")
     }
 
-    return (group.members as any[]).map(member => ({
+    return (group.members as any[]).map((member) => ({
       id: member._id.toString(),
       name: member.name,
       email: member.email,
       profilePicture: member.profilePicture || null,
       role: member._id.equals(group.createdBy._id) ? "admin" : "member",
       joinedAt: member.createdAt?.toISOString() || new Date().toISOString(),
-      isOnline: member.lastActive ? (Date.now() - new Date(member.lastActive).getTime() < 5 * 60 * 1000) : false
-    }));
+      isOnline: member.lastActive
+        ? Date.now() - new Date(member.lastActive).getTime() < 5 * 60 * 1000
+        : false,
+    }))
   }
 
   /**
@@ -415,25 +428,26 @@ throw new Error("Group not found");
    */
   async getGroupMessages(
     groupId: string,
-    userId: string
+    userId: string,
   ): Promise<IGroupMessage[]> {
     // Check if user is a member
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
-    const userObjectId = new mongoose.Types.ObjectId(userId);
-    if (!group.members.some(member => member.equals(userObjectId))) {
-      throw new Error("Not authorized to view messages");
+    const userObjectId = new mongoose.Types.ObjectId(userId)
+    if (!group.members.some((member) => member.equals(userObjectId))) {
+      throw new Error("Not authorized to view messages")
     }
 
-    const messages = await GroupMessage.find({ groupId: new mongoose.Types.ObjectId(groupId) })
+    const messages = await GroupMessage.find({
+      groupId: new mongoose.Types.ObjectId(groupId),
+    })
       .populate("senderId", "name profilePicture")
       .sort({ createdAt: -1 })
       .limit(50) // Default limit
-      .lean();
+      .lean()
 
-    return messages.reverse(); // Return in chronological order
+    return messages.reverse() // Return in chronological order
   }
 
   /**
@@ -443,30 +457,29 @@ throw new Error("Group not found");
     groupId: string,
     userId: string,
     content: string,
-    io: Server
+    io: Server,
   ): Promise<IGroupMessage> {
     // Check if user is a member
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
-    const userObjectId = new mongoose.Types.ObjectId(userId);
-    if (!group.members.some(member => member.equals(userObjectId))) {
-      throw new Error("Not authorized to send messages");
+    const userObjectId = new mongoose.Types.ObjectId(userId)
+    if (!group.members.some((member) => member.equals(userObjectId))) {
+      throw new Error("Not authorized to send messages")
     }
 
     const message = await GroupMessage.create({
       groupId: new mongoose.Types.ObjectId(groupId),
       senderId: userObjectId,
       content: content.trim(),
-      timestamp: new Date()
-    });
+      timestamp: new Date(),
+    })
 
-    await message.populate("senderId", "name profilePicture");
+    await message.populate("senderId", "name profilePicture")
 
     // Update group's last activity
-    group.lastActivity = new Date();
-    await group.save();
+    group.lastActivity = new Date()
+    await group.save()
 
     // Emit to group room
     io.in(groupId).emit("newGroupMessage", {
@@ -475,12 +488,12 @@ throw new Error("Group not found");
       senderName: (message.senderId as any).name,
       content: message.content,
       timestamp: message.timestamp.toISOString(),
-      type: "message"
-    });
+      type: "message",
+    })
 
-    logger.info(`Message sent to group ${groupId} by ${userId}`);
+    logger.info(`Message sent to group ${groupId} by ${userId}`)
 
-    return message;
+    return message
   }
 
   /**
@@ -490,22 +503,21 @@ throw new Error("Group not found");
     groupId: string,
     inviteeId: string,
     inviterId: string,
-    io: Server
+    io: Server,
   ): Promise<void> {
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
     // Check if inviter is a member
-    const inviterObjectId = new mongoose.Types.ObjectId(inviterId);
-    if (!group.members.some(member => member.equals(inviterObjectId))) {
-      throw new Error("Not authorized to invite members");
+    const inviterObjectId = new mongoose.Types.ObjectId(inviterId)
+    if (!group.members.some((member) => member.equals(inviterObjectId))) {
+      throw new Error("Not authorized to invite members")
     }
 
     // Check if invitee is already a member
-    const inviteeObjectId = new mongoose.Types.ObjectId(inviteeId);
-    if (group.members.some(member => member.equals(inviteeObjectId))) {
-      throw new Error("User is already a member");
+    const inviteeObjectId = new mongoose.Types.ObjectId(inviteeId)
+    if (group.members.some((member) => member.equals(inviteeObjectId))) {
+      throw new Error("User is already a member")
     }
 
     const notification = await Notification.create({
@@ -514,15 +526,17 @@ throw new Error("Group not found");
       type: "invitation",
       read: false,
       link: `/groups/${groupId}`,
-    });
+    })
 
     // Emit to the user room
     io.to(inviteeId).emit("groupInvitation", {
       groupId,
       message: notification.message,
-    });
+    })
 
-    logger.info(`Invitation for group ${groupId} sent to ${inviteeId} by ${inviterId}`);
+    logger.info(
+      `Invitation for group ${groupId} sent to ${inviteeId} by ${inviterId}`,
+    )
   }
 
   /**
@@ -532,37 +546,40 @@ throw new Error("Group not found");
     groupId: string,
     memberToRemove: string,
     adminId: string,
-    io: Server
+    io: Server,
   ): Promise<void> {
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
     // Check if requester is admin
-    const adminObjectId = new mongoose.Types.ObjectId(adminId);
+    const adminObjectId = new mongoose.Types.ObjectId(adminId)
     if (!group.createdBy.equals(adminObjectId)) {
-      throw new Error("Only group admin can remove members");
+      throw new Error("Only group admin can remove members")
     }
 
     // Check if member exists
-    const memberObjectId = new mongoose.Types.ObjectId(memberToRemove);
-    if (!group.members.some(member => member.equals(memberObjectId))) {
-      throw new Error("User is not a member of this group");
+    const memberObjectId = new mongoose.Types.ObjectId(memberToRemove)
+    if (!group.members.some((member) => member.equals(memberObjectId))) {
+      throw new Error("User is not a member of this group")
     }
 
     // Cannot remove the group creator
     if (group.createdBy.equals(memberObjectId)) {
-      throw new Error("Cannot remove group creator");
+      throw new Error("Cannot remove group creator")
     }
 
-    group.members = group.members.filter(member => !member.equals(memberObjectId));
-    group.lastActivity = new Date();
-    await group.save();
+    group.members = group.members.filter(
+      (member) => !member.equals(memberObjectId),
+    )
+    group.lastActivity = new Date()
+    await group.save()
 
     // Notify the group
-    io.in(groupId).emit("memberRemoved", { userId: memberToRemove });
+    io.in(groupId).emit("memberRemoved", { userId: memberToRemove })
 
-    logger.info(`Member ${memberToRemove} removed from group ${groupId} by ${adminId}`);
+    logger.info(
+      `Member ${memberToRemove} removed from group ${groupId} by ${adminId}`,
+    )
   }
 
   /**
@@ -571,11 +588,10 @@ throw new Error("Group not found");
   async inviteToGroup(
     groupId: string,
     userId: string,
-    io: Server
+    io: Server,
   ): Promise<void> {
-    const group = await Group.findById(groupId);
-    if (!group) 
-throw new Error("Group not found");
+    const group = await Group.findById(groupId)
+    if (!group) throw new Error("Group not found")
 
     const notification = await Notification.create({
       user: userId,
@@ -583,16 +599,16 @@ throw new Error("Group not found");
       type: "invitation",
       read: false,
       link: `/groups/${groupId}`,
-    });
+    })
 
     // Emit to the user room
     io.to(userId).emit("groupInvitation", {
       groupId,
       message: notification.message,
-    });
+    })
 
-    logger.info(`Invitation for group ${groupId} sent to ${userId}`);
+    logger.info(`Invitation for group ${groupId} sent to ${userId}`)
   }
 }
 
-export default new GroupService();
+export default new GroupService()

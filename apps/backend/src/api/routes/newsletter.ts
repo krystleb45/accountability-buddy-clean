@@ -1,32 +1,32 @@
 // src/api/routes/newsletter.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
 import {
   getSubscribers,
   signupNewsletter,
   unsubscribeNewsletter,
-} from "../controllers/NewsletterController";
-import { protect, restrictTo } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+} from "../controllers/NewsletterController"
+import { protect, restrictTo } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 // Rate limiter for signup (public)
 const newsletterRateLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 50,                  // 50 requests per window
+  max: 50, // 50 requests per window
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     success: false,
     message: "Too many signup attempts from this IP, please try again later.",
   },
-});
+})
 
 /**
  * POST /api/newsletter/signup
@@ -35,14 +35,14 @@ const newsletterRateLimiter = rateLimit({
 router.post(
   "/signup",
   newsletterRateLimiter,
-  [
-    check("email", "A valid email is required").isEmail(),
-  ],
+  [check("email", "A valid email is required").isEmail()],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await signupNewsletter(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await signupNewsletter(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/newsletter/unsubscribe
@@ -50,14 +50,14 @@ router.post(
  */
 router.get(
   "/unsubscribe",
-  [
-    check("token", "Unsubscribe token is required").notEmpty(),
-  ],
+  [check("token", "Unsubscribe token is required").notEmpty()],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await unsubscribeNewsletter(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await unsubscribeNewsletter(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/newsletter/subscribers
@@ -67,9 +67,11 @@ router.get(
   "/subscribers",
   protect,
   restrictTo("admin"),
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await getSubscribers(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await getSubscribers(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

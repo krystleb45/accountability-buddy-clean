@@ -1,12 +1,12 @@
 // src/api/routes/friends.ts
-import { Router } from "express";
-import { check, param, query } from "express-validator";
+import { Router } from "express"
+import { check, param, query } from "express-validator"
 
-import friendshipController from "../controllers/FriendshipController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import friendshipController from "../controllers/FriendshipController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 /**
  * @swagger
@@ -22,12 +22,10 @@ const router = Router();
 router.post(
   "/request",
   protect,
-  [
-    check("recipientId", "Recipient ID is required").isMongoId(),
-  ],
+  [check("recipientId", "Recipient ID is required").isMongoId()],
   handleValidationErrors,
-  friendshipController.sendFriendRequest
-);
+  friendshipController.sendFriendRequest,
+)
 
 /**
  * POST /api/friends/accept
@@ -36,12 +34,10 @@ router.post(
 router.post(
   "/accept",
   protect,
-  [
-    check("requestId", "Request ID is required").isMongoId(),
-  ],
+  [check("requestId", "Request ID is required").isMongoId()],
   handleValidationErrors,
-  friendshipController.acceptFriendRequest
-);
+  friendshipController.acceptFriendRequest,
+)
 
 /**
  * POST /api/friends/decline
@@ -50,12 +46,10 @@ router.post(
 router.post(
   "/decline",
   protect,
-  [
-    check("requestId", "Request ID is required").isMongoId(),
-  ],
+  [check("requestId", "Request ID is required").isMongoId()],
   handleValidationErrors,
-  friendshipController.rejectFriendRequest
-);
+  friendshipController.rejectFriendRequest,
+)
 
 /**
  * DELETE /api/friends/remove/:friendId
@@ -64,22 +58,16 @@ router.post(
 router.delete(
   "/remove/:friendId",
   protect,
-  [
-    param("friendId", "Friend ID must be a valid Mongo ID").isMongoId(),
-  ],
+  [param("friendId", "Friend ID must be a valid Mongo ID").isMongoId()],
   handleValidationErrors,
-  friendshipController.removeFriend
-);
+  friendshipController.removeFriend,
+)
 
 /**
  * GET /api/friends
  * Get user's friend list
  */
-router.get(
-  "/",
-  protect,
-  friendshipController.getFriendsList
-);
+router.get("/", protect, friendshipController.getFriendsList)
 
 /**
  * GET /api/friends/online
@@ -88,22 +76,16 @@ router.get(
 router.get(
   "/online",
   protect,
-  [
-    query("limit").optional().isInt({ min: 1, max: 50 }),
-  ],
+  [query("limit").optional().isInt({ min: 1, max: 50 })],
   handleValidationErrors,
-  friendshipController.getOnlineFriends
-);
+  friendshipController.getOnlineFriends,
+)
 
 /**
  * GET /api/friends/requests
  * Get all pending friend requests
  */
-router.get(
-  "/requests",
-  protect,
-  friendshipController.getPendingFriendRequests
-);
+router.get("/requests", protect, friendshipController.getPendingFriendRequests)
 
 /**
  * GET /api/friends/recommendations
@@ -112,8 +94,8 @@ router.get(
 router.get(
   "/recommendations",
   protect,
-  friendshipController.getAIRecommendedFriends
-);
+  friendshipController.getAIRecommendedFriends,
+)
 
 /**
  * DELETE /api/friends/cancel/:requestId
@@ -122,11 +104,9 @@ router.get(
 router.delete(
   "/cancel/:requestId",
   protect,
-  [
-    param("requestId", "Request ID must be a valid Mongo ID").isMongoId(),
-  ],
+  [param("requestId", "Request ID must be a valid Mongo ID").isMongoId()],
   handleValidationErrors,
-  friendshipController.cancelFriendRequest
-);
+  friendshipController.cancelFriendRequest,
+)
 
-export default router;
+export default router

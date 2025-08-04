@@ -1,7 +1,6 @@
-// src/utils/handleRouteErrors.ts
-import type { NextFunction, Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express"
 
-import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
+import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest"
 // Removed: import { createError } from "../middleware/errorHandler";
 
 /**
@@ -13,15 +12,23 @@ import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRe
  * @returns RequestHandler
  */
 export function handleRouteErrors<T = any>(
-  handler: (req: AdminAuthenticatedRequest<{}, any, T>, res: Response, next: NextFunction) => Promise<void>
+  handler: (
+    req: AdminAuthenticatedRequest<any, any, T>,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void>,
 ): RequestHandler {
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
       // Cast the incoming Request to our strict admin type.
-      const adminReq = req as unknown as AdminAuthenticatedRequest<{}, any, T>;
-      await handler(adminReq, res, next);
+      const adminReq = req as unknown as AdminAuthenticatedRequest<any, any, T>
+      await handler(adminReq, res, next)
     } catch (err) {
-      next(err);
+      next(err)
     }
-  };
+  }
 }

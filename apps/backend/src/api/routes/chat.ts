@@ -1,25 +1,31 @@
 // src/api/routes/chat.ts - Updated with subscription restrictions
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, param } from "express-validator"
 
-import * as chatController from "../controllers/chatController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import { validateFeatureAccess, validateSubscription } from "../middleware/subscriptionValidation";
-import catchAsync from "../utils/catchAsync";
+import * as chatController from "../controllers/chatController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import {
+  validateFeatureAccess,
+  validateSubscription,
+} from "../middleware/subscriptionValidation"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 // Throttle to 60 requests per minute
 const chatLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 60,
-  message: { success: false, message: "Too many requests from this IP, please try again later." },
-});
-router.use(chatLimiter);
+  message: {
+    success: false,
+    message: "Too many requests from this IP, please try again later.",
+  },
+})
+router.use(chatLimiter)
 
 /**
  * POST /api/chat/send
@@ -34,10 +40,12 @@ router.post(
     check("chatId", "Invalid chat ID").isMongoId(),
     handleValidationErrors,
   ],
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await chatController.sendMessage(req, res, next); // Fixed: was editMessage, now sendMessage
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await chatController.sendMessage(req, res, next) // Fixed: was editMessage, now sendMessage
+    },
+  ),
+)
 
 /**
  * POST /api/chat/private/:friendId
@@ -53,10 +61,12 @@ router.post(
     check("message", "Message cannot be empty").notEmpty(),
     handleValidationErrors,
   ],
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await chatController.sendPrivateMessage(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await chatController.sendPrivateMessage(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/chat/private/:friendId
@@ -67,11 +77,13 @@ router.get(
   protect,
   validateSubscription,
   validateFeatureAccess("dmMessaging"), // Pro+ plan required for private messaging
-  [ param("friendId", "Invalid friend ID").isMongoId(), handleValidationErrors ],
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await chatController.getPrivateChats(req, res, next);
-  })
-);
+  [param("friendId", "Invalid friend ID").isMongoId(), handleValidationErrors],
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await chatController.getPrivateChats(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/chat/rooms/create
@@ -89,17 +101,27 @@ router.post(
     handleValidationErrors,
   ],
   // Check if creating private room (Elite plan only)
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    if (req.body.isPrivate === true) {
-      return validateFeatureAccess("privateRooms")(req, res, next);
-    }
-    next();
-  }),
-  catchAsync(async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    // Add your room creation controller here
-    res.status(501).json({ success: false, message: "Room creation not implemented yet" });
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      if (req.body.isPrivate === true) {
+        return validateFeatureAccess("privateRooms")(req, res, next)
+      }
+      next()
+    },
+  ),
+  catchAsync(
+    async (
+      _req: Request,
+      res: Response,
+      _next: NextFunction,
+    ): Promise<void> => {
+      // Add your room creation controller here
+      res
+        .status(501)
+        .json({ success: false, message: "Room creation not implemented yet" })
+    },
+  ),
+)
 
 /**
  * GET /api/chat/rooms
@@ -109,11 +131,19 @@ router.get(
   "/rooms",
   protect,
   validateSubscription,
-  catchAsync(async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    // Add your get rooms controller here
-    res.status(501).json({ success: false, message: "Get rooms not implemented yet" });
-  })
-);
+  catchAsync(
+    async (
+      _req: Request,
+      res: Response,
+      _next: NextFunction,
+    ): Promise<void> => {
+      // Add your get rooms controller here
+      res
+        .status(501)
+        .json({ success: false, message: "Get rooms not implemented yet" })
+    },
+  ),
+)
 
 /**
  * POST /api/chat/rooms/:roomId/join
@@ -123,16 +153,21 @@ router.post(
   "/rooms/:roomId/join",
   protect,
   validateSubscription,
-  [
-    param("roomId", "Invalid room ID").isMongoId(),
-    handleValidationErrors,
-  ],
-  catchAsync(async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    // You would check in the controller if the room is private and validate accordingly
-    // For now, allowing all subscribed users to join
-    res.status(501).json({ success: false, message: "Join room not implemented yet" });
-  })
-);
+  [param("roomId", "Invalid room ID").isMongoId(), handleValidationErrors],
+  catchAsync(
+    async (
+      _req: Request,
+      res: Response,
+      _next: NextFunction,
+    ): Promise<void> => {
+      // You would check in the controller if the room is private and validate accordingly
+      // For now, allowing all subscribed users to join
+      res
+        .status(501)
+        .json({ success: false, message: "Join room not implemented yet" })
+    },
+  ),
+)
 
 /**
  * POST /api/chat/rooms/:roomId/leave
@@ -142,14 +177,19 @@ router.post(
   "/rooms/:roomId/leave",
   protect,
   validateSubscription,
-  [
-    param("roomId", "Invalid room ID").isMongoId(),
-    handleValidationErrors,
-  ],
-  catchAsync(async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    res.status(501).json({ success: false, message: "Leave room not implemented yet" });
-  })
-);
+  [param("roomId", "Invalid room ID").isMongoId(), handleValidationErrors],
+  catchAsync(
+    async (
+      _req: Request,
+      res: Response,
+      _next: NextFunction,
+    ): Promise<void> => {
+      res
+        .status(501)
+        .json({ success: false, message: "Leave room not implemented yet" })
+    },
+  ),
+)
 
 /**
  * GET /api/chat/rooms/:roomId/messages
@@ -159,15 +199,21 @@ router.get(
   "/rooms/:roomId/messages",
   protect,
   validateSubscription,
-  [
-    param("roomId", "Invalid room ID").isMongoId(),
-    handleValidationErrors,
-  ],
-  catchAsync(async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    // Controller should check if room is private and validate subscription accordingly
-    res.status(501).json({ success: false, message: "Get room messages not implemented yet" });
-  })
-);
+  [param("roomId", "Invalid room ID").isMongoId(), handleValidationErrors],
+  catchAsync(
+    async (
+      _req: Request,
+      res: Response,
+      _next: NextFunction,
+    ): Promise<void> => {
+      // Controller should check if room is private and validate subscription accordingly
+      res.status(501).json({
+        success: false,
+        message: "Get room messages not implemented yet",
+      })
+    },
+  ),
+)
 
 /**
  * POST /api/chat/rooms/:roomId/messages
@@ -182,10 +228,19 @@ router.post(
     check("message", "Message is required").notEmpty(),
     handleValidationErrors,
   ],
-  catchAsync(async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    // Controller should check if room is private and validate subscription accordingly
-    res.status(501).json({ success: false, message: "Send room message not implemented yet" });
-  })
-);
+  catchAsync(
+    async (
+      _req: Request,
+      res: Response,
+      _next: NextFunction,
+    ): Promise<void> => {
+      // Controller should check if room is private and validate subscription accordingly
+      res.status(501).json({
+        success: false,
+        message: "Send room message not implemented yet",
+      })
+    },
+  ),
+)
 
-export default router;
+export default router

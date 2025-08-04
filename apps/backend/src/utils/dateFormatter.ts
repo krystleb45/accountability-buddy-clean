@@ -1,33 +1,33 @@
 interface SuccessResponse<T> {
-  success: true;
-  message: string;
-  data: T;
-  timestamp: string;
+  success: true
+  message: string
+  data: T
+  timestamp: string
 }
 
 interface ErrorResponse {
-  success: false;
-  message: string;
-  statusCode: number;
-  details: string[];
-  timestamp: string;
+  success: false
+  message: string
+  statusCode: number
+  details: string[]
+  timestamp: string
 }
 
 interface PaginationMetadata {
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPrevPage: boolean;
+  currentPage: number
+  pageSize: number
+  totalItems: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
 }
 
 interface PaginatedResponse<T> {
-  success: true;
-  message: string;
-  data: T[];
-  pagination: PaginationMetadata;
-  timestamp: string;
+  success: true
+  message: string
+  data: T[]
+  pagination: PaginationMetadata
+  timestamp: string
 }
 
 /**
@@ -36,13 +36,16 @@ interface PaginatedResponse<T> {
  * @param {string} [message] - A success message to include.
  * @returns {SuccessResponse<T>} - The formatted success response object.
  */
-export function formatSuccessResponse <T>(data: T,  message = "Request successful"): SuccessResponse<T> {
+export function formatSuccessResponse<T>(
+  data: T,
+  message = "Request successful",
+): SuccessResponse<T> {
   return {
     success: true,
     message,
     data: data || ({} as T),
     timestamp: new Date().toISOString(),
-  };
+  }
 }
 
 /**
@@ -52,14 +55,18 @@ export function formatSuccessResponse <T>(data: T,  message = "Request successfu
  * @param {string[]} [details] - Optional array of error details.
  * @returns {ErrorResponse} - The formatted error response object.
  */
-export function formatErrorResponse (errorMessage: string,  statusCode = 400,  details: string[] = []): ErrorResponse {
+export function formatErrorResponse(
+  errorMessage: string,
+  statusCode = 400,
+  details: string[] = [],
+): ErrorResponse {
   return {
     success: false,
     message: errorMessage || "An error occurred",
     statusCode,
     details: Array.isArray(details) ? details : [details],
     timestamp: new Date().toISOString(),
-  };
+  }
 }
 
 /**
@@ -71,8 +78,14 @@ export function formatErrorResponse (errorMessage: string,  statusCode = 400,  d
  * @param {string} [message] - A success message to include.
  * @returns {PaginatedResponse<T>} - The formatted paginated response object.
  */
-export function formatPaginatedResponse <T>(data: T[],  page: number,  pageSize: number,  totalItems: number,  message = "Request successful"): PaginatedResponse<T> {
-  const totalPages = Math.ceil(totalItems / pageSize) || 1;
+export function formatPaginatedResponse<T>(
+  data: T[],
+  page: number,
+  pageSize: number,
+  totalItems: number,
+  message = "Request successful",
+): PaginatedResponse<T> {
+  const totalPages = Math.ceil(totalItems / pageSize) || 1
 
   return {
     success: true,
@@ -87,5 +100,5 @@ export function formatPaginatedResponse <T>(data: T[],  page: number,  pageSize:
       hasPrevPage: page > 1,
     },
     timestamp: new Date().toISOString(),
-  };
+  }
 }

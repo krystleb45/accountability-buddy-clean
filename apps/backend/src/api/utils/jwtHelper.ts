@@ -1,16 +1,16 @@
-import type { JwtPayload, SignOptions } from "jsonwebtoken";
+import type { JwtPayload, SignOptions } from "jsonwebtoken"
 
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 
 // Default expiration times
-const DEFAULT_ACCESS_TOKEN_EXPIRY = "1h";
-const DEFAULT_REFRESH_TOKEN_EXPIRY = "7d";
+const DEFAULT_ACCESS_TOKEN_EXPIRY = "1h"
+const DEFAULT_REFRESH_TOKEN_EXPIRY = "7d"
 
 interface TokenPayload extends JwtPayload {
-  id: string;
-  email?: string;
-  role?: string;
-  [key: string]: unknown;
+  id: string
+  email?: string
+  role?: string
+  [key: string]: unknown
 }
 
 /**
@@ -20,17 +20,21 @@ interface TokenPayload extends JwtPayload {
  * @returns The signed JWT access token.
  * @throws Error if `JWT_SECRET` is not defined or token generation fails.
  */
-export function generateAccessToken (payload: TokenPayload,  expiresIn: string = DEFAULT_ACCESS_TOKEN_EXPIRY): string {
-  const secretKey = process.env.JWT_SECRET;
+export function generateAccessToken(
+  payload: TokenPayload,
+  expiresIn: string = DEFAULT_ACCESS_TOKEN_EXPIRY,
+): string {
+  const secretKey = process.env.JWT_SECRET
   if (!secretKey) {
-    throw new Error("JWT_SECRET is not defined in environment variables.");
+    throw new Error("JWT_SECRET is not defined in environment variables.")
   }
 
   try {
-    return jwt.sign(payload, secretKey, { expiresIn } as SignOptions);
+    return jwt.sign(payload, secretKey, { expiresIn } as SignOptions)
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    throw new Error(`Failed to generate access token: ${errorMessage}`);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    throw new Error(`Failed to generate access token: ${errorMessage}`)
   }
 }
 
@@ -41,17 +45,23 @@ export function generateAccessToken (payload: TokenPayload,  expiresIn: string =
  * @returns The signed JWT refresh token.
  * @throws Error if `JWT_REFRESH_SECRET` is not defined or token generation fails.
  */
-export function generateRefreshToken (payload: TokenPayload,  expiresIn: string = DEFAULT_REFRESH_TOKEN_EXPIRY): string {
-  const refreshSecretKey = process.env.JWT_REFRESH_SECRET;
+export function generateRefreshToken(
+  payload: TokenPayload,
+  expiresIn: string = DEFAULT_REFRESH_TOKEN_EXPIRY,
+): string {
+  const refreshSecretKey = process.env.JWT_REFRESH_SECRET
   if (!refreshSecretKey) {
-    throw new Error("JWT_REFRESH_SECRET is not defined in environment variables.");
+    throw new Error(
+      "JWT_REFRESH_SECRET is not defined in environment variables.",
+    )
   }
 
   try {
-    return jwt.sign(payload, refreshSecretKey, { expiresIn } as SignOptions);
+    return jwt.sign(payload, refreshSecretKey, { expiresIn } as SignOptions)
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    throw new Error(`Failed to generate refresh token: ${errorMessage}`);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    throw new Error(`Failed to generate refresh token: ${errorMessage}`)
   }
 }
 
@@ -61,17 +71,18 @@ export function generateRefreshToken (payload: TokenPayload,  expiresIn: string 
  * @returns The decoded token payload.
  * @throws Error if token verification fails.
  */
-export function verifyAccessToken (token: string): TokenPayload {
-  const secretKey = process.env.JWT_SECRET;
+export function verifyAccessToken(token: string): TokenPayload {
+  const secretKey = process.env.JWT_SECRET
   if (!secretKey) {
-    throw new Error("JWT_SECRET is not defined in environment variables.");
+    throw new Error("JWT_SECRET is not defined in environment variables.")
   }
 
   try {
-    return jwt.verify(token, secretKey) as TokenPayload;
+    return jwt.verify(token, secretKey) as TokenPayload
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    throw new Error(`Failed to verify access token: ${errorMessage}`);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    throw new Error(`Failed to verify access token: ${errorMessage}`)
   }
 }
 
@@ -81,17 +92,20 @@ export function verifyAccessToken (token: string): TokenPayload {
  * @returns The decoded refresh token payload.
  * @throws Error if token verification fails.
  */
-export function verifyRefreshToken (refreshToken: string): TokenPayload {
-  const refreshSecretKey = process.env.JWT_REFRESH_SECRET;
+export function verifyRefreshToken(refreshToken: string): TokenPayload {
+  const refreshSecretKey = process.env.JWT_REFRESH_SECRET
   if (!refreshSecretKey) {
-    throw new Error("JWT_REFRESH_SECRET is not defined in environment variables.");
+    throw new Error(
+      "JWT_REFRESH_SECRET is not defined in environment variables.",
+    )
   }
 
   try {
-    return jwt.verify(refreshToken, refreshSecretKey) as TokenPayload;
+    return jwt.verify(refreshToken, refreshSecretKey) as TokenPayload
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    throw new Error(`Failed to verify refresh token: ${errorMessage}`);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    throw new Error(`Failed to verify refresh token: ${errorMessage}`)
   }
 }
 
@@ -100,12 +114,13 @@ export function verifyRefreshToken (refreshToken: string): TokenPayload {
  * @param token - The JWT token to decode.
  * @returns The decoded token payload or null if decoding fails.
  */
-export function decodeToken (token: string): TokenPayload | null {
+export function decodeToken(token: string): TokenPayload | null {
   try {
-    return jwt.decode(token) as TokenPayload | null;
+    return jwt.decode(token) as TokenPayload | null
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    throw new Error(`Failed to decode token: ${errorMessage}`);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    throw new Error(`Failed to decode token: ${errorMessage}`)
   }
 }
 
@@ -115,4 +130,4 @@ export default {
   verifyAccessToken,
   verifyRefreshToken,
   decodeToken,
-};
+}

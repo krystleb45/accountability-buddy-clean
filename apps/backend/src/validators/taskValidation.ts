@@ -1,33 +1,37 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 /**
  * Middleware to handle validation results and send structured errors.
  */
-export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function validationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     // Format validation errors into a structured response
     const formattedErrors = errors.array().map((error) => {
-      const field = "param" in error ? error.param : "unknown";
+      const field = "param" in error ? error.param : "unknown"
       return {
         field,
         message: error.msg,
-      };
-    });
+      }
+    })
 
     res.status(400).json({
       success: false,
       message: "Validation failed.",
       errors: formattedErrors,
-    });
+    })
 
-    return; // Terminate middleware execution
+    return // Terminate middleware execution
   }
 
-  next(); // Proceed to the next middleware
+  next() // Proceed to the next middleware
 }
 
 /**
@@ -56,9 +60,9 @@ export const createTaskValidation = [
     .toDate()
     .custom((value) => {
       if (new Date(value) <= new Date()) {
-        throw new Error("Due date must be in the future.");
+        throw new Error("Due date must be in the future.")
       }
-      return true;
+      return true
     }),
 
   check("priority")
@@ -72,7 +76,7 @@ export const createTaskValidation = [
     .withMessage("Status must be one of: pending, in-progress, completed."),
 
   validationMiddleware, // Attach reusable validation middleware
-];
+]
 
 /**
  * Validation for updating a task.
@@ -105,9 +109,9 @@ export const updateTaskValidation = [
     .toDate()
     .custom((value) => {
       if (new Date(value) <= new Date()) {
-        throw new Error("Due date must be in the future.");
+        throw new Error("Due date must be in the future.")
       }
-      return true;
+      return true
     }),
 
   check("priority")
@@ -121,7 +125,7 @@ export const updateTaskValidation = [
     .withMessage("Status must be one of: pending, in-progress, completed."),
 
   validationMiddleware, // Attach reusable validation middleware
-];
+]
 
 /**
  * Validation for deleting a task.
@@ -134,4 +138,4 @@ export const deleteTaskValidation = [
     .withMessage("Task ID must be a valid Mongo ID"),
 
   validationMiddleware, // Attach reusable validation middleware
-];
+]

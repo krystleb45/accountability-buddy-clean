@@ -1,22 +1,25 @@
 // src/api/routes/gamification.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, query } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, query } from "express-validator"
 
-import gamificationController from "../controllers/gamificationController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import gamificationController from "../controllers/gamificationController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // throttle to 10 requests per minute
 const leaderboardLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 10,
-  message: { success: false, message: "Too many requests, please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests, please try again later.",
+  },
+})
 
 /**
  * GET /api/gamification/leaderboard
@@ -39,16 +42,19 @@ router.get(
   handleValidationErrors,
   // Wrap in an async function so it returns Promise<void>
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await gamificationController.getLeaderboard(req, res, next);
-  }
-);
+    await gamificationController.getLeaderboard(req, res, next)
+  },
+)
 
 // throttle to 10 requests per 15 minutes
 const addPointsLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { success: false, message: "Too many requests, please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests, please try again later.",
+  },
+})
 
 /**
  * POST /api/gamification/add-points
@@ -66,8 +72,8 @@ router.post(
   ],
   handleValidationErrors,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await gamificationController.addPoints(req, res, next);
-  }
-);
+    await gamificationController.addPoints(req, res, next)
+  },
+)
 
-export default router;
+export default router

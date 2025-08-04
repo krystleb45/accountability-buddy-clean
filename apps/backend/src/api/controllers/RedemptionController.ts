@@ -1,9 +1,11 @@
 // src/api/controllers/RedemptionController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express"
 
-import RedemptionService from "../services/RedemptionService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+
+import RedemptionService from "../services/RedemptionService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 /**
  * @desc    Redeem an item for the authenticated user
@@ -12,22 +14,26 @@ import sendResponse from "../utils/sendResponse";
  */
 export const createRedemption = catchAsync(
   async (
-    req: Request<{}, {}, { item: string; pointsUsed: number }>,
+    req: AuthenticatedRequest<
+      unknown,
+      unknown,
+      { item: string; pointsUsed: number }
+    >,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const { item, pointsUsed } = req.body;
+    const userId = req.user!.id
+    const { item, pointsUsed } = req.body
 
     const redemption = await RedemptionService.redeemForUser(
       userId,
       item,
-      pointsUsed
-    );
+      pointsUsed,
+    )
 
-    sendResponse(res, 201, true, "Redemption recorded", { redemption });
-  }
-);
+    sendResponse(res, 201, true, "Redemption recorded", { redemption })
+  },
+)
 
 /**
  * @desc    Get all redemptions for the authenticated user
@@ -35,12 +41,12 @@ export const createRedemption = catchAsync(
  * @access  Private
  */
 export const getMyRedemptions = catchAsync(
-  async (_req: Request, res: Response): Promise<void> => {
-    const userId = (_req.user as any).id;
-    const redemptions = await RedemptionService.listByUser(userId);
-    sendResponse(res, 200, true, "Redemptions fetched", { redemptions });
-  }
-);
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const userId = req.user!.id
+    const redemptions = await RedemptionService.listByUser(userId)
+    sendResponse(res, 200, true, "Redemptions fetched", { redemptions })
+  },
+)
 
 /**
  * @desc    Get redemptions within a date range (admin)
@@ -49,14 +55,24 @@ export const getMyRedemptions = catchAsync(
  */
 export const getRedemptionsByDate = catchAsync(
   async (
-    req: Request<{}, {}, {}, { start: string; end: string }>,
-    res: Response
+    req: AuthenticatedRequest<
+      unknown,
+      unknown,
+      unknown,
+      { start: string; end: string }
+    >,
+    res: Response,
   ): Promise<void> => {
-    const { start, end } = req.query;
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+    const { start, end } = req.query
+    const startDate = new Date(start)
+    const endDate = new Date(end)
 
-    const redemptions = await RedemptionService.listByDateRange(startDate, endDate);
-    sendResponse(res, 200, true, "Redemptions in range fetched", { redemptions });
-  }
-);
+    const redemptions = await RedemptionService.listByDateRange(
+      startDate,
+      endDate,
+    )
+    sendResponse(res, 200, true, "Redemptions in range fetched", {
+      redemptions,
+    })
+  },
+)

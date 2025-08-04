@@ -1,14 +1,14 @@
-import type { Logger } from "winston";
+import type { Logger } from "winston"
 
-import { createLogger, format, transports } from "winston";
-import DailyRotateFile from "winston-daily-rotate-file"; // Explicitly import
+import { createLogger, format, transports } from "winston"
+import DailyRotateFile from "winston-daily-rotate-file" // Explicitly import
 
-const { combine, timestamp, printf, colorize, errors } = format;
+const { combine, timestamp, printf, colorize, errors } = format
 
 // Custom log format for console and file logs
 const logFormat = printf(({ level, message, timestamp, stack }) => {
-  return `${timestamp} [${level}]: ${stack || message}`; // Include stack trace if present
-});
+  return `${timestamp} [${level}]: ${stack || message}` // Include stack trace if present
+})
 
 // Define transports for console and rotating file logs
 const transportList: Array<
@@ -48,7 +48,7 @@ const transportList: Array<
       logFormat,
     ),
   }),
-];
+]
 
 // Create logger instance
 const logger: Logger = createLogger({
@@ -59,7 +59,7 @@ const logger: Logger = createLogger({
   ),
   transports: transportList,
   exitOnError: false, // Prevent process exit on handled exceptions
-});
+})
 
 // Adjust console logging for production
 if (process.env.NODE_ENV === "production") {
@@ -72,8 +72,8 @@ if (process.env.NODE_ENV === "production") {
         logFormat,
       ),
     }),
-  );
+  )
 }
 
 // Export the logger instance
-export default logger;
+export default logger

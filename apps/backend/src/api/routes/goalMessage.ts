@@ -1,20 +1,23 @@
 // src/api/routes/goalMessage.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, param } from "express-validator"
 
-import goalMessageController from "../controllers/GoalMessageController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import goalMessageController from "../controllers/GoalMessageController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // throttle to 30 messages per minute
 const messageLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 30,
-  message: { success: false, message: "Too many messages sent, please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many messages sent, please try again later.",
+  },
+})
 
 /**
  * POST /api/goal-message/:goalId/send
@@ -27,11 +30,13 @@ router.post(
   [
     param("goalId", "Invalid goal ID").isMongoId(),
     check("message", "Message is required").notEmpty(),
-    check("message", "Message must not exceed 500 characters").isLength({ max: 500 }),
+    check("message", "Message must not exceed 500 characters").isLength({
+      max: 500,
+    }),
   ],
   handleValidationErrors,
-  goalMessageController.createGoalMessage
-);
+  goalMessageController.createGoalMessage,
+)
 
 /**
  * GET /api/goal-message/:goalId/messages
@@ -40,9 +45,9 @@ router.post(
 router.get(
   "/:goalId/messages",
   protect,
-  [ param("goalId", "Invalid goal ID").isMongoId() ],
+  [param("goalId", "Invalid goal ID").isMongoId()],
   handleValidationErrors,
-  goalMessageController.getGoalMessages
-);
+  goalMessageController.getGoalMessages,
+)
 
-export default router;
+export default router

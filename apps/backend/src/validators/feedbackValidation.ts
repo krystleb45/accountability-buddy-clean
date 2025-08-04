@@ -1,7 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
-import type { ValidationChain } from "express-validator";
+import type { NextFunction, Request, Response } from "express"
+import type { ValidationChain } from "express-validator"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 /**
  * Middleware to handle validation results and send errors in a structured format.
@@ -9,30 +9,34 @@ import { check, validationResult } from "express-validator";
  * @param res - Express response object.
  * @param next - Express next middleware function.
  */
-export function feedbackValidationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function feedbackValidationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
   if (!errors.isEmpty()) {
     const formattedErrors = errors.array().map((error) => {
       if ("param" in error) {
         return {
           field: error.param,
           message: error.msg,
-        };
+        }
       }
       return {
         field: "unknown",
         message: error.msg,
-      };
-    });
+      }
+    })
 
     res.status(400).json({
       success: false,
       errors: formattedErrors,
-    });
-    return;
+    })
+    return
   }
 
-  next();
+  next()
 }
 
 /**
@@ -52,4 +56,4 @@ export const submitFeedbackValidation: ValidationChain[] = [
     .withMessage(
       "Invalid feedback type. Must be one of: bug, feature-request, or other.",
     ),
-];
+]

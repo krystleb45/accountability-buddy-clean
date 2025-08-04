@@ -1,40 +1,40 @@
 // src/api/models/Level.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Reward Subdocument ---
 export interface IReward {
-  rewardType: "badge" | "discount" | "customization";
-  rewardValue: string;
-  achievedAt: Date;
+  rewardType: "badge" | "discount" | "customization"
+  rewardValue: string
+  achievedAt: Date
 }
 
 // --- Level Document Interface ---
 export interface ILevel extends Document {
-  user: Types.ObjectId;
-  points: number;
-  level: number;
-  nextLevelAt: number;
-  rewards: Types.DocumentArray<IReward>;
-  lastActivity: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  user: Types.ObjectId
+  points: number
+  level: number
+  nextLevelAt: number
+  rewards: Types.DocumentArray<IReward>
+  lastActivity: Date
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  totalRewards: number;
+  totalRewards: number
 
   // Instance methods
   addReward: (
     rewardType: IReward["rewardType"],
-    rewardValue: string
-  ) => Promise<ILevel>;
+    rewardValue: string,
+  ) => Promise<ILevel>
 }
 
 // --- Level Model Interface ---
 export interface ILevelModel extends Model<ILevel> {
-  addPoints: (userId: Types.ObjectId, points: number) => Promise<ILevel>;
-  getTopLevels: (limit: number) => Promise<ILevel[]>;
+  addPoints: (userId: Types.ObjectId, points: number) => Promise<ILevel>
+  getTopLevels: (limit: number) => Promise<ILevel[]>
 }
 
 // --- Sub-schemas ---
@@ -48,8 +48,8 @@ const RewardSchema = new Schema<IReward>(
     rewardValue: { type: String, required: true, trim: true },
     achievedAt: { type: Date, default: Date.now },
   },
-  { _id: false }
-);
+  { _id: false },
+)
 
 // --- Main Schema ---
 const LevelSchema = new Schema<ILevel, ILevelModel>(
@@ -69,71 +69,68 @@ const LevelSchema = new Schema<ILevel, ILevelModel>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-LevelSchema.index({ user: 1 }, { unique: true });
-LevelSchema.index({ level: -1, points: -1 });
-LevelSchema.index({ lastActivity: -1 });
+LevelSchema.index({ user: 1 }, { unique: true })
+LevelSchema.index({ level: -1, points: -1 })
+LevelSchema.index({ lastActivity: -1 })
 
 // --- Pre-save Hook for Level-up Logic ---
 LevelSchema.pre<ILevel>("save", function (next): void {
   while (this.points >= this.nextLevelAt) {
-    this.points -= this.nextLevelAt;
-    this.level += 1;
-    this.nextLevelAt = Math.floor(this.nextLevelAt * 1.2);
+    this.points -= this.nextLevelAt
+    this.level += 1
+    this.nextLevelAt = Math.floor(this.nextLevelAt * 1.2)
   }
-  next();
-});
+  next()
+})
 
 // --- Static Methods ---
 LevelSchema.statics.addPoints = async function (
   this: ILevelModel,
   userId: Types.ObjectId,
-  points: number
+  points: number,
 ): Promise<ILevel> {
-  let lvl = await this.findOne({ user: userId });
+  let lvl = await this.findOne({ user: userId })
   if (!lvl) {
-    lvl = await this.create({ user: userId, points });
+    lvl = await this.create({ user: userId, points })
   } else {
-    lvl.points += points;
-    lvl.lastActivity = new Date();
-    await lvl.save();
+    lvl.points += points
+    lvl.lastActivity = new Date()
+    await lvl.save()
   }
-  return lvl;
-};
+  return lvl
+}
 
 LevelSchema.statics.getTopLevels = function (
   this: ILevelModel,
-  limit: number
+  limit: number,
 ): Promise<ILevel[]> {
   return this.find()
     .sort({ level: -1, points: -1 })
     .limit(limit)
-    .populate("user", "username profilePicture");
-};
+    .populate("user", "username profilePicture")
+}
 
 // --- Virtuals ---
 LevelSchema.virtual("totalRewards").get(function (this: ILevel): number {
-  return this.rewards.length;
-});
+  return this.rewards.length
+})
 
 // --- Instance Methods ---
 LevelSchema.methods.addReward = async function (
   this: ILevel,
   rewardType: IReward["rewardType"],
-  rewardValue: string
+  rewardValue: string,
 ): Promise<ILevel> {
-  this.rewards.push({ rewardType, rewardValue, achievedAt: new Date() });
-  await this.save();
-  return this;
-};
+  this.rewards.push({ rewardType, rewardValue, achievedAt: new Date() })
+  await this.save()
+  return this
+}
 
 // --- Model Export ---
-export const Level = mongoose.model<ILevel, ILevelModel>(
-  "Level",
-  LevelSchema
-);
+export const Level = mongoose.model<ILevel, ILevelModel>("Level", LevelSchema)
 
-export default Level;
+export default Level

@@ -1,30 +1,30 @@
 // src/api/services/AuditService.ts
-import type { Document } from "mongoose";
+import type { Document } from "mongoose"
 
-import { logger } from "../../utils/winstonLogger";
-import AuditLog from "../models/AuditLog";
+import { logger } from "../../utils/winstonLogger"
+import AuditLog from "../models/AuditLog"
 
 interface AuditLogData {
-  userId: string;
-  action: string;
-  description?: string;
-  ipAddress?: string;
-  additionalData?: Record<string, unknown>;
+  userId: string
+  action: string
+  description?: string
+  ipAddress?: string
+  additionalData?: Record<string, unknown>
 }
 
 interface AuditLogFilter {
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | undefined
 }
 
 // Mongoose document type for AuditLog
 type AuditLogType = Document & {
-  userId: string;
-  action: string;
-  description: string;
-  ipAddress: string;
-  additionalData: Record<string, unknown>;
-  createdAt: Date;
-};
+  userId: string
+  action: string
+  description: string
+  ipAddress: string
+  additionalData: Record<string, unknown>
+  createdAt: Date
+}
 
 const AuditService = {
   /**
@@ -38,8 +38,8 @@ const AuditService = {
     additionalData = {},
   }: AuditLogData): Promise<void> {
     if (!userId || !action) {
-      logger.error("Audit logging failed: Missing userId or action");
-      throw new Error("Audit logging requires userId and action");
+      logger.error("Audit logging failed: Missing userId or action")
+      throw new Error("Audit logging requires userId and action")
     }
 
     const entry = new AuditLog({
@@ -48,9 +48,9 @@ const AuditService = {
       description,
       ipAddress,
       additionalData,
-    });
-    await entry.save();
-    logger.info(`Audit log recorded: ${userId} → ${action}`);
+    })
+    await entry.save()
+    logger.info(`Audit log recorded: ${userId} → ${action}`)
   },
 
   /**
@@ -59,24 +59,24 @@ const AuditService = {
   async getAuditLogs(
     filter: AuditLogFilter = {},
     limit = 100,
-    skip = 0
+    skip = 0,
   ): Promise<AuditLogType[]> {
     const logs = await AuditLog.find(filter as any)
       .sort({ createdAt: -1 })
       .limit(limit)
-      .skip(skip);
-    return logs as unknown as AuditLogType[];
+      .skip(skip)
+    return logs as unknown as AuditLogType[]
   },
 
   /**
    * Delete old logs older than retentionDays.
    */
   async deleteOldLogs(retentionDays = 90): Promise<void> {
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - retentionDays);
-    await AuditLog.deleteMany({ createdAt: { $lt: cutoff } });
-    logger.info(`Deleted audit logs older than ${retentionDays} days`);
+    const cutoff = new Date()
+    cutoff.setDate(cutoff.getDate() - retentionDays)
+    await AuditLog.deleteMany({ createdAt: { $lt: cutoff } })
+    logger.info(`Deleted audit logs older than ${retentionDays} days`)
   },
-};
+}
 
-export default AuditService;
+export default AuditService

@@ -1,22 +1,22 @@
 // src/api/services/SessionService.ts
-import type { Request } from "express";
+import type { Request } from "express"
 
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 
-import type { ISession } from "../models/Session";
-import type { IUser } from "../models/User";
+import type { ISession } from "../models/Session"
+import type { IUser } from "../models/User"
 
-import { createError } from "../middleware/errorHandler";
-import { Session } from "../models/Session";
-import { User } from "../models/User";
+import { createError } from "../middleware/errorHandler"
+import { Session } from "../models/Session"
+import { User } from "../models/User"
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
-const JWT_EXPIRES_IN = "1h";
+const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"
+const JWT_EXPIRES_IN = "1h"
 
 export interface LoginResult {
-  token: string;
-  session: ISession;
+  token: string
+  session: ISession
 }
 
 class SessionService {
@@ -26,18 +26,16 @@ class SessionService {
   static async login(
     email: string,
     password: string,
-    req: Request
+    req: Request,
   ): Promise<LoginResult> {
-    const user = await User.findOne({ email });
-    if (!user) 
-throw createError("Invalid credentials", 401);
+    const user = await User.findOne({ email })
+    if (!user) throw createError("Invalid credentials", 401)
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) 
-throw createError("Invalid credentials", 401);
+    const match = await bcrypt.compare(password, user.password)
+    if (!match) throw createError("Invalid credentials", 401)
 
-    const payload = { id: user._id.toString() };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    const payload = { id: user._id.toString() }
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN })
 
     const session = await Session.create({
       user: user._id,
@@ -46,20 +44,19 @@ throw createError("Invalid credentials", 401);
       device: req.headers["user-agent"] || "unknown",
       expiresAt: new Date(Date.now() + 60 * 60 * 1000),
       isActive: true,
-    });
+    })
 
-    return { token, session };
+    return { token, session }
   }
 
   /**
    * Mark a session as inactive (logout).
    */
   static async logout(sessionId: string): Promise<void> {
-    const session = await Session.findById(sessionId);
-    if (!session) 
-return;
-    session.isActive = false;
-    await session.save();
+    const session = await Session.findById(sessionId)
+    if (!session) return
+    session.isActive = false
+    await session.save()
   }
 
   /**
@@ -67,12 +64,12 @@ return;
    */
   static async deleteAllExcept(
     userId: string,
-    keepSessionId: string
+    keepSessionId: string,
   ): Promise<void> {
     await Session.updateMany(
       { user: userId, _id: { $ne: keepSessionId } },
-      { isActive: false }
-    );
+      { isActive: false },
+    )
   }
 
   /**
@@ -81,7 +78,7 @@ return;
   static async refresh(userId: string): Promise<string> {
     const newToken = jwt.sign({ id: userId }, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
-    });
+    })
 
     const session = await Session.findOneAndUpdate(
       { user: userId, isActive: true },
@@ -89,12 +86,11 @@ return;
         token: newToken,
         expiresAt: new Date(Date.now() + 60 * 60 * 1000),
       },
-      { new: true }
-    );
+      { new: true },
+    )
 
-    if (!session) 
-throw createError("Session not found", 404);
-    return newToken;
+    if (!session) throw createError("Session not found", 404)
+    return newToken
   }
 
   /**
@@ -103,31 +99,26 @@ throw createError("Session not found", 404);
   static async getById(sessionId: string): Promise<ISession> {
     const session = await Session.findById(sessionId).populate<
       ISession & { user: IUser }
-    >("user");
-    if (!session) 
-throw createError("Session not found", 404);
-    return session;
+    >("user")
+    if (!session) throw createError("Session not found", 404)
+    return session
   }
 
   /**
    * List all active sessions for a given user.
    */
   static async listForUser(userId: string): Promise<ISession[]> {
-    return Session.find({ user: userId, isActive: true }).populate("user");
+    return Session.find({ user: userId, isActive: true }).populate("user")
   }
 
   /**
    * Delete (deactivate) a single session, verifying ownership.
    */
-  static async delete(
-    sessionId: string,
-    userId: string
-  ): Promise<void> {
-    const session = await Session.findOne({ _id: sessionId, user: userId });
-    if (!session) 
-throw createError("Session not found or access denied", 404);
-    await session.deleteOne();
+  static async delete(sessionId: string, userId: string): Promise<void> {
+    const session = await Session.findOne({ _id: sessionId, user: userId })
+    if (!session) throw createError("Session not found or access denied", 404)
+    await session.deleteOne()
   }
 }
 
-export default SessionService;
+export default SessionService

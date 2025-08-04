@@ -5,69 +5,69 @@
  */
 
 interface JwtConfig {
-  secret: string;
-  refreshSecret: string;
-  expiresIn: string;
-  refreshExpiresIn: string;
-  issuer: string;
-  audience: string;
+  secret: string
+  refreshSecret: string
+  expiresIn: string
+  refreshExpiresIn: string
+  issuer: string
+  audience: string
 }
 
 interface OauthConfig {
-  clientId: string;
-  clientSecret: string;
-  callbackUrl: string;
+  clientId: string
+  clientSecret: string
+  callbackUrl: string
 }
 
 interface OauthSettings {
-  google: OauthConfig;
-  facebook: OauthConfig;
-  github: OauthConfig;
+  google: OauthConfig
+  facebook: OauthConfig
+  github: OauthConfig
 }
 
 interface PasswordPolicy {
-  minLength: number;
-  requireUppercase: boolean;
-  requireNumbers: boolean;
-  requireSpecialCharacters: boolean;
+  minLength: number
+  requireUppercase: boolean
+  requireNumbers: boolean
+  requireSpecialCharacters: boolean
 }
 
 interface RateLimitConfig {
-  windowMs: number;
-  maxRequests: number;
+  windowMs: number
+  maxRequests: number
 }
 
 interface TokenRevocationConfig {
-  redisEnabled: boolean;
-  redisPrefix: string;
+  redisEnabled: boolean
+  redisPrefix: string
 }
 
 interface MfaConfig {
-  enabled: boolean;
-  methods: string[];
-  secretKey: string;
+  enabled: boolean
+  methods: string[]
+  secretKey: string
 }
 
 interface EmailVerificationConfig {
-  enabled: boolean;
-  verificationExpiresIn: string;
+  enabled: boolean
+  verificationExpiresIn: string
 }
 
 interface SocialLoginConfig {
-  enableGoogle: boolean;
-  enableFacebook: boolean;
-  enableGithub: boolean;
+  enableGoogle: boolean
+  enableFacebook: boolean
+  enableGithub: boolean
 }
 
 interface AuthConfig {
-  jwt: JwtConfig;
-  oauth: OauthSettings;
-  passwordPolicy: PasswordPolicy;
-  rateLimit: RateLimitConfig;
-  tokenRevocation: TokenRevocationConfig;
-  mfa: MfaConfig;
-  emailVerification: EmailVerificationConfig;
-  socialLogin: SocialLoginConfig;
+  jwt: JwtConfig
+  oauth: OauthSettings
+  passwordPolicy: PasswordPolicy
+  rateLimit: RateLimitConfig
+  tokenRevocation: TokenRevocationConfig
+  mfa: MfaConfig
+  emailVerification: EmailVerificationConfig
+  socialLogin: SocialLoginConfig
 }
 
 const authConfig: AuthConfig = {
@@ -117,8 +117,14 @@ const authConfig: AuthConfig = {
 
   // Rate Limiting for Auth Routes
   rateLimit: {
-    windowMs: Number.parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || "900000", 10),
-    maxRequests: Number.parseInt(process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || "10", 10),
+    windowMs: Number.parseInt(
+      process.env.AUTH_RATE_LIMIT_WINDOW_MS || "900000",
+      10,
+    ),
+    maxRequests: Number.parseInt(
+      process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || "10",
+      10,
+    ),
   },
 
   // Token Revocation List Configuration
@@ -146,6 +152,6 @@ const authConfig: AuthConfig = {
     enableFacebook: process.env.ENABLE_FACEBOOK_LOGIN === "true",
     enableGithub: process.env.ENABLE_GITHUB_LOGIN === "true",
   },
-};
+}
 
-export default authConfig;
+export default authConfig

@@ -6,59 +6,59 @@
  */
 
 interface AppConfig {
-  appName: string;
-  version: string;
-  environment: string;
-  frontendUrl: string;
-  apiBaseUrl: string;
+  appName: string
+  version: string
+  environment: string
+  frontendUrl: string
+  apiBaseUrl: string
   support: {
-    email: string;
-    url: string;
-    termsOfService: string;
-    privacyPolicy: string;
-  };
+    email: string
+    url: string
+    termsOfService: string
+    privacyPolicy: string
+  }
   analytics: {
-    enabled: boolean;
-    googleAnalyticsId: string;
-    mixpanelToken: string;
-  };
+    enabled: boolean
+    googleAnalyticsId: string
+    mixpanelToken: string
+  }
   localization: {
-    defaultLanguage: string;
-    supportedLanguages: string[];
-  };
+    defaultLanguage: string
+    supportedLanguages: string[]
+  }
   theme: {
-    defaultTheme: string;
-    themes: string[];
-  };
+    defaultTheme: string
+    themes: string[]
+  }
   uploads: {
-    maxFileSize: number;
-    allowedFileTypes: string[];
-  };
+    maxFileSize: number
+    allowedFileTypes: string[]
+  }
   features: {
-    enableChat: boolean;
-    enablePayments: boolean;
-    enableGamification: boolean;
-  };
+    enableChat: boolean
+    enablePayments: boolean
+    enableGamification: boolean
+  }
   security: {
-    corsAllowedOrigins: string[];
+    corsAllowedOrigins: string[]
     passwordPolicy: {
-      minLength: number;
-      requireNumbers: boolean;
-      requireSpecialChars: boolean;
-    };
-  };
+      minLength: number
+      requireNumbers: boolean
+      requireSpecialChars: boolean
+    }
+  }
   logging: {
-    level: string;
-    logDir: string;
-  };
+    level: string
+    logDir: string
+  }
   documentation: {
-    swaggerUrl: string;
-    swaggerCustomCss: string;
-  };
+    swaggerUrl: string
+    swaggerCustomCss: string
+  }
   testing: {
-    skipPreflightCheck: boolean;
-    enableMocks: boolean;
-  };
+    skipPreflightCheck: boolean
+    enableMocks: boolean
+  }
 }
 
 const appConfig: AppConfig = {
@@ -147,6 +147,6 @@ const appConfig: AppConfig = {
     skipPreflightCheck: process.env.SKIP_PREFLIGHT_CHECK === "true",
     enableMocks: process.env.ENABLE_MOCKS === "true",
   },
-};
+}
 
-export default appConfig;
+export default appConfig

@@ -1,14 +1,14 @@
 // File: src/models/Progress.ts
 
-import type { Document, Model } from "mongoose";
+import type { Document, Model } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 export interface IProgress extends Document {
-  user: mongoose.Types.ObjectId;
-  goal: mongoose.Types.ObjectId;
-  progress: number;        // e.g. 0–100
-  updatedAt: Date;
+  user: mongoose.Types.ObjectId
+  goal: mongoose.Types.ObjectId
+  progress: number // e.g. 0–100
+  updatedAt: Date
 }
 
 const ProgressSchema = new Schema<IProgress>(
@@ -35,14 +35,14 @@ const ProgressSchema = new Schema<IProgress>(
   },
   {
     timestamps: { createdAt: true, updatedAt: true },
-  }
-);
+  },
+)
 
 // ensure one progress-per-user-per-goal
-ProgressSchema.index({ user: 1, goal: 1 }, { unique: true });
+ProgressSchema.index({ user: 1, goal: 1 }, { unique: true })
 
 const Progress: Model<IProgress> =
   mongoose.models.Progress ||
-  mongoose.model<IProgress>("Progress", ProgressSchema);
+  mongoose.model<IProgress>("Progress", ProgressSchema)
 
-export default Progress;
+export default Progress

@@ -1,30 +1,32 @@
 // src/api/models/Integration.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Settings Type ---
 export interface IntegrationSettings {
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 // --- Integration Interface ---
 export interface IIntegration extends Document {
-  user: Types.ObjectId;
-  type: "webhook" | "api" | "slack" | "google_calendar" | "github" | "custom";
-  settings: IntegrationSettings;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  user: Types.ObjectId
+  type: "webhook" | "api" | "slack" | "google_calendar" | "github" | "custom"
+  settings: IntegrationSettings
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
 
   // Instance method
-  toggleActiveState: () => Promise<IIntegration>;
+  toggleActiveState: () => Promise<IIntegration>
 }
 
 // --- Integration Model Interface ---
 export interface IIntegrationModel extends Model<IIntegration> {
-  findActiveIntegrationsByUser: (userId: Types.ObjectId) => Promise<IIntegration[]>;
+  findActiveIntegrationsByUser: (
+    userId: Types.ObjectId,
+  ) => Promise<IIntegration[]>
 }
 
 // --- Schema Definition ---
@@ -54,37 +56,37 @@ const IntegrationSchema = new Schema<IIntegration, IIntegrationModel>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-IntegrationSchema.index({ user: 1 });
-IntegrationSchema.index({ type: 1 });
-IntegrationSchema.index({ isActive: 1 });
+IntegrationSchema.index({ user: 1 })
+IntegrationSchema.index({ type: 1 })
+IntegrationSchema.index({ isActive: 1 })
 
 // Or, if you prefer a compound index:
-IntegrationSchema.index({ user: 1, type: 1 });
+IntegrationSchema.index({ user: 1, type: 1 })
 
 // --- Instance Methods ---
 IntegrationSchema.methods.toggleActiveState = async function (
-  this: IIntegration
+  this: IIntegration,
 ): Promise<IIntegration> {
-  this.isActive = !this.isActive;
-  await this.save();
-  return this;
-};
+  this.isActive = !this.isActive
+  await this.save()
+  return this
+}
 
 // --- Static Methods ---
 IntegrationSchema.statics.findActiveIntegrationsByUser = function (
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IIntegration[]> {
-  return this.find({ user: userId, isActive: true }).sort({ type: 1 }).exec();
-};
+  return this.find({ user: userId, isActive: true }).sort({ type: 1 }).exec()
+}
 
 // --- Model Export ---
 export const Integration = mongoose.model<IIntegration, IIntegrationModel>(
   "Integration",
-  IntegrationSchema
-);
+  IntegrationSchema,
+)
 
-export default Integration;
+export default Integration

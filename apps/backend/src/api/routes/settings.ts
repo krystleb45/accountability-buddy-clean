@@ -1,36 +1,32 @@
 // src/api/routes/setting.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
-import sanitize from "mongo-sanitize";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
+import sanitize from "mongo-sanitize"
 
-import * as settingsController from "../controllers/SettingsController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as settingsController from "../controllers/SettingsController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // 10 requests per 15 minutes
 const settingsLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Too many settings requests, please try again later.",
-});
+})
 
 // sanitize only req.body
-function sanitizeBody (req: Request, _res: Response, next: NextFunction): void {
-  req.body = sanitize(req.body);
-  next();
+function sanitizeBody(req: Request, _res: Response, next: NextFunction): void {
+  req.body = sanitize(req.body)
+  next()
 }
 
 /** GET /api/settings */
-router.get(
-  "/",
-  protect,
-  settingsController.getUserSettings
-);
+router.get("/", protect, settingsController.getUserSettings)
 
 /** PUT /api/settings/update */
 router.put(
@@ -45,8 +41,8 @@ router.put(
     check("language").optional().isIn(["en", "es", "fr", "de", "zh"]),
   ],
   handleValidationErrors,
-  settingsController.updateUserSettings
-);
+  settingsController.updateUserSettings,
+)
 
 /** PUT /api/settings/password */
 router.put(
@@ -56,11 +52,13 @@ router.put(
   sanitizeBody,
   [
     check("currentPassword", "Current password is required").notEmpty(),
-    check("newPassword", "New password must be at least 6 characters").isLength({ min: 6 }),
+    check("newPassword", "New password must be at least 6 characters").isLength(
+      { min: 6 },
+    ),
   ],
   handleValidationErrors,
-  settingsController.updateUserPassword
-);
+  settingsController.updateUserPassword,
+)
 
 /** PUT /api/settings/notifications */
 router.put(
@@ -74,14 +72,10 @@ router.put(
     check("pushNotifications").isBoolean(),
   ],
   handleValidationErrors,
-  settingsController.updateNotificationPreferences
-);
+  settingsController.updateNotificationPreferences,
+)
 
 /** DELETE /api/settings/account */
-router.delete(
-  "/account",
-  protect,
-  settingsController.deactivateUserAccount
-);
+router.delete("/account", protect, settingsController.deactivateUserAccount)
 
-export default router;
+export default router

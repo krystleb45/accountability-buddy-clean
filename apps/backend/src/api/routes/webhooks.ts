@@ -1,15 +1,15 @@
-import express, { Router } from "express";
+import express, { Router } from "express"
 
-import * as StripeWebhookController from "../controllers/StripeWebhookController";
+import * as StripeWebhookController from "../controllers/StripeWebhookController"
 
-const router = Router();
+const router = Router()
 
 // **Important** Stripe requires the raw body so the signature can be verified.
 router.post(
   "/stripe",
   // use express.raw to capture the raw buffer before JSON parsing
   express.raw({ type: "application/json" }),
-  StripeWebhookController.handleStripeWebhook
-);
+  StripeWebhookController.handleStripeWebhook,
+)
 
-export default router;
+export default router

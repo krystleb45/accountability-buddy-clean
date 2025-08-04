@@ -1,15 +1,15 @@
 // src/api/routes/books.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import { check, param } from "express-validator"
 
-import * as bookController from "../controllers/bookController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+import * as bookController from "../controllers/bookController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 /**
  * POST /api/books
@@ -25,10 +25,12 @@ router.post(
     check("description", "Description is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.addBook(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.addBook(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/books
@@ -36,10 +38,12 @@ router.post(
  */
 router.get(
   "/",
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.getAllBooks(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.getAllBooks(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/books/:id
@@ -49,10 +53,12 @@ router.get(
   "/:id",
   param("id", "Invalid book ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.getBookById(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.getBookById(req, res, next)
+    },
+  ),
+)
 
 /**
  * PUT /api/books/:id
@@ -63,16 +69,34 @@ router.put(
   protect,
   [
     param("id", "Invalid book ID").isMongoId(),
-    check("title").optional().trim().isLength({ min: 1 }).withMessage("Title cannot be empty"),
-    check("author").optional().trim().isLength({ min: 1 }).withMessage("Author cannot be empty"),
-    check("category").optional().trim().isLength({ min: 1 }).withMessage("Category cannot be empty"),
-    check("description").optional().trim().isLength({ min: 1 }).withMessage("Description cannot be empty"),
+    check("title")
+      .optional()
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Title cannot be empty"),
+    check("author")
+      .optional()
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Author cannot be empty"),
+    check("category")
+      .optional()
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Category cannot be empty"),
+    check("description")
+      .optional()
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Description cannot be empty"),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.editBook(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.editBook(req, res, next)
+    },
+  ),
+)
 
 /**
  * DELETE /api/books/:id
@@ -83,10 +107,12 @@ router.delete(
   protect,
   param("id", "Invalid book ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.deleteBook(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.deleteBook(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/books/:id/like
@@ -97,10 +123,12 @@ router.post(
   protect,
   param("id", "Invalid book ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.likeBook(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.likeBook(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/books/:id/unlike
@@ -111,10 +139,12 @@ router.post(
   protect,
   param("id", "Invalid book ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.unlikeBook(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.unlikeBook(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/books/:id/comment
@@ -128,10 +158,12 @@ router.post(
     check("text", "Comment text cannot be empty").notEmpty().trim(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.addComment(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.addComment(req, res, next)
+    },
+  ),
+)
 
 /**
  * DELETE /api/books/:id/comment/:commentId
@@ -145,9 +177,11 @@ router.delete(
     param("commentId", "Invalid comment ID").isMongoId(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await bookController.removeComment(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await bookController.removeComment(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

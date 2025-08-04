@@ -1,16 +1,19 @@
-// src/api/routes/messages.ts - Updated with subscription restrictions
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import { check, param, query } from "express-validator";
+import { Router } from "express"
+import { check, param, query } from "express-validator"
+import { isValidObjectId } from "mongoose"
 
-import * as MessageController from "../controllers/MessageController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import { validateFeatureAccess, validateSubscription } from "../middleware/subscriptionValidation";
-import catchAsync from "../utils/catchAsync";
+import * as MessageController from "../controllers/MessageController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import {
+  validateFeatureAccess,
+  validateSubscription,
+} from "../middleware/subscriptionValidation"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 /**
  * GET /api/messages
@@ -24,24 +27,31 @@ router.get(
   protect,
   validateSubscription,
   [
-    query("recipientId").optional().isMongoId().withMessage("Invalid recipient ID"),
+    query("recipientId")
+      .optional()
+      .isMongoId()
+      .withMessage("Invalid recipient ID"),
     query("groupId").optional().isMongoId().withMessage("Invalid group ID"),
     query("limit").optional().isInt({ min: 1, max: 100 }),
     query("page").optional().isInt({ min: 1 }),
   ],
   handleValidationErrors,
   // Add middleware to check if querying private messages
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    // If querying private messages (recipientId), check DM access
-    if (req.query.recipientId) {
-      return validateFeatureAccess("dmMessaging")(req, res, next);
-    }
-    next();
-  }),
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getMessages(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      // If querying private messages (recipientId), check DM access
+      if (req.query.recipientId) {
+        return validateFeatureAccess("dmMessaging")(req, res, next)
+      }
+      next()
+    },
+  ),
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getMessages(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/messages/threads
@@ -60,16 +70,20 @@ router.get(
   ],
   handleValidationErrors,
   // Check if requesting private threads
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    if (req.query.messageType === "private") {
-      return validateFeatureAccess("dmMessaging")(req, res, next);
-    }
-    next();
-  }),
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getMessageThreads(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      if (req.query.messageType === "private") {
+        return validateFeatureAccess("dmMessaging")(req, res, next)
+      }
+      next()
+    },
+  ),
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getMessageThreads(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/messages/threads/:threadId/messages
@@ -87,10 +101,12 @@ router.get(
     query("before").optional().isISO8601(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getMessagesInThread(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getMessagesInThread(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/messages/threads/:threadId/mark-read
@@ -102,10 +118,12 @@ router.post(
   validateSubscription,
   param("threadId", "Invalid thread ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.markThreadAsRead(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.markThreadAsRead(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/messages/recent
@@ -115,14 +133,14 @@ router.get(
   "/recent",
   protect,
   validateSubscription,
-  [
-    query("limit").optional().isInt({ min: 1, max: 50 }),
-  ],
+  [query("limit").optional().isInt({ min: 1, max: 50 })],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getRecentMessages(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getRecentMessages(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/messages/unread-count
@@ -132,10 +150,12 @@ router.get(
   "/unread-count",
   protect,
   validateSubscription,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getUnreadCount(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getUnreadCount(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/messages/stats
@@ -145,10 +165,12 @@ router.get(
   "/stats",
   protect,
   validateSubscription,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getMessageStats(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getMessageStats(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/messages
@@ -161,37 +183,44 @@ router.post(
   validateSubscription,
   [
     check("content", "Message content is required").notEmpty(),
-    check("messageType", "Message type must be 'private' or 'group'").isIn(["private", "group"]),
+    check("messageType", "Message type must be 'private' or 'group'").isIn([
+      "private",
+      "group",
+    ]),
     // Either recipientId (for private) or groupId (for group) is required
     check().custom((_value, { req }) => {
-      const { messageType, recipientId, groupId } = req.body;
+      const { messageType, recipientId, groupId } = req.body
       if (messageType === "private" && !recipientId) {
-        throw new Error("recipientId is required for private messages");
+        throw new Error("recipientId is required for private messages")
       }
       if (messageType === "group" && !groupId) {
-        throw new Error("groupId is required for group messages");
+        throw new Error("groupId is required for group messages")
       }
-      if (recipientId && !require("mongoose").Types.ObjectId.isValid(recipientId)) {
-        throw new Error("Invalid recipientId");
+      if (recipientId && !isValidObjectId(recipientId)) {
+        throw new Error("Invalid recipientId")
       }
-      if (groupId && !require("mongoose").Types.ObjectId.isValid(groupId)) {
-        throw new Error("Invalid groupId");
+      if (groupId && !isValidObjectId(groupId)) {
+        throw new Error("Invalid groupId")
       }
-      return true;
+      return true
     }),
   ],
   handleValidationErrors,
   // Check if sending private message
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    if (req.body.messageType === "private") {
-      return validateFeatureAccess("dmMessaging")(req, res, next);
-    }
-    next();
-  }),
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.sendMessage(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      if (req.body.messageType === "private") {
+        return validateFeatureAccess("dmMessaging")(req, res, next)
+      }
+      next()
+    },
+  ),
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.sendMessage(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/messages/:messageId
@@ -203,10 +232,12 @@ router.get(
   validateSubscription,
   param("messageId", "Invalid message ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getMessageById(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getMessageById(req, res, next)
+    },
+  ),
+)
 
 /**
  * PUT /api/messages/:messageId
@@ -221,10 +252,12 @@ router.put(
     check("content", "Message content is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.editMessage(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.editMessage(req, res, next)
+    },
+  ),
+)
 
 /**
  * DELETE /api/messages/:messageId
@@ -236,10 +269,12 @@ router.delete(
   validateSubscription,
   param("messageId", "Invalid message ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.deleteMessage(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.deleteMessage(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/messages/:messageId/reactions
@@ -254,10 +289,12 @@ router.post(
     check("emoji", "Emoji is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.addReaction(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.addReaction(req, res, next)
+    },
+  ),
+)
 
 /**
  * DELETE /api/messages/:messageId/reactions/:emoji
@@ -272,10 +309,12 @@ router.delete(
     param("emoji", "Emoji is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.removeReaction(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.removeReaction(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/messages/mark-read
@@ -290,10 +329,12 @@ router.post(
     check("messageIds.*", "Invalid message ID").isMongoId(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.markMultipleMessagesAsRead(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.markMultipleMessagesAsRead(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/messages/search
@@ -313,16 +354,20 @@ router.get(
   ],
   handleValidationErrors,
   // Check if searching private messages
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    if (req.query.messageType === "private" || req.query.recipientId) {
-      return validateFeatureAccess("dmMessaging")(req, res, next);
-    }
-    next();
-  }),
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.searchMessages(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      if (req.query.messageType === "private" || req.query.recipientId) {
+        return validateFeatureAccess("dmMessaging")(req, res, next)
+      }
+      next()
+    },
+  ),
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.searchMessages(req, res, next)
+    },
+  ),
+)
 
 // Legacy routes (keep for backward compatibility)
 /**
@@ -337,10 +382,12 @@ router.get(
   validateFeatureAccess("dmMessaging"), // Private conversations require Pro+
   param("userId", "Invalid user ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.getMessagesWithUser(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.getMessagesWithUser(req, res, next)
+    },
+  ),
+)
 
 /**
  * PATCH /api/messages/:userId/read
@@ -354,9 +401,11 @@ router.patch(
   validateFeatureAccess("dmMessaging"), // Private conversations require Pro+
   param("userId", "Invalid user ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MessageController.markMessagesAsRead(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MessageController.markMessagesAsRead(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

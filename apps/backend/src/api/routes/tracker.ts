@@ -1,28 +1,24 @@
 // src/api/routes/tracker.ts
-import { Router } from "express";
-import { check } from "express-validator";
+import { Router } from "express"
+import { check } from "express-validator"
 
-import * as trackerCtrl from "../controllers/TrackerController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as trackerCtrl from "../controllers/TrackerController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // GET /api/tracker/ → fetch all trackers
-router.get(
-  "/",
-  protect,
-  trackerCtrl.getAllTrackers
-);
+router.get("/", protect, trackerCtrl.getAllTrackers)
 
 // POST /api/tracker/ → create a tracker
 router.post(
   "/",
   protect,
-  [ check("name", "Tracker name is required").notEmpty() ],
+  [check("name", "Tracker name is required").notEmpty()],
   handleValidationErrors,
-  trackerCtrl.createTracker
-);
+  trackerCtrl.createTracker,
+)
 
 // PUT /api/tracker/:id → update a tracker’s progress
 router.put(
@@ -33,39 +29,31 @@ router.put(
     check("progress", "Progress must be a number").isNumeric(),
   ],
   handleValidationErrors,
-  trackerCtrl.updateTracker
-);
+  trackerCtrl.updateTracker,
+)
 
 // DELETE /api/tracker/:id → delete a tracker
 router.delete(
   "/:id",
   protect,
-  [ check("id", "Invalid tracker id").isMongoId() ],
+  [check("id", "Invalid tracker id").isMongoId()],
   handleValidationErrors,
-  trackerCtrl.deleteTracker
-);
+  trackerCtrl.deleteTracker,
+)
 
 // GET /api/tracker/data → get all raw tracking data
-router.get(
-  "/data",
-  protect,
-  trackerCtrl.getTrackingData
-);
+router.get("/data", protect, trackerCtrl.getTrackingData)
 
 // POST /api/tracker/add → add a new tracking data entry
-router.post(
-  "/add",
-  protect,
-  trackerCtrl.addTrackingData
-);
+router.post("/add", protect, trackerCtrl.addTrackingData)
 
 // DELETE /api/tracker/delete/:id → delete a tracking data entry
 router.delete(
   "/delete/:id",
   protect,
-  [ check("id", "Invalid entry id").isMongoId() ],
+  [check("id", "Invalid entry id").isMongoId()],
   handleValidationErrors,
-  trackerCtrl.deleteTrackingData
-);
+  trackerCtrl.deleteTrackingData,
+)
 
-export default router;
+export default router

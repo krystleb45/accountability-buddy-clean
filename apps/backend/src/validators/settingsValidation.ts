@@ -1,34 +1,38 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 /**
  * Middleware to handle validation results and send structured errors.
  */
-export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function validationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     // Format validation errors into a structured response
     const formattedErrors = errors.array().map((error) => {
       // Check if `error` has the `param` property
-      const field = "param" in error ? error.param : "unknown";
+      const field = "param" in error ? error.param : "unknown"
       return {
         field,
         message: error.msg,
-      };
-    });
+      }
+    })
 
     res.status(400).json({
       success: false,
       message: "Validation failed.",
       errors: formattedErrors,
-    });
+    })
 
-    return; // Terminate middleware execution
+    return // Terminate middleware execution
   }
 
-  next(); // Proceed to the next middleware
+  next() // Proceed to the next middleware
 }
 
 /**
@@ -53,8 +57,8 @@ export const updateSettingsValidation = [
     .isObject()
     .withMessage("Privacy settings must be an object.")
     .custom((privacy: Record<string, unknown>) => {
-      const validKeys = ["profileVisibility", "showActivity", "shareData"];
-      return Object.keys(privacy).every((key) => validKeys.includes(key));
+      const validKeys = ["profileVisibility", "showActivity", "shareData"]
+      return Object.keys(privacy).every((key) => validKeys.includes(key))
     })
     .withMessage("Privacy settings contain invalid keys."),
 
@@ -62,7 +66,7 @@ export const updateSettingsValidation = [
   check("theme")
     .optional()
     .isIn(["light", "dark"])
-    .withMessage("Theme must be either \"light\" or \"dark\"."),
+    .withMessage('Theme must be either "light" or "dark".'),
 
   // Validate email preferences
   check("emailPreferences")
@@ -70,12 +74,18 @@ export const updateSettingsValidation = [
     .isObject()
     .withMessage("Email preferences must be an object.")
     .custom((prefs: Record<string, boolean>) => {
-      const validPrefs = ["marketingEmails", "transactionalEmails", "updateEmails"];
+      const validPrefs = [
+        "marketingEmails",
+        "transactionalEmails",
+        "updateEmails",
+      ]
       return Object.keys(prefs).every(
         (key) => validPrefs.includes(key) && typeof prefs[key] === "boolean",
-      );
+      )
     })
-    .withMessage("Email preferences must contain valid keys with boolean values."),
+    .withMessage(
+      "Email preferences must contain valid keys with boolean values.",
+    ),
 
   // Validate timezone setting
   check("timezone")
@@ -89,4 +99,4 @@ export const updateSettingsValidation = [
 
   // Attach reusable validation middleware
   validationMiddleware,
-];
+]

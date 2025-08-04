@@ -1,17 +1,17 @@
 // src/api/models/CustomReminder.ts
 
-import type { CallbackError, Document, Model } from "mongoose";
+import type { CallbackError, Document, Model } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 export interface ICustomReminder extends Document {
-  user: mongoose.Types.ObjectId;
-  reminderMessage: string;
-  remindAt: Date;
-  recurrence?: string | null;
-  disabled: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  user: mongoose.Types.ObjectId
+  reminderMessage: string
+  remindAt: Date
+  recurrence?: string | null
+  disabled: boolean
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface ICustomReminderModel extends Model<ICustomReminder> {}
@@ -45,28 +45,28 @@ const CustomReminderSchema = new Schema<ICustomReminder, ICustomReminderModel>(
   },
   {
     timestamps: true, // adds createdAt + updatedAt
-  }
-);
+  },
+)
 
 // — Index declarations (only here) —
-CustomReminderSchema.index({ user: 1 });
-CustomReminderSchema.index({ remindAt: 1 });
-CustomReminderSchema.index({ disabled: 1 });
+CustomReminderSchema.index({ user: 1 })
+CustomReminderSchema.index({ remindAt: 1 })
+CustomReminderSchema.index({ disabled: 1 })
 
 /** Ensure `remindAt` is always in the future */
 CustomReminderSchema.pre<ICustomReminder>(
   "save",
   function (this: ICustomReminder, next: (err?: CallbackError) => void): void {
     if (this.remindAt <= new Date()) {
-      return next(new Error("remindAt must be in the future"));
+      return next(new Error("remindAt must be in the future"))
     }
-    next();
-  }
-);
+    next()
+  },
+)
 
-export const CustomReminder = mongoose.model<ICustomReminder, ICustomReminderModel>(
-  "CustomReminder",
-  CustomReminderSchema
-);
+export const CustomReminder = mongoose.model<
+  ICustomReminder,
+  ICustomReminderModel
+>("CustomReminder", CustomReminderSchema)
 
-export default CustomReminder;
+export default CustomReminder

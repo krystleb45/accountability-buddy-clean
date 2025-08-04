@@ -1,11 +1,11 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import fs from "node:fs";
+import fs from "node:fs"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 // File size limit (e.g., 10MB)
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
 
 // Allowed file types
 const ALLOWED_FILE_TYPES = [
@@ -15,7 +15,7 @@ const ALLOWED_FILE_TYPES = [
   "application/pdf",
   "audio/mpeg",
   "audio/wav",
-];
+]
 
 const FileValidationMiddleware = {
   /**
@@ -27,21 +27,21 @@ const FileValidationMiddleware = {
   validateFile: (req: Request, res: Response, next: NextFunction): void => {
     // Handle single file upload
     if (req.file) {
-      validateSingleFile(req.file, res, next);
-    } 
-    
+      validateSingleFile(req.file, res, next)
+    }
+
     // Handle multiple file uploads
     else if (req.files && Array.isArray(req.files)) {
-      validateMultipleFiles(req.files, res, next);
-    } 
-    
+      validateMultipleFiles(req.files, res, next)
+    }
+
     // Handle case where no files are uploaded
     else {
-      logger.error("No file uploaded");
-      res.status(400).json({ success: false, message: "No file uploaded" });
+      logger.error("No file uploaded")
+      res.status(400).json({ success: false, message: "No file uploaded" })
     }
   },
-};
+}
 
 /**
  * Validate a single file
@@ -49,41 +49,47 @@ const FileValidationMiddleware = {
  * @param res The response object
  * @param next The next middleware function
  */
-function validateSingleFile (file: Express.Multer.File, res: Response, next: NextFunction): void {
-  const fileSize = file.size;
-  const fileType = file.mimetype;
+function validateSingleFile(
+  file: Express.Multer.File,
+  res: Response,
+  next: NextFunction,
+): void {
+  const fileSize = file.size
+  const fileType = file.mimetype
 
   // Validate file type
   if (!ALLOWED_FILE_TYPES.includes(fileType)) {
-    logger.error(`Invalid file type: ${fileType}`);
+    logger.error(`Invalid file type: ${fileType}`)
     res.status(400).json({
       success: false,
       message: `Invalid file type. Allowed types: ${ALLOWED_FILE_TYPES.join(", ")}`,
-    });
-    return;
+    })
+    return
   }
 
   // Validate file size
   if (fileSize > MAX_FILE_SIZE) {
-    logger.error(`File size exceeds the limit: ${fileSize} bytes`);
+    logger.error(`File size exceeds the limit: ${fileSize} bytes`)
     res.status(400).json({
       success: false,
       message: `File size exceeds the ${MAX_FILE_SIZE / (1024 * 1024)}MB limit`,
-    });
-    return;
+    })
+    return
   }
 
   // Validate file content (Check for corruption or empty file)
   fs.readFile(file.path, (err, data) => {
     if (err || !data || data.length === 0) {
-      logger.error(`File is empty or corrupted: ${file.originalname}`);
-      res.status(400).json({ success: false, message: "File is empty or corrupted" });
-      return;
+      logger.error(`File is empty or corrupted: ${file.originalname}`)
+      res
+        .status(400)
+        .json({ success: false, message: "File is empty or corrupted" })
+      return
     }
 
     // Proceed to the next middleware if file is valid
-    next();
-  });
+    next()
+  })
 }
 
 /**
@@ -92,50 +98,54 @@ function validateSingleFile (file: Express.Multer.File, res: Response, next: Nex
  * @param res Response object
  * @param next Next middleware function
  */
-function validateMultipleFiles (files: Express.Multer.File[],  res: Response,  next: NextFunction): void {
-  const invalidFiles: string[] = [];
+function validateMultipleFiles(
+  files: Express.Multer.File[],
+  res: Response,
+  next: NextFunction,
+): void {
+  const invalidFiles: string[] = []
 
   for (const file of files) {
-    const fileSize = file.size;
-    const fileType = file.mimetype;
+    const fileSize = file.size
+    const fileType = file.mimetype
 
     // Validate file type
     if (!ALLOWED_FILE_TYPES.includes(fileType)) {
-      invalidFiles.push(`Invalid file type: ${file.originalname}`);
+      invalidFiles.push(`Invalid file type: ${file.originalname}`)
     }
 
     // Validate file size
     if (fileSize > MAX_FILE_SIZE) {
-      invalidFiles.push(`File size exceeds the limit: ${file.originalname}`);
+      invalidFiles.push(`File size exceeds the limit: ${file.originalname}`)
     }
 
     // Validate file content (Check for corruption or empty file)
-    const filePath = file.path;
+    const filePath = file.path
     try {
-      const data = fs.readFileSync(filePath);
+      const data = fs.readFileSync(filePath)
       if (!data || data.length === 0) {
-        invalidFiles.push(`File is empty or corrupted: ${file.originalname}`);
+        invalidFiles.push(`File is empty or corrupted: ${file.originalname}`)
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
-        logger.error(`Error reading file: ${err.message}`);
-        invalidFiles.push(`Error reading file: ${file.originalname}`);
+        logger.error(`Error reading file: ${err.message}`)
+        invalidFiles.push(`Error reading file: ${file.originalname}`)
       } else {
-        logger.error(`Unknown error reading file: ${err}`);
-        invalidFiles.push(`Unknown error reading file: ${file.originalname}`);
+        logger.error(`Unknown error reading file: ${err}`)
+        invalidFiles.push(`Unknown error reading file: ${file.originalname}`)
       }
     }
   }
 
   // If there are any invalid files, send the errors
   if (invalidFiles.length > 0) {
-    logger.error(`Invalid files: ${invalidFiles.join(", ")}`);
-    res.status(400).json({ success: false, message: invalidFiles.join(", ") });
-    return;
+    logger.error(`Invalid files: ${invalidFiles.join(", ")}`)
+    res.status(400).json({ success: false, message: invalidFiles.join(", ") })
+    return
   }
 
   // Proceed to the next middleware if all files are valid
-  next();
+  next()
 }
 
-export default FileValidationMiddleware;
+export default FileValidationMiddleware

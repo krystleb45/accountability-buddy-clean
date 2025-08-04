@@ -1,7 +1,7 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs"
 
 // Default salt rounds for bcrypt
-const DEFAULT_SALT_ROUNDS = 12;
+const DEFAULT_SALT_ROUNDS = 12
 
 /**
  * Hashes a plain text password using bcrypt.
@@ -9,20 +9,20 @@ const DEFAULT_SALT_ROUNDS = 12;
  * @returns {Promise<string>} - The hashed password.
  * @throws {Error} - Throws an error if input is invalid or hashing fails.
  */
-export async function hashPassword (password: string): Promise<string> {
+export async function hashPassword(password: string): Promise<string> {
   if (!password || typeof password !== "string") {
-    throw new Error("Password must be a non-empty string.");
+    throw new Error("Password must be a non-empty string.")
   }
 
   // Use environment variable for salt rounds, default to 12
   const saltRounds =
-    Number.parseInt(process.env.SALT_ROUNDS || "", 10) || DEFAULT_SALT_ROUNDS;
+    Number.parseInt(process.env.SALT_ROUNDS || "", 10) || DEFAULT_SALT_ROUNDS
 
   try {
-    const salt = await bcrypt.genSalt(saltRounds);
-    return await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(saltRounds)
+    return await bcrypt.hash(password, salt)
   } catch (error) {
-    throw new Error(`Failed to hash password: ${(error as Error).message}`);
+    throw new Error(`Failed to hash password: ${(error as Error).message}`)
   }
 }
 
@@ -33,19 +33,22 @@ export async function hashPassword (password: string): Promise<string> {
  * @returns {Promise<boolean>} - Returns true if the passwords match, otherwise false.
  * @throws {Error} - Throws an error if input is invalid or comparison fails.
  */
-export async function comparePassword (password: string,  hashedPassword: string): Promise<boolean> {
+export async function comparePassword(
+  password: string,
+  hashedPassword: string,
+): Promise<boolean> {
   if (!password || typeof password !== "string") {
-    throw new Error("Password must be a non-empty string.");
+    throw new Error("Password must be a non-empty string.")
   }
 
   if (!hashedPassword || typeof hashedPassword !== "string") {
-    throw new Error("Hashed password must be a non-empty string.");
+    throw new Error("Hashed password must be a non-empty string.")
   }
 
   try {
-    return await bcrypt.compare(password, hashedPassword);
+    return await bcrypt.compare(password, hashedPassword)
   } catch (error) {
-    throw new Error(`Failed to compare passwords: ${(error as Error).message}`);
+    throw new Error(`Failed to compare passwords: ${(error as Error).message}`)
   }
 }
 
@@ -54,20 +57,20 @@ export async function comparePassword (password: string,  hashedPassword: string
  * @param {string} password - The plain text password.
  * @returns {boolean} - True if the password is strong enough, otherwise false.
  */
-export function isPasswordStrong (password: string): boolean {
+export function isPasswordStrong(password: string): boolean {
   if (!password || typeof password !== "string") {
-    return false;
+    return false
   }
 
   // Strong password requirements: at least 8 characters, 1 letter, 1 number, 1 special character
   const strongPasswordPattern =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Z\d@$!%*?&#]{8,}$/i;
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Z\d@$!%*?&#]{8,}$/i
 
-  return strongPasswordPattern.test(password);
+  return strongPasswordPattern.test(password)
 }
 
 export default {
   hashPassword,
   comparePassword,
   isPasswordStrong,
-};
+}

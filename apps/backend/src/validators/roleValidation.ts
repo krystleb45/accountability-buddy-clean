@@ -1,12 +1,16 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 /**
  * Middleware to handle validation results and send structured errors.
  */
-export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function validationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     // Format validation errors into a structured response
@@ -15,24 +19,24 @@ export function validationMiddleware (req: Request,  res: Response,  next: NextF
         return {
           field: error.param,
           message: error.msg,
-        };
+        }
       }
       return {
         field: "unknown",
         message: error.msg,
-      };
-    });
+      }
+    })
 
     res.status(400).json({
       success: false,
       message: "Validation failed",
       errors: formattedErrors,
-    });
+    })
 
-    return; // Terminate middleware execution
+    return // Terminate middleware execution
   }
 
-  next(); // Proceed to the next middleware
+  next() // Proceed to the next middleware
 }
 
 /**
@@ -58,7 +62,7 @@ export const createRoleValidation = [
     .withMessage("Each permission must be a valid string."),
 
   validationMiddleware, // Apply the reusable validation middleware
-];
+]
 
 /**
  * Validation for updating a role.
@@ -89,7 +93,7 @@ export const updateRoleValidation = [
     .withMessage("Each permission must be a valid string."),
 
   validationMiddleware, // Apply the reusable validation middleware
-];
+]
 
 /**
  * Validation for assigning a role to a user.
@@ -108,4 +112,4 @@ export const assignRoleValidation = [
     .withMessage("Role ID must be a valid Mongo ID"),
 
   validationMiddleware, // Apply the reusable validation middleware
-];
+]

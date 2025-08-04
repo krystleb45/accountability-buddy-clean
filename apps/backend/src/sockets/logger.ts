@@ -1,20 +1,20 @@
-import { format } from "date-fns";
-import fs from "node:fs";
-import path from "node:path";
+import { format } from "date-fns"
+import fs from "node:fs"
+import path from "node:path"
 
 // Define log levels
-type LogLevel = "INFO" | "WARN" | "ERROR" | "DEBUG";
+type LogLevel = "INFO" | "WARN" | "ERROR" | "DEBUG"
 
 // Set log file paths
-const LOG_DIRECTORY = path.resolve(__dirname, "../../logs");
+const LOG_DIRECTORY = path.resolve(__dirname, "../../logs")
 const LOG_FILE = path.join(
   LOG_DIRECTORY,
   `${format(new Date(), "yyyy-MM-dd")}.log`,
-);
+)
 
 // Ensure the log directory exists
 if (!fs.existsSync(LOG_DIRECTORY)) {
-  fs.mkdirSync(LOG_DIRECTORY, { recursive: true });
+  fs.mkdirSync(LOG_DIRECTORY, { recursive: true })
 }
 
 /**
@@ -23,29 +23,29 @@ if (!fs.existsSync(LOG_DIRECTORY)) {
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-function log (level: LogLevel,  message: string,  meta?: Record<string, any>): void {
-  const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+function log(
+  level: LogLevel,
+  message: string,
+  meta?: Record<string, any>,
+): void {
+  const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss")
   const logEntry = `${timestamp} [${level}] ${message} ${
     meta ? JSON.stringify(meta) : ""
-  }\n`;
+  }\n`
 
   // Write log to file
-  fs.appendFileSync(LOG_FILE, logEntry);
+  fs.appendFileSync(LOG_FILE, logEntry)
 
   // Log to console
   switch (level) {
     case "INFO":
-    
-      break;
+      break
     case "WARN":
-    
-      break;
+      break
     case "ERROR":
-    
-      break;
+      break
     case "DEBUG":
-    
-      break;
+      break
   }
 }
 
@@ -54,8 +54,8 @@ function log (level: LogLevel,  message: string,  meta?: Record<string, any>): v
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-function info (message: string, meta?: Record<string, any>): void {
-  log("INFO", message, meta);
+function info(message: string, meta?: Record<string, any>): void {
+  log("INFO", message, meta)
 }
 
 /**
@@ -63,8 +63,8 @@ function info (message: string, meta?: Record<string, any>): void {
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-function warn (message: string, meta?: Record<string, any>): void {
-  log("WARN", message, meta);
+function warn(message: string, meta?: Record<string, any>): void {
+  log("WARN", message, meta)
 }
 
 /**
@@ -72,8 +72,8 @@ function warn (message: string, meta?: Record<string, any>): void {
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-function error (message: string, meta?: Record<string, any>): void {
-  log("ERROR", message, meta);
+function error(message: string, meta?: Record<string, any>): void {
+  log("ERROR", message, meta)
 }
 
 /**
@@ -81,8 +81,8 @@ function error (message: string, meta?: Record<string, any>): void {
  * @param message - The log message
  * @param meta - Additional metadata to log (optional)
  */
-function debug (message: string, meta?: Record<string, any>): void {
-  log("DEBUG", message, meta);
+function debug(message: string, meta?: Record<string, any>): void {
+  log("DEBUG", message, meta)
 }
 
-export { debug, error, info, warn };
+export { debug, error, info, warn }

@@ -1,30 +1,30 @@
 // src/api/models/Statistics.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Statistics Document Interface ---
 export interface IStatistics extends Document {
-  user: Types.ObjectId;
-  goalsCompleted: number;
-  currentStreak: number;
-  longestStreak: number;
-  totalPoints: number;
-  weeklyActivity: Record<string, number>; // e.g., { Monday: 2, Tuesday: 0, ... }
-  lastUpdated: Date;
+  user: Types.ObjectId
+  goalsCompleted: number
+  currentStreak: number
+  longestStreak: number
+  totalPoints: number
+  weeklyActivity: Record<string, number> // e.g., { Monday: 2, Tuesday: 0, ... }
+  lastUpdated: Date
 
   // Instance methods
-  recordGoalCompletion: () => Promise<IStatistics>;
-  recordActivity: (day: string, count?: number) => Promise<IStatistics>;
-  addPoints: (points: number) => Promise<IStatistics>;
+  recordGoalCompletion: () => Promise<IStatistics>
+  recordActivity: (day: string, count?: number) => Promise<IStatistics>
+  addPoints: (points: number) => Promise<IStatistics>
 }
 
 // --- Statistics Model Static Interface ---
 export interface IStatisticsModel extends Model<IStatistics> {
-  getByUser: (userId: Types.ObjectId) => Promise<IStatistics | null>;
-  initializeForUser: (userId: Types.ObjectId) => Promise<IStatistics>;
-  resetWeeklyActivity: (userId: Types.ObjectId) => Promise<IStatistics | null>;
+  getByUser: (userId: Types.ObjectId) => Promise<IStatistics | null>
+  initializeForUser: (userId: Types.ObjectId) => Promise<IStatistics>
+  resetWeeklyActivity: (userId: Types.ObjectId) => Promise<IStatistics | null>
 }
 
 // --- Schema Definition ---
@@ -34,13 +34,12 @@ const StatisticsSchema = new Schema<IStatistics, IStatisticsModel>(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,      // keep uniqueness
-      
+      unique: true, // keep uniqueness
     },
     goalsCompleted: { type: Number, default: 0 },
-    currentStreak:   { type: Number, default: 0 },
-    longestStreak:   { type: Number, default: 0 },
-    totalPoints:     { type: Number, default: 0 },
+    currentStreak: { type: Number, default: 0 },
+    longestStreak: { type: Number, default: 0 },
+    totalPoints: { type: Number, default: 0 },
     weeklyActivity: {
       type: Map,
       of: Number,
@@ -60,78 +59,77 @@ const StatisticsSchema = new Schema<IStatistics, IStatisticsModel>(
     timestamps: true,
     toJSON: { virtuals: false },
     toObject: { virtuals: false },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-StatisticsSchema.index({ user: 1 });  // declared here instead
+StatisticsSchema.index({ user: 1 }) // declared here instead
 
 // --- Instance Methods ---
 // Record a completed goal: increment goalsCompleted, update streaks
 StatisticsSchema.methods.recordGoalCompletion = async function (
-  this: IStatistics
+  this: IStatistics,
 ): Promise<IStatistics> {
-  this.goalsCompleted += 1;
-  this.currentStreak += 1;
+  this.goalsCompleted += 1
+  this.currentStreak += 1
   if (this.currentStreak > this.longestStreak) {
-    this.longestStreak = this.currentStreak;
+    this.longestStreak = this.currentStreak
   }
-  this.lastUpdated = new Date();
-  return this.save();
-};
+  this.lastUpdated = new Date()
+  return this.save()
+}
 
 // Record activity for a given day
 StatisticsSchema.methods.recordActivity = async function (
   this: IStatistics,
   day: string,
-  count = 1
+  count = 1,
 ): Promise<IStatistics> {
-  const current = this.weeklyActivity[day] || 0;
-  this.weeklyActivity[day] = current + count;
-  this.lastUpdated = new Date();
-  this.markModified("weeklyActivity");
-  return this.save();
-};
+  const current = this.weeklyActivity[day] || 0
+  this.weeklyActivity[day] = current + count
+  this.lastUpdated = new Date()
+  this.markModified("weeklyActivity")
+  return this.save()
+}
 
 // Add points to totalPoints
 StatisticsSchema.methods.addPoints = async function (
   this: IStatistics,
-  points: number
+  points: number,
 ): Promise<IStatistics> {
-  this.totalPoints += points;
-  this.lastUpdated = new Date();
-  return this.save();
-};
+  this.totalPoints += points
+  this.lastUpdated = new Date()
+  return this.save()
+}
 
 // --- Static Methods ---
 // Get or find one by user
 StatisticsSchema.statics.getByUser = function (
   this: IStatisticsModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IStatistics | null> {
-  return this.findOne({ user: userId }).exec();
-};
+  return this.findOne({ user: userId }).exec()
+}
 
 // Initialize stats document for new user
 StatisticsSchema.statics.initializeForUser = async function (
   this: IStatisticsModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IStatistics> {
-  let stats = await this.findOne({ user: userId }).exec();
+  let stats = await this.findOne({ user: userId }).exec()
   if (!stats) {
-    stats = await this.create({ user: userId });
+    stats = await this.create({ user: userId })
   }
-  return stats;
-};
+  return stats
+}
 
 // Reset weekly activity back to zeros
 StatisticsSchema.statics.resetWeeklyActivity = async function (
   this: IStatisticsModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IStatistics | null> {
-  const stats = await this.findOne({ user: userId }).exec();
-  if (!stats) 
-return null;
+  const stats = await this.findOne({ user: userId }).exec()
+  if (!stats) return null
   const resetMap: Record<string, number> = {
     Monday: 0,
     Tuesday: 0,
@@ -140,16 +138,16 @@ return null;
     Friday: 0,
     Saturday: 0,
     Sunday: 0,
-  };
-  stats.weeklyActivity = resetMap as any;
-  stats.lastUpdated = new Date();
-  stats.markModified("weeklyActivity");
-  return stats.save();
-};
+  }
+  stats.weeklyActivity = resetMap as any
+  stats.lastUpdated = new Date()
+  stats.markModified("weeklyActivity")
+  return stats.save()
+}
 
 // --- Model Export ---
 export const Statistics = mongoose.model<IStatistics, IStatisticsModel>(
   "Statistics",
-  StatisticsSchema
-);
-export default Statistics;
+  StatisticsSchema,
+)
+export default Statistics

@@ -1,4 +1,4 @@
-export function mapStripeStatusToCustomStatus (status: string): string {
+export function mapStripeStatusToCustomStatus(status: string): string {
   const statusMap: { [key: string]: string } = {
     active: "active",
     past_due: "past_due",
@@ -7,7 +7,7 @@ export function mapStripeStatusToCustomStatus (status: string): string {
     incomplete: "incomplete",
     incomplete_expired: "expired",
     trialing: "trialing",
-  };
+  }
 
-  return statusMap[status] || "unknown";
+  return statusMap[status] || "unknown"
 }

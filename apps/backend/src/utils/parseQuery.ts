@@ -17,54 +17,60 @@
  *
  * @returns Parsed and sanitized query parameters.
  */
-type QueryType = "number" | "boolean" | "date" | "string";
+type QueryType = "number" | "boolean" | "date" | "string"
 
 interface QuerySchema {
-  type: QueryType;
-  default?: number | boolean | Date | string | null;
+  type: QueryType
+  default?: number | boolean | Date | string | null
 }
 
-type ParsedQuery = Record<string, string | number | boolean | Date | null>;
+type ParsedQuery = Record<string, string | number | boolean | Date | null>
 
-function parseQuery (query: Record<string, unknown>,  schema: Record<string, QuerySchema>): ParsedQuery {
-  const parsedQuery: ParsedQuery = {};
+function parseQuery(
+  query: Record<string, unknown>,
+  schema: Record<string, QuerySchema>,
+): ParsedQuery {
+  const parsedQuery: ParsedQuery = {}
 
   for (const key in schema) {
-    const { type, default: defaultValue } = schema[key];
-    let value = query[key] !== undefined ? query[key] : defaultValue;
+    const { type, default: defaultValue } = schema[key]
+    let value = query[key] !== undefined ? query[key] : defaultValue
 
     // Handle type conversion and sanitization
     switch (type) {
       case "number":
-        value = value !== undefined ? Number(value) : defaultValue;
-        if (isNaN(value as number)) 
-value = defaultValue ?? null;
-        break;
+        value = value !== undefined ? Number(value) : defaultValue
+        if (Number.isNaN(value as number)) value = defaultValue ?? null
+        break
 
       case "boolean":
-        value = value === "true" || value === true;
-        break;
+        value = value === "true" || value === true
+        break
 
       case "date":
         value =
-          value !== undefined && new Date(value as string).toString() !== "Invalid Date"
+          value !== undefined &&
+          new Date(value as string).toString() !== "Invalid Date"
             ? new Date(value as string)
-            : defaultValue ?? null;
-        break;
+            : (defaultValue ?? null)
+        break
 
       case "string":
-        value = value !== undefined ? sanitizeString(value as string) : defaultValue ?? null;
-        break;
+        value =
+          value !== undefined
+            ? sanitizeString(value as string)
+            : (defaultValue ?? null)
+        break
 
       default:
-        value = defaultValue ?? null;
-        break;
+        value = defaultValue ?? null
+        break
     }
 
-    parsedQuery[key] = value as string | number | boolean | Date | null;
+    parsedQuery[key] = value as string | number | boolean | Date | null
   }
 
-  return parsedQuery;
+  return parsedQuery
 }
 
 /**
@@ -72,10 +78,9 @@ value = defaultValue ?? null;
  * @param str - The string to sanitize.
  * @returns Sanitized string.
  */
-function sanitizeString (str: unknown): string {
-  if (typeof str !== "string") 
-return "";
-  return str.trim().replace(/[<>{}]/g, ""); // Remove potentially unsafe characters
+function sanitizeString(str: unknown): string {
+  if (typeof str !== "string") return ""
+  return str.trim().replace(/[<>{}]/g, "") // Remove potentially unsafe characters
 }
 
-export default parseQuery;
+export default parseQuery

@@ -1,16 +1,17 @@
-// src/api/controllers/blogController.ts
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import * as blogService from "../services/blogService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+
+import * as blogService from "../services/blogService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 //
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 //
-function validateObjectId (id: string): boolean {
+function validateObjectId(id: string): boolean {
   return mongoose.Types.ObjectId.isValid(id)
 }
 
@@ -19,50 +20,55 @@ function validateObjectId (id: string): boolean {
  * @route POST /api/blog
  */
 export const createBlogPost = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     if (!req.user) {
-      sendResponse(res, 401, false, "Unauthorized");
-      return;
+      sendResponse(res, 401, false, "Unauthorized")
+      return
     }
 
-    const { title, content, category } = req.body;
+    const { title, content, category } = req.body
     if (!title || !content || !category) {
-      sendResponse(res, 400, false, "Title, content & category required");
-      return;
+      sendResponse(res, 400, false, "Title, content & category required")
+      return
     }
 
     const post = await blogService.createBlogPostService(
       req.user.id,
       title,
       content,
-      category
-    );
-    sendResponse(res, 201, true, "Blog post created", { post });
-  }
-);
+      category,
+    )
+    sendResponse(res, 201, true, "Blog post created", { post })
+  },
+)
 
 /**
  * @desc Toggle like / unlike on a blog post
  * @route POST /api/blog/:id/like
  */
 export const toggleLikeBlogPost = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     if (!req.user) {
-      sendResponse(res, 401, false, "Unauthorized");
-      return;
+      sendResponse(res, 401, false, "Unauthorized")
+      return
     }
 
-    const { id } = req.params;
+    const { id } = req.params
     if (!validateObjectId(id)) {
-      sendResponse(res, 400, false, "Invalid post ID");
-      return;
+      sendResponse(res, 400, false, "Invalid post ID")
+      return
     }
 
-    const post = await blogService.toggleLikeBlogPostService(req.user.id, id);
-    const liked = post.likes.some((l) => l.equals(req.user!.id));
-    sendResponse(res, 200, true, `Blog post ${liked ? "liked" : "unliked"}`, { post });
-  }
-);
+    const post = await blogService.toggleLikeBlogPostService(req.user.id, id)
+    const liked = post.likes.some((l) => l.equals(req.user!.id))
+    sendResponse(res, 200, true, `Blog post ${liked ? "liked" : "unliked"}`, {
+      post,
+    })
+  },
+)
 
 /**
  * @desc Add a comment
@@ -70,47 +76,58 @@ export const toggleLikeBlogPost = catchAsync(
  */
 export const addComment = catchAsync(
   async (
-    req: Request<{ id: string }, unknown, { text: string }>,
-    res: Response
+    req: AuthenticatedRequest<{ id: string }, unknown, { text: string }>,
+    res: Response,
   ): Promise<void> => {
     if (!req.user) {
-      sendResponse(res, 401, false, "Unauthorized");
-      return;
+      sendResponse(res, 401, false, "Unauthorized")
+      return
     }
 
-    const { id } = req.params;
-    const { text } = req.body;
+    const { id } = req.params
+    const { text } = req.body
     if (!validateObjectId(id) || !text?.trim()) {
-      sendResponse(res, 400, false, "Invalid ID or empty comment");
-      return;
+      sendResponse(res, 400, false, "Invalid ID or empty comment")
+      return
     }
 
-    const post = await blogService.addCommentService(req.user.id, id, text.trim());
-    sendResponse(res, 201, true, "Comment added", { post });
-  }
-);
+    const post = await blogService.addCommentService(
+      req.user.id,
+      id,
+      text.trim(),
+    )
+    sendResponse(res, 201, true, "Comment added", { post })
+  },
+)
 
 /**
  * @desc Remove a comment
  * @route DELETE /api/blog/:postId/comment/:commentId
  */
 export const removeComment = catchAsync(
-  async (req: Request<{ postId: string; commentId: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ postId: string; commentId: string }>,
+    res: Response,
+  ): Promise<void> => {
     if (!req.user) {
-      sendResponse(res, 401, false, "Unauthorized");
-      return;
+      sendResponse(res, 401, false, "Unauthorized")
+      return
     }
 
-    const { postId, commentId } = req.params;
+    const { postId, commentId } = req.params
     if (!validateObjectId(postId) || !validateObjectId(commentId)) {
-      sendResponse(res, 400, false, "Invalid IDs");
-      return;
+      sendResponse(res, 400, false, "Invalid IDs")
+      return
     }
 
-    const post = await blogService.removeCommentService(req.user.id, postId, commentId);
-    sendResponse(res, 200, true, "Comment removed", { post });
-  }
-);
+    const post = await blogService.removeCommentService(
+      req.user.id,
+      postId,
+      commentId,
+    )
+    sendResponse(res, 200, true, "Comment removed", { post })
+  },
+)
 
 /**
  * @desc Get all blog posts
@@ -118,15 +135,20 @@ export const removeComment = catchAsync(
  */
 export const getAllBlogPosts = catchAsync(
   async (
-    req: Request<unknown, unknown, unknown, { limit?: string; page?: string }>,
-    res: Response
+    req: AuthenticatedRequest<
+      unknown,
+      unknown,
+      unknown,
+      { limit?: string; page?: string }
+    >,
+    res: Response,
   ): Promise<void> => {
-    const limit = Number.parseInt(req.query.limit || "10", 10);
-    const page = Number.parseInt(req.query.page || "1", 10);
-    const posts = await blogService.getAllBlogPostsService(limit, page);
-    sendResponse(res, 200, true, "Blog posts retrieved", { posts });
-  }
-);
+    const limit = Number.parseInt(req.query.limit || "10", 10)
+    const page = Number.parseInt(req.query.page || "1", 10)
+    const posts = await blogService.getAllBlogPostsService(limit, page)
+    sendResponse(res, 200, true, "Blog posts retrieved", { posts })
+  },
+)
 
 /**
  * @desc Get a single blog post by ID
@@ -134,32 +156,35 @@ export const getAllBlogPosts = catchAsync(
  */
 export const getBlogPostById = catchAsync(
   async (req: Request<{ id: string }>, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const { id } = req.params
     if (!validateObjectId(id)) {
-      sendResponse(res, 400, false, "Invalid post ID");
-      return;
+      sendResponse(res, 400, false, "Invalid post ID")
+      return
     }
-    const post = await blogService.getBlogPostByIdService(id);
-    sendResponse(res, 200, true, "Blog post retrieved", { post });
-  }
-);
+    const post = await blogService.getBlogPostByIdService(id)
+    sendResponse(res, 200, true, "Blog post retrieved", { post })
+  },
+)
 
 /**
  * @desc Edit a blog post
  * @route PUT /api/blog/:id
  */
 export const editBlogPost = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     if (!req.user) {
-      sendResponse(res, 401, false, "Unauthorized");
-      return;
+      sendResponse(res, 401, false, "Unauthorized")
+      return
     }
 
-    const { id } = req.params;
-    const { title, content, category } = req.body;
+    const { id } = req.params
+    const { title, content, category } = req.body
     if (!validateObjectId(id)) {
-      sendResponse(res, 400, false, "Invalid post ID");
-      return;
+      sendResponse(res, 400, false, "Invalid post ID")
+      return
     }
 
     const post = await blogService.updateBlogPostService(
@@ -167,33 +192,36 @@ export const editBlogPost = catchAsync(
       id,
       title,
       content,
-      category
-    );
-    sendResponse(res, 200, true, "Blog post updated", { post });
-  }
-);
+      category,
+    )
+    sendResponse(res, 200, true, "Blog post updated", { post })
+  },
+)
 
 /**
  * @desc Delete a blog post
  * @route DELETE /api/blog/:id
  */
 export const deleteBlogPost = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     if (!req.user) {
-      sendResponse(res, 401, false, "Unauthorized");
-      return;
+      sendResponse(res, 401, false, "Unauthorized")
+      return
     }
 
-    const { id } = req.params;
+    const { id } = req.params
     if (!validateObjectId(id)) {
-      sendResponse(res, 400, false, "Invalid post ID");
-      return;
+      sendResponse(res, 400, false, "Invalid post ID")
+      return
     }
 
-    const post = await blogService.deleteBlogPostService(req.user.id, id);
-    sendResponse(res, 200, true, "Blog post deleted", { post });
-  }
-);
+    const post = await blogService.deleteBlogPostService(req.user.id, id)
+    sendResponse(res, 200, true, "Blog post deleted", { post })
+  },
+)
 
 export default {
   createBlogPost,
@@ -204,4 +232,4 @@ export default {
   getBlogPostById,
   editBlogPost,
   deleteBlogPost,
-};
+}

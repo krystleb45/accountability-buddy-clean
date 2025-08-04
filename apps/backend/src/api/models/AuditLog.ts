@@ -1,24 +1,24 @@
 // src/api/models/AuditLog.ts
-import type { CallbackError, Document, Model, Types } from "mongoose";
+import type { CallbackError, Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
-import validator from "validator";
+import mongoose, { Schema } from "mongoose"
+import validator from "validator"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 // --- Types & Interfaces ---
-export type EntityType = "User" | "Goal" | "Task" | "Subscription" | "Payment";
+export type EntityType = "User" | "Goal" | "Task" | "Subscription" | "Payment"
 
 export interface IAuditTrail extends Document {
-  userId?: Types.ObjectId;
-  entityType: EntityType;
-  entityId: Types.ObjectId;
-  action: string;
-  description?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  createdAt: Date;  // set by mongoose timestamps
-  updatedAt: Date;  // set by mongoose timestamps
+  userId?: Types.ObjectId
+  entityType: EntityType
+  entityId: Types.ObjectId
+  action: string
+  description?: string
+  ipAddress?: string
+  userAgent?: string
+  createdAt: Date // set by mongoose timestamps
+  updatedAt: Date // set by mongoose timestamps
 }
 
 export interface IAuditTrailModel extends Model<IAuditTrail> {
@@ -29,8 +29,8 @@ export interface IAuditTrailModel extends Model<IAuditTrail> {
     action: string,
     description?: string,
     ipAddress?: string,
-    userAgent?: string
-  ) => Promise<IAuditTrail>;
+    userAgent?: string,
+  ) => Promise<IAuditTrail>
 }
 
 // --- Schema Definition ---
@@ -68,39 +68,35 @@ const AuditTrailSchema = new Schema<IAuditTrail>(
     timestamps: true,
     toJSON: { virtuals: false },
     toObject: { virtuals: false },
-  }
-);
+  },
+)
 
-
-AuditTrailSchema.index({ userId: 1 });
-AuditTrailSchema.index({ entityType: 1 });
-AuditTrailSchema.index({ entityId: 1 });
-AuditTrailSchema.index({ action: 1, createdAt: -1 });
+AuditTrailSchema.index({ userId: 1 })
+AuditTrailSchema.index({ entityType: 1 })
+AuditTrailSchema.index({ entityId: 1 })
+AuditTrailSchema.index({ action: 1, createdAt: -1 })
 
 // --- Pre-save Hook ---
 AuditTrailSchema.pre<IAuditTrail>(
   "save",
   function (this: IAuditTrail, next: (err?: CallbackError) => void): void {
     if (!this.userId && !this.ipAddress) {
-      const error = new Error("Either userId or ipAddress must be provided.");
-      logger.error(`AuditTrail validation error: ${error.message}`);
-      return next(error);
+      const error = new Error("Either userId or ipAddress must be provided.")
+      logger.error(`AuditTrail validation error: ${error.message}`)
+      return next(error)
     }
-    next();
-  }
-);
+    next()
+  },
+)
 
 // --- Post-save Hooks ---
-AuditTrailSchema.post<IAuditTrail>(
-  "save",
-  function (this: IAuditTrail): void {
-    logger.info(
-      `AuditTrail created for ${this.entityType} ${this.entityId}: ${this.action} by user ${
-        this.userId || "Unknown"
-      } at ${this.createdAt.toISOString()}`
-    );
-  }
-);
+AuditTrailSchema.post<IAuditTrail>("save", function (this: IAuditTrail): void {
+  logger.info(
+    `AuditTrail created for ${this.entityType} ${this.entityId}: ${this.action} by user ${
+      this.userId || "Unknown"
+    } at ${this.createdAt.toISOString()}`,
+  )
+})
 
 AuditTrailSchema.post<IAuditTrail>(
   "save",
@@ -109,16 +105,16 @@ AuditTrailSchema.post<IAuditTrail>(
     this: IAuditTrail,
     error: CallbackError,
     doc: IAuditTrail,
-    next: (err?: CallbackError) => void
+    next: (err?: CallbackError) => void,
   ): void {
     if (error) {
       logger.error(
-        `Error saving AuditTrail for ${doc.entityType} ${doc.entityId}: ${error.message}`
-      );
+        `Error saving AuditTrail for ${doc.entityType} ${doc.entityId}: ${error.message}`,
+      )
     }
-    next(error);
-  }
-);
+    next(error)
+  },
+)
 
 // --- Static Methods ---
 AuditTrailSchema.statics.logEvent = async function (
@@ -128,7 +124,7 @@ AuditTrailSchema.statics.logEvent = async function (
   action: string,
   description = "",
   ipAddress = "",
-  userAgent = ""
+  userAgent = "",
 ): Promise<IAuditTrail> {
   const entry = new this({
     userId,
@@ -138,15 +134,15 @@ AuditTrailSchema.statics.logEvent = async function (
     description,
     ipAddress,
     userAgent,
-  }) as IAuditTrail;
+  }) as IAuditTrail
 
-  await entry.save();
-  return entry;
-};
+  await entry.save()
+  return entry
+}
 
 // --- Model Export ---
 export const AuditTrail = mongoose.model<IAuditTrail, IAuditTrailModel>(
   "AuditTrail",
-  AuditTrailSchema
-);
-export default AuditTrail;
+  AuditTrailSchema,
+)
+export default AuditTrail

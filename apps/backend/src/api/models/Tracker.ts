@@ -1,25 +1,25 @@
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Tracker Document Interface ---
 export interface ITracker extends Document {
-  user: Types.ObjectId;   // Reference to the User model
-  name: string;           // Name of the tracker
-  progress: number;       // Progress percentage (0-100)
-  createdAt: Date;        // Timestamp for creation
-  updatedAt: Date;        // Timestamp for last update
+  user: Types.ObjectId // Reference to the User model
+  name: string // Name of the tracker
+  progress: number // Progress percentage (0-100)
+  createdAt: Date // Timestamp for creation
+  updatedAt: Date // Timestamp for last update
 
   // Instance methods
-  addProgress: (amount: number) => Promise<ITracker>;
-  reset: () => Promise<ITracker>;
-  isComplete: () => boolean;
+  addProgress: (amount: number) => Promise<ITracker>
+  reset: () => Promise<ITracker>
+  isComplete: () => boolean
 }
 
 // --- Tracker Model Interface ---
 export interface ITrackerModel extends Model<ITracker> {
-  findByUser: (userId: Types.ObjectId) => Promise<ITracker[]>;
-  resetAll: (userId: Types.ObjectId) => Promise<void>;
+  findByUser: (userId: Types.ObjectId) => Promise<ITracker[]>
+  resetAll: (userId: Types.ObjectId) => Promise<void>
 }
 
 // --- Tracker Schema Definition ---
@@ -46,53 +46,51 @@ const TrackerSchema = new Schema<ITracker, ITrackerModel>(
   },
   {
     timestamps: true,
-  }
-);
+  },
+)
 
 // --- Instance Methods ---
 TrackerSchema.methods.addProgress = async function (
   this: ITracker,
-  amount: number
+  amount: number,
 ): Promise<ITracker> {
-  this.progress = Math.min(100, this.progress + amount);
-  return this.save();
-};
+  this.progress = Math.min(100, this.progress + amount)
+  return this.save()
+}
 
 TrackerSchema.methods.reset = async function (
-  this: ITracker
+  this: ITracker,
 ): Promise<ITracker> {
-  this.progress = 0;
-  return this.save();
-};
+  this.progress = 0
+  return this.save()
+}
 
-TrackerSchema.methods.isComplete = function (
-  this: ITracker
-): boolean {
-  return this.progress >= 100;
-};
+TrackerSchema.methods.isComplete = function (this: ITracker): boolean {
+  return this.progress >= 100
+}
 
 // --- Static Methods ---
 TrackerSchema.statics.findByUser = function (
   this: ITrackerModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<ITracker[]> {
-  return this.find({ user: userId }).sort({ name: 1 }).exec();
-};
+  return this.find({ user: userId }).sort({ name: 1 }).exec()
+}
 
 TrackerSchema.statics.resetAll = async function (
   this: ITrackerModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<void> {
-  await this.updateMany({ user: userId }, { progress: 0 }).exec();
-};
+  await this.updateMany({ user: userId }, { progress: 0 }).exec()
+}
 
 // --- Explicit Indexes ---
-TrackerSchema.index({ user: 1, name: 1 });
+TrackerSchema.index({ user: 1, name: 1 })
 
 // --- Model Export ---
 export const Tracker = mongoose.model<ITracker, ITrackerModel>(
   "Tracker",
-  TrackerSchema
-);
+  TrackerSchema,
+)
 
-export default Tracker;
+export default Tracker

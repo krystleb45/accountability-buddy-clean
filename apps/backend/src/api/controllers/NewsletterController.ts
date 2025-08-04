@@ -1,10 +1,10 @@
 // src/api/controllers/NewsletterController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger";
-import Newsletter from "../models/Newsletter";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import { logger } from "../../utils/winstonLogger"
+import Newsletter from "../models/Newsletter"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 /**
  * @desc    Subscribe to the newsletter
@@ -12,31 +12,35 @@ import sendResponse from "../utils/sendResponse";
  * @access  Public
  */
 export const signupNewsletter = catchAsync(
-  async (req: Request<{}, {}, { email: string }>, res: Response, _next: NextFunction): Promise<void> => {
-    const { email } = req.body;
+  async (
+    req: Request<unknown, unknown, { email: string }>,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> => {
+    const { email } = req.body
     if (!email?.trim()) {
-      sendResponse(res, 400, false, "Email is required.");
-      return;
+      sendResponse(res, 400, false, "Email is required.")
+      return
     }
 
     // find or create subscriber
-    const subscriber = await Newsletter.findOrCreate(email.trim().toLowerCase());
+    const subscriber = await Newsletter.findOrCreate(email.trim().toLowerCase())
 
     if (subscriber.status === "subscribed") {
-      sendResponse(res, 400, false, "Email is already subscribed.");
-      return;
+      sendResponse(res, 400, false, "Email is already subscribed.")
+      return
     }
 
     // resubscribe
-    subscriber.status = "subscribed";
-    subscriber.subscribedAt = new Date();
-    await subscriber.regenerateUnsubscribeToken();
-    await subscriber.save();
+    subscriber.status = "subscribed"
+    subscriber.subscribedAt = new Date()
+    await subscriber.regenerateUnsubscribeToken()
+    await subscriber.save()
 
-    logger.info(`Newsletter subscription (resubscribe): ${email}`);
-    sendResponse(res, 201, true, "Successfully subscribed to the newsletter.");
-  }
-);
+    logger.info(`Newsletter subscription (resubscribe): ${email}`)
+    sendResponse(res, 201, true, "Successfully subscribed to the newsletter.")
+  },
+)
 
 /**
  * @desc    Unsubscribe from the newsletter
@@ -44,30 +48,39 @@ export const signupNewsletter = catchAsync(
  * @access  Public
  */
 export const unsubscribeNewsletter = catchAsync(
-  async (req: Request<{}, {}, {}, { token?: string }>, res: Response, _next: NextFunction): Promise<void> => {
-    const token = req.query.token;
+  async (
+    req: Request<unknown, unknown, unknown, { token?: string }>,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> => {
+    const token = req.query.token
     if (typeof token !== "string") {
-      sendResponse(res, 400, false, "Invalid or missing token.");
-      return;
+      sendResponse(res, 400, false, "Invalid or missing token.")
+      return
     }
 
     // find the subscriber by token
-    const subscriber = await Newsletter.findOne({ unsubscribeToken: token });
+    const subscriber = await Newsletter.findOne({ unsubscribeToken: token })
     if (!subscriber) {
-      sendResponse(res, 404, false, "Subscriber not found.");
-      return;
+      sendResponse(res, 404, false, "Subscriber not found.")
+      return
     }
 
     // use the instance method to validate and unsubscribe
-    await subscriber.unsubscribe(token);
+    await subscriber.unsubscribe(token)
     // clear token so they can’t unsubscribe twice
-    subscriber.unsubscribeToken = undefined;
-    await subscriber.save();
+    subscriber.unsubscribeToken = undefined
+    await subscriber.save()
 
-    logger.info(`Newsletter unsubscription: ${subscriber.email}`);
-    sendResponse(res, 200, true, "Successfully unsubscribed from the newsletter.");
-  }
-);
+    logger.info(`Newsletter unsubscription: ${subscriber.email}`)
+    sendResponse(
+      res,
+      200,
+      true,
+      "Successfully unsubscribed from the newsletter.",
+    )
+  },
+)
 
 /**
  * @desc    Get all subscribers (Admin only)
@@ -76,11 +89,13 @@ export const unsubscribeNewsletter = catchAsync(
  */
 export const getSubscribers = catchAsync(
   async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    const subscribers = await Newsletter.findSubscribed();
+    const subscribers = await Newsletter.findSubscribed()
     if (subscribers.length === 0) {
-      sendResponse(res, 404, false, "No subscribers found.");
-      return;
+      sendResponse(res, 404, false, "No subscribers found.")
+      return
     }
-    sendResponse(res, 200, true, "Subscribers fetched successfully.", { subscribers });
-  }
-);
+    sendResponse(res, 200, true, "Subscribers fetched successfully.", {
+      subscribers,
+    })
+  },
+)

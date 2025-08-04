@@ -1,21 +1,21 @@
 // src/api/models/Leaderboard.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Interface for Leaderboard Document ---
 export interface ILeaderboard extends Document {
-  user: Types.ObjectId;
-  completedGoals: number;
-  completedMilestones: number;
-  totalPoints: number;
-  streakDays: number;
-  rank: number | null;
-  createdAt: Date;
-  updatedAt: Date;
+  user: Types.ObjectId
+  completedGoals: number
+  completedMilestones: number
+  totalPoints: number
+  streakDays: number
+  rank: number | null
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  rankDescription: string;
+  rankDescription: string
 }
 
 // --- Model Interface for Statics ---
@@ -25,10 +25,10 @@ export interface ILeaderboardModel extends Model<ILeaderboard> {
     points: number,
     goals: number,
     milestones: number,
-    streak: number
-  ) => Promise<ILeaderboard>;
-  recalculateRanks: () => Promise<void>;
-  getTop: (n: number) => Promise<ILeaderboard[]>;
+    streak: number,
+  ) => Promise<ILeaderboard>
+  recalculateRanks: () => Promise<void>
+  getTop: (n: number) => Promise<ILeaderboard[]>
 }
 
 // --- Schema Definition ---
@@ -49,12 +49,12 @@ const LeaderboardSchema = new Schema<ILeaderboard, ILeaderboardModel>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
 // Unique index on user
-LeaderboardSchema.index({ user: 1 }, { unique: true });
+LeaderboardSchema.index({ user: 1 }, { unique: true })
 // Compound sort index
 LeaderboardSchema.index(
   {
@@ -63,8 +63,8 @@ LeaderboardSchema.index(
     completedMilestones: -1,
     streakDays: -1,
   },
-  { name: "leaderboard_sort_index" }
-);
+  { name: "leaderboard_sort_index" },
+)
 
 // --- Static Methods ---
 LeaderboardSchema.statics.updateLeaderboard = async function (
@@ -72,7 +72,7 @@ LeaderboardSchema.statics.updateLeaderboard = async function (
   points: number,
   goals: number,
   milestones: number,
-  streak: number
+  streak: number,
 ): Promise<ILeaderboard> {
   const entry = await this.findOneAndUpdate(
     { user: userId },
@@ -84,11 +84,11 @@ LeaderboardSchema.statics.updateLeaderboard = async function (
         streakDays: streak,
       },
     },
-    { new: true, upsert: true, setDefaultsOnInsert: true }
-  );
-  await this.recalculateRanks();
-  return entry!;
-};
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  )
+  await this.recalculateRanks()
+  return entry!
+}
 
 LeaderboardSchema.statics.recalculateRanks = async function (): Promise<void> {
   const entries = await this.find()
@@ -98,14 +98,16 @@ LeaderboardSchema.statics.recalculateRanks = async function (): Promise<void> {
       completedMilestones: -1,
       streakDays: -1,
     })
-    .exec();
+    .exec()
   for (let i = 0; i < entries.length; i++) {
-    entries[i].rank = i + 1;
-    await entries[i].save();
+    entries[i].rank = i + 1
+    await entries[i].save()
   }
-};
+}
 
-LeaderboardSchema.statics.getTop = function (n: number): Promise<ILeaderboard[]> {
+LeaderboardSchema.statics.getTop = function (
+  n: number,
+): Promise<ILeaderboard[]> {
   return this.find()
     .sort({
       totalPoints: -1,
@@ -113,27 +115,29 @@ LeaderboardSchema.statics.getTop = function (n: number): Promise<ILeaderboard[]>
       completedMilestones: -1,
       streakDays: -1,
     })
-    .limit(n);
-};
+    .limit(n)
+}
 
 // --- Virtual Field ---
-LeaderboardSchema.virtual("rankDescription").get(function (this: ILeaderboard): string {
+LeaderboardSchema.virtual("rankDescription").get(function (
+  this: ILeaderboard,
+): string {
   switch (this.rank) {
     case 1:
-      return "Champion";
+      return "Champion"
     case 2:
-      return "Runner-up";
+      return "Runner-up"
     case 3:
-      return "Third Place";
+      return "Third Place"
     default:
-      return this.rank ? `Rank ${this.rank}` : "Unranked";
+      return this.rank ? `Rank ${this.rank}` : "Unranked"
   }
-});
+})
 
 // --- Model Export ---
 export const Leaderboard = mongoose.model<ILeaderboard, ILeaderboardModel>(
   "Leaderboard",
-  LeaderboardSchema
-);
+  LeaderboardSchema,
+)
 
-export default Leaderboard;
+export default Leaderboard

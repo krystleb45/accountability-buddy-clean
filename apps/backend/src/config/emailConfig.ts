@@ -1,33 +1,33 @@
-import { google } from "googleapis";
-import nodemailer from "nodemailer";
+import { google } from "googleapis"
+import nodemailer from "nodemailer"
 
-import { logger } from "../utils/winstonLogger";
+import { logger } from "../utils/winstonLogger"
 // OAuth2 Client Setup
 const oAuth2Client = new google.auth.OAuth2(
   process.env.EMAIL_CLIENT_ID,
   process.env.EMAIL_CLIENT_SECRET,
   process.env.EMAIL_REDIRECT_URI,
-);
+)
 
 oAuth2Client.setCredentials({
   refresh_token: process.env.EMAIL_REFRESH_TOKEN,
-});
+})
 
 /**
  * @desc    Generates an access token for Gmail OAuth2.
  * @returns {Promise<string>} The generated access token.
  * @throws  {Error} If token generation fails.
  */
-async function getAccessToken (): Promise<string> {
+async function getAccessToken(): Promise<string> {
   try {
-    const { token } = await oAuth2Client.getAccessToken();
+    const { token } = await oAuth2Client.getAccessToken()
     if (!token) {
-      throw new Error("Failed to retrieve access token");
+      throw new Error("Failed to retrieve access token")
     }
-    return token;
+    return token
   } catch (error) {
-    logger.error("Error generating access token: ", error);
-    throw new Error("Could not generate access token for email service");
+    logger.error("Error generating access token: ", error)
+    throw new Error("Could not generate access token for email service")
   }
 }
 
@@ -37,10 +37,10 @@ async function getAccessToken (): Promise<string> {
  * @returns {Promise<nodemailer.Transporter>} The configured Nodemailer transporter.
  * @throws  {Error} If transporter creation fails.
  */
-async function createTransporter (): Promise<nodemailer.Transporter> {
+async function createTransporter(): Promise<nodemailer.Transporter> {
   try {
     if (process.env.USE_GMAIL_OAUTH === "true") {
-      const accessToken = await getAccessToken();
+      const accessToken = await getAccessToken()
 
       // Create transporter for Gmail OAuth2
       return nodemailer.createTransport({
@@ -53,7 +53,7 @@ async function createTransporter (): Promise<nodemailer.Transporter> {
           refreshToken: process.env.EMAIL_REFRESH_TOKEN,
           accessToken,
         },
-      });
+      })
     } else {
       // Fallback to basic SMTP configuration
       return nodemailer.createTransport({
@@ -64,12 +64,12 @@ async function createTransporter (): Promise<nodemailer.Transporter> {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
         },
-      });
+      })
     }
   } catch (error) {
-    logger.error("Error creating email transporter: ", error);
-    throw new Error("Failed to create email transporter");
+    logger.error("Error creating email transporter: ", error)
+    throw new Error("Failed to create email transporter")
   }
 }
 
-export default createTransporter;
+export default createTransporter

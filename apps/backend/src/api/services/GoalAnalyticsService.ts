@@ -1,58 +1,56 @@
-// src/api/services/GoalAnalyticsService.ts
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import type { IGoalAnalytics } from "../models/GoalAnalytics";
+import type { IGoalAnalytics } from "../models/GoalAnalytics"
 
-import { createError } from "../middleware/errorHandler";
-import GoalAnalytics from "../models/GoalAnalytics";
+import { createError } from "../middleware/errorHandler"
+import GoalAnalytics from "../models/GoalAnalytics"
 
 class GoalAnalyticsService {
   /** Fetch analytics for a given user */
   static async getByUser(userId: string): Promise<IGoalAnalytics[]> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw createError("Invalid user ID", 400);
+      throw createError("Invalid user ID", 400)
     }
-    return GoalAnalytics.find({ user: userId }).exec();
+    return GoalAnalytics.find({ user: userId }).exec()
   }
 
   /** Fetch all analytics (admin) */
   static async getAll(): Promise<IGoalAnalytics[]> {
-    return GoalAnalytics.find().exec();
+    return GoalAnalytics.find().exec()
   }
 
   /** Fetch analytics for one goal */
   static async getByGoal(goalId: string): Promise<IGoalAnalytics | null> {
     if (!mongoose.Types.ObjectId.isValid(goalId)) {
-      throw createError("Invalid goal ID", 400);
+      throw createError("Invalid goal ID", 400)
     }
-    return GoalAnalytics.findOne({ goal: goalId }).exec();
+    return GoalAnalytics.findOne({ goal: goalId }).exec()
   }
 
   /** Update analytics document for one goal */
   static async update(
     goalId: string,
-    updates: Partial<IGoalAnalytics>
+    updates: Partial<IGoalAnalytics>,
   ): Promise<IGoalAnalytics | null> {
     if (!mongoose.Types.ObjectId.isValid(goalId)) {
-      throw createError("Invalid goal ID", 400);
+      throw createError("Invalid goal ID", 400)
     }
-    return GoalAnalytics.findOneAndUpdate(
-      { goal: goalId },
-      updates,
-      { new: true, runValidators: true }
-    )
+    return GoalAnalytics.findOneAndUpdate({ goal: goalId }, updates, {
+      new: true,
+      runValidators: true,
+    })
       .lean<IGoalAnalytics>()
-      .exec();
+      .exec()
   }
 
   /** Delete analytics for one goal */
   static async delete(goalId: string): Promise<IGoalAnalytics | null> {
     if (!mongoose.Types.ObjectId.isValid(goalId)) {
-      throw createError("Invalid goal ID", 400);
+      throw createError("Invalid goal ID", 400)
     }
     return GoalAnalytics.findOneAndDelete({ goal: goalId })
       .lean<IGoalAnalytics>()
-      .exec();
+      .exec()
   }
 
   /**
@@ -62,21 +60,21 @@ class GoalAnalyticsService {
   static async getByDateRange(
     userId: string,
     startDate: string,
-    endDate: string
+    endDate: string,
   ): Promise<IGoalAnalytics[]> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw createError("Invalid user ID", 400);
+      throw createError("Invalid user ID", 400)
     }
-    const start = new Date(startDate);
-    const end   = new Date(endDate);
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      throw createError("Invalid date format", 400);
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+      throw createError("Invalid date format", 400)
     }
     return GoalAnalytics.find({
       user: userId,
       recordedAt: { $gte: start, $lte: end },
-    }).exec();
+    }).exec()
   }
 }
 
-export default GoalAnalyticsService;
+export default GoalAnalyticsService

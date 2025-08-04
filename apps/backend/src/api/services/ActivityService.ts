@@ -1,15 +1,14 @@
 // src/api/services/ActivityService.ts
 
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import type { IActivity } from "../models/Activity";
+import type { IActivity } from "../models/Activity"
 
-import { Activity } from "../models/Activity";  // ← named import
-
+import { Activity } from "../models/Activity" // ← named import
 
 export interface PaginatedActivities {
-  activities: IActivity[];
-  total: number;
+  activities: IActivity[]
+  total: number
 }
 
 export default class ActivityService {
@@ -18,50 +17,46 @@ export default class ActivityService {
     userId: string,
     type: string,
     description?: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<IActivity> {
     const newActivity = new Activity({
       user: new mongoose.Types.ObjectId(userId),
       type,
       description,
       metadata,
-    });
-    return newActivity.save();
+    })
+    return newActivity.save()
   }
 
   /** Fetch activities for a user, with optional type filter & pagination */
   static async getUserActivities(
     userId: string,
-    opts: { type?: string; page?: number; limit?: number }
+    opts: { type?: string; page?: number; limit?: number },
   ): Promise<PaginatedActivities> {
-    const query: Record<string, any> = { user: userId };
-    if (opts.type) 
-query.type = opts.type;
+    const query: Record<string, any> = { user: userId }
+    if (opts.type) query.type = opts.type
 
-    const limit = opts.limit ?? 10;
-    const skip = ((opts.page ?? 1) - 1) * limit;
+    const limit = opts.limit ?? 10
+    const skip = ((opts.page ?? 1) - 1) * limit
 
     const [activities, total] = await Promise.all([
-      Activity.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
+      Activity.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
       Activity.countDocuments(query),
-    ]);
+    ])
 
-    return { activities, total };
+    return { activities, total }
   }
 
   /** Fetch a single activity by its ID (optionally ensure not deleted) */
   static async getActivityById(
     activityId: string,
-    { includeDeleted = false } = {}
+    { includeDeleted = false } = {},
   ): Promise<IActivity | null> {
-    const query = Activity.findById(activityId);
+    const query = Activity.findById(activityId)
     if (!includeDeleted) {
-      query.where("isDeleted").ne(true);
+      query.where("isDeleted").ne(true)
     }
-    return query.exec();
+    return query.exec()
   }
 
   /** Create a new activity (controller-level validations apply before calling) */
@@ -69,7 +64,7 @@ query.type = opts.type;
     userId: string,
     type: string,
     description?: string,
-    metadata: Record<string, unknown> = {}
+    metadata: Record<string, unknown> = {},
   ): Promise<IActivity> {
     const newActivity = new Activity({
       user: new mongoose.Types.ObjectId(userId),
@@ -77,8 +72,8 @@ query.type = opts.type;
       description: description ?? "",
       metadata,
       participants: [], // start empty
-    });
-    return newActivity.save();
+    })
+    return newActivity.save()
   }
 
   /** Update an existing activity, but only if it matches user and is not deleted */
@@ -86,64 +81,60 @@ query.type = opts.type;
     activityId: string,
     userId: string,
     updates: Partial<{
-      type: string;
-      description: string;
-      metadata: Record<string, unknown>;
-      participants: string[];
-    }>
+      type: string
+      description: string
+      metadata: Record<string, unknown>
+      participants: string[]
+    }>,
   ): Promise<IActivity | null> {
     const act = await Activity.findOne({
       _id: activityId,
       user: userId,
       isDeleted: { $ne: true },
-    });
-    if (!act) 
-return null;
-    Object.assign(act, updates);
-    return act.save();
+    })
+    if (!act) return null
+    Object.assign(act, updates)
+    return act.save()
   }
 
   /** Add the user to the participants array */
   static async joinActivity(
     activityId: string,
-    userId: string
+    userId: string,
   ): Promise<IActivity | null> {
-    const act = await Activity.findById(activityId);
-    if (!act || act.isDeleted) 
-return null;
+    const act = await Activity.findById(activityId)
+    if (!act || act.isDeleted) return null
 
-    const uid = new mongoose.Types.ObjectId(userId);
+    const uid = new mongoose.Types.ObjectId(userId)
     if (!act.participants.some((p) => p.equals(uid))) {
-      act.participants.push(uid);
-      await act.save();
+      act.participants.push(uid)
+      await act.save()
     }
-    return act;
+    return act
   }
 
   /** Remove the user from the participants array */
   static async leaveActivity(
     activityId: string,
-    userId: string
+    userId: string,
   ): Promise<IActivity | null> {
-    const act = await Activity.findById(activityId);
-    if (!act || act.isDeleted) 
-return null;
+    const act = await Activity.findById(activityId)
+    if (!act || act.isDeleted) return null
 
-    act.participants = act.participants.filter((p) => !p.equals(userId));
-    await act.save();
-    return act;
+    act.participants = act.participants.filter((p) => !p.equals(userId))
+    await act.save()
+    return act
   }
 
   /** Soft-delete (mark `isDeleted=true`) */
   static async deleteActivity(
     activityId: string,
-    userId: string
+    userId: string,
   ): Promise<boolean> {
-    const act = await Activity.findOne({ _id: activityId, user: userId });
-    if (!act) 
-return false;
-    act.isDeleted = true;
-    await act.save();
-    return true;
+    const act = await Activity.findOne({ _id: activityId, user: userId })
+    if (!act) return false
+    act.isDeleted = true
+    await act.save()
+    return true
   }
 }

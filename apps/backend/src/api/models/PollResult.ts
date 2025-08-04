@@ -1,25 +1,28 @@
 // src/api/models/PollResult.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- PollResult Document Interface ---
 export interface IPollResult extends Document {
-  pollId: Types.ObjectId;       // Poll ID
-  optionId: Types.ObjectId;     // Option ID
-  votesCount: number;           // Number of votes
-  createdAt: Date;
-  updatedAt: Date;
+  pollId: Types.ObjectId // Poll ID
+  optionId: Types.ObjectId // Option ID
+  votesCount: number // Number of votes
+  createdAt: Date
+  updatedAt: Date
 
   // Instance methods
-  incrementVotes: (count?: number) => Promise<IPollResult>;
-  resetVotes: () => Promise<IPollResult>;
+  incrementVotes: (count?: number) => Promise<IPollResult>
+  resetVotes: () => Promise<IPollResult>
 }
 
 // --- PollResult Model Static Interface ---
 export interface IPollResultModel extends Model<IPollResult> {
-  getResultsForPoll: (pollId: Types.ObjectId) => Promise<IPollResult[]>;
-  recordVote: (pollId: Types.ObjectId, optionId: Types.ObjectId) => Promise<IPollResult>;
+  getResultsForPoll: (pollId: Types.ObjectId) => Promise<IPollResult[]>
+  recordVote: (
+    pollId: Types.ObjectId,
+    optionId: Types.ObjectId,
+  ) => Promise<IPollResult>
 }
 
 // --- Schema Definition ---
@@ -32,7 +35,7 @@ const PollResultSchema = new Schema<IPollResult, IPollResultModel>(
     },
     optionId: {
       type: Schema.Types.ObjectId,
-      ref: "Poll",  // assuming Poll stores its own options; adjust ref if needed
+      ref: "Poll", // assuming Poll stores its own options; adjust ref if needed
       required: true,
     },
     votesCount: {
@@ -43,55 +46,54 @@ const PollResultSchema = new Schema<IPollResult, IPollResultModel>(
   },
   {
     timestamps: true,
-  }
-);
+  },
+)
 
 // --- Indexes ---
 // Unique combination of poll + option
-PollResultSchema.index({ pollId: 1, optionId: 1 }, { unique: true });
+PollResultSchema.index({ pollId: 1, optionId: 1 }, { unique: true })
 
 // --- Instance Methods ---
 PollResultSchema.methods.incrementVotes = async function (
   this: IPollResult,
-  count = 1
+  count = 1,
 ): Promise<IPollResult> {
-  this.votesCount += count;
-  await this.save();
-  return this;
-};
+  this.votesCount += count
+  await this.save()
+  return this
+}
 
 PollResultSchema.methods.resetVotes = async function (
-  this: IPollResult
+  this: IPollResult,
 ): Promise<IPollResult> {
-  this.votesCount = 0;
-  await this.save();
-  return this;
-};
+  this.votesCount = 0
+  await this.save()
+  return this
+}
 
 // --- Static Methods ---
 PollResultSchema.statics.getResultsForPoll = function (
-  pollId: Types.ObjectId
+  pollId: Types.ObjectId,
 ): Promise<IPollResult[]> {
-  return this.find({ pollId }).sort({ votesCount: -1 });
-};
+  return this.find({ pollId }).sort({ votesCount: -1 })
+}
 
 PollResultSchema.statics.recordVote = async function (
   pollId: Types.ObjectId,
-  optionId: Types.ObjectId
+  optionId: Types.ObjectId,
 ): Promise<IPollResult> {
-  const filter = { pollId, optionId };
-  const update = { $inc: { votesCount: 1 } };
-  const opts = { new: true, upsert: true, setDefaultsOnInsert: true };
-  const result = await this.findOneAndUpdate(filter, update, opts);
-  if (!result) 
-throw new Error("Failed to record vote");
-  return result;
-};
+  const filter = { pollId, optionId }
+  const update = { $inc: { votesCount: 1 } }
+  const opts = { new: true, upsert: true, setDefaultsOnInsert: true }
+  const result = await this.findOneAndUpdate(filter, update, opts)
+  if (!result) throw new Error("Failed to record vote")
+  return result
+}
 
 // --- Model Export ---
 export const PollResult = mongoose.model<IPollResult, IPollResultModel>(
   "PollResult",
-  PollResultSchema
-);
+  PollResultSchema,
+)
 
-export default PollResult;
+export default PollResult

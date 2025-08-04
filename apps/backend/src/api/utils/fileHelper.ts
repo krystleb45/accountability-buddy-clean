@@ -1,17 +1,17 @@
-import multer from "multer";
-import fs from "node:fs";
-import path from "node:path";
+import multer from "multer"
+import fs from "node:fs"
+import path from "node:path"
 
 // Allowed file types for upload (e.g., images, PDFs)
-const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"];
+const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"]
 
 /**
  * @desc    Ensures a directory exists, creates it if it doesn't.
  * @param   {string} dirPath - The path of the directory to ensure.
  */
-export function ensureDirectoryExists (dirPath: string): void {
+export function ensureDirectoryExists(dirPath: string): void {
   if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
+    fs.mkdirSync(dirPath, { recursive: true })
   }
 }
 
@@ -23,41 +23,41 @@ export const upload = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, cb) => {
       try {
-        const uploadDir = path.join(__dirname, "../uploads");
-        ensureDirectoryExists(uploadDir); // Ensure the upload directory exists
-        cb(null, uploadDir);
+        const uploadDir = path.join(__dirname, "../uploads")
+        ensureDirectoryExists(uploadDir) // Ensure the upload directory exists
+        cb(null, uploadDir)
       } catch (error) {
-        cb(error as Error, "");
+        cb(error as Error, "")
       }
     },
     filename: (_req, file, cb) => {
-      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+      const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`
       cb(
         null,
         `${file.fieldname}-${uniqueSuffix}${path.extname(file.originalname)}`,
-      );
+      )
     },
   }),
   limits: { fileSize: 2 * 1024 * 1024 }, // 2MB file size limit
   fileFilter: (_req, file, cb) => {
     if (allowedFileTypes.includes(file.mimetype)) {
-      cb(null, true);
+      cb(null, true)
     } else {
-      cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", file.fieldname));
+      cb(new multer.MulterError("LIMIT_UNEXPECTED_FILE", file.fieldname))
     }
   },
-});
+})
 
 /**
  * @desc    Deletes a file from the file system.
  * @param   {string} filePath - The path of the file to delete.
  * @returns {Promise<void>} - Resolves if the file is deleted, rejects if an error occurs.
  */
-export async function deleteFile (filePath: string): Promise<void> {
+export async function deleteFile(filePath: string): Promise<void> {
   try {
-    await fs.promises.unlink(filePath);
+    await fs.promises.unlink(filePath)
   } catch (err) {
-    throw new Error(`Failed to delete file: ${(err as Error).message}`);
+    throw new Error(`Failed to delete file: ${(err as Error).message}`)
   }
 }
 
@@ -66,9 +66,9 @@ export async function deleteFile (filePath: string): Promise<void> {
  * @param   {string} filename - The name of the file to validate.
  * @returns {boolean} - Returns true if the file has a valid extension, false otherwise.
  */
-export function validateFileExtension (filename: string): boolean {
-  const ext = path.extname(filename).toLowerCase();
-  return [".jpeg", ".jpg", ".png", ".pdf"].includes(ext);
+export function validateFileExtension(filename: string): boolean {
+  const ext = path.extname(filename).toLowerCase()
+  return [".jpeg", ".jpg", ".png", ".pdf"].includes(ext)
 }
 
 /**
@@ -76,11 +76,11 @@ export function validateFileExtension (filename: string): boolean {
  * @param   {string} filePath - The path of the file to read.
  * @returns {Promise<string>} - Resolves with the file content, rejects if an error occurs.
  */
-export async function readFile (filePath: string): Promise<string> {
+export async function readFile(filePath: string): Promise<string> {
   try {
-    return await fs.promises.readFile(filePath, "utf8");
+    return await fs.promises.readFile(filePath, "utf8")
   } catch (err) {
-    throw new Error(`Failed to read file: ${(err as Error).message}`);
+    throw new Error(`Failed to read file: ${(err as Error).message}`)
   }
 }
 
@@ -90,11 +90,11 @@ export async function readFile (filePath: string): Promise<string> {
  * @param   {string} data - The data to write to the file.
  * @returns {Promise<void>} - Resolves if the file is written, rejects if an error occurs.
  */
-export async function writeFile (filePath: string,  data: string): Promise<void> {
+export async function writeFile(filePath: string, data: string): Promise<void> {
   try {
-    await fs.promises.writeFile(filePath, data, "utf8");
+    await fs.promises.writeFile(filePath, data, "utf8")
   } catch (err) {
-    throw new Error(`Failed to write file: ${(err as Error).message}`);
+    throw new Error(`Failed to write file: ${(err as Error).message}`)
   }
 }
 
@@ -105,4 +105,4 @@ export default {
   ensureDirectoryExists,
   readFile,
   writeFile,
-};
+}

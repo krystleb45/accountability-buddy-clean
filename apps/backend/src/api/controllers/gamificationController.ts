@@ -1,9 +1,9 @@
 // src/api/controllers/gamificationController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import GamificationService from "../services/GamificationService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import GamificationService from "../services/GamificationService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 export default {
   /**
@@ -14,17 +14,26 @@ export default {
   getLeaderboard: catchAsync(
     async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
       // parse & default
-      const page    = Math.max(1, Number.parseInt(req.query.page  as string, 10) || 1);
-      const limit   = Math.min(100, Math.max(1, Number.parseInt(req.query.limit as string, 10) || 10));
+      const page = Math.max(
+        1,
+        Number.parseInt(req.query.page as string, 10) || 1,
+      )
+      const limit = Math.min(
+        100,
+        Math.max(1, Number.parseInt(req.query.limit as string, 10) || 10),
+      )
 
       // delegate to service
-      const { entries, pagination } = await GamificationService.getLeaderboard(page, limit);
+      const { entries, pagination } = await GamificationService.getLeaderboard(
+        page,
+        limit,
+      )
 
       sendResponse(res, 200, true, "Leaderboard retrieved successfully", {
         entries,
         pagination,
-      });
-    }
+      })
+    },
   ),
 
   /**
@@ -34,22 +43,18 @@ export default {
    */
   addPoints: catchAsync(
     async (
-      req: Request<{}, {}, { userId: string; points: number }>,
+      req: Request<unknown, unknown, { userId: string; points: number }>,
       res: Response,
-      _next: NextFunction
+      _next: NextFunction,
     ): Promise<void> => {
-      const { userId, points } = req.body;
+      const { userId, points } = req.body
 
       // delegate to service
-      const profile = await GamificationService.addPoints(userId, points);
+      const profile = await GamificationService.addPoints(userId, points)
 
-      sendResponse(
-        res,
-        200,
-        true,
-        `Added ${points} points to user ${userId}`,
-        { profile }
-      );
-    }
+      sendResponse(res, 200, true, `Added ${points} points to user ${userId}`, {
+        profile,
+      })
+    },
   ),
-};
+}

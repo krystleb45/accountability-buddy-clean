@@ -1,35 +1,36 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { check, validationResult } from "express-validator";
-import mongoose from "mongoose";
-
-
+import { check, validationResult } from "express-validator"
+import mongoose from "mongoose"
 
 /**
  * Middleware to handle validation results and send structured errors.
  */
-export function validateMiddleware (req: Request, res: Response, next: NextFunction): void {
-  const errors = validationResult(req);
+export function validateMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     // Map validation errors into a structured format
     const formattedErrors = errors.array().map((error) => ({
       field: "param" in error ? error.param : "unknown",
       message: error.msg,
-    }));
+    }))
 
     // Send structured errors as a response
     res.status(400).json({
       success: false,
       errors: formattedErrors,
-    });
+    })
 
-    return; // Explicitly terminate middleware execution
+    return // Explicitly terminate middleware execution
   }
 
-  next(); // Proceed to the next middleware if no errors
+  next() // Proceed to the next middleware if no errors
 }
-
 
 /**
  * Validation for creating a group.
@@ -54,11 +55,13 @@ export const createGroupValidation = [
   check("interests")
     .isArray({ min: 1 })
     .withMessage("You must select at least one interest.")
-    .custom((interests: string[]) => interests.every((interest) => typeof interest === "string"))
+    .custom((interests: string[]) =>
+      interests.every((interest) => typeof interest === "string"),
+    )
     .withMessage("Interests must be an array of strings."),
 
   validateMiddleware,
-];
+]
 
 /**
  * Validation for joining a group.
@@ -79,4 +82,4 @@ export const joinGroupValidation = [
     .withMessage("Invalid user ID."),
 
   validateMiddleware,
-];
+]

@@ -1,29 +1,29 @@
 // src/api/middleware/authJwt.ts - FIXED VERSION
 
-import type { RequestHandler } from "express";
+import type { RequestHandler } from "express"
 
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
 
-import { logger } from "../../utils/winstonLogger";
-import { User } from "../models/User";
-import catchAsync from "../utils/catchAsync";
-import { createError } from "./errorHandler";
+import { logger } from "../../utils/winstonLogger"
+import { User } from "../models/User"
+import catchAsync from "../utils/catchAsync"
+import { createError } from "./errorHandler"
 
 interface JwtPayload {
-  userId: string;
-  role: string;
+  userId: string
+  role: string
 }
 
 export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
-  let token: string | undefined;
+  let token: string | undefined
 
   // ONLY use Bearer Authorization header (sent by your Next.js proxy)
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization
   if (authHeader?.startsWith("Bearer ")) {
-    token = authHeader.slice(7).trim();
-    logger.info("🔑 Using token from Authorization header");
+    token = authHeader.slice(7).trim()
+    logger.info("🔑 Using token from Authorization header")
   }
 
   // REMOVED: NextAuth session cookie fallback
@@ -31,39 +31,37 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
   // Your proxy correctly sends the real JWT in Authorization header
 
   if (!token) {
-    logger.warn("❌ No token found in Authorization header");
-    return next(createError("Unauthorized: No token provided", 401));
+    logger.warn("❌ No token found in Authorization header")
+    return next(createError("Unauthorized: No token provided", 401))
   }
 
   // Verify JWT using the correct secret
-  const secret = process.env.ACCESS_TOKEN_SECRET || process.env.JWT_SECRET;
+  const secret = process.env.ACCESS_TOKEN_SECRET || process.env.JWT_SECRET
   if (!secret) {
-    logger.error("ACCESS_TOKEN_SECRET/JWT_SECRET not set");
-    return next(createError("Server misconfiguration", 500));
+    logger.error("ACCESS_TOKEN_SECRET/JWT_SECRET not set")
+    return next(createError("Server misconfiguration", 500))
   }
 
-  let decoded: JwtPayload;
+  let decoded: JwtPayload
   try {
-    logger.info(`🔍 Verifying token: ${token.substring(0, 20)}...`);
-    decoded = jwt.verify(token, secret) as JwtPayload;
-    logger.info(`✅ Token verified for user: ${decoded.userId}`);
+    logger.info(`🔍 Verifying token: ${token.substring(0, 20)}...`)
+    decoded = jwt.verify(token, secret) as JwtPayload
+    logger.info(`✅ Token verified for user: ${decoded.userId}`)
   } catch (err: any) {
-    logger.warn("❌ Invalid token:", err.message);
-    return next(createError("Unauthorized: Invalid token", 401));
+    logger.warn("❌ Invalid token:", err.message)
+    return next(createError("Unauthorized: Invalid token", 401))
   }
 
   // Load user from database
-  const userDoc = await User.findById(decoded.userId)
-    .select("-password")
-    .lean();
+  const userDoc = await User.findById(decoded.userId).select("-password").lean()
 
   if (!userDoc) {
-    logger.warn(`❌ User not found: ${decoded.userId}`);
-    return next(createError("Unauthorized: User not found", 401));
+    logger.warn(`❌ User not found: ${decoded.userId}`)
+    return next(createError("Unauthorized: User not found", 401))
   }
 
   // Attach user to request
-  (req as AuthenticatedRequest).user = {
+  ;(req as AuthenticatedRequest).user = {
     id: userDoc._id.toString(),
     username: userDoc.username,
     email: userDoc.email,
@@ -79,8 +77,8 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
     isVerified: userDoc.isVerified,
     createdAt: userDoc.createdAt,
     updatedAt: userDoc.updatedAt,
-  };
+  }
 
-  logger.info(`✅ Authenticated user ${userDoc.email}`);
-  next();
-});
+  logger.info(`✅ Authenticated user ${userDoc.email}`)
+  next()
+})

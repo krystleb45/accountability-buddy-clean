@@ -1,12 +1,17 @@
 // src/api/services/blogService.ts
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import type { IBlogPost } from "../models/BlogPost";
+import type { IBlogPost } from "../models/BlogPost"
 
-import BlogPost from "../models/BlogPost";
-import Notification from "../models/Notification";
+import BlogPost from "../models/BlogPost"
+import Notification from "../models/Notification"
 
-export async function createBlogPostService (userId: string,  title: string,  content: string,  category: string): Promise<IBlogPost> {
+export async function createBlogPostService(
+  userId: string,
+  title: string,
+  content: string,
+  category: string,
+): Promise<IBlogPost> {
   const post = new BlogPost({
     author: userId,
     title,
@@ -14,50 +19,55 @@ export async function createBlogPostService (userId: string,  title: string,  co
     category,
     likes: [],
     comments: [],
-  });
-  await post.save();
-  return post;
+  })
+  await post.save()
+  return post
 }
 
-export async function toggleLikeBlogPostService (userId: string,  postId: string): Promise<IBlogPost> {
-  const post = await BlogPost.findById(postId);
-  if (!post) 
-throw new Error("Blog post not found");
+export async function toggleLikeBlogPostService(
+  userId: string,
+  postId: string,
+): Promise<IBlogPost> {
+  const post = await BlogPost.findById(postId)
+  if (!post) throw new Error("Blog post not found")
 
-  const uid = new mongoose.Types.ObjectId(userId);
-  const idx = post.likes.findIndex((l) => l.equals(uid));
+  const uid = new mongoose.Types.ObjectId(userId)
+  const idx = post.likes.findIndex((l) => l.equals(uid))
 
   if (idx === -1) {
-    post.likes.push(uid);
+    post.likes.push(uid)
     await Notification.create({
       user: post.author,
       message: `You received a like on your blog post "${post.title}"`,
       type: "success",
       link: `/blog/${postId}`,
       read: false,
-    });
+    })
   } else {
-    post.likes.splice(idx, 1);
+    post.likes.splice(idx, 1)
   }
 
-  await post.save();
-  return post;
+  await post.save()
+  return post
 }
 
-export async function addCommentService (userId: string,  postId: string,  text: string): Promise<IBlogPost> {
-  const post = await BlogPost.findById(postId);
-  if (!post) 
-throw new Error("Blog post not found");
+export async function addCommentService(
+  userId: string,
+  postId: string,
+  text: string,
+): Promise<IBlogPost> {
+  const post = await BlogPost.findById(postId)
+  if (!post) throw new Error("Blog post not found")
 
-  const uid = new mongoose.Types.ObjectId(userId);
+  const uid = new mongoose.Types.ObjectId(userId)
   // create a real sub-document
   const commentDoc = post.comments.create({
     user: uid,
     text,
     createdAt: new Date(),
-  });
-  post.comments.push(commentDoc as any);
-  await post.save();
+  })
+  post.comments.push(commentDoc as any)
+  await post.save()
 
   await Notification.create({
     user: post.author,
@@ -65,68 +75,78 @@ throw new Error("Blog post not found");
     type: "info",
     link: `/blog/${postId}`,
     read: false,
-  });
+  })
 
-  return post;
+  return post
 }
 
-export async function removeCommentService (userId: string,  postId: string,  commentId: string): Promise<IBlogPost> {
-  const post = await BlogPost.findById(postId);
-  if (!post) 
-throw new Error("Blog post not found");
+export async function removeCommentService(
+  userId: string,
+  postId: string,
+  commentId: string,
+): Promise<IBlogPost> {
+  const post = await BlogPost.findById(postId)
+  if (!post) throw new Error("Blog post not found")
 
-  const idx = post.comments.findIndex((c) => c._id.toString() === commentId);
-  if (idx === -1) 
-throw new Error("Comment not found");
+  const idx = post.comments.findIndex((c) => c._id.toString() === commentId)
+  if (idx === -1) throw new Error("Comment not found")
   if (post.comments[idx].user.toString() !== userId) {
-    throw new Error("You are not authorized to delete this comment");
+    throw new Error("You are not authorized to delete this comment")
   }
 
-  post.comments.splice(idx, 1);
-  await post.save();
-  return post;
+  post.comments.splice(idx, 1)
+  await post.save()
+  return post
 }
 
-export async function getAllBlogPostsService (limit: number,  page: number): Promise<IBlogPost[]> {
+export async function getAllBlogPostsService(
+  limit: number,
+  page: number,
+): Promise<IBlogPost[]> {
   return BlogPost.find()
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
-    .limit(limit);
+    .limit(limit)
 }
 
-export async function getBlogPostByIdService (postId: string): Promise<IBlogPost> {
-  const post = await BlogPost.findById(postId);
-  if (!post) 
-throw new Error("Blog post not found");
-  return post;
+export async function getBlogPostByIdService(
+  postId: string,
+): Promise<IBlogPost> {
+  const post = await BlogPost.findById(postId)
+  if (!post) throw new Error("Blog post not found")
+  return post
 }
 
-export async function updateBlogPostService (userId: string,  postId: string,  title?: string,  content?: string,  category?: string): Promise<IBlogPost> {
-  const post = await BlogPost.findById(postId);
-  if (!post) 
-throw new Error("Blog post not found");
+export async function updateBlogPostService(
+  userId: string,
+  postId: string,
+  title?: string,
+  content?: string,
+  category?: string,
+): Promise<IBlogPost> {
+  const post = await BlogPost.findById(postId)
+  if (!post) throw new Error("Blog post not found")
   if (post.author.toString() !== userId) {
-    throw new Error("You are not authorized to update this blog post");
+    throw new Error("You are not authorized to update this blog post")
   }
-  if (title) 
-post.title = title;
-  if (content) 
-post.content = content;
-  if (category) 
-post.category = category;
-  await post.save();
-  return post;
+  if (title) post.title = title
+  if (content) post.content = content
+  if (category) post.category = category
+  await post.save()
+  return post
 }
 
-export async function deleteBlogPostService (userId: string,  postId: string): Promise<IBlogPost> {
-  const post = await BlogPost.findById(postId);
-  if (!post) 
-throw new Error("Blog post not found");
+export async function deleteBlogPostService(
+  userId: string,
+  postId: string,
+): Promise<IBlogPost> {
+  const post = await BlogPost.findById(postId)
+  if (!post) throw new Error("Blog post not found")
   if (post.author.toString() !== userId) {
-    throw new Error("You are not authorized to delete this blog post");
+    throw new Error("You are not authorized to delete this blog post")
   }
-  await post.deleteOne();
-  return post;
+  await post.deleteOne()
+  return post
 }
 
 export default {
@@ -138,4 +158,4 @@ export default {
   getBlogPostByIdService,
   updateBlogPostService,
   deleteBlogPostService,
-};
+}

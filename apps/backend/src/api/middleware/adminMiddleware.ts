@@ -1,60 +1,80 @@
-import type { RequestHandler } from "express";
+import type { RequestHandler } from "express"
 
-import jwt from "jsonwebtoken";
-import sanitize from "mongo-sanitize";
+import jwt from "jsonwebtoken"
+import sanitize from "mongo-sanitize"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest";
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
 
-import { logger } from "../../utils/winstonLogger";
-import { User } from "../models/User";
+import { logger } from "../../utils/winstonLogger"
+import { User } from "../models/User"
 
 /**
  * Middleware to enforce permission-based access control
  * Accepts either a single permission or an array of permissions.
  * Grants access if the user has any one of them or is an admin.
  */
-function checkPermission (requiredPermissions: string | string[]): RequestHandler {
+function checkPermission(
+  requiredPermissions: string | string[],
+): RequestHandler {
   return async (req, res, next): Promise<void> => {
-    const authReq = req as AuthenticatedRequest;
+    const authReq = req as AuthenticatedRequest
 
     try {
-      const authHeader = authReq.headers.authorization;
+      const authHeader = authReq.headers.authorization
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        logger.warn("Authorization header missing or malformed");
-        res.status(401).json({ message: "Authorization denied. No valid token provided." });
-        return;
+        logger.warn("Authorization header missing or malformed")
+        res
+          .status(401)
+          .json({ message: "Authorization denied. No valid token provided." })
+        return
       }
 
-      const token = sanitize(authHeader.split(" ")[1]);
-      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || "default_secret") as {
-        id: string;
-        role: string;
-      };
+      const token = sanitize(authHeader.split(" ")[1])
+      const decoded = jwt.verify(
+        token,
+        process.env.ACCESS_TOKEN_SECRET || "default_secret",
+      ) as {
+        id: string
+        role: string
+      }
 
       if (!decoded?.id) {
-        logger.warn("Token verification failed");
-        res.status(401).json({ message: "Authorization denied. Invalid token payload." });
-        return;
+        logger.warn("Token verification failed")
+        res
+          .status(401)
+          .json({ message: "Authorization denied. Invalid token payload." })
+        return
       }
 
-      const user = await User.findById(decoded.id).select("id email role permissions");
+      const user = await User.findById(decoded.id).select(
+        "id email role permissions",
+      )
       if (!user) {
-        logger.warn("User not found for provided token");
-        res.status(401).json({ message: "Authorization denied. User does not exist." });
-        return;
+        logger.warn("User not found for provided token")
+        res
+          .status(401)
+          .json({ message: "Authorization denied. User does not exist." })
+        return
       }
 
-      const permissions = user.permissions ?? [];
-      const required = Array.isArray(requiredPermissions) ? requiredPermissions : [requiredPermissions];
+      const permissions = user.permissions ?? []
+      const required = Array.isArray(requiredPermissions)
+        ? requiredPermissions
+        : [requiredPermissions]
 
       const hasPermission =
-        user.role === "admin" || required.some((perm) => permissions.includes(perm));
+        user.role === "admin" ||
+        required.some((perm) => permissions.includes(perm))
 
       if (!hasPermission) {
-        logger.warn(`User ${user._id} lacks required permission(s): ${required.join(", ")}`);
-        res.status(403).json({ message: "Access denied. Insufficient permissions." });
-        return;
+        logger.warn(
+          `User ${user._id} lacks required permission(s): ${required.join(", ")}`,
+        )
+        res
+          .status(403)
+          .json({ message: "Access denied. Insufficient permissions." })
+        return
       }
 
       authReq.user = {
@@ -62,15 +82,18 @@ function checkPermission (requiredPermissions: string | string[]): RequestHandle
         email: user.email,
         role: user.role,
         permissions,
-      };
+      }
 
-      next();
+      next()
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Unknown error during auth";
-      logger.error(`Authentication error: ${message}`);
-      res.status(500).json({ message: "Internal server error during authentication." });
+      const message =
+        error instanceof Error ? error.message : "Unknown error during auth"
+      logger.error(`Authentication error: ${message}`)
+      res
+        .status(500)
+        .json({ message: "Internal server error during authentication." })
     }
-  };
+  }
 }
 
-export default checkPermission;
+export default checkPermission

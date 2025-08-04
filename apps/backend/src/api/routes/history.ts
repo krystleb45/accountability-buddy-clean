@@ -1,22 +1,25 @@
 // src/api/routes/history.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
-import historyController from "../controllers/HistoryController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import historyController from "../controllers/HistoryController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // throttle to 20 requests per minute
 const historyLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 20,
-  message: { success: false, message: "Too many requests, please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests, please try again later.",
+  },
+})
 
 /**
  * GET /api/history
@@ -27,9 +30,9 @@ router.get(
   protect,
   historyLimiter,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await historyController.getAllHistory(req, res, next);
-  }
-);
+    await historyController.getAllHistory(req, res, next)
+  },
+)
 
 /**
  * GET /api/history/:id
@@ -42,9 +45,9 @@ router.get(
   check("id", "Invalid history ID").isMongoId(),
   handleValidationErrors,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await historyController.getHistoryById(req, res, next);
-  }
-);
+    await historyController.getHistoryById(req, res, next)
+  },
+)
 
 /**
  * POST /api/history
@@ -58,9 +61,9 @@ router.post(
   check("action", "Action is required").notEmpty(),
   handleValidationErrors,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await historyController.createHistory(req, res, next);
-  }
-);
+    await historyController.createHistory(req, res, next)
+  },
+)
 
 /**
  * DELETE /api/history/:id
@@ -73,9 +76,9 @@ router.delete(
   check("id", "Invalid history ID").isMongoId(),
   handleValidationErrors,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await historyController.deleteHistoryById(req, res, next);
-  }
-);
+    await historyController.deleteHistoryById(req, res, next)
+  },
+)
 
 /**
  * DELETE /api/history/clear
@@ -86,8 +89,8 @@ router.delete(
   protect,
   historyLimiter,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await historyController.clearHistory(req, res, next);
-  }
-);
+    await historyController.clearHistory(req, res, next)
+  },
+)
 
-export default router;
+export default router

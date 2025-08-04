@@ -1,16 +1,15 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
 /**
  * @desc    Checks if an email is valid using a regular expression.
  * @param   {string} email - The email address to validate.
  * @returns {boolean} - Returns true if the email is valid, otherwise false.
  */
-export function isValidEmail (email: string): boolean {
-  if (typeof email !== "string") 
-return false;
+export function isValidEmail(email: string): boolean {
+  if (typeof email !== "string") return false
 
-  const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
-  return emailRegex.test(email);
+  const emailRegex = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
+  return emailRegex.test(email)
 }
 
 /**
@@ -23,13 +22,12 @@ return false;
  * @param   {string} password - The password to validate.
  * @returns {boolean} - Returns true if the password is strong, otherwise false.
  */
-export function isStrongPassword (password: string): boolean {
-  if (typeof password !== "string") 
-return false;
+export function isStrongPassword(password: string): boolean {
+  if (typeof password !== "string") return false
 
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
-  return passwordRegex.test(password);
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/
+  return passwordRegex.test(password)
 }
 
 /**
@@ -37,8 +35,8 @@ return false;
  * @param   {string} id - The string to check.
  * @returns {boolean} - Returns true if the string is a valid ObjectId, otherwise false.
  */
-export function isValidObjectId (id: string): boolean {
-  return mongoose.Types.ObjectId.isValid(id);
+export function isValidObjectId(id: string): boolean {
+  return mongoose.Types.ObjectId.isValid(id)
 }
 
 /**
@@ -47,12 +45,11 @@ export function isValidObjectId (id: string): boolean {
  * @param   {string} phone - The phone number to validate.
  * @returns {boolean} - Returns true if the phone number is valid, otherwise false.
  */
-export function isValidPhoneNumber (phone: string): boolean {
-  if (typeof phone !== "string") 
-return false;
+export function isValidPhoneNumber(phone: string): boolean {
+  if (typeof phone !== "string") return false
 
-  const phoneRegex = /^\+[1-9]\d{7,14}$/;
-  return phoneRegex.test(phone);
+  const phoneRegex = /^\+[1-9]\d{7,14}$/
+  return phoneRegex.test(phone)
 }
 
 /**
@@ -60,9 +57,11 @@ return false;
  * @param   {string} date - The date string to validate.
  * @returns {boolean} - Returns true if the date is valid, otherwise false.
  */
-export function isValidISODate (date: string): boolean {
-  const parsedDate = new Date(date);
-  return !isNaN(parsedDate.getTime()) && parsedDate.toISOString() === date;
+export function isValidISODate(date: string): boolean {
+  const parsedDate = new Date(date)
+  return (
+    !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString() === date
+  )
 }
 
 /**
@@ -70,15 +69,14 @@ export function isValidISODate (date: string): boolean {
  * @param   {string} url - The URL to validate.
  * @returns {boolean} - Returns true if the URL is valid, otherwise false.
  */
-export function isValidURL (url: string): boolean {
-  if (typeof url !== "string") 
-return false;
+export function isValidURL(url: string): boolean {
+  if (typeof url !== "string") return false
 
   try {
-    new URL(url);
-    return true;
+    const _ = new URL(url)
+    return true
   } catch {
-    return false;
+    return false
   }
 }
 
@@ -89,10 +87,9 @@ return false;
  * @param   {number} max - Maximum length.
  * @returns {boolean} - Returns true if the string length is within the range, otherwise false.
  */
-export function isValidStringLength (str: string,  min = 1,  max = 255): boolean {
-  if (typeof str !== "string") 
-return false;
-  return str.length >= min && str.length <= max;
+export function isValidStringLength(str: string, min = 1, max = 255): boolean {
+  if (typeof str !== "string") return false
+  return str.length >= min && str.length <= max
 }
 
 /**
@@ -102,8 +99,11 @@ return false;
  * @param   {number} max - Maximum value.
  * @returns {boolean} - Returns true if the number is within the range, otherwise false.
  */
-export function isValidNumberRange (num: number,  min = Number.MIN_SAFE_INTEGER,  max = Number.MAX_SAFE_INTEGER): boolean {
-  if (typeof num !== "number") 
-return false;
-  return num >= min && num <= max;
+export function isValidNumberRange(
+  num: number,
+  min = Number.MIN_SAFE_INTEGER,
+  max = Number.MAX_SAFE_INTEGER,
+): boolean {
+  if (typeof num !== "number") return false
+  return num >= min && num <= max
 }

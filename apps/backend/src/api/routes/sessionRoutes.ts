@@ -1,5 +1,5 @@
-import { Router } from "express";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import { check, param } from "express-validator"
 
 import {
   deleteAllSessions,
@@ -9,12 +9,12 @@ import {
   login,
   logout,
   refreshSession,
-} from "../controllers/SessionController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+} from "../controllers/SessionController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 // POST /api/session/login
 router.post(
@@ -24,17 +24,17 @@ router.post(
     check("password", "Password is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(login)
-);
+  catchAsync(login),
+)
 
 // POST /api/session/logout
-router.post("/logout", protect, catchAsync(logout));
+router.post("/logout", protect, catchAsync(logout))
 
 // DELETE /api/session/all
-router.delete("/all", protect, catchAsync(deleteAllSessions));
+router.delete("/all", protect, catchAsync(deleteAllSessions))
 
 // POST /api/session/refresh
-router.post("/refresh", protect, catchAsync(refreshSession));
+router.post("/refresh", protect, catchAsync(refreshSession))
 
 // GET /api/session/:sessionId
 router.get(
@@ -42,11 +42,11 @@ router.get(
   protect,
   param("sessionId", "Invalid session ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(getSession)
-);
+  catchAsync(getSession),
+)
 
 // GET /api/session
-router.get("/", protect, catchAsync(getUserSessions));
+router.get("/", protect, catchAsync(getUserSessions))
 
 // DELETE /api/session/:sessionId
 router.delete(
@@ -54,7 +54,7 @@ router.delete(
   protect,
   param("sessionId", "Invalid session ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(deleteSession)
-);
+  catchAsync(deleteSession),
+)
 
-export default router;
+export default router

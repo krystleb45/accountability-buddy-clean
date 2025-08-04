@@ -1,15 +1,15 @@
-// src/api/routes/militarySupportRoutes.ts 
-import type { NextFunction, Request, Response } from "express";
+// src/api/routes/militarySupportRoutes.ts
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import { check } from "express-validator";
+import { Router } from "express"
+import { check } from "express-validator"
 
-import * as militarySupportController from "../controllers/militarySupportController";
-import { militaryAuth, protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+import * as militarySupportController from "../controllers/militarySupportController"
+import { militaryAuth, protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 /**
  * GET /api/military-support/resources
@@ -19,10 +19,12 @@ const router = Router();
 router.get(
   "/resources",
   // REMOVED: protect, militaryAuth - now public for crisis support
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await militarySupportController.getResources(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await militarySupportController.getResources(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/military-support/disclaimer
@@ -31,10 +33,12 @@ router.get(
 router.get(
   "/disclaimer",
   // Already public - no auth middleware
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await militarySupportController.getDisclaimer(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await militarySupportController.getDisclaimer(req, res, next)
+    },
+  ),
+)
 
 // ========================================
 // AUTHENTICATED ROUTES (for members with accounts)
@@ -49,14 +53,19 @@ router.post(
   protect,
   militaryAuth,
   [
-    check("chatroomId", "chatroomId is required and must be a valid ID").isMongoId(),
+    check(
+      "chatroomId",
+      "chatroomId is required and must be a valid ID",
+    ).isMongoId(),
     check("message", "Message text is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await militarySupportController.sendMessage(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await militarySupportController.sendMessage(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/military-support/chatrooms
@@ -66,10 +75,12 @@ router.get(
   "/chatrooms",
   protect,
   militaryAuth,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await militarySupportController.getChatrooms(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await militarySupportController.getChatrooms(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/military-support/chatrooms
@@ -84,9 +95,11 @@ router.post(
     check("topic", "Chatroom topic is required").notEmpty(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await militarySupportController.createChatroom(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await militarySupportController.createChatroom(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

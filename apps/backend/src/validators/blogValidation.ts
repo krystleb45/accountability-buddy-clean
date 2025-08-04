@@ -1,4 +1,4 @@
-import { body, param, query } from "express-validator";
+import { body, param, query } from "express-validator"
 
 const validateBlogCreation = [
   body("title")
@@ -45,7 +45,7 @@ const validateBlogCreation = [
     .withMessage("Meta description must be a string.")
     .isLength({ max: 160 })
     .withMessage("Meta description cannot exceed 160 characters."),
-];
+]
 
 const validateBlogUpdate = [
   param("blogId")
@@ -54,7 +54,7 @@ const validateBlogUpdate = [
     .isUUID()
     .withMessage("Blog ID must be a valid UUID."),
   ...validateBlogCreation, // Reuse the same rules as blog creation for updating
-];
+]
 
 const validateBlogId = [
   param("blogId")
@@ -62,7 +62,7 @@ const validateBlogId = [
     .withMessage("Blog ID is required.")
     .isUUID()
     .withMessage("Blog ID must be a valid UUID."),
-];
+]
 
 const validateBlogSearch = [
   query("query")
@@ -83,11 +83,11 @@ const validateBlogSearch = [
     .optional()
     .isInt({ min: 1, max: 100 })
     .withMessage("Limit must be an integer between 1 and 100."),
-];
+]
 
 export default {
   validateBlogCreation,
   validateBlogUpdate,
   validateBlogId,
   validateBlogSearch,
-};
+}

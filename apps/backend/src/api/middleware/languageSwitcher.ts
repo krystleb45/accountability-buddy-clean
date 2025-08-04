@@ -1,48 +1,53 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 // ✅ Extend Express Request to Include `lang`
 interface RequestWithLang extends Request {
-  lang?: string;
+  lang?: string
 }
 
 // ✅ Define available languages
-const availableLanguages = ["en", "de", "es", "fr", "jp"];
+const availableLanguages = ["en", "de", "es", "fr", "jp"]
 
 /**
  * Middleware to switch language based on user preference.
  * Checks `Accept-Language` header, cookies, or query parameters for language selection.
  */
-function languageSwitcher (req: RequestWithLang, res: Response, next: NextFunction): void {
+function languageSwitcher(
+  req: RequestWithLang,
+  res: Response,
+  next: NextFunction,
+): void {
   try {
     let lang: string | undefined =
       req.headers["accept-language"] ||
       req.cookies?.lang ||
-      (req.query.lang as string);
+      (req.query.lang as string)
 
     if (lang) {
-      lang = lang.split("-")[0].toLowerCase();
+      lang = lang.split("-")[0].toLowerCase()
     }
 
-    req.lang = lang && availableLanguages.includes(lang) ? lang : "en";
+    req.lang = lang && availableLanguages.includes(lang) ? lang : "en"
 
     res.cookie("lang", req.lang, {
       httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-    });
+    })
 
-    next();
+    next()
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    logger.error(`Error in languageSwitcher middleware: ${errorMessage}`);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error"
+    logger.error(`Error in languageSwitcher middleware: ${errorMessage}`)
     res.status(500).json({
       success: false,
       message: "An error occurred while setting language preferences",
-    });
+    })
   }
 }
 
-export default languageSwitcher;
+export default languageSwitcher

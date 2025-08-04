@@ -1,10 +1,9 @@
 // src/api/controllers/PointController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import * as PointService from "../services/PointsService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
-
+import * as PointService from "../services/PointsService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 /**
  * @desc    Add points to the authenticated user
@@ -13,20 +12,22 @@ import sendResponse from "../utils/sendResponse";
  */
 export const addPoints = catchAsync(
   async (
-    req: Request<{}, {}, { points: number }>,
+    req: Request<unknown, unknown, { points: number }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const { points } = req.body;
+    const userId = req.user!.id
+    const { points } = req.body
     if (typeof points !== "number" || points <= 0) {
-      sendResponse(res, 400, false, "Points must be a positive number");
-      return;
+      sendResponse(res, 400, false, "Points must be a positive number")
+      return
     }
-    const updatedUser = await PointService.addPoints(userId, points);
-    sendResponse(res, 200, true, `Added ${points} points`, { user: updatedUser });
-  }
-);
+    const updatedUser = await PointService.addPoints(userId, points)
+    sendResponse(res, 200, true, `Added ${points} points`, {
+      user: updatedUser,
+    })
+  },
+)
 
 /**
  * @desc    Subtract points from the authenticated user
@@ -35,20 +36,22 @@ export const addPoints = catchAsync(
  */
 export const subtractPoints = catchAsync(
   async (
-    req: Request<{}, {}, { points: number }>,
+    req: Request<unknown, unknown, { points: number }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const { points } = req.body;
+    const userId = req.user!.id
+    const { points } = req.body
     if (typeof points !== "number" || points <= 0) {
-      sendResponse(res, 400, false, "Points must be a positive number");
-      return;
+      sendResponse(res, 400, false, "Points must be a positive number")
+      return
     }
-    const updatedUser = await PointService.subtractPoints(userId, points);
-    sendResponse(res, 200, true, `Subtracted ${points} points`, { user: updatedUser });
-  }
-);
+    const updatedUser = await PointService.subtractPoints(userId, points)
+    sendResponse(res, 200, true, `Subtracted ${points} points`, {
+      user: updatedUser,
+    })
+  },
+)
 
 /**
  * @desc    Get current points balance of the authenticated user
@@ -57,11 +60,13 @@ export const subtractPoints = catchAsync(
  */
 export const getUserPoints = catchAsync(
   async (_req: Request, res: Response): Promise<void> => {
-    const userId = _req.user!.id;
-    const points = await PointService.getUserPoints(userId);
-    sendResponse(res, 200, true, "Current points fetched successfully", { points });
-  }
-);
+    const userId = _req.user!.id
+    const points = await PointService.getUserPoints(userId)
+    sendResponse(res, 200, true, "Current points fetched successfully", {
+      points,
+    })
+  },
+)
 
 /**
  * @desc    Redeem points for a reward
@@ -70,27 +75,27 @@ export const getUserPoints = catchAsync(
  */
 export const redeemPoints = catchAsync(
   async (
-    req: Request<{}, {}, { rewardId: string }>,
+    req: Request<unknown, unknown, { rewardId: string }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const { rewardId } = req.body;
+    const userId = req.user!.id
+    const { rewardId } = req.body
     if (!rewardId) {
-      sendResponse(res, 400, false, "Reward ID is required");
-      return;
+      sendResponse(res, 400, false, "Reward ID is required")
+      return
     }
-    const result = await PointService.redeemPoints(userId, rewardId);
+    const result = await PointService.redeemPoints(userId, rewardId)
     sendResponse(res, 200, true, result.message, {
       reward: result.reward,
       userPoints: result.userPoints,
-    });
-  }
-);
+    })
+  },
+)
 
 export default {
   addPoints,
   subtractPoints,
   getUserPoints,
   redeemPoints,
-};
+}

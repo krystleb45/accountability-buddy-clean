@@ -1,25 +1,29 @@
-import type { NextFunction, Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, RequestHandler, Response } from "express"
 
-import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
+import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest"
 
-import { createError } from "../middleware/errorHandler";
+import { createError } from "../middleware/errorHandler"
 
 export function handleAdminRoute<T = any>(
   handler: (
-    req: AdminAuthenticatedRequest<{}, any, T>,
+    req: AdminAuthenticatedRequest<unknown, any, T>,
     res: Response,
-    next: NextFunction
-  ) => Promise<void>
+    next: NextFunction,
+  ) => Promise<void>,
 ): RequestHandler {
   return (req: Request, res: Response, next: NextFunction): Promise<void> => {
     // We first cast to any so we can check for req.user
-    const maybeUser = (req as any).user;
+    const maybeUser = (req as any).user
     if (!maybeUser) {
       // If user is missing, immediately pass an unauthorized error.
-      return Promise.reject(createError("Unauthorized access", 401));
+      return Promise.reject(createError("Unauthorized access", 401))
     }
     // Now we cast the request to our AdminAuthenticatedRequest.
-    const adminReq = req as unknown as AdminAuthenticatedRequest<{}, any, T>;
-    return handler(adminReq, res, next);
-  };
+    const adminReq = req as unknown as AdminAuthenticatedRequest<
+      unknown,
+      any,
+      T
+    >
+    return handler(adminReq, res, next)
+  }
 }

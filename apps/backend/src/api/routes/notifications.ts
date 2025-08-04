@@ -1,13 +1,13 @@
 // src/api/routes/notifications.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
-import * as NotificationController from "../controllers/NotificationController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as NotificationController from "../controllers/NotificationController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // Limit posts to avoid spam
 const notificationLimiter = rateLimit({
@@ -17,9 +17,10 @@ const notificationLimiter = rateLimit({
   legacyHeaders: false,
   message: {
     success: false,
-    message: "Too many notifications sent from this IP, please try again later.",
+    message:
+      "Too many notifications sent from this IP, please try again later.",
   },
-});
+})
 
 /**
  * POST /api/notifications
@@ -41,18 +42,14 @@ router.post(
     ]),
   ],
   handleValidationErrors,
-  NotificationController.sendNotification
-);
+  NotificationController.sendNotification,
+)
 
 /**
  * GET /api/notifications
  * Get all notifications for current user
  */
-router.get(
-  "/",
-  protect,
-  NotificationController.getNotifications
-);
+router.get("/", protect, NotificationController.getNotifications)
 
 /**
  * PATCH /api/notifications/read
@@ -64,12 +61,14 @@ router.patch(
   [
     check("notificationIds", "notificationIds must be an array of IDs")
       .isArray({ min: 1 })
-      .custom((arr: any[]) => arr.every((id) => typeof id === "string" && /^[0-9a-f]{24}$/i.test(id)))
+      .custom((arr: any[]) =>
+        arr.every((id) => typeof id === "string" && /^[0-9a-f]{24}$/i.test(id)),
+      )
       .withMessage("Each notificationId must be a valid Mongo ID"),
   ],
   handleValidationErrors,
-  NotificationController.markNotificationsAsRead
-);
+  NotificationController.markNotificationsAsRead,
+)
 
 /**
  * DELETE /api/notifications/:notificationId
@@ -79,10 +78,13 @@ router.delete(
   "/:notificationId",
   protect,
   [
-    check("notificationId", "notificationId must be a valid Mongo ID").isMongoId()
+    check(
+      "notificationId",
+      "notificationId must be a valid Mongo ID",
+    ).isMongoId(),
   ],
   handleValidationErrors,
-  NotificationController.deleteNotification
-);
+  NotificationController.deleteNotification,
+)
 
-export default router;
+export default router

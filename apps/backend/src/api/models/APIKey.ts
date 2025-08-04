@@ -1,38 +1,38 @@
 // src/api/models/APIKey.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
-import crypto from "node:crypto";
+import mongoose, { Schema } from "mongoose"
+import crypto from "node:crypto"
 
 // --- Types & Interfaces ---
-export type Permission = "read" | "write" | "delete" | "admin";
+export type Permission = "read" | "write" | "delete" | "admin"
 
 export interface IAPIKey extends Document {
-  key: string;
-  owner: Types.ObjectId;
-  permissions: Permission[];
-  isActive: boolean;
-  expiresAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  key: string
+  owner: Types.ObjectId
+  permissions: Permission[]
+  isActive: boolean
+  expiresAt: Date
+  createdAt: Date
+  updatedAt: Date
 
   // Virtual
-  status: string;
+  status: string
 
   // Instance methods
-  deactivate: (this: IAPIKey) => Promise<IAPIKey>;
-  renew: (this: IAPIKey, days?: number) => Promise<IAPIKey>;
-  hasPermission: (this: IAPIKey, permission: Permission) => boolean;
+  deactivate: (this: IAPIKey) => Promise<IAPIKey>
+  renew: (this: IAPIKey, days?: number) => Promise<IAPIKey>
+  hasPermission: (this: IAPIKey, permission: Permission) => boolean
 }
 
 export interface IAPIKeyModel extends Model<IAPIKey> {
-  validateKey: (apiKey: string) => Promise<IAPIKey | null>;
+  validateKey: (apiKey: string) => Promise<IAPIKey | null>
   generateKeyForUser: (
     userId: Types.ObjectId,
     permissions?: Permission[],
-    expirationDays?: number
-  ) => Promise<IAPIKey>;
+    expirationDays?: number,
+  ) => Promise<IAPIKey>
 }
 
 // --- Schema Definition ---
@@ -60,101 +60,94 @@ const APIKeySchema = new Schema<IAPIKey>(
     expiresAt: {
       type: Date,
       required: true,
-      default: (): Date =>
-        new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      default: (): Date => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     },
   },
   {
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes (all in one place) ---
-APIKeySchema.index({ owner: 1, isActive: 1 });
-APIKeySchema.index({ expiresAt: 1 });
+APIKeySchema.index({ owner: 1, isActive: 1 })
+APIKeySchema.index({ expiresAt: 1 })
 
 // --- Virtuals ---
 APIKeySchema.virtual("status").get(function (this: IAPIKey): string {
-  if (!this.isActive) 
-return "Inactive";
-  return this.expiresAt.getTime() > Date.now() ? "Active" : "Expired";
-});
+  if (!this.isActive) return "Inactive"
+  return this.expiresAt.getTime() > Date.now() ? "Active" : "Expired"
+})
 
 // --- Pre‑validate Hook ---
 APIKeySchema.pre<IAPIKey>("validate", function (next) {
   if (!this.key) {
-    this.key = crypto.randomBytes(32).toString("hex");
+    this.key = crypto.randomBytes(32).toString("hex")
   }
-  next();
-});
+  next()
+})
 
 // --- Instance Methods ---
 APIKeySchema.methods.deactivate = async function (
-  this: IAPIKey
+  this: IAPIKey,
 ): Promise<IAPIKey> {
-  this.isActive = false;
-  await this.save();
+  this.isActive = false
+  await this.save()
   // assert to IAPIKey so TS knows the returned document has all IAPIKey fields
-  return this as IAPIKey;
-};
+  return this as IAPIKey
+}
 
 APIKeySchema.methods.renew = async function (
   this: IAPIKey,
-  days = 30
+  days = 30,
 ): Promise<IAPIKey> {
-  this.expiresAt = new Date(
-    Date.now() + days * 24 * 60 * 60 * 1000
-  );
-  this.isActive = true;
-  await this.save();
-  return this as IAPIKey;
-};
+  this.expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000)
+  this.isActive = true
+  await this.save()
+  return this as IAPIKey
+}
 
 APIKeySchema.methods.hasPermission = function (
-  permission: Permission
+  permission: Permission,
 ): boolean {
   return (
-    this.permissions.includes(permission) ||
-    this.permissions.includes("admin")
-  );
-};
+    this.permissions.includes(permission) || this.permissions.includes("admin")
+  )
+}
 
 // --- Static Methods ---
 APIKeySchema.statics.validateKey = async function (
-  apiKey: string
+  apiKey: string,
 ): Promise<IAPIKey | null> {
   return this.findOne({
     key: apiKey,
     isActive: true,
     expiresAt: { $gt: new Date() },
-  });
-};
+  })
+}
 
 APIKeySchema.statics.generateKeyForUser = async function (
   userId: Types.ObjectId,
   permissions: Permission[] = ["read"],
-  expirationDays = 30
+  expirationDays = 30,
 ): Promise<IAPIKey> {
-  const keyString = crypto.randomBytes(32).toString("hex");
-  const expiresAt = new Date(
-    Date.now() + expirationDays * 24 * 60 * 60 * 1000
-  );
+  const keyString = crypto.randomBytes(32).toString("hex")
+  const expiresAt = new Date(Date.now() + expirationDays * 24 * 60 * 60 * 1000)
   const newKey = new this({
     key: keyString,
     owner: userId,
     permissions,
     expiresAt,
-  });
-  await newKey.save();
-  return newKey;
-};
+  })
+  await newKey.save()
+  return newKey
+}
 
 // --- Model Export ---
 export const APIKey = mongoose.model<IAPIKey, IAPIKeyModel>(
   "APIKey",
-  APIKeySchema
-);
+  APIKeySchema,
+)
 
-export default APIKey;
+export default APIKey

@@ -1,16 +1,16 @@
-import dotenv from "dotenv";
+import dotenv from "dotenv"
 
-dotenv.config();
+dotenv.config()
 
 interface SessionConfig {
-  secret: string;
-  resave: boolean;
-  saveUninitialized: boolean;
+  secret: string
+  resave: boolean
+  saveUninitialized: boolean
   cookie: {
-    secure: boolean;
-    maxAge: number; // Cookie expiration in milliseconds
-  };
-  store?: string; // Optional store, e.g., Redis
+    secure: boolean
+    maxAge: number // Cookie expiration in milliseconds
+  }
+  store?: string // Optional store, e.g., Redis
 }
 
 const sessionConfig: SessionConfig = {
@@ -22,6 +22,6 @@ const sessionConfig: SessionConfig = {
     maxAge: Number.parseInt(process.env.SESSION_MAX_AGE || "86400000", 10), // Default: 1 day
   },
   store: process.env.SESSION_STORE || undefined, // Optional session store (e.g., Redis)
-};
+}
 
-export default sessionConfig;
+export default sessionConfig

@@ -1,30 +1,37 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 /**
  * Middleware to handle validation results and send structured errors.
  */
-export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function validationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     // Format validation errors into a structured response
     const formattedErrors = errors.array().map((error) => ({
-      field: "param" in error && typeof error.param === "string" ? error.param : "unknown",
+      field:
+        "param" in error && typeof error.param === "string"
+          ? error.param
+          : "unknown",
       message: error.msg,
-    }));
+    }))
 
     res.status(400).json({
       success: false,
       message: "Validation failed",
       errors: formattedErrors,
-    });
+    })
 
-    return; // Terminate the middleware execution
+    return // Terminate the middleware execution
   }
 
-  next(); // Proceed to the next middleware
+  next() // Proceed to the next middleware
 }
 
 /**
@@ -46,14 +53,14 @@ export const searchValidation = [
     .custom((filters: Record<string, unknown>) => {
       return Object.values(filters).every(
         (value) => typeof value === "string" || typeof value === "number",
-      );
+      )
     })
     .withMessage("All filter values must be strings or numbers."),
 
   check("sort")
     .optional()
     .isIn(["asc", "desc"])
-    .withMessage("Sort must be either \"asc\" or \"desc\"."),
+    .withMessage('Sort must be either "asc" or "desc".'),
 
   check("page")
     .optional()
@@ -66,5 +73,4 @@ export const searchValidation = [
     .withMessage("Limit must be an integer between 1 and 100."),
 
   validationMiddleware,
-];
-
+]

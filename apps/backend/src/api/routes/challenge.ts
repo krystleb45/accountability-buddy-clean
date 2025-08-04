@@ -1,7 +1,7 @@
 // src/api/routes/challenge.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, param } from "express-validator"
 
 import {
   createChallenge,
@@ -9,11 +9,11 @@ import {
   getPublicChallenges,
   joinChallenge,
   leaveChallenge,
-} from "../controllers/ChallengeController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+} from "../controllers/ChallengeController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // Limit challenge creation to 3 per IP per 15 minutes
 const challengeCreateLimiter = rateLimit({
@@ -21,9 +21,10 @@ const challengeCreateLimiter = rateLimit({
   max: 3,
   message: {
     success: false,
-    message: "Too many challenges created from this IP. Please try again later.",
+    message:
+      "Too many challenges created from this IP. Please try again later.",
   },
-});
+})
 
 /**
  * Create a new challenge
@@ -36,25 +37,27 @@ router.post(
   challengeCreateLimiter,
   [
     check("name", "Name is required").notEmpty(),
-    check("type", "Type must be 'weekly' or 'monthly'")
-      .isIn(["weekly", "monthly"]),
-    check("milestones", "Milestones array is required")
-      .isArray({ min: 1 }),
-    check("milestones.*.label", "Each milestone must have a label")
-      .notEmpty(),
-    check("milestones.*.target", "Each milestone must have a numeric target")
-      .isNumeric(),
+    check("type", "Type must be 'weekly' or 'monthly'").isIn([
+      "weekly",
+      "monthly",
+    ]),
+    check("milestones", "Milestones array is required").isArray({ min: 1 }),
+    check("milestones.*.label", "Each milestone must have a label").notEmpty(),
+    check(
+      "milestones.*.target",
+      "Each milestone must have a numeric target",
+    ).isNumeric(),
   ],
   handleValidationErrors,
-  createChallenge
-);
+  createChallenge,
+)
 
 /**
  * Get all public challenges
  * GET /api/challenge/public
  * Public, no rate-limit
  */
-router.get("/public", getPublicChallenges);
+router.get("/public", getPublicChallenges)
 
 /**
  * Join a challenge
@@ -71,8 +74,8 @@ router.post(
       .withMessage("challengeId must be a valid Mongo ID"),
   ],
   handleValidationErrors,
-  joinChallenge
-);
+  joinChallenge,
+)
 
 /**
  * Leave a challenge
@@ -89,8 +92,8 @@ router.post(
       .withMessage("challengeId must be a valid Mongo ID"),
   ],
   handleValidationErrors,
-  leaveChallenge
-);
+  leaveChallenge,
+)
 
 /**
  * Get challenge details by ID
@@ -99,11 +102,9 @@ router.post(
  */
 router.get(
   "/:id",
-  [
-    param("id", "Invalid challenge ID").isMongoId(),
-  ],
+  [param("id", "Invalid challenge ID").isMongoId()],
   handleValidationErrors,
-  getChallengeById
-);
+  getChallengeById,
+)
 
-export default router;
+export default router

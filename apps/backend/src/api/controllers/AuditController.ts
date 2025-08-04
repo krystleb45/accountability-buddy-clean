@@ -1,16 +1,16 @@
 // src/api/controllers/AuditController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import sanitize from "mongo-sanitize";
+import sanitize from "mongo-sanitize"
 
-import { createError } from "../middleware/errorHandler";
-import AuditService from "../services/AuditService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import { createError } from "../middleware/errorHandler"
+import AuditService from "../services/AuditService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 interface LogBody {
-  action: string;
-  details?: string;
+  action: string
+  details?: string
 }
 
 /**
@@ -19,13 +19,13 @@ interface LogBody {
  */
 export const logAuditEvent = catchAsync(
   async (
-    req: Request<{}, {}, LogBody>,
+    req: Request<unknown, unknown, LogBody>,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const { action, details } = sanitize(req.body) as LogBody;
+    const { action, details } = sanitize(req.body) as LogBody
     if (!action || typeof action !== "string") {
-      return next(createError("Invalid or missing 'action' parameter", 400));
+      return next(createError("Invalid or missing 'action' parameter", 400))
     }
 
     await AuditService.recordAudit({
@@ -33,11 +33,11 @@ export const logAuditEvent = catchAsync(
       action,
       description: details,
       ipAddress: req.ip,
-    });
+    })
 
-    sendResponse(res, 201, true, "Audit event logged successfully");
-  }
-);
+    sendResponse(res, 201, true, "Audit event logged successfully")
+  },
+)
 
 /**
  * GET /api/audit
@@ -45,14 +45,14 @@ export const logAuditEvent = catchAsync(
  */
 export const getAuditLogs = catchAsync(
   async (_req: Request, res: Response): Promise<void> => {
-    const logs = await AuditService.getAuditLogs();
+    const logs = await AuditService.getAuditLogs()
     if (!logs.length) {
-      sendResponse(res, 404, false, "No audit logs found");
-      return;
+      sendResponse(res, 404, false, "No audit logs found")
+      return
     }
-    sendResponse(res, 200, true, "Audit logs fetched successfully", { logs });
-  }
-);
+    sendResponse(res, 200, true, "Audit logs fetched successfully", { logs })
+  },
+)
 
 /**
  * GET /api/audit/user/:userId
@@ -64,23 +64,23 @@ export const getAuditLogsByUser = catchAsync(
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const { userId } = req.params;
+    const { userId } = req.params
     if (!userId) {
-      next(createError("User ID is required", 400));
-      return;
+      next(createError("User ID is required", 400))
+      return
     }
 
-    const logs = await AuditService.getAuditLogs({ userId });
+    const logs = await AuditService.getAuditLogs({ userId })
     if (!logs.length) {
-      sendResponse(res, 404, false, "No audit logs found for this user");
-      return;
+      sendResponse(res, 404, false, "No audit logs found for this user")
+      return
     }
 
-    sendResponse(res, 200, true, "Audit logs fetched successfully", { logs });
-  }
-);
+    sendResponse(res, 200, true, "Audit logs fetched successfully", { logs })
+  },
+)
 export default {
   logAuditEvent,
   getAuditLogs,
   getAuditLogsByUser,
-};
+}

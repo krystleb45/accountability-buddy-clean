@@ -1,13 +1,11 @@
-import type { NextFunction, Request, Response } from "express";
-import type { ValidationChain, ValidationError } from "express-validator";
+import type { NextFunction, Request, Response } from "express"
+import type { ValidationChain, ValidationError } from "express-validator"
 
-import { check, validationResult } from "express-validator";
-import multer, { MulterError } from "multer";
-
-
+import { check, validationResult } from "express-validator"
+import multer, { MulterError } from "multer"
 
 // Allowed file types for upload
-const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"];
+const allowedFileTypes = ["image/jpeg", "image/png", "application/pdf"]
 
 /**
  * Multer setup for file uploads with file size limit and file type checking.
@@ -18,16 +16,25 @@ const upload = multer({
   },
   fileFilter: (_req, file, cb): void => {
     if (!allowedFileTypes.includes(file.mimetype)) {
-      return cb(new MulterError("LIMIT_UNEXPECTED_FILE", "Invalid file type. Only JPEG, PNG, and PDF are allowed."));
+      return cb(
+        new MulterError(
+          "LIMIT_UNEXPECTED_FILE",
+          "Invalid file type. Only JPEG, PNG, and PDF are allowed.",
+        ),
+      )
     }
-    cb(null, true);
+    cb(null, true)
   },
-}).single("file");
+}).single("file")
 
 /**
  * Middleware to handle file upload validation using Multer.
  */
-export function multerMiddleware (req: Request, res: Response, next: NextFunction): void {
+export function multerMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   void upload(req, res, (err) => {
     if (err) {
       if (err instanceof MulterError) {
@@ -40,7 +47,7 @@ export function multerMiddleware (req: Request, res: Response, next: NextFunctio
               message: `Multer error: ${err.message}`,
             },
           ],
-        });
+        })
       } else {
         // Handle other errors
         res.status(500).json({
@@ -51,9 +58,9 @@ export function multerMiddleware (req: Request, res: Response, next: NextFunctio
               message: `Server error: ${err instanceof Error ? err.message : "Unknown error"}`,
             },
           ],
-        });
+        })
       }
-      return; // Stop further processing
+      return // Stop further processing
     }
 
     if (!req.file) {
@@ -66,15 +73,13 @@ export function multerMiddleware (req: Request, res: Response, next: NextFunctio
             message: "No file uploaded",
           },
         ],
-      });
-      return; // Stop further processing
+      })
+      return // Stop further processing
     }
 
-    next(); // Proceed to the next middleware if no errors
-  });
+    next() // Proceed to the next middleware if no errors
+  })
 }
-
-
 
 /**
  * Validation for additional file upload fields.
@@ -86,20 +91,26 @@ export const fileFieldValidation: ValidationChain[] = [
     .withMessage("Description cannot be more than 300 characters.")
     .trim()
     .escape(), // Sanitize to prevent XSS
-];
+]
 
 /**
  * Type guard to check if an error is a ValidationError with a `param` property.
  */
-function isValidationErrorWithParam (error: ValidationError): error is ValidationError & { param: string } {
-  return "param" in error && typeof error.param === "string";
+function isValidationErrorWithParam(
+  error: ValidationError,
+): error is ValidationError & { param: string } {
+  return "param" in error && typeof error.param === "string"
 }
 
 /**
  * Reusable validation middleware to handle validation results and send structured errors.
  */
-export function validationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function validationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
 
   if (!errors.isEmpty()) {
     const formattedErrors = errors.array().map((error) => {
@@ -107,22 +118,22 @@ export function validationMiddleware (req: Request,  res: Response,  next: NextF
         return {
           field: error.param,
           message: error.msg,
-        };
+        }
       }
       // Fallback for errors without `param`
       return {
         field: "unknown",
         message: error.msg,
-      };
-    });
+      }
+    })
 
     res.status(400).json({
       success: false,
       errors: formattedErrors,
-    });
+    })
 
-    return; // Explicitly terminate the middleware function
+    return // Explicitly terminate the middleware function
   }
 
-  next(); // Proceed to the next middleware if no errors
+  next() // Proceed to the next middleware if no errors
 }

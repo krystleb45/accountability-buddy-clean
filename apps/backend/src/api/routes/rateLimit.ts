@@ -1,11 +1,11 @@
 // src/api/routes/rateLimit.ts
-import { Router } from "express";
+import { Router } from "express"
 
-import { getRateLimitStatus } from "../controllers/RateLimiterController";
+import { getRateLimitStatus } from "../controllers/RateLimiterController"
 
-const router = Router();
+const router = Router()
 
 // GET /api/rate-limit/status
-router.get("/status", getRateLimitStatus);
+router.get("/status", getRateLimitStatus)
 
-export default router;
+export default router

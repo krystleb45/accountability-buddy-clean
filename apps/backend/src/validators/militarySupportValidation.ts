@@ -1,4 +1,4 @@
-import { body, param, query } from "express-validator";
+import { body, param, query } from "express-validator"
 
 const validateMilitarySupportMessage = [
   body("message")
@@ -9,7 +9,7 @@ const validateMilitarySupportMessage = [
     .withMessage("Message must be a string.")
     .isLength({ max: 500 })
     .withMessage("Message cannot exceed 500 characters."),
-];
+]
 
 const validateResourceSubmission = [
   body("title")
@@ -31,7 +31,7 @@ const validateResourceSubmission = [
     .withMessage("Description must be a string.")
     .isLength({ max: 300 })
     .withMessage("Description cannot exceed 300 characters."),
-];
+]
 
 const validateMilitarySupportRequest = [
   body("userId")
@@ -52,7 +52,7 @@ const validateMilitarySupportRequest = [
     .withMessage("Details must be a string.")
     .isLength({ max: 500 })
     .withMessage("Details cannot exceed 500 characters."),
-];
+]
 
 const validateChatroomId = [
   param("chatroomId")
@@ -60,7 +60,7 @@ const validateChatroomId = [
     .withMessage("Chatroom ID is required.")
     .isUUID()
     .withMessage("Chatroom ID must be a valid UUID."),
-];
+]
 
 const validatePagination = [
   query("page")
@@ -71,7 +71,7 @@ const validatePagination = [
     .optional()
     .isInt({ min: 1, max: 100 })
     .withMessage("Limit must be an integer between 1 and 100."),
-];
+]
 
 export default {
   validateMilitarySupportMessage,
@@ -79,4 +79,4 @@ export default {
   validateMilitarySupportRequest,
   validateChatroomId,
   validatePagination,
-};
+}

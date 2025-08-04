@@ -1,46 +1,46 @@
 // src/api/models/Reminder.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Recurrence and ReminderType ---
-type Recurrence = "none" | "daily" | "weekly" | "monthly";
-type ReminderType = "email" | "sms" | "app";
+type Recurrence = "none" | "daily" | "weekly" | "monthly"
+type ReminderType = "email" | "sms" | "app"
 
 // --- Reminder Document Interface ---
 export interface IReminder extends Document {
-  user: Types.ObjectId;
-  message: string;
-  goal?: Types.ObjectId;
-  remindAt: Date;
-  recurrence: Recurrence;
-  isActive: boolean;
-  isSent: boolean;
-  reminderType: ReminderType;
-  email?: string;
-  lastSent?: Date;
-  endRepeat?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  user: Types.ObjectId
+  message: string
+  goal?: Types.ObjectId
+  remindAt: Date
+  recurrence: Recurrence
+  isActive: boolean
+  isSent: boolean
+  reminderType: ReminderType
+  email?: string
+  lastSent?: Date
+  endRepeat?: Date
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  isRecurring: boolean;
+  isRecurring: boolean
 
   // Instance methods
-  deactivate: () => Promise<IReminder>;
-  markAsSent: () => Promise<IReminder>;
+  deactivate: () => Promise<IReminder>
+  markAsSent: () => Promise<IReminder>
 }
 
 // --- Reminder Model Static Interface ---
 export interface IReminderModel extends Model<IReminder> {
-  getUpcomingRemindersForUser: (userId: Types.ObjectId) => Promise<IReminder[]>;
-  getUpcomingRemindersInRange: (start: Date, end: Date) => Promise<IReminder[]>;
+  getUpcomingRemindersForUser: (userId: Types.ObjectId) => Promise<IReminder[]>
+  getUpcomingRemindersInRange: (start: Date, end: Date) => Promise<IReminder[]>
   getUserReminders: (
     userId: Types.ObjectId,
-    filters?: Partial<IReminder>
-  ) => Promise<IReminder[]>;
-  markAsSent: (reminderId: string) => Promise<IReminder | null>;
+    filters?: Partial<IReminder>,
+  ) => Promise<IReminder[]>
+  markAsSent: (reminderId: string) => Promise<IReminder | null>
 }
 
 // --- Schema Definition ---
@@ -83,7 +83,7 @@ const ReminderSchema = new Schema<IReminder, IReminderModel>(
       type: Date,
       validate: {
         validator(this: IReminder, value: Date): boolean {
-          return !value || value.getTime() > this.remindAt.getTime();
+          return !value || value.getTime() > this.remindAt.getTime()
         },
         message: "End repeat must be after remindAt",
       },
@@ -93,52 +93,54 @@ const ReminderSchema = new Schema<IReminder, IReminderModel>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-ReminderSchema.index({ user: 1, remindAt: 1 });
-ReminderSchema.index({ recurrence: 1 });
-ReminderSchema.index({ isActive: 1 });
-ReminderSchema.index({ isSent: 1 });
-ReminderSchema.index({ goal: 1 });
+ReminderSchema.index({ user: 1, remindAt: 1 })
+ReminderSchema.index({ recurrence: 1 })
+ReminderSchema.index({ isActive: 1 })
+ReminderSchema.index({ isSent: 1 })
+ReminderSchema.index({ goal: 1 })
 
 // --- Virtual ---
 ReminderSchema.virtual("isRecurring").get(function (this: IReminder): boolean {
-  return this.recurrence !== "none";
-});
+  return this.recurrence !== "none"
+})
 
 // --- Middleware ---
 ReminderSchema.pre<IReminder>("save", function (next): void {
   if (this.isModified("message")) {
-    this.message = this.message.trim();
+    this.message = this.message.trim()
   }
   if (this.recurrence !== "none" && !this.endRepeat) {
-    return next(new Error("End repeat date is required for recurring reminders"));
+    return next(
+      new Error("End repeat date is required for recurring reminders"),
+    )
   }
-  next();
-});
+  next()
+})
 
 // --- Instance Methods ---
 ReminderSchema.methods.deactivate = async function (
-  this: IReminder
+  this: IReminder,
 ): Promise<IReminder> {
-  this.isActive = false;
-  return this.save();
-};
+  this.isActive = false
+  return this.save()
+}
 
 ReminderSchema.methods.markAsSent = async function (
-  this: IReminder
+  this: IReminder,
 ): Promise<IReminder> {
-  this.isSent = true;
-  this.lastSent = new Date();
-  return this.save();
-};
+  this.isSent = true
+  this.lastSent = new Date()
+  return this.save()
+}
 
 // --- Static Methods ---
 ReminderSchema.statics.getUpcomingRemindersForUser = function (
   this: IReminderModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IReminder[]> {
   return this.find({
     user: userId,
@@ -147,44 +149,43 @@ ReminderSchema.statics.getUpcomingRemindersForUser = function (
     isActive: true,
   })
     .sort({ remindAt: 1 })
-    .exec();
-};
+    .exec()
+}
 
 ReminderSchema.statics.getUpcomingRemindersInRange = function (
   this: IReminderModel,
   start: Date,
-  end: Date
+  end: Date,
 ): Promise<IReminder[]> {
   return this.find({
     isActive: true,
     remindAt: { $gte: start, $lte: end },
     isSent: false,
-  }).exec();
-};
+  }).exec()
+}
 
 ReminderSchema.statics.getUserReminders = function (
   this: IReminderModel,
   userId: Types.ObjectId,
-  filters: Partial<IReminder> = {}
+  filters: Partial<IReminder> = {},
 ): Promise<IReminder[]> {
-  return this.find({ user: userId, ...filters } as any).exec();
-};
+  return this.find({ user: userId, ...filters } as any).exec()
+}
 
 ReminderSchema.statics.markAsSent = async function (
   this: IReminderModel,
-  reminderId: string
+  reminderId: string,
 ): Promise<IReminder | null> {
-  const rem = await this.findById(reminderId).exec();
-  if (!rem) 
-return null;
-  rem.isSent = true;
-  rem.lastSent = new Date();
-  return rem.save();
-};
+  const rem = await this.findById(reminderId).exec()
+  if (!rem) return null
+  rem.isSent = true
+  rem.lastSent = new Date()
+  return rem.save()
+}
 
 // --- Model Export ---
 export const Reminder = mongoose.model<IReminder, IReminderModel>(
   "Reminder",
-  ReminderSchema
-);
-export default Reminder;
+  ReminderSchema,
+)
+export default Reminder

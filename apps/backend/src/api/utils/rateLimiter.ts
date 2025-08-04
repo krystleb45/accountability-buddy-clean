@@ -1,15 +1,15 @@
-// src/api/utils/rateLimiter.ts - FIXED: Conditional Redis usage
-import type { Request, Response } from "express";
-import type { Options, RateLimitRequestHandler } from "express-rate-limit";
+import type { Request, Response } from "express"
+import type { Options, RateLimitRequestHandler } from "express-rate-limit"
 
-import rateLimit from "express-rate-limit";
+import rateLimit from "express-rate-limit"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 // Check if Redis is disabled
-const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
+const isRedisDisabled =
+  process.env.DISABLE_REDIS === "true" ||
   process.env.SKIP_REDIS_INIT === "true" ||
-  process.env.DISABLE_REDIS === "true";
+  process.env.DISABLE_REDIS === "true"
 
 /**
  * @desc    Creates a rate limiter with configurable limits, IP-based throttling, and optional Redis-backed storage.
@@ -19,7 +19,12 @@ const isRedisDisabled = process.env.DISABLE_REDIS === "true" ||
  * @param   {boolean} [useRedis] - Whether to use Redis for distributed rate-limiting across multiple servers.
  * @returns {RateLimitRequestHandler} Middleware function to apply rate limiting.
  */
-function createRateLimiter (maxRequests: number,  windowMs: number,  message = "Too many requests, please try again later.",  useRedis = false): RateLimitRequestHandler {
+async function createRateLimiter(
+  maxRequests: number,
+  windowMs: number,
+  message = "Too many requests, please try again later.",
+  useRedis = false,
+): Promise<RateLimitRequestHandler> {
   const options: Partial<Options> = {
     windowMs,
     max: maxRequests,
@@ -35,73 +40,82 @@ function createRateLimiter (maxRequests: number,  windowMs: number,  message = "
         ip: req.ip,
         path: req.originalUrl,
         method: req.method,
-      });
+      })
       res.status(429).json({
         success: false,
         message,
-      });
+      })
     },
     standardHeaders: true,
     legacyHeaders: false,
     // Default to memory store
     store: undefined,
-  };
+  }
 
   // Only attempt Redis if enabled and requested
   if (useRedis && !isRedisDisabled) {
     try {
-      logger.info("🔴 Attempting to use Redis store for rate limiting");
+      logger.info("🔴 Attempting to use Redis store for rate limiting")
 
       // Dynamic import Redis modules
-      const RedisStore = require("rate-limit-redis");
-      const redisClient = require("../../config/redisClient").default;
+      const { default: RedisStore } = await import("rate-limit-redis")
+      const { default: redisClient } = await import("../../config/redisClient")
 
       if (redisClient && typeof redisClient.sendCommand === "function") {
         options.store = new RedisStore({
           sendCommand: async (...args: string[]): Promise<any> => {
             try {
-              const response = await redisClient.sendCommand(args);
+              const response = await redisClient.sendCommand(args)
 
               if (response === null || response === undefined) {
-                return "";
+                return ""
               }
 
-              if (typeof response === "string" || typeof response === "number") {
-                return response;
+              if (
+                typeof response === "string" ||
+                typeof response === "number"
+              ) {
+                return response
               }
 
               if (Array.isArray(response)) {
-                return response.map((item) => (item === null ? "" : item));
+                return response.map((item) => (item === null ? "" : item))
               }
 
-              throw new Error(`Invalid Redis reply type: ${typeof response}`);
+              throw new Error(`Invalid Redis reply type: ${typeof response}`)
             } catch (error) {
               logger.error("Error executing Redis command for rate limiter", {
                 args,
-                error: (error as Error).message
-              });
-              throw error;
+                error: (error as Error).message,
+              })
+              throw error
             }
           },
-        });
+        })
 
-        logger.info("✅ Rate limiter using Redis store");
+        logger.info("✅ Rate limiter using Redis store")
       } else {
-        logger.warn("⚠️ Redis client not available for rate limiter, using memory store");
+        logger.warn(
+          "⚠️ Redis client not available for rate limiter, using memory store",
+        )
       }
     } catch (error) {
-      logger.error(`Failed to setup Redis rate limiter: ${(error as Error).message}`);
-      logger.warn("⚠️ Rate limiter falling back to memory store");
+      logger.error(
+        `Failed to setup Redis rate limiter: ${(error as Error).message}`,
+      )
+      logger.warn("⚠️ Rate limiter falling back to memory store")
     }
   } else if (useRedis && isRedisDisabled) {
-    logger.info("🚫 Redis disabled - rate limiter using memory store");
+    logger.info("🚫 Redis disabled - rate limiter using memory store")
   }
 
   // Log the configuration
-  const storeType = options.store ? "Redis" : "Memory";
-  logger.info(`Rate limiter created: ${maxRequests} requests per ${windowMs}ms using ${storeType} store`);
+  const storeType = options.store ? "Redis" : "Memory"
+  logger.info(
+    `Rate limiter created: ${maxRequests} requests per ${windowMs}ms using ${storeType} store`,
+  )
 
-  return rateLimit(options);
+  return rateLimit(options)
 }
 
 /**
@@ -112,12 +126,12 @@ export const globalRateLimiter = rateLimit({
   windowMs: process.env.NODE_ENV === "test" ? 1000 : 15 * 60 * 1000, // 1 second for tests, 15 minutes otherwise
   max: process.env.NODE_ENV === "test" ? 10 : 100, // Allow 10 requests for tests, 100 for production
   handler: (_req, res) => {
-    res.status(429).json({ message: "Rate limit exceeded" });
+    res.status(429).json({ message: "Rate limit exceeded" })
   },
   standardHeaders: true,
   legacyHeaders: false,
   // Uses memory store by default (no store specified)
-});
+})
 
 /**
  * @desc    Rate limiter for authentication routes (e.g., login, register).
@@ -128,7 +142,7 @@ export const authRateLimiter = createRateLimiter(
   15 * 60 * 1000,
   "Too many login attempts, please try again later.",
   false, // Changed to false to avoid Redis when disabled
-);
+)
 
 /**
  * @desc    Rate limiter for sensitive data routes (e.g., password reset).
@@ -139,7 +153,7 @@ export const sensitiveDataRateLimiter = createRateLimiter(
   30 * 60 * 1000,
   "Too many attempts, please try again in 30 minutes.",
   false, // Changed to false to avoid Redis when disabled
-);
+)
 
 /**
  * @desc    Custom rate limiter for specific routes or actions.
@@ -149,6 +163,11 @@ export const sensitiveDataRateLimiter = createRateLimiter(
  * @param   {boolean} [useRedis] - Whether to use Redis for distributed rate limiting.
  * @returns {RateLimitRequestHandler} Middleware function to apply custom rate limiting.
  */
-export function customRateLimiter (maxRequests: number,  windowMs: number,  message: string,  useRedis = false): RateLimitRequestHandler {
-  return createRateLimiter(maxRequests, windowMs, message, useRedis);
+export async function customRateLimiter(
+  maxRequests: number,
+  windowMs: number,
+  message: string,
+  useRedis = false,
+) {
+  return createRateLimiter(maxRequests, windowMs, message, useRedis)
 }

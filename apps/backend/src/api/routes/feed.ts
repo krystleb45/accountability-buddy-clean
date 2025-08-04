@@ -1,20 +1,23 @@
 // src/api/routes/feed.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, param } from "express-validator"
 
-import * as feedController from "../controllers/feedController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as feedController from "../controllers/feedController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // throttle to 10 requests per 15 minutes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { success: false, msg: "Too many requests. Please try again later." },
-});
+  message: {
+    success: false,
+    msg: "Too many requests. Please try again later.",
+  },
+})
 
 /**
  * POST /api/feed/post
@@ -31,18 +34,13 @@ router.post(
       .isLength({ max: 500 }),
   ],
   handleValidationErrors,
-  feedController.createPost
-);
+  feedController.createPost,
+)
 
 /**
  * GET /api/feed
  */
-router.get(
-  "/",
-  limiter,
-  protect,
-  feedController.getFeed
-);
+router.get("/", limiter, protect, feedController.getFeed)
 
 /**
  * POST /api/feed/like/:id
@@ -51,10 +49,10 @@ router.post(
   "/like/:id",
   limiter,
   protect,
-  [ param("id", "Invalid post ID").isMongoId() ],
+  [param("id", "Invalid post ID").isMongoId()],
   handleValidationErrors,
-  feedController.addLike
-);
+  feedController.addLike,
+)
 
 /**
  * DELETE /api/feed/unlike/:id
@@ -63,10 +61,10 @@ router.delete(
   "/unlike/:id",
   limiter,
   protect,
-  [ param("id", "Invalid post ID").isMongoId() ],
+  [param("id", "Invalid post ID").isMongoId()],
   handleValidationErrors,
-  feedController.removeLike
-);
+  feedController.removeLike,
+)
 
 /**
  * POST /api/feed/comment/:id
@@ -78,11 +76,13 @@ router.post(
   [
     param("id", "Invalid post ID").isMongoId(),
     check("text", "Comment must not be empty").notEmpty(),
-    check("text", "Comment must not exceed 200 characters").isLength({ max: 200 }),
+    check("text", "Comment must not exceed 200 characters").isLength({
+      max: 200,
+    }),
   ],
   handleValidationErrors,
-  feedController.addComment
-);
+  feedController.addComment,
+)
 
 /**
  * DELETE /api/feed/comment/:postId/:commentId
@@ -96,7 +96,7 @@ router.delete(
     param("commentId", "Invalid comment ID").isMongoId(),
   ],
   handleValidationErrors,
-  feedController.removeComment
-);
+  feedController.removeComment,
+)
 
-export default router;
+export default router

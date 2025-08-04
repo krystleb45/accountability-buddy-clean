@@ -1,34 +1,35 @@
 // src/api/models/MilitarySupportChatroom.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Chatroom Interface ---
 export interface IMilitarySupportChatroom extends Document {
-  _id: Types.ObjectId;
-  name: string;
-  description: string;
-  members: Types.ObjectId[];            // Users in the room
-  visibility: "public" | "private";     // Access control
-  isActive: boolean;                    // Soft-delete flag
-  createdAt: Date;
-  updatedAt: Date;
+  _id: Types.ObjectId
+  name: string
+  description: string
+  members: Types.ObjectId[] // Users in the room
+  visibility: "public" | "private" // Access control
+  isActive: boolean // Soft-delete flag
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  memberCount: number;
+  memberCount: number
 
   // Instance methods
-  addMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom>;
-  removeMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom>;
-  deactivate: () => Promise<IMilitarySupportChatroom>;
-  activate: () => Promise<IMilitarySupportChatroom>;
+  addMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom>
+  removeMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom>
+  deactivate: () => Promise<IMilitarySupportChatroom>
+  activate: () => Promise<IMilitarySupportChatroom>
 }
 
 // --- Model Interface ---
-export interface IMilitarySupportChatroomModel extends Model<IMilitarySupportChatroom> {
-  findPublic: () => Promise<IMilitarySupportChatroom[]>;
-  findByMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom[]>;
+export interface IMilitarySupportChatroomModel
+  extends Model<IMilitarySupportChatroom> {
+  findPublic: () => Promise<IMilitarySupportChatroom[]>
+  findByMember: (userId: Types.ObjectId) => Promise<IMilitarySupportChatroom[]>
 }
 
 // --- Schema Definition ---
@@ -72,81 +73,81 @@ const MilitarySupportChatroomSchema = new Schema<
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-MilitarySupportChatroomSchema.index({ name: "text", description: "text" });
-MilitarySupportChatroomSchema.index({ members: 1 });
-MilitarySupportChatroomSchema.index({ visibility: 1 });
-MilitarySupportChatroomSchema.index({ isActive: 1 });
+MilitarySupportChatroomSchema.index({ name: "text", description: "text" })
+MilitarySupportChatroomSchema.index({ members: 1 })
+MilitarySupportChatroomSchema.index({ visibility: 1 })
+MilitarySupportChatroomSchema.index({ isActive: 1 })
 
 // --- Virtual for member count ---
 MilitarySupportChatroomSchema.virtual("memberCount").get(function (
-  this: IMilitarySupportChatroom
+  this: IMilitarySupportChatroom,
 ): number {
-  return this.members.length;
-});
+  return this.members.length
+})
 
 // --- Instance Methods ---
 MilitarySupportChatroomSchema.methods.addMember = async function (
   this: IMilitarySupportChatroom,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IMilitarySupportChatroom> {
   if (!this.members.some((m) => m.equals(userId))) {
-    this.members.push(userId);
-    await this.save();
+    this.members.push(userId)
+    await this.save()
   }
-  return this;
-};
+  return this
+}
 
 MilitarySupportChatroomSchema.methods.removeMember = async function (
   this: IMilitarySupportChatroom,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IMilitarySupportChatroom> {
-  this.members = this.members.filter((m) => !m.equals(userId));
-  await this.save();
-  return this;
-};
+  this.members = this.members.filter((m) => !m.equals(userId))
+  await this.save()
+  return this
+}
 
 MilitarySupportChatroomSchema.methods.deactivate = async function (
-  this: IMilitarySupportChatroom
+  this: IMilitarySupportChatroom,
 ): Promise<IMilitarySupportChatroom> {
-  this.isActive = false;
-  await this.save();
-  return this;
-};
+  this.isActive = false
+  await this.save()
+  return this
+}
 
 MilitarySupportChatroomSchema.methods.activate = async function (
-  this: IMilitarySupportChatroom
+  this: IMilitarySupportChatroom,
 ): Promise<IMilitarySupportChatroom> {
-  this.isActive = true;
-  await this.save();
-  return this;
-};
+  this.isActive = true
+  await this.save()
+  return this
+}
 
 // --- Static Methods ---
 MilitarySupportChatroomSchema.statics.findPublic = function (): Promise<
   IMilitarySupportChatroom[]
-  > {
+> {
   return this.find({ visibility: "public", isActive: true }).sort({
     createdAt: -1,
-  });
-};
+  })
+}
 
 MilitarySupportChatroomSchema.statics.findByMember = function (
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IMilitarySupportChatroom[]> {
   return this.find({
     members: userId,
     isActive: true,
-  }).sort({ updatedAt: -1 });
-};
+  }).sort({ updatedAt: -1 })
+}
 
 // --- Model Export ---
 export const MilitarySupportChatroom = mongoose.model<
   IMilitarySupportChatroom,
   IMilitarySupportChatroomModel
->("MilitarySupportChatroom", MilitarySupportChatroomSchema);
+>("MilitarySupportChatroom", MilitarySupportChatroomSchema)
 
-export default MilitarySupportChatroom;
+export default MilitarySupportChatroom

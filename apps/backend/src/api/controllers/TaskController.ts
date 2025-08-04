@@ -1,11 +1,11 @@
-// src/api/controllers/TaskController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express"
 
-import type { ITask } from "../models/Task";
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { ITask } from "../models/Task"
 
-import TaskService from "../services/TaskService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import TaskService from "../services/TaskService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 /**
  * @desc    Fetch all tasks for the authenticated user
@@ -13,12 +13,16 @@ import sendResponse from "../utils/sendResponse";
  * @access  Private
  */
 export const getAllTasks = catchAsync(
-  async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    const userId = req.user!.id;
-    const tasks: ITask[] = await TaskService.getTasks(userId);
-    sendResponse(res, 200, true, "Tasks fetched successfully", { tasks });
-  }
-);
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> => {
+    const userId = req.user!.id
+    const tasks: ITask[] = await TaskService.getTasks(userId)
+    sendResponse(res, 200, true, "Tasks fetched successfully", { tasks })
+  },
+)
 
 /**
  * @desc    Fetch a single task by ID
@@ -27,19 +31,21 @@ export const getAllTasks = catchAsync(
  */
 export const getTaskById = catchAsync(
   async (
-    req: Request<{ id: string }>,
+    req: AuthenticatedRequest<{ id: string }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const results = await TaskService.getTasks(userId, { _id: req.params.id });
+    const userId = req.user!.id
+    const results = await TaskService.getTasks(userId, { _id: req.params.id })
     if (!results.length) {
-      sendResponse(res, 404, false, "Task not found");
-      return;
+      sendResponse(res, 404, false, "Task not found")
+      return
     }
-    sendResponse(res, 200, true, "Task fetched successfully", { task: results[0] });
-  }
-);
+    sendResponse(res, 200, true, "Task fetched successfully", {
+      task: results[0],
+    })
+  },
+)
 
 /**
  * @desc    Create a new task
@@ -48,16 +54,18 @@ export const getTaskById = catchAsync(
  */
 export const createTask = catchAsync(
   async (
-    req: Request<{}, {}, Partial<ITask>>,
+    req: AuthenticatedRequest<unknown, unknown, Partial<ITask>>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const taskData = req.body;
-    const newTask = await TaskService.createTask(taskData, userId);
-    sendResponse(res, 201, true, "Task created successfully", { task: newTask });
-  }
-);
+    const userId = req.user!.id
+    const taskData = req.body
+    const newTask = await TaskService.createTask(taskData, userId)
+    sendResponse(res, 201, true, "Task created successfully", {
+      task: newTask,
+    })
+  },
+)
 
 /**
  * @desc    Update a task by ID
@@ -66,15 +74,21 @@ export const createTask = catchAsync(
  */
 export const updateTask = catchAsync(
   async (
-    req: Request<{ id: string }, {}, Partial<ITask>>,
+    req: AuthenticatedRequest<{ id: string }, unknown, Partial<ITask>>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const updated = await TaskService.updateTask(req.params.id, userId, req.body);
-    sendResponse(res, 200, true, "Task updated successfully", { task: updated });
-  }
-);
+    const userId = req.user!.id
+    const updated = await TaskService.updateTask(
+      req.params.id,
+      userId,
+      req.body,
+    )
+    sendResponse(res, 200, true, "Task updated successfully", {
+      task: updated,
+    })
+  },
+)
 
 /**
  * @desc    Delete a task by ID
@@ -83,15 +97,15 @@ export const updateTask = catchAsync(
  */
 export const deleteTask = catchAsync(
   async (
-    req: Request<{ id: string }>,
+    req: AuthenticatedRequest<{ id: string }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    await TaskService.deleteTask(req.params.id, userId);
-    sendResponse(res, 200, true, "Task deleted successfully");
-  }
-);
+    const userId = req.user!.id
+    await TaskService.deleteTask(req.params.id, userId)
+    sendResponse(res, 200, true, "Task deleted successfully")
+  },
+)
 
 /**
  * @desc    Mark a task as complete
@@ -100,15 +114,17 @@ export const deleteTask = catchAsync(
  */
 export const completeTask = catchAsync(
   async (
-    req: Request<{ id: string }>,
+    req: AuthenticatedRequest<{ id: string }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const completed = await TaskService.completeTask(req.params.id, userId);
-    sendResponse(res, 200, true, "Task marked as complete", { task: completed });
-  }
-);
+    const userId = req.user!.id
+    const completed = await TaskService.completeTask(req.params.id, userId)
+    sendResponse(res, 200, true, "Task marked as complete", {
+      task: completed,
+    })
+  },
+)
 
 /**
  * @desc    Update a task's progress
@@ -117,16 +133,20 @@ export const completeTask = catchAsync(
  */
 export const trackProgress = catchAsync(
   async (
-    req: Request<{ id: string }, {}, { progress: number }>,
+    req: AuthenticatedRequest<{ id: string }, unknown, { progress: number }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user!.id;
-    const { progress } = req.body;
-    const updated = await TaskService.trackProgress(req.params.id, userId, progress);
-    sendResponse(res, 200, true, "Task progress updated", { task: updated });
-  }
-);
+    const userId = req.user!.id
+    const { progress } = req.body
+    const updated = await TaskService.trackProgress(
+      req.params.id,
+      userId,
+      progress,
+    )
+    sendResponse(res, 200, true, "Task progress updated", { task: updated })
+  },
+)
 
 export default {
   getAllTasks,
@@ -136,4 +156,4 @@ export default {
   deleteTask,
   completeTask,
   trackProgress,
-};
+}

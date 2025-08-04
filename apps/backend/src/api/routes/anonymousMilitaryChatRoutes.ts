@@ -1,6 +1,6 @@
 // src/api/routes/anonymousMilitaryChatRoutes.ts - UPDATED with mood routes
 
-import { Router } from "express";
+import { Router } from "express"
 
 import {
   getMessages,
@@ -8,42 +8,42 @@ import {
   getRooms,
   joinRoom,
   leaveRoom,
-  sendMessage
-} from "../controllers/anonymousMilitaryChatController";
+  sendMessage,
+} from "../controllers/anonymousMilitaryChatController"
 import {
   getCommunityMoodData,
   getMoodEncouragement,
   getMoodStatistics,
   getMoodTrends,
   hasSubmittedToday,
-  submitMoodCheckIn
-} from "../controllers/anonymousMoodController";
-import { anonymousAuth } from "../middleware/anonymousAuth";
+  submitMoodCheckIn,
+} from "../controllers/anonymousMoodController"
+import { anonymousAuth } from "../middleware/anonymousAuth"
 
-const router = Router();
+const router = Router()
 
 // ===== CHAT ROUTES =====
 
 // Public chat routes - no authentication required
-router.get("/rooms", getRooms);
-router.get("/rooms/:roomId/messages", getMessages);
-router.get("/rooms/:roomId/members", getRoomMemberCount);
+router.get("/rooms", getRooms)
+router.get("/rooms/:roomId/messages", getMessages)
+router.get("/rooms/:roomId/members", getRoomMemberCount)
 
 // Anonymous session chat routes
-router.post("/rooms/:roomId/join", anonymousAuth, joinRoom);
-router.post("/rooms/:roomId/message", anonymousAuth, sendMessage);
-router.post("/rooms/:roomId/leave", anonymousAuth, leaveRoom);
+router.post("/rooms/:roomId/join", anonymousAuth, joinRoom)
+router.post("/rooms/:roomId/message", anonymousAuth, sendMessage)
+router.post("/rooms/:roomId/leave", anonymousAuth, leaveRoom)
 
 // ===== MOOD CHECK-IN ROUTES =====
 
 // Public mood routes - no authentication required
-router.get("/mood-trends/community", getCommunityMoodData);
-router.get("/mood-trends/history", getMoodTrends);
-router.get("/mood-stats", getMoodStatistics);
-router.get("/mood-encouragement/:mood", getMoodEncouragement);
+router.get("/mood-trends/community", getCommunityMoodData)
+router.get("/mood-trends/history", getMoodTrends)
+router.get("/mood-stats", getMoodStatistics)
+router.get("/mood-encouragement/:mood", getMoodEncouragement)
 
 // Anonymous session mood routes - require session ID
-router.post("/mood-checkin", anonymousAuth, submitMoodCheckIn);
-router.get("/mood-checkin/today", anonymousAuth, hasSubmittedToday);
+router.post("/mood-checkin", anonymousAuth, submitMoodCheckIn)
+router.get("/mood-checkin/today", anonymousAuth, hasSubmittedToday)
 
-export default router;
+export default router

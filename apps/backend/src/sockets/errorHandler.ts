@@ -1,4 +1,4 @@
-import type { Server, Socket } from "socket.io";
+import type { Server, Socket } from "socket.io"
 
 /**
  * Centralized Error Handler for Socket.IO
@@ -7,8 +7,8 @@ import type { Server, Socket } from "socket.io";
 
 // Interface for custom error types
 interface SocketError extends Error {
-  statusCode?: number;
-  clientMessage?: string;
+  statusCode?: number
+  clientMessage?: string
 }
 
 /**
@@ -16,8 +16,7 @@ interface SocketError extends Error {
  * @param _error - The error object
  * @param context - Context about where the error occurred
  */
-function logError (_error: Error, _p0: string): void {
-  
+function logError(_error: Error, _p0: string): void {
   // Optional: Add external logging service integration here (e.g., Sentry)
 }
 
@@ -26,9 +25,9 @@ function logError (_error: Error, _p0: string): void {
  * @param socket - The client socket
  * @param error - The error object
  */
-function sendErrorToClient (socket: Socket, error: SocketError): void {
-  const clientMessage = error.clientMessage || "An unexpected error occurred.";
-  socket.emit("error", { message: clientMessage });
+function sendErrorToClient(socket: Socket, error: SocketError): void {
+  const clientMessage = error.clientMessage || "An unexpected error occurred."
+  socket.emit("error", { message: clientMessage })
 }
 
 /**
@@ -36,37 +35,37 @@ function sendErrorToClient (socket: Socket, error: SocketError): void {
  * @param handler - The socket event handler
  * @returns A wrapped handler with error handling
  */
-function withErrorHandler (handler: (socket: Socket, ...args: any[]) => Promise<void>) {
+function withErrorHandler(
+  handler: (socket: Socket, ...args: any[]) => Promise<void>,
+) {
   return async (socket: Socket, ...args: any[]): Promise<void> => {
-      try {
-        await handler(socket, ...args);
-      } catch (error) {
-        logError(error as Error, "Event Handler");
-        sendErrorToClient(socket, error as SocketError);
-      }
+    try {
+      await handler(socket, ...args)
+    } catch (error) {
+      logError(error as Error, "Event Handler")
+      sendErrorToClient(socket, error as SocketError)
     }
+  }
 }
 
 /**
  * Attaches a globalThis error listener to the server
  * @param io - The Socket.IO server instance
  */
-function attachGlobalErrorHandler (io: Server): void {
+function attachGlobalErrorHandler(io: Server): void {
   io.on("connection", (socket: Socket) => {
     // Global error handling for the socket
     socket.on("error", (error: Error) => {
-      logError(error, "Socket Connection");
+      logError(error, "Socket Connection")
       sendErrorToClient(socket, {
         ...error,
         clientMessage: "A connection error occurred.",
-      });
-    });
+      })
+    })
 
     // Handle disconnect errors
-    socket.on("disconnect", () => {
-      
-    });
-  });
+    socket.on("disconnect", () => {})
+  })
 }
 
 export {
@@ -74,4 +73,4 @@ export {
   logError,
   sendErrorToClient,
   withErrorHandler,
-};
+}

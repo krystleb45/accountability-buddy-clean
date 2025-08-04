@@ -1,15 +1,15 @@
-import dotenv from "dotenv";
-import * as admin from "firebase-admin";
+import dotenv from "dotenv"
+import * as admin from "firebase-admin"
 
-import { logger } from "../utils/winstonLogger"; // ✅ Use winston logger instead of console.log
+import { logger } from "../utils/winstonLogger" // ✅ Use winston logger instead of console.log
 
-dotenv.config();
+dotenv.config()
 
 // Check if Firebase credentials exist
 const isFirebaseEnabled =
   process.env.FIREBASE_PROJECT_ID &&
   process.env.FIREBASE_PRIVATE_KEY &&
-  process.env.FIREBASE_CLIENT_EMAIL;
+  process.env.FIREBASE_CLIENT_EMAIL
 
 if (isFirebaseEnabled) {
   // Construct service account object
@@ -24,7 +24,7 @@ if (isFirebaseEnabled) {
     token_uri: process.env.FIREBASE_TOKEN_URI,
     auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_CERT_URL,
     client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
-  } as admin.ServiceAccount;
+  } as admin.ServiceAccount
 
   // Initialize Firebase Admin SDK
   if (!admin.apps.length) {
@@ -33,11 +33,11 @@ if (isFirebaseEnabled) {
       databaseURL:
         process.env.FIREBASE_DATABASE_URL ||
         "https://your-project.firebaseio.com",
-    });
-    logger.info("✅ Firebase Initialized"); // ✅ Use winston logger
+    })
+    logger.info("✅ Firebase Initialized") // ✅ Use winston logger
   }
 } else {
-  logger.warn("⚠️ Firebase is not configured. Skipping initialization."); // ✅ Replace console.log
+  logger.warn("⚠️ Firebase is not configured. Skipping initialization.") // ✅ Replace console.log
 }
 
-export default admin;
+export default admin

@@ -1,33 +1,41 @@
 // src/api/models/MilitaryResource.ts
-import type { Document, Model } from "mongoose";
+import type { Document, Model } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Category Union ---
-export type ResourceCategory = "hotline" | "website" | "forum" | "organization" | "other";
+export type ResourceCategory =
+  | "hotline"
+  | "website"
+  | "forum"
+  | "organization"
+  | "other"
 
 // --- Document Interface ---
 export interface IExternalSupportResource extends Document {
-  title: string;
-  url: string;
-  description?: string;
-  category: ResourceCategory;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  title: string
+  url: string
+  description?: string
+  category: ResourceCategory
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  domain: string;
+  domain: string
 
   // Instance methods
-  deactivate: () => Promise<IExternalSupportResource>;
-  activate: () => Promise<IExternalSupportResource>;
+  deactivate: () => Promise<IExternalSupportResource>
+  activate: () => Promise<IExternalSupportResource>
 }
 
 // --- Model Interface for Statics ---
-export interface IExternalSupportResourceModel extends Model<IExternalSupportResource> {
-  findByCategory: (category: ResourceCategory) => Promise<IExternalSupportResource[]>;
-  searchByTitle: (text: string) => Promise<IExternalSupportResource[]>;
+export interface IExternalSupportResourceModel
+  extends Model<IExternalSupportResource> {
+  findByCategory: (
+    category: ResourceCategory,
+  ) => Promise<IExternalSupportResource[]>
+  searchByTitle: (text: string) => Promise<IExternalSupportResource[]>
 }
 
 // --- Schema Definition ---
@@ -71,68 +79,66 @@ const ExternalSupportResourceSchema = new Schema<
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Full‑text + B‑tree Indexes ---
 // Text‑search on title, plus B‑tree on URL for lookups
-ExternalSupportResourceSchema.index({ title: "text", url: 1 });
+ExternalSupportResourceSchema.index({ title: "text", url: 1 })
 
 // --- Virtuals ---
 ExternalSupportResourceSchema.virtual("domain").get(function (
-  this: IExternalSupportResource
+  this: IExternalSupportResource,
 ): string {
   try {
-    const u = new URL(this.url);
-    return u.hostname;
+    const u = new URL(this.url)
+    return u.hostname
   } catch {
-    return "";
+    return ""
   }
-});
+})
 
 // --- Instance Methods ---
 ExternalSupportResourceSchema.methods.deactivate = async function (
-  this: IExternalSupportResource
+  this: IExternalSupportResource,
 ): Promise<IExternalSupportResource> {
-  this.isActive = false;
-  await this.save();
-  return this;
-};
+  this.isActive = false
+  await this.save()
+  return this
+}
 
 ExternalSupportResourceSchema.methods.activate = async function (
-  this: IExternalSupportResource
+  this: IExternalSupportResource,
 ): Promise<IExternalSupportResource> {
-  this.isActive = true;
-  await this.save();
-  return this;
-};
+  this.isActive = true
+  await this.save()
+  return this
+}
 
 // --- Static Methods ---
 ExternalSupportResourceSchema.statics.findByCategory = function (
   this: IExternalSupportResourceModel,
-  category: ResourceCategory
+  category: ResourceCategory,
 ): Promise<IExternalSupportResource[]> {
-  return this.find({ category, isActive: true })
-    .sort({ title: 1 })
-    .exec();
-};
+  return this.find({ category, isActive: true }).sort({ title: 1 }).exec()
+}
 
 ExternalSupportResourceSchema.statics.searchByTitle = function (
   this: IExternalSupportResourceModel,
-  text: string
+  text: string,
 ): Promise<IExternalSupportResource[]> {
   return this.find(
     { $text: { $search: text }, isActive: true },
-    { score: { $meta: "textScore" } }
+    { score: { $meta: "textScore" } },
   )
     .sort({ score: { $meta: "textScore" } })
-    .exec();
-};
+    .exec()
+}
 
 // --- Model Export ---
 export const ExternalSupportResource = mongoose.model<
   IExternalSupportResource,
   IExternalSupportResourceModel
->("ExternalSupportResource", ExternalSupportResourceSchema);
+>("ExternalSupportResource", ExternalSupportResourceSchema)
 
-export default ExternalSupportResource;
+export default ExternalSupportResource

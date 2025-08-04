@@ -1,33 +1,30 @@
-import type { Logger } from "winston";
+import type { Logger } from "winston"
 
-import * as fs from "node:fs";
-import * as path from "node:path";
-import { createLogger, format, transports } from "winston";
-import "winston-daily-rotate-file";
+import * as fs from "node:fs"
+import * as path from "node:path"
+import { createLogger, format, transports } from "winston"
+import "winston-daily-rotate-file"
 
 // ✅ Define log directory and level
-const logDir = process.env.LOG_DIR || "logs";
-const env = process.env.NODE_ENV || "development";
+const logDir = process.env.LOG_DIR || "logs"
+const env = process.env.NODE_ENV || "development"
 const logLevel =
   process.env.LOG_LEVEL ||
-  (env === "development"
-    ? "debug"
-    : env === "test"
-      ? "warn"
-      : "info");
-
+  (env === "development" ? "debug" : env === "test" ? "warn" : "info")
 
 // ✅ Ensure log directory exists
 if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
+  fs.mkdirSync(logDir, { recursive: true })
 }
 
 // ✅ Define log format
-const customLogFormat = format.printf(({ timestamp, level, message, stack }) => {
-  return stack
-    ? `${timestamp} [${level}]: ${message} - ${stack}` // Log stack trace if present
-    : `${timestamp} [${level}]: ${message}`;
-});
+const customLogFormat = format.printf(
+  ({ timestamp, level, message, stack }) => {
+    return stack
+      ? `${timestamp} [${level}]: ${message} - ${stack}` // Log stack trace if present
+      : `${timestamp} [${level}]: ${message}`
+  },
+)
 
 // ✅ Create the logger instance
 const logger: Logger = createLogger({
@@ -35,7 +32,7 @@ const logger: Logger = createLogger({
   format: format.combine(
     format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), // Standardized timestamp
     format.errors({ stack: true }), // Capture stack trace
-    customLogFormat
+    customLogFormat,
   ),
   transports: [
     // Daily rotating error logs
@@ -56,11 +53,11 @@ const logger: Logger = createLogger({
       zippedArchive: true,
     }),
   ],
-});
+})
 
 // ✅ Add `logStructured` function separately
-function logStructured (infoObject: object): void {
-  logger.info(JSON.stringify(infoObject, null, 2));
+function logStructured(infoObject: object): void {
+  logger.info(JSON.stringify(infoObject, null, 2))
 }
 
 // ✅ Add console transport for development environments
@@ -70,25 +67,25 @@ if (process.env.NODE_ENV !== "production") {
       format: format.combine(
         format.colorize(),
         format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        format.simple()
+        format.simple(),
       ),
-    })
-  );
+    }),
+  )
 }
 
 // ✅ Handle uncaught exceptions and rejections
 logger.exceptions.handle(
-  new transports.File({ filename: path.join(logDir, "exceptions.log") })
-);
+  new transports.File({ filename: path.join(logDir, "exceptions.log") }),
+)
 
 logger.rejections.handle(
-  new transports.File({ filename: path.join(logDir, "rejections.log") })
-);
+  new transports.File({ filename: path.join(logDir, "rejections.log") }),
+)
 
 // ✅ Handle logger errors
 logger.on("error", (err) => {
-  logger.error("Logger error:", err);
-});
+  logger.error("Logger error:", err)
+})
 
 // ✅ Flush logs before exiting
 // process.on("exit", () => {
@@ -96,4 +93,4 @@ logger.on("error", (err) => {
 //  logger.end();
 // });
 
-export { logger, logStructured };
+export { logger, logStructured }

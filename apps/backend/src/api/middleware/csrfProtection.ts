@@ -1,8 +1,8 @@
-import type { NextFunction, Request, Response } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core"
 
-import csrf from "csurf";
+import csrf from "csurf"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 /**
  * Initialize CSRF protection with cookie-based tokens.
  * Protects against Cross-Site Request Forgery (CSRF) attacks.
@@ -14,26 +14,31 @@ const csrfProtection = csrf({
     sameSite: "lax", // Mitigates CSRF attacks by restricting third-party cookie sending
     maxAge: 60 * 60 * 1000, // Set cookie expiration time to 1 hour
   },
-});
+})
 
 /**
  * Middleware to handle CSRF errors.
  * Responds with a 403 error for invalid or missing CSRF tokens.
  */
-function csrfErrorHandler (err: { code?: string; message?: string },  _req: Request,  res: Response,  next: NextFunction): void {
+function csrfErrorHandler(
+  err: { code?: string; message?: string },
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   if (err.code === "EBADCSRFTOKEN") {
     // Log the CSRF error for debugging or monitoring
-    logger.warn(`Invalid CSRF token detected: ${err.message || "No message"}`);
+    logger.warn(`Invalid CSRF token detected: ${err.message || "No message"}`)
 
     // Respond with a 403 Forbidden error
     res.status(403).json({
       success: false,
       message: "Invalid CSRF token",
-    });
+    })
   } else {
-    next(err); // Pass other errors to the next middleware
+    next(err) // Pass other errors to the next middleware
   }
 }
 
 // Export the CSRF protection middleware and error handler
-export { csrfErrorHandler, csrfProtection };
+export { csrfErrorHandler, csrfProtection }

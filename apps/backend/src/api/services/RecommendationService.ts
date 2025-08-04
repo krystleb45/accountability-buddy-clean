@@ -1,42 +1,46 @@
 // src/api/services/RecommendationService.ts
 
-import type { Request } from "express";
+import type { Request } from "express"
 
-import type { IBlogPost } from "../models/BlogPost";
-import type { IBook } from "../models/Book";
-import type { IGoal } from "../models/Goal";
-import type { IUser } from "../models/User";
+import type { IBlogPost } from "../models/BlogPost"
+import type { IBook } from "../models/Book"
+import type { IGoal } from "../models/Goal"
+import type { IUser } from "../models/User"
 
-import BlogService from "./blogService";
-import BookService from "./bookRecommendationService";
-import FriendshipService from "./FriendService";
-import GoalService from "./GoalManagementService";
+import BlogService from "./blogService"
+import BookService from "./bookRecommendationService"
+import FriendshipService from "./FriendService"
+import GoalService from "./GoalManagementService"
 
 export interface RecommendationResult<T> {
-  items: T[];
+  items: T[]
 }
 
 class RecommendationService {
   static async getBookRecommendations(): Promise<RecommendationResult<IBook>> {
-    const books = await BookService.getAllBooksService();
-    return { items: books };
+    const books = await BookService.getAllBooksService()
+    return { items: books }
   }
 
   static async getGoalRecommendations(): Promise<RecommendationResult<IGoal>> {
-    const goals = await GoalService.getPublicGoals();
-    return { items: goals };
+    const goals = await GoalService.getPublicGoals()
+    return { items: goals }
   }
 
-  static async getBlogRecommendations(): Promise<RecommendationResult<IBlogPost>> {
-    const posts = await BlogService.getAllBlogPostsService(10, 1); // or pass real params
-    return { items: posts };
+  static async getBlogRecommendations(): Promise<
+    RecommendationResult<IBlogPost>
+  > {
+    const posts = await BlogService.getAllBlogPostsService(10, 1) // or pass real params
+    return { items: posts }
   }
 
-  static async getFriendRecommendations(req: Request): Promise<RecommendationResult<IUser>> {
-    const userId = req.user!.id;
-    const friends = await FriendshipService.aiRecommendations(userId);
-    return { items: friends };
+  static async getFriendRecommendations(
+    req: Request,
+  ): Promise<RecommendationResult<IUser>> {
+    const userId = req.user!.id
+    const friends = await FriendshipService.aiRecommendations(userId)
+    return { items: friends }
   }
 }
 
-export default RecommendationService;
+export default RecommendationService

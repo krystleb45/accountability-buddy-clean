@@ -1,21 +1,24 @@
-import type { Router } from "express";
+import type { Router } from "express"
 
-import express from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import express from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
-import * as xpCtrl from "../controllers/xpHistoryController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
+import * as xpCtrl from "../controllers/xpHistoryController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
-  message: { success: false, message: "Too many requests; please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests; please try again later.",
+  },
+})
 
 /**
  * @swagger
@@ -49,8 +52,8 @@ router.post(
     check("reason", "Reason is required").notEmpty(),
   ],
   handleValidationErrors,
-  xpCtrl.createXpEntry
-);
+  xpCtrl.createXpEntry,
+)
 
 /**
  * @swagger
@@ -64,12 +67,7 @@ router.post(
  *       200:
  *         description: List of XP entries for the user
  */
-router.get(
-  "/",
-  protect,
-  limiter,
-  xpCtrl.getMyXpHistory
-);
+router.get("/", protect, limiter, xpCtrl.getMyXpHistory)
 
 /**
  * @swagger
@@ -88,7 +86,7 @@ router.get(
   protect,
   roleBasedAccessControl(["admin"]),
   limiter,
-  xpCtrl.getAllXpHistory
-);
+  xpCtrl.getAllXpHistory,
+)
 
-export default router;
+export default router

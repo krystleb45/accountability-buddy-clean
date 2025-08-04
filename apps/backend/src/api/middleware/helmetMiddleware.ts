@@ -1,4 +1,4 @@
-import helmet from "helmet"; // Use ES module import for TypeScript compliance
+import helmet from "helmet" // Use ES module import for TypeScript compliance
 
 // Configure Helmet middleware with enhanced options
 const helmetMiddleware = helmet({
@@ -40,6 +40,6 @@ const helmetMiddleware = helmet({
   ieNoOpen: true, // Prevent IE from executing downloads in site's context
   noSniff: true, // Prevent MIME-type sniffing
   referrerPolicy: { policy: "no-referrer" }, // Restrict referrer information
-});
+})
 
-export default helmetMiddleware; // Use ES module export for TypeScript compliance
+export default helmetMiddleware // Use ES module export for TypeScript compliance

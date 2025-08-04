@@ -1,20 +1,20 @@
 // src/api/models/Invitation.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
-export type InvitationStatus = "pending" | "accepted" | "rejected";
+export type InvitationStatus = "pending" | "accepted" | "rejected"
 
 /**
  * Invitation document interface
  */
 export interface IInvitation extends Document {
-  groupId:    Types.ObjectId;
-  sender:     Types.ObjectId;
-  recipient:  Types.ObjectId;
-  status:     InvitationStatus;
-  createdAt:  Date;
-  updatedAt:  Date;
+  groupId: Types.ObjectId
+  sender: Types.ObjectId
+  recipient: Types.ObjectId
+  status: InvitationStatus
+  createdAt: Date
+  updatedAt: Date
 }
 
 /**
@@ -46,13 +46,13 @@ const InvitationSchema = new Schema<IInvitation>(
   },
   {
     timestamps: true,
-  }
-);
+  },
+)
 
 // Declare indexes at the schema level:
-InvitationSchema.index({ groupId: 1 });
-InvitationSchema.index({ sender: 1 });
-InvitationSchema.index({ recipient: 1 });
+InvitationSchema.index({ groupId: 1 })
+InvitationSchema.index({ sender: 1 })
+InvitationSchema.index({ recipient: 1 })
 // If you need to ensure a user only gets one invitation per group:
 // InvitationSchema.index({ groupId: 1, recipient: 1 }, { unique: true });
 
@@ -62,7 +62,7 @@ export interface InvitationModel extends Model<IInvitation> {
 
 export const Invitation = mongoose.model<IInvitation, InvitationModel>(
   "Invitation",
-  InvitationSchema
-);
+  InvitationSchema,
+)
 
-export default Invitation;
+export default Invitation

@@ -1,15 +1,15 @@
 // src/api/routes/follow.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import { param } from "express-validator";
+import { Router } from "express"
+import { param } from "express-validator"
 
-import FollowController from "../controllers/FollowController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+import FollowController from "../controllers/FollowController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 // Follow a user
 router.post(
@@ -18,9 +18,9 @@ router.post(
   param("userId", "Invalid user ID").isMongoId(),
   handleValidationErrors,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await FollowController.followUser(req, res, next);
-  })
-);
+    await FollowController.followUser(req, res, next)
+  }),
+)
 
 // Unfollow a user
 router.delete(
@@ -29,9 +29,9 @@ router.delete(
   param("userId", "Invalid user ID").isMongoId(),
   handleValidationErrors,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await FollowController.unfollowUser(req, res, next);
-  })
-);
+    await FollowController.unfollowUser(req, res, next)
+  }),
+)
 
 // Get followers of a user
 router.get(
@@ -39,9 +39,9 @@ router.get(
   param("userId", "Invalid user ID").isMongoId(),
   handleValidationErrors,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await FollowController.getFollowers(req, res, next);
-  })
-);
+    await FollowController.getFollowers(req, res, next)
+  }),
+)
 
 // Get users a user is following
 router.get(
@@ -49,8 +49,8 @@ router.get(
   param("userId", "Invalid user ID").isMongoId(),
   handleValidationErrors,
   catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    await FollowController.getFollowing(req, res, next);
-  })
-);
+    await FollowController.getFollowing(req, res, next)
+  }),
+)
 
-export default router;
+export default router

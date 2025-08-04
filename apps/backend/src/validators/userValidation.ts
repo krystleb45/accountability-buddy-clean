@@ -1,6 +1,6 @@
-import type { ValidationChain } from "express-validator";
+import type { ValidationChain } from "express-validator"
 
-import { check } from "express-validator";
+import { check } from "express-validator"
 
 /**
  * Validation for registering a new user.
@@ -13,7 +13,9 @@ export const registerUserValidation: ValidationChain[] = [
     .isLength({ min: 3, max: 30 })
     .withMessage("Username must be between 3 and 30 characters.")
     .matches(/^[\w-]+$/)
-    .withMessage("Username can only contain letters, numbers, underscores, and dashes.")
+    .withMessage(
+      "Username can only contain letters, numbers, underscores, and dashes.",
+    )
     .escape(),
 
   check("email")
@@ -34,7 +36,7 @@ export const registerUserValidation: ValidationChain[] = [
     .withMessage(
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
     ),
-];
+]
 
 /**
  * Validation for updating the user profile.
@@ -46,7 +48,9 @@ export const updateUserProfileValidation: ValidationChain[] = [
     .isLength({ min: 3, max: 30 })
     .withMessage("Username must be between 3 and 30 characters.")
     .matches(/^[\w-]+$/)
-    .withMessage("Username can only contain letters, numbers, underscores, and dashes.")
+    .withMessage(
+      "Username can only contain letters, numbers, underscores, and dashes.",
+    )
     .escape(),
 
   check("email")
@@ -65,13 +69,15 @@ export const updateUserProfileValidation: ValidationChain[] = [
     .withMessage(
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
     ),
-];
+]
 
 /**
  * Validation for changing the user password.
  */
 export const changePasswordValidation: ValidationChain[] = [
-  check("currentPassword").notEmpty().withMessage("Current password is required."),
+  check("currentPassword")
+    .notEmpty()
+    .withMessage("Current password is required."),
   check("newPassword")
     .notEmpty()
     .withMessage("New password is required.")
@@ -81,11 +87,13 @@ export const changePasswordValidation: ValidationChain[] = [
     .withMessage(
       "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
     ),
-];
+]
 
 /**
  * Validation for deleting a user account.
  */
 export const deleteUserAccountValidation: ValidationChain[] = [
-  check("password").notEmpty().withMessage("Password is required to delete the account."),
-];
+  check("password")
+    .notEmpty()
+    .withMessage("Password is required to delete the account."),
+]

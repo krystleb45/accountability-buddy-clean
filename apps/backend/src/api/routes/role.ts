@@ -1,20 +1,20 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
 
-import * as RoleCtrl from "../controllers/RoleController";
-import { protect } from "../middleware/authMiddleware";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
+import * as RoleCtrl from "../controllers/RoleController"
+import { protect } from "../middleware/authMiddleware"
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 
-const router = Router();
-const adminOnly = roleBasedAccessControl(["admin"]);
+const router = Router()
+const adminOnly = roleBasedAccessControl(["admin"])
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Too many requests. Please try again later.",
-});
+})
 
 /**
  * POST /api/roles/seed
@@ -26,12 +26,12 @@ router.post(
   limiter,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await RoleCtrl.seedRoles(req, res, next);
+      await RoleCtrl.seedRoles(req, res, next)
     } catch (err) {
-      next(err);
+      next(err)
     }
-  }
-);
+  },
+)
 
 /**
  * GET /api/roles
@@ -43,12 +43,12 @@ router.get(
   limiter,
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      await RoleCtrl.getAllRoles(req, res, next);
+      await RoleCtrl.getAllRoles(req, res, next)
     } catch (err) {
-      next(err);
+      next(err)
     }
-  }
-);
+  },
+)
 
 /**
  * PUT /api/roles/:id
@@ -59,14 +59,18 @@ router.put(
   adminOnly,
   limiter,
   // <-- annotate params type here
-  async (req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> => {
+  async (
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
-      await RoleCtrl.updateRole(req, res, next);
+      await RoleCtrl.updateRole(req, res, next)
     } catch (err) {
-      next(err);
+      next(err)
     }
-  }
-);
+  },
+)
 
 /**
  * DELETE /api/roles/:id
@@ -77,13 +81,17 @@ router.delete(
   adminOnly,
   limiter,
   // <-- and here
-  async (req: Request<{ id: string }>, res: Response, next: NextFunction): Promise<void> => {
+  async (
+    req: Request<{ id: string }>,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     try {
-      await RoleCtrl.deleteRole(req, res, next);
+      await RoleCtrl.deleteRole(req, res, next)
     } catch (err) {
-      next(err);
+      next(err)
     }
-  }
-);
+  },
+)
 
-export default router;
+export default router

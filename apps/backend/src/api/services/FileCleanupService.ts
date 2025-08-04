@@ -1,18 +1,18 @@
-import { execSync } from "node:child_process";
-import fs from "node:fs";
-import path from "node:path";
-import sanitizeFilename from "sanitize-filename";
+import { execSync } from "node:child_process"
+import fs from "node:fs"
+import path from "node:path"
+import sanitizeFilename from "sanitize-filename"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
-const UPLOAD_DIR = path.resolve(__dirname, "../uploads");
+const UPLOAD_DIR = path.resolve(__dirname, "../uploads")
 
 /**
  * Build a safe, absolute path under our uploads dir.
  */
 export function resolveUpload(filename: string): string {
-  const cleanName = sanitizeFilename(filename);
-  return path.join(UPLOAD_DIR, cleanName);
+  const cleanName = sanitizeFilename(filename)
+  return path.join(UPLOAD_DIR, cleanName)
 }
 
 /**
@@ -20,21 +20,23 @@ export function resolveUpload(filename: string): string {
  */
 export async function scanOrDelete(filePath: string): Promise<boolean> {
   if (!fs.existsSync(filePath)) {
-    throw new Error("File does not exist");
+    throw new Error("File does not exist")
   }
   try {
-    const result = execSync(`clamscan ${filePath}`, { stdio: "pipe" }).toString();
-    const clean = !/FOUND/.test(result);
+    const result = execSync(`clamscan ${filePath}`, {
+      stdio: "pipe",
+    }).toString()
+    const clean = !/FOUND/.test(result)
     if (!clean) {
-      fs.unlinkSync(filePath);
-      logger.warn(`Infected file deleted: ${filePath}`);
+      fs.unlinkSync(filePath)
+      logger.warn(`Infected file deleted: ${filePath}`)
     }
-    return clean;
+    return clean
   } catch (err) {
-    logger.error(`Virus scan error for ${filePath}: ${(err as Error).message}`);
+    logger.error(`Virus scan error for ${filePath}: ${(err as Error).message}`)
     // On scanner error, be conservative and delete
-    fs.unlinkSync(filePath);
-    return false;
+    fs.unlinkSync(filePath)
+    return false
   }
 }
 
@@ -42,19 +44,22 @@ export async function scanOrDelete(filePath: string): Promise<boolean> {
  * Delete (unlink) a file by its sanitized name.
  */
 export async function deleteUpload(filename: string): Promise<void> {
-  const filePath = resolveUpload(filename);
+  const filePath = resolveUpload(filename)
   if (!fs.existsSync(filePath)) {
-    throw new Error("File not found");
+    throw new Error("File not found")
   }
-  fs.unlinkSync(filePath);
-  logger.info(`File deleted: ${filePath}`);
+  fs.unlinkSync(filePath)
+  logger.info(`File deleted: ${filePath}`)
 }
 
 /**
  * Build a public URL for a given uploaded filename.
  */
-export function urlFor(req: { protocol: string; get: (header: string) => string | undefined }, filename: string): string {
-  const host = `${req.protocol}://${req.get("host")}`;
-  const clean = sanitizeFilename(filename);
-  return `${host}/uploads/${clean}`;
+export function urlFor(
+  req: { protocol: string; get: (header: string) => string | undefined },
+  filename: string,
+): string {
+  const host = `${req.protocol}://${req.get("host")}`
+  const clean = sanitizeFilename(filename)
+  return `${host}/uploads/${clean}`
 }

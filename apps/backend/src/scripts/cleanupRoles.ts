@@ -1,37 +1,37 @@
 // src/scripts/cleanupRoles.ts
 
-import dotenv from "dotenv";
-import mongoose from "mongoose";
+import dotenv from "dotenv"
+import mongoose from "mongoose"
 
-import Role from "../api/models/Role"; // Adjust path if needed
-import { loadEnvironment } from "../utils/loadEnv";
-import { logger } from "../utils/winstonLogger";
+import Role from "../api/models/Role" // Adjust path if needed
+import { loadEnvironment } from "../utils/loadEnv"
+import { logger } from "../utils/winstonLogger"
 
-loadEnvironment();
-dotenv.config();
+loadEnvironment()
+dotenv.config()
 
 /**
  * Deletes all Role documents from the database.
  */
 async function main(): Promise<void> {
-  const mongoUri = process.env.MONGO_URI;
+  const mongoUri = process.env.MONGO_URI
   if (!mongoUri) {
-    logger.error("MONGO_URI is not defined in environment variables.");
-    process.exit(1);
+    logger.error("MONGO_URI is not defined in environment variables.")
+    process.exit(1)
   }
 
   try {
-    await mongoose.connect(mongoUri);
-    logger.info("✅ Connected to MongoDB");
+    await mongoose.connect(mongoUri)
+    logger.info("✅ Connected to MongoDB")
 
-    const result = await Role.deleteMany({});
-    logger.info(`🧹 Deleted ${result.deletedCount} roles from the database`);
+    const result = await Role.deleteMany({})
+    logger.info(`🧹 Deleted ${result.deletedCount} roles from the database`)
   } catch (error) {
-    logger.error(`❌ Error cleaning up roles: ${(error as Error).message}`);
+    logger.error(`❌ Error cleaning up roles: ${(error as Error).message}`)
   } finally {
-    await mongoose.disconnect();
-    logger.info("🔌 Disconnected from MongoDB");
+    await mongoose.disconnect()
+    logger.info("🔌 Disconnected from MongoDB")
   }
 }
 
-void main();
+void main()

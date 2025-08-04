@@ -1,13 +1,13 @@
 // src/api/controllers/AnalyticsController.ts
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
-import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
+import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest"
 
-import { PERMISSIONS } from "../../constants/roles";
-import { createError } from "../middleware/errorHandler";
-import AnalyticsService from "../services/AnalyticsService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import { PERMISSIONS } from "../../constants/roles"
+import { createError } from "../middleware/errorHandler"
+import AnalyticsService from "../services/AnalyticsService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 // ────────────────────────────
 // Dashboard overview analytics
@@ -16,10 +16,16 @@ import sendResponse from "../utils/sendResponse";
 export const getDashboardAnalytics = catchAsync(
   async (_req: Request, res: Response): Promise<void> => {
     // reuse the same totals you had before, or swap in service.dashboardTotals() if you like
-    const data = await AnalyticsService.getGlobalAnalytics();
-    sendResponse(res, 200, true, "Dashboard analytics fetched successfully", data);
-  }
-);
+    const data = await AnalyticsService.getGlobalAnalytics()
+    sendResponse(
+      res,
+      200,
+      true,
+      "Dashboard analytics fetched successfully",
+      data,
+    )
+  },
+)
 
 // ────────────────────────────
 // User analytics
@@ -27,20 +33,22 @@ export const getDashboardAnalytics = catchAsync(
 // ────────────────────────────
 export const getUserAnalytics = catchAsync(
   async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const currentUser = req.user!;
+    const currentUser = req.user!
     if (!PERMISSIONS.VIEW_ANALYTICS.includes(currentUser.role)) {
-      throw createError("Access denied. Insufficient privileges.", 403);
+      throw createError("Access denied. Insufficient privileges.", 403)
     }
 
     // service takes (userId, endDate?, metric?) — here we just pass userId
-    const analytics = await AnalyticsService.getUserAnalytics(currentUser.id);
+    const analytics = await AnalyticsService.getUserAnalytics(currentUser.id)
     if (analytics == null) {
-      throw createError("Failed to compute user analytics", 500);
+      throw createError("Failed to compute user analytics", 500)
     }
 
-    sendResponse(res, 200, true, "User analytics fetched successfully", { analytics });
-  }
-);
+    sendResponse(res, 200, true, "User analytics fetched successfully", {
+      analytics,
+    })
+  },
+)
 
 // ────────────────────────────
 // Global goal/post analytics
@@ -49,13 +57,15 @@ export const getUserAnalytics = catchAsync(
 // ────────────────────────────
 export const getGlobalAnalytics = catchAsync(
   async (_req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const data = await AnalyticsService.getGlobalAnalytics();
+    const data = await AnalyticsService.getGlobalAnalytics()
     if (data == null) {
-      throw createError("Failed to compute globalThis analytics", 500);
+      throw createError("Failed to compute globalThis analytics", 500)
     }
-    sendResponse(res, 200, true, "Global analytics fetched successfully", { data });
-  }
-);
+    sendResponse(res, 200, true, "Global analytics fetched successfully", {
+      data,
+    })
+  },
+)
 
 // ────────────────────────────
 // Financial analytics
@@ -63,16 +73,21 @@ export const getGlobalAnalytics = catchAsync(
 // ────────────────────────────
 export const getFinancialAnalytics = catchAsync(
   async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const currentUser = req.user!;
+    const currentUser = req.user!
     if (!PERMISSIONS.EDIT_SETTINGS.includes(currentUser.role)) {
-      throw createError("Access denied. Only Super Admins can view financial analytics.", 403);
+      throw createError(
+        "Access denied. Only Super Admins can view financial analytics.",
+        403,
+      )
     }
 
     // for now your service doesn’t have a dedicated financial method, so reuse getGlobalAnalytics
-    const analytics = await AnalyticsService.getGlobalAnalytics();
-    sendResponse(res, 200, true, "Financial analytics fetched successfully", { analytics });
-  }
-);
+    const analytics = await AnalyticsService.getGlobalAnalytics()
+    sendResponse(res, 200, true, "Financial analytics fetched successfully", {
+      analytics,
+    })
+  },
+)
 
 // ────────────────────────────
 // Custom analytics
@@ -80,23 +95,39 @@ export const getFinancialAnalytics = catchAsync(
 // ────────────────────────────
 export const getCustomAnalytics = catchAsync(
   async (
-    req: AdminAuthenticatedRequest<unknown, any, { startDate: string; endDate: string; metric: string }>,
-    res: Response
+    req: AdminAuthenticatedRequest<
+      unknown,
+      any,
+      { startDate: string; endDate: string; metric: string }
+    >,
+    res: Response,
   ): Promise<void> => {
-    const { startDate, endDate, metric } = req.body;
+    const { startDate, endDate, metric } = req.body
     if (!startDate || !endDate || !metric) {
-      throw createError("Missing required fields: startDate, endDate, metric", 400);
+      throw createError(
+        "Missing required fields: startDate, endDate, metric",
+        400,
+      )
     }
-    if (Number.isNaN(Date.parse(startDate)) || Number.isNaN(Date.parse(endDate))) {
-      throw createError("Invalid date format. Expected ISO 8601.", 400);
+    if (
+      Number.isNaN(Date.parse(startDate)) ||
+      Number.isNaN(Date.parse(endDate))
+    ) {
+      throw createError("Invalid date format. Expected ISO 8601.", 400)
     }
 
     // AnalyticsService.getUserAnalytics can take metric/endDate as optional args
-    const analytics = await AnalyticsService.getUserAnalytics(req.user!.id, endDate, metric);
+    const analytics = await AnalyticsService.getUserAnalytics(
+      req.user!.id,
+      endDate,
+      metric,
+    )
     if (analytics == null) {
-      throw createError("Failed to compute custom analytics", 500);
+      throw createError("Failed to compute custom analytics", 500)
     }
 
-    sendResponse(res, 200, true, "Custom analytics fetched successfully", { analytics });
-  }
-);
+    sendResponse(res, 200, true, "Custom analytics fetched successfully", {
+      analytics,
+    })
+  },
+)

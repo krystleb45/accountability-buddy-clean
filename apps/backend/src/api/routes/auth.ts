@@ -1,34 +1,34 @@
 // src/api/routes/auth.ts
 
-import type { RequestHandler } from "express";
+import type { RequestHandler } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, validationResult } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, validationResult } from "express-validator"
 
-import { logger } from "../../utils/winstonLogger";
-import authController from "../controllers/authController";
-import { protect } from "../middleware/authMiddleware";
+import { logger } from "../../utils/winstonLogger"
+import authController from "../controllers/authController"
+import { protect } from "../middleware/authMiddleware"
 
-const router = Router();
+const router = Router()
 
 // ─── limit login/register to 10 per 15min ─────────────────────────────────
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: "Too many authentication attempts. Please try again later.",
-});
+})
 
 // ─── wrapper to catch sync+async errors ──────────────────────────────────
 function wrap(handler: RequestHandler): RequestHandler {
   return async (req, res, next) => {
     try {
-      await handler(req, res, next);
+      await handler(req, res, next)
     } catch (err) {
-      logger.error(`Auth route error: ${(err as Error).message}`);
-      next(err);
+      logger.error(`Auth route error: ${(err as Error).message}`)
+      next(err)
     }
-  };
+  }
 }
 
 // ─── POST /api/auth/register ─────────────────────────────────────────────
@@ -41,15 +41,15 @@ router.post(
     check("password", "Password must be ≥8 characters").isLength({ min: 8 }),
   ],
   wrap(async (req, res, next) => {
-    const errs = validationResult(req);
+    const errs = validationResult(req)
     if (!errs.isEmpty()) {
-      res.status(400).json({ success: false, errors: errs.array() });
-      return; // void
+      res.status(400).json({ success: false, errors: errs.array() })
+      return // void
     }
-    await authController.register(req, res, next);
-          // ensure void
-  })
-);
+    await authController.register(req, res, next)
+    // ensure void
+  }),
+)
 
 // ─── POST /api/auth/login ────────────────────────────────────────────────
 router.post(
@@ -60,48 +60,44 @@ router.post(
     check("password", "Password is required").notEmpty(),
   ],
   wrap(async (req, res, next) => {
-    const errs = validationResult(req);
+    const errs = validationResult(req)
     if (!errs.isEmpty()) {
-      res.status(400).json({ success: false, errors: errs.array() });
-      return;
+      res.status(400).json({ success: false, errors: errs.array() })
+      return
     }
-    await authController.login(req, res, next);
-    
-  })
-);
+    await authController.login(req, res, next)
+  }),
+)
 
 // ─── POST /api/auth/refresh-token ───────────────────────────────────────
 router.post(
   "/refresh-token",
   [check("refreshToken", "Refresh token is required").notEmpty()],
   wrap(async (req, res, next) => {
-    const errs = validationResult(req);
+    const errs = validationResult(req)
     if (!errs.isEmpty()) {
-      res.status(400).json({ success: false, errors: errs.array() });
-      return;
+      res.status(400).json({ success: false, errors: errs.array() })
+      return
     }
-    await authController.refreshToken(req, res, next);
-    
-  })
-);
+    await authController.refreshToken(req, res, next)
+  }),
+)
 
 // ─── POST /api/auth/logout ───────────────────────────────────────────────
 router.post(
   "/logout",
   wrap(async (req, res, next) => {
-    await authController.logout(req, res, next);
-    
-  })
-);
+    await authController.logout(req, res, next)
+  }),
+)
 
 // ─── GET /api/auth/me ────────────────────────────────────────────────────
 router.get(
   "/me",
   protect,
   wrap(async (req, res, next) => {
-    await authController.getCurrentUser(req, res, next);
-    
-  })
-);
+    await authController.getCurrentUser(req, res, next)
+  }),
+)
 
-export default router;
+export default router

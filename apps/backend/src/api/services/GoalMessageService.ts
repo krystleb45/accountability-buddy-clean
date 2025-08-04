@@ -1,23 +1,23 @@
 // src/api/services/goalMessageService.ts
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import type { IGoalMessage } from "../models/GoalMessage";
+import type { IGoalMessage } from "../models/GoalMessage"
 
-import { createError } from "../middleware/errorHandler";
-import Goal from "../models/Goal";
-import { GoalMessage } from "../models/GoalMessage";
+import { createError } from "../middleware/errorHandler"
+import Goal from "../models/Goal"
+import { GoalMessage } from "../models/GoalMessage"
 
 export interface PopulatedMsg {
-  _id: string;
+  _id: string
   user: {
-    _id: string;
-    username: string;
-    profilePicture?: string;
-  };
-  goal: string;
-  message: string;
-  createdAt: Date;
-  updatedAt: Date;
+    _id: string
+    username: string
+    profilePicture?: string
+  }
+  goal: string
+  message: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 class GoalMessageService {
@@ -27,21 +27,24 @@ class GoalMessageService {
   static async create(
     goalId: string,
     userId: string,
-    text: string
+    text: string,
   ): Promise<IGoalMessage> {
-    if (!mongoose.isValidObjectId(goalId) || !mongoose.isValidObjectId(userId)) {
-      throw createError("Invalid goal or user ID", 400);
+    if (
+      !mongoose.isValidObjectId(goalId) ||
+      !mongoose.isValidObjectId(userId)
+    ) {
+      throw createError("Invalid goal or user ID", 400)
     }
-    const goal = await Goal.findOne({ _id: goalId, user: userId });
+    const goal = await Goal.findOne({ _id: goalId, user: userId })
     if (!goal) {
-      throw createError("Goal not found or access denied", 404);
+      throw createError("Goal not found or access denied", 404)
     }
     const doc = await GoalMessage.create({
       goal: goalId,
       user: userId,
       message: text.trim(),
-    });
-    return doc.toObject();
+    })
+    return doc.toObject()
   }
 
   /**
@@ -49,12 +52,12 @@ class GoalMessageService {
    */
   static async listByGoal(goalId: string): Promise<PopulatedMsg[]> {
     if (!mongoose.isValidObjectId(goalId)) {
-      throw createError("Invalid goal ID", 400);
+      throw createError("Invalid goal ID", 400)
     }
     const raw = await GoalMessage.find({ goal: goalId })
       .sort({ createdAt: -1 })
       .populate("user", "username profilePicture")
-      .lean();
+      .lean()
 
     return (raw as any[]).map((m) => ({
       _id: String(m._id),
@@ -67,7 +70,7 @@ class GoalMessageService {
       message: m.message,
       createdAt: new Date(m.createdAt),
       updatedAt: new Date(m.updatedAt),
-    }));
+    }))
   }
 
   /**
@@ -76,36 +79,33 @@ class GoalMessageService {
   static async update(
     messageId: string,
     userId: string,
-    newText: string
+    newText: string,
   ): Promise<IGoalMessage> {
     if (!mongoose.isValidObjectId(messageId)) {
-      throw createError("Invalid message ID", 400);
+      throw createError("Invalid message ID", 400)
     }
-    const msg = await GoalMessage.findOne({ _id: messageId, user: userId });
+    const msg = await GoalMessage.findOne({ _id: messageId, user: userId })
     if (!msg) {
-      throw createError("Message not found or access denied", 404);
+      throw createError("Message not found or access denied", 404)
     }
-    msg.message = newText.trim();
-    await msg.save();
-    return msg.toObject();
+    msg.message = newText.trim()
+    await msg.save()
+    return msg.toObject()
   }
 
   /**
    * Delete a message, ensuring the user is the author.
    */
-  static async delete(
-    messageId: string,
-    userId: string
-  ): Promise<void> {
+  static async delete(messageId: string, userId: string): Promise<void> {
     if (!mongoose.isValidObjectId(messageId)) {
-      throw createError("Invalid message ID", 400);
+      throw createError("Invalid message ID", 400)
     }
-    const msg = await GoalMessage.findOne({ _id: messageId, user: userId });
+    const msg = await GoalMessage.findOne({ _id: messageId, user: userId })
     if (!msg) {
-      throw createError("Message not found or access denied", 404);
+      throw createError("Message not found or access denied", 404)
     }
-    await msg.deleteOne();
+    await msg.deleteOne()
   }
 }
 
-export default GoalMessageService;
+export default GoalMessageService

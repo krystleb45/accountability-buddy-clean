@@ -1,21 +1,21 @@
 // src/api/models/XpHistory.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Document Interface ---
 export interface IXpHistory extends Document {
-  userId: Types.ObjectId;   // Reference to User
-  xp: number;               // XP gained
-  date: Date;               // When XP was earned
-  reason: string;           // E.g. "Completed Goal"
+  userId: Types.ObjectId // Reference to User
+  xp: number // XP gained
+  date: Date // When XP was earned
+  reason: string // E.g. "Completed Goal"
 
-  createdAt: Date;          // Auto-added by timestamps
-  updatedAt: Date;          // Auto-added by timestamps
+  createdAt: Date // Auto-added by timestamps
+  updatedAt: Date // Auto-added by timestamps
 
   /** Human-readable summary */
-  summary: () => string;
+  summary: () => string
 }
 
 // --- Model Interface ---
@@ -27,21 +27,18 @@ export interface IXpHistoryModel extends Model<IXpHistory> {
     userId: Types.ObjectId,
     xp: number,
     reason: string,
-    date?: Date
-  ) => Promise<IXpHistory>;
+    date?: Date,
+  ) => Promise<IXpHistory>
 
   /**
    * Fetch recent XP entries for a user.
    */
-  getForUser: (
-    userId: Types.ObjectId,
-    limit?: number
-  ) => Promise<IXpHistory[]>;
+  getForUser: (userId: Types.ObjectId, limit?: number) => Promise<IXpHistory[]>
 
   /**
    * Compute total XP for a user.
    */
-  getTotalXp: (userId: Types.ObjectId) => Promise<number>;
+  getTotalXp: (userId: Types.ObjectId) => Promise<number>
 }
 
 // --- Schema Definition ---
@@ -70,20 +67,20 @@ const XpHistorySchema = new Schema<IXpHistory, IXpHistoryModel>(
     },
   },
   {
-    timestamps: true,         // Adds createdAt & updatedAt
+    timestamps: true, // Adds createdAt & updatedAt
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-XpHistorySchema.index({ userId: 1, date: -1 });
+XpHistorySchema.index({ userId: 1, date: -1 })
 
 // --- Instance Methods ---
 XpHistorySchema.methods.summary = function (this: IXpHistory): string {
-  const d = this.date.toISOString().split("T")[0];
-  return `${d}: +${this.xp} XP (${this.reason})`;
-};
+  const d = this.date.toISOString().split("T")[0]
+  return `${d}: +${this.xp} XP (${this.reason})`
+}
 
 // --- Static Methods ---
 XpHistorySchema.statics.logXp = async function (
@@ -91,38 +88,35 @@ XpHistorySchema.statics.logXp = async function (
   userId: Types.ObjectId,
   xp: number,
   reason: string,
-  date: Date = new Date()
+  date: Date = new Date(),
 ): Promise<IXpHistory> {
-  const entry = new this({ userId, xp, reason, date });
-  return entry.save();
-};
+  const entry = new this({ userId, xp, reason, date })
+  return entry.save()
+}
 
 XpHistorySchema.statics.getForUser = function (
   this: IXpHistoryModel,
   userId: Types.ObjectId,
-  limit = 50
+  limit = 50,
 ): Promise<IXpHistory[]> {
-  return this.find({ userId })
-    .sort({ date: -1 })
-    .limit(limit)
-    .exec();
-};
+  return this.find({ userId }).sort({ date: -1 }).limit(limit).exec()
+}
 
 XpHistorySchema.statics.getTotalXp = async function (
   this: IXpHistoryModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<number> {
   const result = await this.aggregate([
     { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-    { $group: { _id: null, total: { $sum: "$xp" } } }
-  ]);
-  return result.length > 0 ? result[0].total : 0;
-};
+    { $group: { _id: null, total: { $sum: "$xp" } } },
+  ])
+  return result.length > 0 ? result[0].total : 0
+}
 
 // --- Model Export ---
 export const XpHistory = mongoose.model<IXpHistory, IXpHistoryModel>(
   "XpHistory",
-  XpHistorySchema
-);
+  XpHistorySchema,
+)
 
-export default XpHistory;
+export default XpHistory

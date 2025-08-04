@@ -1,8 +1,8 @@
-import type { SendMailOptions, TransportOptions } from "nodemailer";
+import type { SendMailOptions, TransportOptions } from "nodemailer"
 
-import nodemailer from "nodemailer";
+import nodemailer from "nodemailer"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
@@ -16,11 +16,17 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false,
   },
-} as TransportOptions);
+} as TransportOptions)
 
-export async function sendEmail (to: string,  subject: string,  text = "",  options: Partial<SendMailOptions> = {},  retries = 3): Promise<void> {
+export async function sendEmail(
+  to: string,
+  subject: string,
+  text = "",
+  options: Partial<SendMailOptions> = {},
+  retries = 3,
+): Promise<void> {
   if (!to || !subject) {
-    throw new Error("Recipient email and subject are required");
+    throw new Error("Recipient email and subject are required")
   }
 
   const mailOptions: SendMailOptions = {
@@ -29,23 +35,23 @@ export async function sendEmail (to: string,  subject: string,  text = "",  opti
     subject,
     text,
     ...options,
-  };
+  }
 
-  let attempt = 0;
+  let attempt = 0
   while (attempt < retries) {
     try {
-      await transporter.sendMail(mailOptions);
-      logger.info(`Email successfully sent to ${to}`);
-      return;
+      await transporter.sendMail(mailOptions)
+      logger.info(`Email successfully sent to ${to}`)
+      return
     } catch (err: unknown) {
-      attempt++;
-      const errMsg = err instanceof Error ? err.message : String(err);
-      logger.error(`Attempt ${attempt} to send email failed: ${errMsg}`);
+      attempt++
+      const errMsg = err instanceof Error ? err.message : String(err)
+      logger.error(`Attempt ${attempt} to send email failed: ${errMsg}`)
       if (attempt >= retries) {
-        throw new Error(`Failed to send email after ${retries} attempts`);
+        throw new Error(`Failed to send email after ${retries} attempts`)
       }
       // back‐off before retrying
-      await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000))
     }
   }
 }
@@ -57,17 +63,22 @@ export async function sendEmail (to: string,  subject: string,  text = "",  opti
  * @param html - HTML content for the email.
  * @param options - Additional email options.
  */
-export async function sendHtmlEmail (to: string,  subject: string,  html: string,  options: Partial<SendMailOptions> = {}): Promise<void> {
+export async function sendHtmlEmail(
+  to: string,
+  subject: string,
+  html: string,
+  options: Partial<SendMailOptions> = {},
+): Promise<void> {
   if (!html) {
-    throw new Error("HTML content is required for sending an HTML email");
+    throw new Error("HTML content is required for sending an HTML email")
   }
 
   const mailOptions: Partial<SendMailOptions> = {
     html,
     ...options,
-  };
+  }
 
-  await sendEmail(to, subject, "", mailOptions);
+  await sendEmail(to, subject, "", mailOptions)
 }
 
 /**
@@ -77,30 +88,35 @@ export async function sendHtmlEmail (to: string,  subject: string,  html: string
  * @param text - Plain text content (optional if HTML is provided).
  * @param attachments - Array of attachment objects.
  */
-export async function sendEmailWithAttachments (to: string,  subject: string,  text: string,  attachments: Array<{ filename: string; path: string }> = []): Promise<void> {
+export async function sendEmailWithAttachments(
+  to: string,
+  subject: string,
+  text: string,
+  attachments: Array<{ filename: string; path: string }> = [],
+): Promise<void> {
   if (!Array.isArray(attachments)) {
-    throw new TypeError("Attachments must be provided as an array");
+    throw new TypeError("Attachments must be provided as an array")
   }
 
   const mailOptions: Partial<SendMailOptions> = {
     text,
     attachments,
-  };
+  }
 
-  await sendEmail(to, subject, text, mailOptions);
+  await sendEmail(to, subject, text, mailOptions)
 }
 
 /**
  * Verifies the SMTP connection to ensure the server is ready to send emails.
  */
-export async function verifySmtpConnection (): Promise<void> {
+export async function verifySmtpConnection(): Promise<void> {
   try {
-    await transporter.verify();
-    logger.info("SMTP server is ready to take messages");
+    await transporter.verify()
+    logger.info("SMTP server is ready to take messages")
   } catch (error: unknown) {
     const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    logger.error(`SMTP connection verification failed: ${errorMessage}`);
-    throw new Error("Failed to verify SMTP connection");
+      error instanceof Error ? error.message : "Unknown error"
+    logger.error(`SMTP connection verification failed: ${errorMessage}`)
+    throw new Error("Failed to verify SMTP connection")
   }
 }

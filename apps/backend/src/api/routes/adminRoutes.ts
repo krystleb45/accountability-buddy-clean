@@ -1,21 +1,21 @@
-import type { NextFunction, RequestHandler, Response, Router } from "express";
+import type { NextFunction, RequestHandler, Response, Router } from "express"
 
-import express from "express";
-import { check, validationResult } from "express-validator";
+import express from "express"
+import { check, validationResult } from "express-validator"
 
-import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest";
+import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest"
 
-import { PERMISSIONS } from "../../constants/roles";
-import { logger } from "../../utils/winstonLogger";
+import { PERMISSIONS } from "../../constants/roles"
+import { logger } from "../../utils/winstonLogger"
 import {
   deleteUserAccount,
   getAllUsers,
   updateUserRole,
-} from "../controllers/AdminController";
-import checkPermission from "../middleware/adminMiddleware"; // ✅ supports single or multiple permissions
-import { protect } from "../middleware/authMiddleware";
+} from "../controllers/AdminController"
+import checkPermission from "../middleware/adminMiddleware" // ✅ supports single or multiple permissions
+import { protect } from "../middleware/authMiddleware"
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 /**
  * @swagger
@@ -24,16 +24,22 @@ const router: Router = express.Router();
  *   description: Admin endpoints for managing users
  */
 
-function handleRouteErrors (handler: (req: AdminAuthenticatedRequest, res: Response, next: NextFunction) => Promise<void>): RequestHandler {
+function handleRouteErrors(
+  handler: (
+    req: AdminAuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<void>,
+): RequestHandler {
   return async (req, res, next) => {
-      try {
-        const typedReq = req as unknown as AdminAuthenticatedRequest;
-        await handler(typedReq, res, next);
-      } catch (error) {
-        logger.error(`Error occurred: ${(error as Error).message}`);
-        next(error);
-      }
+    try {
+      const typedReq = req as unknown as AdminAuthenticatedRequest
+      await handler(typedReq, res, next)
+    } catch (error) {
+      logger.error(`Error occurred: ${(error as Error).message}`)
+      next(error)
     }
+  }
 }
 
 /**
@@ -57,9 +63,9 @@ router.get(
   protect,
   checkPermission(PERMISSIONS.MANAGE_USERS), // ✅ Array OK
   handleRouteErrors(async (req, res, next) => {
-    await getAllUsers(req, res, next);
-  })
-);
+    await getAllUsers(req, res, next)
+  }),
+)
 
 /**
  * @swagger
@@ -100,21 +106,25 @@ router.patch(
   [
     protect,
     checkPermission(PERMISSIONS.EDIT_SETTINGS), // ✅ Array OK
-    check("userId", "User ID is required and must be valid").notEmpty().isMongoId(),
+    check("userId", "User ID is required and must be valid")
+      .notEmpty()
+      .isMongoId(),
     check("role", "Role is required").notEmpty().isString(),
   ],
   handleRouteErrors(async (req, res, next) => {
-    const errors = validationResult(req);
+    const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      logger.warn(`Validation failed: ${JSON.stringify(errors.array())}`);
-      res.status(400).json({ success: false, errors: errors.array() });
-      return;
+      logger.warn(`Validation failed: ${JSON.stringify(errors.array())}`)
+      res.status(400).json({ success: false, errors: errors.array() })
+      return
     }
 
-    await updateUserRole(req, res, next);
-    res.status(200).json({ success: true, message: "User role updated successfully" });
-  })
-);
+    await updateUserRole(req, res, next)
+    res
+      .status(200)
+      .json({ success: true, message: "User role updated successfully" })
+  }),
+)
 
 /**
  * @swagger
@@ -148,10 +158,12 @@ router.delete(
     checkPermission(PERMISSIONS.MANAGE_USERS), // ✅ Array OK
   ],
   handleRouteErrors(async (req, res, next) => {
-    await deleteUserAccount(req, res, next);
-    logger.info(`User account deleted. UserID: ${req.params.userId}`);
-    res.status(200).json({ success: true, message: "User account deleted successfully" });
-  })
-);
+    await deleteUserAccount(req, res, next)
+    logger.info(`User account deleted. UserID: ${req.params.userId}`)
+    res
+      .status(200)
+      .json({ success: true, message: "User account deleted successfully" })
+  }),
+)
 
-export default router;
+export default router

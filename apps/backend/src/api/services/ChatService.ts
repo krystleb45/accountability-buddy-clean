@@ -1,17 +1,17 @@
 // src/api/services/ChatService.ts
-import { Types } from "mongoose";
+import { Types } from "mongoose"
 
-import type { IChat } from "../models/Chat";
-import type { IMessage } from "../models/Message";
+import type { IChat } from "../models/Chat"
+import type { IMessage } from "../models/Message"
 
-import Chat from "../models/Chat";
-import Message from "../models/Message";
+import Chat from "../models/Chat"
+import Message from "../models/Message"
 
 export interface PaginatedMessages {
-  messages: IMessage[];
-  totalMessages: number;
-  totalPages: number;
-  currentPage: number;
+  messages: IMessage[]
+  totalMessages: number
+  totalPages: number
+  currentPage: number
 }
 
 export default class ChatService {
@@ -21,12 +21,12 @@ export default class ChatService {
   static async fetchMessages(
     chatId: string,
     page: number,
-    limit: number
+    limit: number,
   ): Promise<PaginatedMessages> {
     if (!Types.ObjectId.isValid(chatId)) {
-      throw new Error("Invalid chat ID");
+      throw new Error("Invalid chat ID")
     }
-    const skip = (page - 1) * limit;
+    const skip = (page - 1) * limit
     const [messages, totalMessages] = await Promise.all([
       Message.find({ chatId })
         .sort({ timestamp: -1 })
@@ -34,9 +34,9 @@ export default class ChatService {
         .limit(limit)
         .exec(),
       Message.countDocuments({ chatId }),
-    ]);
-    const totalPages = Math.ceil(totalMessages / limit);
-    return { messages, totalMessages, totalPages, currentPage: page };
+    ])
+    const totalPages = Math.ceil(totalMessages / limit)
+    return { messages, totalMessages, totalPages, currentPage: page }
   }
 
   /**
@@ -44,15 +44,15 @@ export default class ChatService {
    */
   static async getOrCreatePrivateChat(
     userA: string,
-    userB: string
+    userB: string,
   ): Promise<IChat> {
-    const a = new Types.ObjectId(userA);
-    const b = new Types.ObjectId(userB);
+    const a = new Types.ObjectId(userA)
+    const b = new Types.ObjectId(userB)
 
     let chat = await Chat.findOne({
       chatType: "private",
       participants: { $all: [a, b] },
-    }).exec();
+    }).exec()
 
     if (!chat) {
       chat = await Chat.create({
@@ -60,10 +60,10 @@ export default class ChatService {
         participants: [a, b],
         messages: [],
         unreadMessages: [],
-      });
+      })
     }
 
-    return chat;
+    return chat
   }
 
   /**
@@ -73,10 +73,10 @@ export default class ChatService {
     chatId: string,
     senderId: string,
     receiverId: string,
-    encryptedText: string
+    encryptedText: string,
   ): Promise<IMessage> {
     if (!Types.ObjectId.isValid(chatId)) {
-      throw new Error("Invalid chat ID");
+      throw new Error("Invalid chat ID")
     }
     const msg = await Message.create({
       chatId: new Types.ObjectId(chatId),
@@ -86,15 +86,19 @@ export default class ChatService {
       messageType: "private",
       timestamp: new Date(),
       status: "sent",
-    });
-    await Chat.findByIdAndUpdate(chatId, {
-      $push: { messages: msg._id },
-      // increment unread count for receiver
-      $inc: { "unreadMessages.$[elem].count": 1 },
-    }, {
-      arrayFilters: [{ "elem.userId": receiverId }],
-    });
-    return msg;
+    })
+    await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $push: { messages: msg._id },
+        // increment unread count for receiver
+        $inc: { "unreadMessages.$[elem].count": 1 },
+      },
+      {
+        arrayFilters: [{ "elem.userId": receiverId }],
+      },
+    )
+    return msg
   }
 
   /**
@@ -102,15 +106,15 @@ export default class ChatService {
    */
   static async editMessage(
     messageId: string,
-    encryptedText: string
+    encryptedText: string,
   ): Promise<void> {
     if (!Types.ObjectId.isValid(messageId)) {
-      throw new Error("Invalid message ID");
+      throw new Error("Invalid message ID")
     }
     await Message.findByIdAndUpdate(messageId, {
       text: encryptedText,
       status: "edited",
-    }).exec();
+    }).exec()
   }
 
   /**
@@ -118,12 +122,12 @@ export default class ChatService {
    */
   static async deleteMessage(messageId: string): Promise<void> {
     if (!Types.ObjectId.isValid(messageId)) {
-      throw new Error("Invalid message ID");
+      throw new Error("Invalid message ID")
     }
     await Message.findByIdAndUpdate(messageId, {
       text: "This message has been deleted.",
       status: "deleted",
-    }).exec();
+    }).exec()
   }
 
   /**
@@ -131,12 +135,12 @@ export default class ChatService {
    */
   static async markRead(chatId: string, userId: string): Promise<void> {
     if (!Types.ObjectId.isValid(chatId)) {
-      throw new Error("Invalid chat ID");
+      throw new Error("Invalid chat ID")
     }
     await Chat.updateOne(
       { _id: chatId, "unreadMessages.userId": userId },
-      { $set: { "unreadMessages.$.count": 0 } }
-    ).exec();
+      { $set: { "unreadMessages.$.count": 0 } },
+    ).exec()
   }
 
   /**
@@ -144,22 +148,19 @@ export default class ChatService {
    */
   static async fetchPrivateHistory(
     userA: string,
-    userB: string
+    userB: string,
   ): Promise<IMessage[]> {
     const chat = await Chat.findOne({
       chatType: "private",
       participants: {
-        $all: [
-          new Types.ObjectId(userA),
-          new Types.ObjectId(userB),
-        ],
+        $all: [new Types.ObjectId(userA), new Types.ObjectId(userB)],
       },
-    }).exec();
+    }).exec()
 
     if (!chat) {
-      throw new Error("Private chat not found");
+      throw new Error("Private chat not found")
     }
 
-    return Message.find({ chatId: chat._id }).sort({ timestamp: 1 }).exec();
+    return Message.find({ chatId: chat._id }).sort({ timestamp: 1 }).exec()
   }
 }

@@ -1,17 +1,17 @@
 // src/api/routes/matches.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { param } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { param } from "express-validator"
 
-import * as MatchController from "../controllers/MatchController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+import * as MatchController from "../controllers/MatchController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 50 });
+const router = Router()
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 50 })
 
 /**
  * POST /api/matches
@@ -21,10 +21,12 @@ router.post(
   "/",
   protect,
   limiter,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MatchController.createMatch(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MatchController.createMatch(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/matches
@@ -34,10 +36,12 @@ router.get(
   "/",
   protect,
   limiter,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MatchController.getUserMatches(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MatchController.getUserMatches(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/matches/:matchId
@@ -49,10 +53,12 @@ router.get(
   limiter,
   param("matchId", "Invalid match ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MatchController.getMatchById(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MatchController.getMatchById(req, res, next)
+    },
+  ),
+)
 
 /**
  * PATCH /api/matches/:matchId/status
@@ -64,10 +70,12 @@ router.patch(
   limiter,
   param("matchId", "Invalid match ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MatchController.updateMatchStatus(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MatchController.updateMatchStatus(req, res, next)
+    },
+  ),
+)
 
 /**
  * DELETE /api/matches/:matchId
@@ -79,9 +87,11 @@ router.delete(
   limiter,
   param("matchId", "Invalid match ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await MatchController.deleteMatch(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await MatchController.deleteMatch(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

@@ -1,8 +1,8 @@
-import bcrypt from "bcryptjs";
-import crypto from "node:crypto";
+import bcrypt from "bcryptjs"
+import crypto from "node:crypto"
 
 // Number of salt rounds for bcrypt (increase for stronger hashing, but slower performance)
-const SALT_ROUNDS = 12;
+const SALT_ROUNDS = 12
 
 /**
  * @desc Hashes a password using bcrypt.
@@ -10,11 +10,11 @@ const SALT_ROUNDS = 12;
  * @returns {Promise<string>} - Resolves to the hashed password.
  * @throws {Error} - Throws error if the input is invalid.
  */
-export async function hashPassword (password: string): Promise<string> {
+export async function hashPassword(password: string): Promise<string> {
   if (typeof password !== "string" || password.length < 6) {
-    throw new Error("Password must be a string with at least 6 characters.");
+    throw new Error("Password must be a string with at least 6 characters.")
   }
-  return await bcrypt.hash(password, SALT_ROUNDS);
+  return await bcrypt.hash(password, SALT_ROUNDS)
 }
 
 /**
@@ -23,8 +23,11 @@ export async function hashPassword (password: string): Promise<string> {
  * @param {string} hashedPassword - The hashed password to compare against.
  * @returns {Promise<boolean>} - Resolves to true if passwords match, false otherwise.
  */
-export async function comparePassword (password: string,  hashedPassword: string): Promise<boolean> {
-  return await bcrypt.compare(password, hashedPassword);
+export async function comparePassword(
+  password: string,
+  hashedPassword: string,
+): Promise<boolean> {
+  return await bcrypt.compare(password, hashedPassword)
 }
 
 /**
@@ -34,18 +37,18 @@ export async function comparePassword (password: string,  hashedPassword: string
  * @returns {string} - The encrypted data in hex format.
  * @throws {Error} - Throws error if the encryption key is invalid.
  */
-export function encryptData (text: string, key: string): string {
+export function encryptData(text: string, key: string): string {
   if (key.length !== 32) {
-    throw new Error("Encryption key must be 32 characters long for AES-256.");
+    throw new Error("Encryption key must be 32 characters long for AES-256.")
   }
 
-  const iv = crypto.randomBytes(16); // Generate a random IV
-  const cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(key), iv);
-  let encrypted = cipher.update(text, "utf8", "hex");
-  encrypted += cipher.final("hex");
+  const iv = crypto.randomBytes(16) // Generate a random IV
+  const cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(key), iv)
+  let encrypted = cipher.update(text, "utf8", "hex")
+  encrypted += cipher.final("hex")
 
   // Return the IV and encrypted data in hex format
-  return `${iv.toString("hex")}:${encrypted}`;
+  return `${iv.toString("hex")}:${encrypted}`
 }
 
 /**
@@ -55,22 +58,22 @@ export function encryptData (text: string, key: string): string {
  * @returns {string} - The decrypted plaintext.
  * @throws {Error} - Throws error if the decryption key is invalid or data is malformed.
  */
-export function decryptData (encryptedData: string, key: string): string {
+export function decryptData(encryptedData: string, key: string): string {
   if (key.length !== 32) {
-    throw new Error("Decryption key must be 32 characters long for AES-256.");
+    throw new Error("Decryption key must be 32 characters long for AES-256.")
   }
 
-  const [ivHex, encryptedHex] = encryptedData.split(":");
+  const [ivHex, encryptedHex] = encryptedData.split(":")
   if (!ivHex || !encryptedHex) {
-    throw new Error("Invalid encrypted data format.");
+    throw new Error("Invalid encrypted data format.")
   }
 
-  const iv = Buffer.from(ivHex, "hex");
-  const decipher = crypto.createDecipheriv("aes-256-cbc", Buffer.from(key), iv);
-  let decrypted = decipher.update(encryptedHex, "hex", "utf8");
-  decrypted += decipher.final("utf8");
+  const iv = Buffer.from(ivHex, "hex")
+  const decipher = crypto.createDecipheriv("aes-256-cbc", Buffer.from(key), iv)
+  let decrypted = decipher.update(encryptedHex, "hex", "utf8")
+  decrypted += decipher.final("utf8")
 
-  return decrypted;
+  return decrypted
 }
 
 /**
@@ -79,14 +82,14 @@ export function decryptData (encryptedData: string, key: string): string {
  * @returns {Promise<string>} - Resolves to a hex-encoded token.
  * @throws {Error} - Throws error if token generation fails.
  */
-export async function generateRandomToken (length = 32): Promise<string> {
+export async function generateRandomToken(length = 32): Promise<string> {
   try {
-    const buffer = await crypto.randomBytes(length);
-    return buffer.toString("hex");
+    const buffer = await crypto.randomBytes(length)
+    return buffer.toString("hex")
   } catch (err) {
     throw new Error(
       `Failed to generate random token: ${(err as Error).message}`,
-    );
+    )
   }
 }
 
@@ -95,9 +98,9 @@ export async function generateRandomToken (length = 32): Promise<string> {
  * @param {string} message - The message to encrypt.
  * @returns {string} - The encrypted message in hex format.
  */
-export function encryptMessage (message: string): string {
-  const encryptionKey = process.env.ENCRYPTION_KEY || "your-32-character-key"; // Ensure key is securely stored
-  return encryptData(message, encryptionKey);
+export function encryptMessage(message: string): string {
+  const encryptionKey = process.env.ENCRYPTION_KEY || "your-32-character-key" // Ensure key is securely stored
+  return encryptData(message, encryptionKey)
 }
 
 /**
@@ -105,7 +108,7 @@ export function encryptMessage (message: string): string {
  * @param {string} encryptedMessage - The encrypted message.
  * @returns {string} - The decrypted plaintext message.
  */
-export function decryptMessage (encryptedMessage: string): string {
-  const encryptionKey = process.env.ENCRYPTION_KEY || "your-32-character-key"; // Ensure key is securely stored
-  return decryptData(encryptedMessage, encryptionKey);
+export function decryptMessage(encryptedMessage: string): string {
+  const encryptionKey = process.env.ENCRYPTION_KEY || "your-32-character-key" // Ensure key is securely stored
+  return decryptData(encryptedMessage, encryptionKey)
 }

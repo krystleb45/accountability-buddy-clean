@@ -1,12 +1,7 @@
 {
-  "watch": [
-    "src"
-  ],
+  "watch": ["src"],
   "ext": "ts,json",
-  "ignore": [
-    "dist",
-    "node_modules"
-  ],
+  "ignore": ["dist", "node_modules"],
   "exec": "node --max-old-space-size=4096 --no-deprecation -r ts-node/register ./src/server.ts",
   "env": {
     "NODE_ENV": "development"

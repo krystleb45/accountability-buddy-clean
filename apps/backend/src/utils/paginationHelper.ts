@@ -1,7 +1,11 @@
-export function paginate (totalItems: number,  currentPage: number,  pageSize: number) {
-  const totalPages = Math.ceil(totalItems / pageSize);
-  const hasNextPage = currentPage < totalPages;
-  const hasPrevPage = currentPage > 1;
+export function paginate(
+  totalItems: number,
+  currentPage: number,
+  pageSize: number,
+) {
+  const totalPages = Math.ceil(totalItems / pageSize)
+  const hasNextPage = currentPage < totalPages
+  const hasPrevPage = currentPage > 1
 
   return {
     totalItems,
@@ -10,5 +14,5 @@ export function paginate (totalItems: number,  currentPage: number,  pageSize: n
     totalPages,
     hasNextPage,
     hasPrevPage,
-  };
+  }
 }

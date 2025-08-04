@@ -1,30 +1,33 @@
 // src/api/models/Report.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Report Document Interface ---
 export interface IReport extends Document {
-  userId: Types.ObjectId;       // Reporter
-  reportedId: Types.ObjectId;   // ID of the entity reported (post, comment, user)
-  reportType: "post" | "comment" | "user";
-  reason: string;
-  status: "pending" | "resolved";
-  resolvedBy?: Types.ObjectId;
-  resolvedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  userId: Types.ObjectId // Reporter
+  reportedId: Types.ObjectId // ID of the entity reported (post, comment, user)
+  reportType: "post" | "comment" | "user"
+  reason: string
+  status: "pending" | "resolved"
+  resolvedBy?: Types.ObjectId
+  resolvedAt?: Date
+  createdAt: Date
+  updatedAt: Date
 
   // Instance methods
-  resolve: (resolverId: Types.ObjectId) => Promise<IReport>;
+  resolve: (resolverId: Types.ObjectId) => Promise<IReport>
 }
 
 // --- Report Model Static Interface ---
 export interface IReportModel extends Model<IReport> {
-  getByUser: (userId: Types.ObjectId) => Promise<IReport[]>;
-  getPending: () => Promise<IReport[]>;
-  resolveReport: (reportId: string, resolverId: Types.ObjectId) => Promise<IReport>;
+  getByUser: (userId: Types.ObjectId) => Promise<IReport[]>
+  getPending: () => Promise<IReport[]>
+  resolveReport: (
+    reportId: string,
+    resolverId: Types.ObjectId,
+  ) => Promise<IReport>
 }
 
 // --- Schema Definition ---
@@ -66,56 +69,56 @@ const ReportSchema = new Schema<IReport, IReportModel>(
     timestamps: true,
     toJSON: { virtuals: false },
     toObject: { virtuals: false },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-ReportSchema.index({ userId: 1 });
-ReportSchema.index({ reportedId: 1 });
-ReportSchema.index({ reportType: 1 });
-ReportSchema.index({ status: 1 });
+ReportSchema.index({ userId: 1 })
+ReportSchema.index({ reportedId: 1 })
+ReportSchema.index({ reportType: 1 })
+ReportSchema.index({ status: 1 })
 
 // --- Instance Methods ---
 ReportSchema.methods.resolve = async function (
   this: IReport,
-  resolverId: Types.ObjectId
+  resolverId: Types.ObjectId,
 ): Promise<IReport> {
-  this.status = "resolved";
-  this.resolvedBy = resolverId;
-  this.resolvedAt = new Date();
-  return this.save();
-};
+  this.status = "resolved"
+  this.resolvedBy = resolverId
+  this.resolvedAt = new Date()
+  return this.save()
+}
 
 // --- Static Methods ---
 ReportSchema.statics.getByUser = function (
   this: IReportModel,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IReport[]> {
-  return this.find({ userId }).sort({ createdAt: -1 }).exec();
-};
+  return this.find({ userId }).sort({ createdAt: -1 }).exec()
+}
 
 ReportSchema.statics.getPending = function (
-  this: IReportModel
+  this: IReportModel,
 ): Promise<IReport[]> {
-  return this.find({ status: "pending" }).sort({ createdAt: 1 }).exec();
-};
+  return this.find({ status: "pending" }).sort({ createdAt: 1 }).exec()
+}
 
 ReportSchema.statics.resolveReport = async function (
   this: IReportModel,
   reportId: string,
-  resolverId: Types.ObjectId
+  resolverId: Types.ObjectId,
 ): Promise<IReport> {
-  const report = await this.findById(reportId);
+  const report = await this.findById(reportId)
   if (!report) {
-    throw new Error("Report not found");
+    throw new Error("Report not found")
   }
-  return report.resolve(resolverId);
-};
+  return report.resolve(resolverId)
+}
 
 // --- Model Export ---
 export const Report = mongoose.model<IReport, IReportModel>(
   "Report",
-  ReportSchema
-);
+  ReportSchema,
+)
 
-export default Report;
+export default Report

@@ -1,19 +1,19 @@
 // src/api/models/BadgeProgress.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 /**
  * The badge‐progress document interface.
  */
 export interface IBadgeProgress extends Document {
-  user: Types.ObjectId;
-  badgeType: string;
-  progress: number;
-  createdAt: Date;
-  updatedAt: Date;
+  user: Types.ObjectId
+  badgeType: string
+  progress: number
+  createdAt: Date
+  updatedAt: Date
 }
 
 /**
@@ -47,27 +47,27 @@ const BadgeProgressSchema = new Schema<IBadgeProgress>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // single compound index instead of field-level ones
-BadgeProgressSchema.index({ user: 1, badgeType: 1 });
+BadgeProgressSchema.index({ user: 1, badgeType: 1 })
 
 // Example hook: log each save
 BadgeProgressSchema.post<IBadgeProgress>("save", (doc) => {
   logger.info(
-    `BadgeProgress for user ${doc.user.toString()} and badgeType "${doc.badgeType}" is now ${doc.progress}`
-  );
-});
+    `BadgeProgress for user ${doc.user.toString()} and badgeType "${doc.badgeType}" is now ${doc.progress}`,
+  )
+})
 
 // (Optional) Example static for future extensions
 // BadgeProgressSchema.statics.resetProgressForUser = async function (userId: Types.ObjectId) {
 //   await this.updateMany({ user: userId }, { $set: { progress: 0 } });
 // };
 
-export const BadgeProgress = mongoose.model<IBadgeProgress, IBadgeProgressModel>(
-  "BadgeProgress",
-  BadgeProgressSchema
-);
+export const BadgeProgress = mongoose.model<
+  IBadgeProgress,
+  IBadgeProgressModel
+>("BadgeProgress", BadgeProgressSchema)
 
-export default BadgeProgress;
+export default BadgeProgress

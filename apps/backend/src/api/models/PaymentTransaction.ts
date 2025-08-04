@@ -1,46 +1,54 @@
 // src/api/models/PaymentTransaction.ts
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Transaction Status & Method Types ---
-export type TransactionStatus = "initiated" | "processing" | "completed" | "failed" | "refunded";
-export type TransactionMethod = "card" | "paypal" | "bank_transfer" | "crypto";
+export type TransactionStatus =
+  | "initiated"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "refunded"
+export type TransactionMethod = "card" | "paypal" | "bank_transfer" | "crypto"
 
 // --- Interface for PaymentTransaction Document ---
 export interface IPaymentTransaction extends Document {
-  userId: Types.ObjectId;
-  transactionId: string;
-  paymentMethod: TransactionMethod;
-  amount: number;
-  currency: string;
-  status: TransactionStatus;
-  description?: string;
-  initiatedAt: Date;
-  completedAt?: Date;
-  paymentGatewayResponse?: Record<string, unknown>;
-  isRefundable: boolean;
-  refundReason?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  userId: Types.ObjectId
+  transactionId: string
+  paymentMethod: TransactionMethod
+  amount: number
+  currency: string
+  status: TransactionStatus
+  description?: string
+  initiatedAt: Date
+  completedAt?: Date
+  paymentGatewayResponse?: Record<string, unknown>
+  isRefundable: boolean
+  refundReason?: string
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  isCompleted: boolean;
+  isCompleted: boolean
 
   // Instance methods
-  markAsCompleted: () => Promise<void>;
-  markAsFailed: (reason: string) => Promise<void>;
-  initiateRefund: (reason: string) => Promise<IPaymentTransaction>;
+  markAsCompleted: () => Promise<void>
+  markAsFailed: (reason: string) => Promise<void>
+  initiateRefund: (reason: string) => Promise<IPaymentTransaction>
 }
 
 // --- Model Interface for Statics ---
 export interface IPaymentTransactionModel extends Model<IPaymentTransaction> {
-  findByUser: (userId: Types.ObjectId) => Promise<IPaymentTransaction[]>;
-  getTotalAmountForUser: (userId: Types.ObjectId) => Promise<number>;
+  findByUser: (userId: Types.ObjectId) => Promise<IPaymentTransaction[]>
+  getTotalAmountForUser: (userId: Types.ObjectId) => Promise<number>
 }
 
 // --- Schema Definition ---
-const PaymentTransactionSchema = new Schema<IPaymentTransaction, IPaymentTransactionModel>(
+const PaymentTransactionSchema = new Schema<
+  IPaymentTransaction,
+  IPaymentTransactionModel
+>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -106,81 +114,90 @@ const PaymentTransactionSchema = new Schema<IPaymentTransaction, IPaymentTransac
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-PaymentTransactionSchema.index({ userId: 1 });
-PaymentTransactionSchema.index({ transactionId: 1 }, { unique: true });
-PaymentTransactionSchema.index({ status: 1 });
-PaymentTransactionSchema.index({ initiatedAt: -1 });
-PaymentTransactionSchema.index({ completedAt: 1 });
+PaymentTransactionSchema.index({ userId: 1 })
+PaymentTransactionSchema.index({ transactionId: 1 }, { unique: true })
+PaymentTransactionSchema.index({ status: 1 })
+PaymentTransactionSchema.index({ initiatedAt: -1 })
+PaymentTransactionSchema.index({ completedAt: 1 })
 
 // --- Pre-save Hook ---
 PaymentTransactionSchema.pre<IPaymentTransaction>("save", function (next) {
   if (this.amount <= 0) {
-    return next(new Error("Transaction amount must be greater than zero."));
+    return next(new Error("Transaction amount must be greater than zero."))
   }
-  next();
-});
+  next()
+})
 
 // --- Instance Methods ---
-PaymentTransactionSchema.methods.markAsCompleted = async function (this: IPaymentTransaction): Promise<void> {
-  this.status = "completed";
-  this.completedAt = new Date();
-  await this.save();
-};
+PaymentTransactionSchema.methods.markAsCompleted = async function (
+  this: IPaymentTransaction,
+): Promise<void> {
+  this.status = "completed"
+  this.completedAt = new Date()
+  await this.save()
+}
 
 PaymentTransactionSchema.methods.markAsFailed = async function (
   this: IPaymentTransaction,
-  reason: string
+  reason: string,
 ): Promise<void> {
-  this.status = "failed";
-  this.description = `Failed: ${reason}`;
-  await this.save();
-};
+  this.status = "failed"
+  this.description = `Failed: ${reason}`
+  await this.save()
+}
 
 PaymentTransactionSchema.methods.initiateRefund = async function (
   this: IPaymentTransaction,
-  reason: string
+  reason: string,
 ): Promise<IPaymentTransaction> {
   if (!this.isRefundable) {
-    throw new Error("This transaction is not eligible for a refund.");
+    throw new Error("This transaction is not eligible for a refund.")
   }
   if (this.status !== "completed") {
-    throw new Error("Only completed transactions can be refunded.");
+    throw new Error("Only completed transactions can be refunded.")
   }
-  this.status = "refunded";
-  this.refundReason = reason || "No reason provided";
-  await this.save();
-  return this;
-};
+  this.status = "refunded"
+  this.refundReason = reason || "No reason provided"
+  await this.save()
+  return this
+}
 
 // --- Static Methods ---
 PaymentTransactionSchema.statics.findByUser = function (
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IPaymentTransaction[]> {
-  return this.find({ userId }).sort({ initiatedAt: -1 });
-};
+  return this.find({ userId }).sort({ initiatedAt: -1 })
+}
 
 PaymentTransactionSchema.statics.getTotalAmountForUser = async function (
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<number> {
   const result = await this.aggregate([
-    { $match: { userId: new mongoose.Types.ObjectId(userId), status: "completed" } },
+    {
+      $match: {
+        userId: new mongoose.Types.ObjectId(userId),
+        status: "completed",
+      },
+    },
     { $group: { _id: "$userId", totalAmount: { $sum: "$amount" } } },
-  ]);
-  return result.length > 0 ? result[0].totalAmount : 0;
-};
+  ])
+  return result.length > 0 ? result[0].totalAmount : 0
+}
 
 // --- Virtuals ---
-PaymentTransactionSchema.virtual("isCompleted").get(function (this: IPaymentTransaction): boolean {
-  return this.status === "completed";
-});
+PaymentTransactionSchema.virtual("isCompleted").get(function (
+  this: IPaymentTransaction,
+): boolean {
+  return this.status === "completed"
+})
 
 // --- Model Export ---
-export const PaymentTransaction = mongoose.model<IPaymentTransaction, IPaymentTransactionModel>(
-  "PaymentTransaction",
-  PaymentTransactionSchema
-);
-export default PaymentTransaction;
+export const PaymentTransaction = mongoose.model<
+  IPaymentTransaction,
+  IPaymentTransactionModel
+>("PaymentTransaction", PaymentTransactionSchema)
+export default PaymentTransaction

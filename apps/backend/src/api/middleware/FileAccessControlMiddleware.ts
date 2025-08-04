@@ -1,11 +1,11 @@
 // src/api/middleware/FileAccessControlMiddleware.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Types } from "mongoose";
+import { Types } from "mongoose"
 
-import FileUpload from "../models/FileUpload";
-import { User } from "../models/User";
-import sendResponse from "../utils/sendResponse";
+import FileUpload from "../models/FileUpload"
+import { User } from "../models/User"
+import sendResponse from "../utils/sendResponse"
 
 /**
  * Ensure only the owner (or an admin) can access a given file.
@@ -13,43 +13,48 @@ import sendResponse from "../utils/sendResponse";
 export default async function fileAccessControl(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): Promise<void> {
-  const fileId = req.params.fileId;
-  const userId = req.user?.id;
+  const fileId = req.params.fileId
+  const userId = req.user?.id
 
   if (!userId) {
-    sendResponse(res, 401, false, "Unauthorized");
-    return;
+    sendResponse(res, 401, false, "Unauthorized")
+    return
   }
 
   // Must be a valid ObjectId
   if (!Types.ObjectId.isValid(fileId)) {
-    sendResponse(res, 400, false, "Invalid file ID");
-    return;
+    sendResponse(res, 400, false, "Invalid file ID")
+    return
   }
 
-  const file = await FileUpload.findById(fileId).lean();
+  const file = await FileUpload.findById(fileId).lean()
   if (!file) {
-    sendResponse(res, 404, false, "File not found");
-    return;
+    sendResponse(res, 404, false, "File not found")
+    return
   }
 
   // If you're the uploader, you're good
   if (new Types.ObjectId(userId).equals(file.user)) {
-    return next();
+    return next()
   }
 
   // Otherwise check if you're an admin
-  const user = await User.findById(userId).select("role");
+  const user = await User.findById(userId).select("role")
   if (!user) {
-    sendResponse(res, 404, false, "User not found");
-    return;
+    sendResponse(res, 404, false, "User not found")
+    return
   }
   if (user.role === "admin") {
-    return next();
+    return next()
   }
 
   // All other cases: forbidden
-  sendResponse(res, 403, false, "You do not have permission to access this file");
+  sendResponse(
+    res,
+    403,
+    false,
+    "You do not have permission to access this file",
+  )
 }

@@ -1,11 +1,11 @@
-import { google } from "googleapis";
-import nodemailer from "nodemailer";
+import { google } from "googleapis"
+import nodemailer from "nodemailer"
 
 interface EmailOptions {
-  to: string;
-  subject: string;
-  text?: string;
-  html?: string;
+  to: string
+  subject: string
+  text?: string
+  html?: string
 }
 
 // Configure OAuth2 for secure email sending (optional)
@@ -13,8 +13,8 @@ const oAuth2Client = new google.auth.OAuth2(
   process.env.GMAIL_CLIENT_ID,
   process.env.GMAIL_CLIENT_SECRET,
   process.env.GMAIL_REDIRECT_URI,
-);
-oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
+)
+oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN })
 
 /**
  * Creates a nodemailer transporter based on environment variables.
@@ -22,13 +22,13 @@ oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
  * @returns Promise<nodemailer.Transporter> - Configured transporter for sending emails.
  * @throws Error if transporter configuration fails.
  */
-async function createTransporter (): Promise<nodemailer.Transporter> {
+async function createTransporter(): Promise<nodemailer.Transporter> {
   try {
     if (process.env.USE_GMAIL_OAUTH === "true") {
-      const accessToken = await oAuth2Client.getAccessToken();
+      const accessToken = await oAuth2Client.getAccessToken()
 
       if (!accessToken.token) {
-        throw new Error("Failed to retrieve access token for Gmail OAuth2");
+        throw new Error("Failed to retrieve access token for Gmail OAuth2")
       }
 
       return nodemailer.createTransport({
@@ -41,7 +41,7 @@ async function createTransporter (): Promise<nodemailer.Transporter> {
           refreshToken: process.env.GMAIL_REFRESH_TOKEN,
           accessToken: accessToken.token,
         },
-      });
+      })
     }
 
     // Fallback to SMTP transport
@@ -53,9 +53,11 @@ async function createTransporter (): Promise<nodemailer.Transporter> {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-    });
+    })
   } catch (error) {
-    throw new Error(`Failed to configure email transporter: ${(error as Error).message}`);
+    throw new Error(
+      `Failed to configure email transporter: ${(error as Error).message}`,
+    )
   }
 }
 
@@ -65,19 +67,19 @@ async function createTransporter (): Promise<nodemailer.Transporter> {
  * @returns Promise<void> - Resolves when the email is successfully sent.
  * @throws Error if email sending fails.
  */
-async function sendEmail (options: EmailOptions): Promise<void> {
+async function sendEmail(options: EmailOptions): Promise<void> {
   try {
-    const transporter = await createTransporter();
+    const transporter = await createTransporter()
     await transporter.sendMail({
       from: `"Accountability Buddy" <${process.env.EMAIL_FROM}>`,
       to: options.to,
       subject: options.subject,
       text: options.text,
       html: options.html,
-    });
+    })
   } catch (error) {
-    throw new Error(`Unable to send email: ${(error as Error).message}`);
+    throw new Error(`Unable to send email: ${(error as Error).message}`)
   }
 }
 
-export default sendEmail;
+export default sendEmail

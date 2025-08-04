@@ -1,5 +1,5 @@
-import redisClient from "../../config/redisClient"; // Redis client setup
-import { logger } from "../../utils/winstonLogger";
+import redisClient from "../../config/redisClient" // Redis client setup
+import { logger } from "../../utils/winstonLogger"
 
 export const CacheInvalidationService = {
   /**
@@ -8,18 +8,19 @@ export const CacheInvalidationService = {
    */
   async invalidateCacheByKey(key: string): Promise<void> {
     try {
-      if (!key) 
-throw new Error("Cache key is required for invalidation");
+      if (!key) throw new Error("Cache key is required for invalidation")
 
-      const result = await redisClient.del(key); // Delete the cache key
+      const result = await redisClient.del(key) // Delete the cache key
       if (result) {
-        logger.info(`Cache invalidated for key: ${key}`);
+        logger.info(`Cache invalidated for key: ${key}`)
       } else {
-        logger.warn(`No cache found for key: ${key}`);
+        logger.warn(`No cache found for key: ${key}`)
       }
     } catch (error) {
-      logger.error(`Error invalidating cache for key: ${key} - ${String(error)}`);
-      throw new Error("Failed to invalidate cache by key");
+      logger.error(
+        `Error invalidating cache for key: ${key} - ${String(error)}`,
+      )
+      throw new Error("Failed to invalidate cache by key")
     }
   },
 
@@ -30,18 +31,20 @@ throw new Error("Cache key is required for invalidation");
   async invalidateCacheByKeys(keys: string[]): Promise<void> {
     try {
       if (!Array.isArray(keys) || keys.length === 0) {
-        throw new Error("An array of cache keys is required for invalidation");
+        throw new Error("An array of cache keys is required for invalidation")
       }
 
-      const result = await redisClient.del(keys); // Delete multiple cache keys
+      const result = await redisClient.del(keys) // Delete multiple cache keys
       if (result) {
-        logger.info(`Cache invalidated for keys: ${keys.join(", ")}`);
+        logger.info(`Cache invalidated for keys: ${keys.join(", ")}`)
       } else {
-        logger.warn(`No matching cache found for keys: ${keys.join(", ")}`);
+        logger.warn(`No matching cache found for keys: ${keys.join(", ")}`)
       }
     } catch (error) {
-      logger.error(`Error invalidating cache for keys: ${keys.join(", ")} - ${String(error)}`);
-      throw new Error("Failed to invalidate cache by keys");
+      logger.error(
+        `Error invalidating cache for keys: ${keys.join(", ")} - ${String(error)}`,
+      )
+      throw new Error("Failed to invalidate cache by keys")
     }
   },
 
@@ -51,19 +54,21 @@ throw new Error("Cache key is required for invalidation");
    */
   async invalidateCacheByPattern(pattern: string): Promise<void> {
     try {
-      if (!pattern) 
-throw new Error("Pattern is required for cache invalidation");
+      if (!pattern)
+        throw new Error("Pattern is required for cache invalidation")
 
-      const keys = await redisClient.keys(pattern); // Find keys matching the pattern
+      const keys = await redisClient.keys(pattern) // Find keys matching the pattern
       if (keys.length > 0) {
-        await redisClient.del(keys); // Delete matching keys
-        logger.info(`Cache invalidated for keys matching pattern: ${pattern}`);
+        await redisClient.del(keys) // Delete matching keys
+        logger.info(`Cache invalidated for keys matching pattern: ${pattern}`)
       } else {
-        logger.info(`No cache keys found matching pattern: ${pattern}`);
+        logger.info(`No cache keys found matching pattern: ${pattern}`)
       }
     } catch (error) {
-      logger.error(`Error invalidating cache by pattern: ${pattern} - ${String(error)}`);
-      throw new Error("Failed to invalidate cache by pattern");
+      logger.error(
+        `Error invalidating cache by pattern: ${pattern} - ${String(error)}`,
+      )
+      throw new Error("Failed to invalidate cache by pattern")
     }
   },
 
@@ -72,11 +77,11 @@ throw new Error("Pattern is required for cache invalidation");
    */
   async clearAllCache(): Promise<void> {
     try {
-      await redisClient.flushDb(); // Clears the entire Redis database
-      logger.info("All cache entries cleared");
+      await redisClient.flushDb() // Clears the entire Redis database
+      logger.info("All cache entries cleared")
     } catch (error) {
-      logger.error(`Error clearing all cache: ${String(error)}`);
-      throw new Error("Failed to clear all cache");
+      logger.error(`Error clearing all cache: ${String(error)}`)
+      throw new Error("Failed to clear all cache")
     }
   },
 
@@ -85,22 +90,31 @@ throw new Error("Pattern is required for cache invalidation");
    * @param   key - The cache key to check.
    * @param   threshold - TTL threshold in seconds (invalidate if TTL < threshold).
    */
-  async invalidateCacheIfTTLBelow(key: string, threshold: number): Promise<void> {
+  async invalidateCacheIfTTLBelow(
+    key: string,
+    threshold: number,
+  ): Promise<void> {
     try {
       if (!key || !threshold) {
-        throw new Error("Key and TTL threshold are required for conditional invalidation");
+        throw new Error(
+          "Key and TTL threshold are required for conditional invalidation",
+        )
       }
 
-      const ttl = await redisClient.ttl(key); // Get the TTL of the key
+      const ttl = await redisClient.ttl(key) // Get the TTL of the key
       if (ttl !== -1 && ttl < threshold) {
-        await redisClient.del(key); // Invalidate if TTL is below threshold
-        logger.info(`Cache invalidated for key: ${key} (TTL below ${threshold} seconds)`);
+        await redisClient.del(key) // Invalidate if TTL is below threshold
+        logger.info(
+          `Cache invalidated for key: ${key} (TTL below ${threshold} seconds)`,
+        )
       } else if (ttl === -1) {
-        logger.warn(`Cache key ${key} does not have a TTL set`);
+        logger.warn(`Cache key ${key} does not have a TTL set`)
       }
     } catch (error) {
-      logger.error(`Error invalidating cache based on TTL for key: ${key} - ${String(error)}`);
-      throw new Error("Failed to invalidate cache based on TTL");
+      logger.error(
+        `Error invalidating cache based on TTL for key: ${key} - ${String(error)}`,
+      )
+      throw new Error("Failed to invalidate cache based on TTL")
     }
   },
 
@@ -110,17 +124,18 @@ throw new Error("Pattern is required for cache invalidation");
    */
   async invalidateUserCache(userId: string): Promise<void> {
     try {
-      if (!userId) 
-throw new Error("User ID is required for cache invalidation");
+      if (!userId) throw new Error("User ID is required for cache invalidation")
 
-      const pattern = `user:${userId}:*`; // Pattern to match user-related keys
-      await this.invalidateCacheByPattern(pattern);
-      logger.info(`Cache invalidated for user-related keys: ${pattern}`);
+      const pattern = `user:${userId}:*` // Pattern to match user-related keys
+      await this.invalidateCacheByPattern(pattern)
+      logger.info(`Cache invalidated for user-related keys: ${pattern}`)
     } catch (error) {
-      logger.error(`Error invalidating user cache for user ID: ${userId} - ${String(error)}`);
-      throw new Error("Failed to invalidate user cache");
+      logger.error(
+        `Error invalidating user cache for user ID: ${userId} - ${String(error)}`,
+      )
+      throw new Error("Failed to invalidate user cache")
     }
   },
-};
+}
 
-export default CacheInvalidationService;
+export default CacheInvalidationService

@@ -1,35 +1,35 @@
 // src/api/services/GamificationService.ts
 
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-import type {IGamification} from "../models/Gamification";
+import type { IGamification } from "../models/Gamification"
 
-import GamificationModel from "../models/Gamification";
+import GamificationModel from "../models/Gamification"
 
 // What we want in our final payload
 export interface LeaderboardEntry {
-  _id: string;
+  _id: string
   userId: {
-    _id: string;
-    username: string;
-    profilePicture?: string;
-  };
-  level: number;
-  points: number;
+    _id: string
+    username: string
+    profilePicture?: string
+  }
+  level: number
+  points: number
 }
 
 export interface LeaderboardResult {
-  entries: LeaderboardEntry[];
+  entries: LeaderboardEntry[]
   pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalUsers: number;
-  };
+    currentPage: number
+    totalPages: number
+    totalUsers: number
+  }
 }
 
 export interface UserProgress {
-  level: number;
-  points: number;
+  level: number
+  points: number
 }
 
 /**
@@ -39,11 +39,8 @@ const GamificationService = {
   /**
    * Fetch a paginated leaderboard with populated user info.
    */
-  async getLeaderboard(
-    page = 1,
-    limit = 10
-  ): Promise<LeaderboardResult> {
-    const skip = (page - 1) * limit;
+  async getLeaderboard(page = 1, limit = 10): Promise<LeaderboardResult> {
+    const skip = (page - 1) * limit
 
     const [rawDocs, totalUsers] = await Promise.all([
       GamificationModel.find()
@@ -53,12 +50,12 @@ const GamificationService = {
         .populate("userId", "username profilePicture")
         .lean(),
       GamificationModel.countDocuments(),
-    ]);
+    ])
 
     const entries: LeaderboardEntry[] = rawDocs.map((doc) => {
       const d = doc as unknown as IGamification & {
-        userId: { _id: any; username: string; profilePicture?: string };
-      };
+        userId: { _id: any; username: string; profilePicture?: string }
+      }
 
       return {
         _id: d._id.toString(),
@@ -69,8 +66,8 @@ const GamificationService = {
           username: d.userId.username,
           profilePicture: d.userId.profilePicture,
         },
-      };
-    });
+      }
+    })
 
     return {
       entries,
@@ -79,7 +76,7 @@ const GamificationService = {
         totalPages: Math.ceil(totalUsers / limit),
         totalUsers,
       },
-    };
+    }
   },
 
   /**
@@ -87,22 +84,22 @@ const GamificationService = {
    */
   async getUserProgress(userId: string): Promise<UserProgress> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid user ID");
+      throw new Error("Invalid user ID")
     }
 
     // 1) Fetch the document (no .lean())
-    let profile = await GamificationModel.findOne({ userId });
+    let profile = await GamificationModel.findOne({ userId })
 
     // 2) If missing, create it
     if (!profile) {
-      profile = await GamificationModel.create({ userId, level: 1, points: 0 });
+      profile = await GamificationModel.create({ userId, level: 1, points: 0 })
     }
 
     // 3) Now `profile` is always a Document<IGamification>
     return {
       level: profile.level,
       points: profile.points,
-    };
+    }
   },
 
   /**
@@ -110,16 +107,16 @@ const GamificationService = {
    */
   async addPoints(userId: string, amount: number): Promise<void> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid user ID");
+      throw new Error("Invalid user ID")
     }
 
-    let profile = await GamificationModel.findOne({ userId });
+    let profile = await GamificationModel.findOne({ userId })
     if (!profile) {
-      profile = await GamificationModel.create({ userId, level: 1, points: 0 });
+      profile = await GamificationModel.create({ userId, level: 1, points: 0 })
     }
 
-    await profile.addPoints(amount);
+    await profile.addPoints(amount)
   },
-};
+}
 
-export default GamificationService;
+export default GamificationService

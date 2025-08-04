@@ -1,15 +1,23 @@
 // src/api/controllers/GoalMessageController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Response } from "express"
 
-import { createError } from "../middleware/errorHandler";
-import GoalMessageService from "../services/GoalMessageService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+
+import { createError } from "../middleware/errorHandler"
+import GoalMessageService from "../services/GoalMessageService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 // Reusable types
-interface ParamsWithGoal { goalId: string }
-interface ParamsWithMessage { messageId: string }
-interface BodyWithMessage { message: string }
+interface ParamsWithGoal {
+  goalId: string
+}
+interface ParamsWithMessage {
+  messageId: string
+}
+interface BodyWithMessage {
+  message: string
+}
 
 /**
  * @desc Create a new goal message
@@ -18,24 +26,23 @@ interface BodyWithMessage { message: string }
  */
 export const createGoalMessage = catchAsync(
   async (
-    req: Request<ParamsWithGoal, {}, BodyWithMessage>,
+    req: AuthenticatedRequest<ParamsWithGoal, BodyWithMessage>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user?.id;
-    if (!userId) 
-return next(createError("Unauthorized", 401));
+    const userId = req.user?.id
+    if (!userId) return next(createError("Unauthorized", 401))
 
-    const { goalId } = req.params;
-    const { message } = req.body;
+    const { goalId } = req.params
+    const { message } = req.body
     if (!message?.trim()) {
-      return next(createError("Message is required", 400));
+      return next(createError("Message is required", 400))
     }
 
-    const newMsg = await GoalMessageService.create(goalId, userId, message);
-    sendResponse(res, 201, true, "Goal message created", { message: newMsg });
-  }
-);
+    const newMsg = await GoalMessageService.create(goalId, userId, message)
+    sendResponse(res, 201, true, "Goal message created", { message: newMsg })
+  },
+)
 
 /**
  * @desc Get all messages for a goal
@@ -44,19 +51,18 @@ return next(createError("Unauthorized", 401));
  */
 export const getGoalMessages = catchAsync(
   async (
-    req: Request<ParamsWithGoal>,
+    req: AuthenticatedRequest<ParamsWithGoal>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user?.id;
-    if (!userId) 
-return next(createError("Unauthorized", 401));
+    const userId = req.user?.id
+    if (!userId) return next(createError("Unauthorized", 401))
 
-    const { goalId } = req.params;
-    const messages = await GoalMessageService.listByGoal(goalId);
-    sendResponse(res, 200, true, "Goal messages fetched", { messages });
-  }
-);
+    const { goalId } = req.params
+    const messages = await GoalMessageService.listByGoal(goalId)
+    sendResponse(res, 200, true, "Goal messages fetched", { messages })
+  },
+)
 
 /**
  * @desc Edit a single goal message
@@ -65,24 +71,23 @@ return next(createError("Unauthorized", 401));
  */
 export const updateGoalMessage = catchAsync(
   async (
-    req: Request<ParamsWithMessage, {}, BodyWithMessage>,
+    req: AuthenticatedRequest<ParamsWithMessage, BodyWithMessage>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user?.id;
-    if (!userId) 
-return next(createError("Unauthorized", 401));
+    const userId = req.user?.id
+    if (!userId) return next(createError("Unauthorized", 401))
 
-    const { messageId } = req.params;
-    const { message } = req.body;
+    const { messageId } = req.params
+    const { message } = req.body
     if (!message?.trim()) {
-      return next(createError("Message content cannot be empty", 400));
+      return next(createError("Message content cannot be empty", 400))
     }
 
-    const updated = await GoalMessageService.update(messageId, userId, message);
-    sendResponse(res, 200, true, "Goal message updated", { message: updated });
-  }
-);
+    const updated = await GoalMessageService.update(messageId, userId, message)
+    sendResponse(res, 200, true, "Goal message updated", { message: updated })
+  },
+)
 
 /**
  * @desc Delete a single goal message
@@ -91,23 +96,22 @@ return next(createError("Unauthorized", 401));
  */
 export const deleteGoalMessage = catchAsync(
   async (
-    req: Request<ParamsWithMessage>,
+    req: AuthenticatedRequest<ParamsWithMessage>,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user?.id;
-    if (!userId) 
-return next(createError("Unauthorized", 401));
+    const userId = req.user?.id
+    if (!userId) return next(createError("Unauthorized", 401))
 
-    const { messageId } = req.params;
-    await GoalMessageService.delete(messageId, userId);
-    sendResponse(res, 200, true, "Goal message deleted");
-  }
-);
+    const { messageId } = req.params
+    await GoalMessageService.delete(messageId, userId)
+    sendResponse(res, 200, true, "Goal message deleted")
+  },
+)
 
 export default {
   createGoalMessage,
   getGoalMessages,
   updateGoalMessage,
   deleteGoalMessage,
-};
+}

@@ -1,23 +1,23 @@
 // src/api/services/SupportTicketService.ts
-import { Types } from "mongoose";
+import { Types } from "mongoose"
 
-import type { ISupportTicket } from "../models/SupportTicket";
+import type { ISupportTicket } from "../models/SupportTicket"
 
-import { createError } from "../middleware/errorHandler";
-import SupportTicketModel from "../models/SupportTicket";
+import { createError } from "../middleware/errorHandler"
+import SupportTicketModel from "../models/SupportTicket"
 
 export interface CreateTicketDTO {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  priority?: string;
+  name: string
+  email: string
+  subject: string
+  message: string
+  priority?: string
 }
 
 export interface UpdateTicketDTO {
-  status?: string;
-  priority?: string;
-  message?: string;
+  status?: string
+  priority?: string
+  message?: string
 }
 
 class SupportTicketService {
@@ -32,15 +32,15 @@ class SupportTicketService {
       message: data.message,
       priority: data.priority ?? "normal",
       status: "open",
-    });
-    return ticket;
+    })
+    return ticket
   }
 
   /**
    * List all tickets, newest first.
    */
   static async listTickets(): Promise<ISupportTicket[]> {
-    return SupportTicketModel.find().sort({ createdAt: -1 }).exec();
+    return SupportTicketModel.find().sort({ createdAt: -1 }).exec()
   }
 
   /**
@@ -49,13 +49,13 @@ class SupportTicketService {
    */
   static async getTicket(ticketId: string): Promise<ISupportTicket> {
     if (!Types.ObjectId.isValid(ticketId)) {
-      throw createError("Invalid ticket ID", 400);
+      throw createError("Invalid ticket ID", 400)
     }
-    const ticket = await SupportTicketModel.findById(ticketId).exec();
+    const ticket = await SupportTicketModel.findById(ticketId).exec()
     if (!ticket) {
-      throw createError("Ticket not found", 404);
+      throw createError("Ticket not found", 404)
     }
-    return ticket;
+    return ticket
   }
 
   /**
@@ -64,21 +64,21 @@ class SupportTicketService {
    */
   static async updateTicket(
     ticketId: string,
-    updates: UpdateTicketDTO
+    updates: UpdateTicketDTO,
   ): Promise<ISupportTicket> {
     if (!Types.ObjectId.isValid(ticketId)) {
-      throw createError("Invalid ticket ID", 400);
+      throw createError("Invalid ticket ID", 400)
     }
     const ticket = await SupportTicketModel.findByIdAndUpdate(
       ticketId,
       updates,
-      { new: true, runValidators: true }
-    ).exec();
+      { new: true, runValidators: true },
+    ).exec()
     if (!ticket) {
-      throw createError("Ticket not found", 404);
+      throw createError("Ticket not found", 404)
     }
-    return ticket;
+    return ticket
   }
 }
 
-export default SupportTicketService;
+export default SupportTicketService

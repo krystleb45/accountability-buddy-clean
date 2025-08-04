@@ -1,19 +1,23 @@
 // src/api/routes/goalAnalyticsRoutes.ts - Updated with subscription restrictions and proper typing
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
-import { Router } from "express";
-import { check, query } from "express-validator";
+import { Router } from "express"
+import { check, query } from "express-validator"
 
 import {
   getGoalAnalyticsByDateRange,
   getGoalAnalyticsById,
   getUserGoalAnalytics,
-} from "../controllers/goalAnalyticsController";
-import { protect } from "../middleware/authJwt";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import { trialPrompt, validateFeatureAccess, validateSubscription } from "../middleware/subscriptionValidation";
+} from "../controllers/goalAnalyticsController"
+import { protect } from "../middleware/authJwt"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import {
+  trialPrompt,
+  validateFeatureAccess,
+  validateSubscription,
+} from "../middleware/subscriptionValidation"
 
-const router = Router();
+const router = Router()
 
 /**
  * GET /api/analytics/goals
@@ -25,8 +29,8 @@ router.get(
   protect,
   validateSubscription,
   trialPrompt("basic-analytics"), // Show upgrade hint for trial users
-  getUserGoalAnalytics
-);
+  getUserGoalAnalytics,
+)
 
 /**
  * GET /api/analytics/goals/:goalId
@@ -40,8 +44,8 @@ router.get(
   trialPrompt("goal-analytics"),
   check("goalId", "Goal ID is invalid").isMongoId(),
   handleValidationErrors,
-  getGoalAnalyticsById
-);
+  getGoalAnalyticsById,
+)
 
 /**
  * GET /api/analytics/goals/:goalId/date-range
@@ -57,8 +61,8 @@ router.get(
   query("startDate", "Invalid or missing startDate").notEmpty().isISO8601(),
   query("endDate", "Invalid or missing endDate").notEmpty().isISO8601(),
   handleValidationErrors,
-  getGoalAnalyticsByDateRange
-);
+  getGoalAnalyticsByDateRange,
+)
 
 /**
  * GET /api/analytics/advanced
@@ -74,10 +78,10 @@ router.get(
     res.status(501).json({
       success: false,
       message: "Advanced analytics controller not implemented yet",
-      note: "This endpoint requires Pro or Elite plan"
-    });
-  }
-);
+      note: "This endpoint requires Pro or Elite plan",
+    })
+  },
+)
 
 /**
  * GET /api/analytics/reports
@@ -98,10 +102,10 @@ router.get(
     res.status(501).json({
       success: false,
       message: "Reports controller not implemented yet",
-      note: "This endpoint requires Pro or Elite plan"
-    });
-  }
-);
+      note: "This endpoint requires Pro or Elite plan",
+    })
+  },
+)
 
 /**
  * GET /api/analytics/export
@@ -114,7 +118,9 @@ router.get(
   validateFeatureAccess("analytics"), // Pro+ plan required
   [
     query("format").optional().isIn(["csv", "json", "xlsx"]),
-    query("dateRange").optional().isIn(["week", "month", "quarter", "year", "all"]),
+    query("dateRange")
+      .optional()
+      .isIn(["week", "month", "quarter", "year", "all"]),
     handleValidationErrors,
   ],
   // Add your export controller here
@@ -122,10 +128,10 @@ router.get(
     res.status(501).json({
       success: false,
       message: "Export controller not implemented yet",
-      note: "This endpoint requires Pro or Elite plan"
-    });
-  }
-);
+      note: "This endpoint requires Pro or Elite plan",
+    })
+  },
+)
 
 /**
  * GET /api/analytics/insights
@@ -141,9 +147,9 @@ router.get(
     res.status(501).json({
       success: false,
       message: "AI insights controller not implemented yet",
-      note: "This endpoint requires Pro or Elite plan"
-    });
-  }
-);
+      note: "This endpoint requires Pro or Elite plan",
+    })
+  },
+)
 
-export default router;
+export default router

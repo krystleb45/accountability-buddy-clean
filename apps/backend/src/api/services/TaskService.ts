@@ -1,9 +1,9 @@
 // src/api/services/TaskService.ts
-import type { ITask } from "../models/Task";
+import type { ITask } from "../models/Task"
 
-import Task from "../models/Task";
-import LoggingService from "./LoggingService";
-import NotificationService from "./NotificationService";
+import Task from "../models/Task"
+import LoggingService from "./LoggingService"
+import NotificationService from "./NotificationService"
 
 const TaskService = {
   /**
@@ -18,27 +18,27 @@ const TaskService = {
         ...taskData,
         user: userId,
         status: "pending",
-      });
-      const savedTask = await task.save();
+      })
+      const savedTask = await task.save()
 
       await LoggingService.logInfo(
-        `Task created for user: ${userId}, Task ID: ${savedTask._id}`
-      );
+        `Task created for user: ${userId}, Task ID: ${savedTask._id}`,
+      )
 
       void NotificationService.sendInAppNotification(
         userId, // sender
         userId, // receiver
-        `New task created: ${savedTask.title}`
-      );
+        `New task created: ${savedTask.title}`,
+      )
 
-      return savedTask.toObject();
+      return savedTask.toObject()
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
+      const msg = error instanceof Error ? error.message : String(error)
       await LoggingService.logError("Error creating task", new Error(msg), {
         taskData,
         userId,
-      });
-      throw new Error("Failed to create task");
+      })
+      throw new Error("Failed to create task")
     }
   },
 
@@ -50,20 +50,19 @@ const TaskService = {
     filters: Record<string, unknown> = {},
   ): Promise<ITask[]> => {
     try {
-      const tasks = await Task
-        .find({ user: userId, ...filters })
-        .lean<ITask[]>()  // ← here
-        .exec();
+      const tasks = await Task.find({ user: userId, ...filters })
+        .lean<ITask[]>() // ← here
+        .exec()
 
-      await LoggingService.logInfo(`Fetched tasks for user: ${userId}`);
-      return tasks;
+      await LoggingService.logInfo(`Fetched tasks for user: ${userId}`)
+      return tasks
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
+      const msg = error instanceof Error ? error.message : String(error)
       await LoggingService.logError("Error fetching tasks", new Error(msg), {
         userId,
         filters,
-      });
-      throw new Error("Failed to fetch tasks");
+      })
+      throw new Error("Failed to fetch tasks")
     }
   },
 
@@ -79,67 +78,67 @@ const TaskService = {
       const task = await Task.findOneAndUpdate(
         { _id: taskId, user: userId },
         updates,
-        { new: true, runValidators: true }
+        { new: true, runValidators: true },
       )
         .lean<ITask>()
-        .exec();
+        .exec()
 
       if (!task) {
-        await LoggingService.logWarn("Task not found", { taskId, userId });
-        throw new Error("Task not found");
+        await LoggingService.logWarn("Task not found", { taskId, userId })
+        throw new Error("Task not found")
       }
 
-      await LoggingService.logInfo(`Task updated: ${taskId}`);
-      return task;
+      await LoggingService.logInfo(`Task updated: ${taskId}`)
+      return task
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
+      const msg = error instanceof Error ? error.message : String(error)
       await LoggingService.logError("Error updating task", new Error(msg), {
         taskId,
         updates,
-      });
-      throw new Error("Failed to update task");
+      })
+      throw new Error("Failed to update task")
     }
   },
 
   /**
    * Mark a task as complete.
    */
-  completeTask: async (
-    taskId: string,
-    userId: string,
-  ): Promise<ITask> => {
+  completeTask: async (taskId: string, userId: string): Promise<ITask> => {
     try {
       const task = await Task.findOneAndUpdate(
         { _id: taskId, user: userId },
         { status: "completed", completedAt: new Date() },
-        { new: true }
+        { new: true },
       )
         .lean<ITask>()
-        .exec();
+        .exec()
 
       if (!task) {
-        await LoggingService.logWarn("Task not found for completion", { taskId, userId });
-        throw new Error("Task not found");
+        await LoggingService.logWarn("Task not found for completion", {
+          taskId,
+          userId,
+        })
+        throw new Error("Task not found")
       }
 
       void NotificationService.sendInAppNotification(
         userId,
         userId,
-        `Task completed: ${task.title}`
-      );
+        `Task completed: ${task.title}`,
+      )
       await LoggingService.logInfo(
-        `Task completed by user: ${userId}, Task ID: ${taskId}`
-      );
+        `Task completed by user: ${userId}, Task ID: ${taskId}`,
+      )
 
-      return task;
+      return task
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
+      const msg = error instanceof Error ? error.message : String(error)
       await LoggingService.logError(
         "Error marking task as complete",
         new Error(msg),
-        { taskId, userId }
-      );
-      throw new Error("Failed to complete task");
+        { taskId, userId },
+      )
+      throw new Error("Failed to complete task")
     }
   },
 
@@ -153,30 +152,33 @@ const TaskService = {
     try {
       const task = await Task.findOneAndDelete({ _id: taskId, user: userId })
         .lean<ITask>()
-        .exec();
+        .exec()
 
       if (!task) {
-        await LoggingService.logWarn("Task not found for deletion", { taskId, userId });
-        throw new Error("Task not found");
+        await LoggingService.logWarn("Task not found for deletion", {
+          taskId,
+          userId,
+        })
+        throw new Error("Task not found")
       }
 
       void NotificationService.sendInAppNotification(
         userId,
         userId,
-        `Task deleted: ${task.title}`
-      );
+        `Task deleted: ${task.title}`,
+      )
       await LoggingService.logInfo(
-        `Task deleted by user: ${userId}, Task ID: ${taskId}`
-      );
+        `Task deleted by user: ${userId}, Task ID: ${taskId}`,
+      )
 
-      return { success: true, message: "Task deleted successfully" };
+      return { success: true, message: "Task deleted successfully" }
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
+      const msg = error instanceof Error ? error.message : String(error)
       await LoggingService.logError("Error deleting task", new Error(msg), {
         taskId,
         userId,
-      });
-      throw new Error("Failed to delete task");
+      })
+      throw new Error("Failed to delete task")
     }
   },
 
@@ -190,38 +192,38 @@ const TaskService = {
   ): Promise<ITask> => {
     try {
       if (progress < 0 || progress > 100) {
-        throw new Error("Progress must be between 0 and 100");
+        throw new Error("Progress must be between 0 and 100")
       }
 
       const task = await Task.findOneAndUpdate(
         { _id: taskId, user: userId },
         { progress },
-        { new: true }
+        { new: true },
       )
         .lean<ITask>()
-        .exec();
+        .exec()
 
       if (!task) {
         await LoggingService.logWarn("Task not found for progress tracking", {
           taskId,
-        });
-        throw new Error("Task not found");
+        })
+        throw new Error("Task not found")
       }
 
       await LoggingService.logInfo(
-        `Task progress updated: ${taskId} to ${progress}%`
-      );
-      return task;
+        `Task progress updated: ${taskId} to ${progress}%`,
+      )
+      return task
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : String(error);
+      const msg = error instanceof Error ? error.message : String(error)
       await LoggingService.logError(
         "Error tracking task progress",
         new Error(msg),
-        { taskId, progress }
-      );
-      throw new Error("Failed to track task progress");
+        { taskId, progress },
+      )
+      throw new Error("Failed to track task progress")
     }
   },
-};
+}
 
-export default TaskService;
+export default TaskService

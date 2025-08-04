@@ -1,6 +1,6 @@
-import { format, parse } from "date-fns";
+import { format, parse } from "date-fns"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 export const DataProcessingService = {
   /**
@@ -9,18 +9,18 @@ export const DataProcessingService = {
    * @returns The sanitized object.
    */
   sanitizeInput(data: Record<string, unknown>): Record<string, unknown> {
-    const sanitizedData: Record<string, unknown> = {};
+    const sanitizedData: Record<string, unknown> = {}
 
     for (const [key, value] of Object.entries(data)) {
       if (typeof value === "string") {
-        sanitizedData[key] = value.trim().replace(/[<>]/g, ""); // Trim and remove < >
+        sanitizedData[key] = value.trim().replace(/[<>]/g, "") // Trim and remove < >
       } else {
-        sanitizedData[key] = value;
+        sanitizedData[key] = value
       }
     }
 
-    logger.info("Input data sanitized successfully.");
-    return sanitizedData;
+    logger.info("Input data sanitized successfully.")
+    return sanitizedData
   },
 
   /**
@@ -35,18 +35,18 @@ export const DataProcessingService = {
     page: number,
     limit: number,
   ): { items: T[]; total: number; totalPages: number; currentPage: number } {
-    const total = data.length;
-    const totalPages = Math.ceil(total / limit);
-    const startIndex = (page - 1) * limit;
-    const paginatedItems = data.slice(startIndex, startIndex + limit);
+    const total = data.length
+    const totalPages = Math.ceil(total / limit)
+    const startIndex = (page - 1) * limit
+    const paginatedItems = data.slice(startIndex, startIndex + limit)
 
-    logger.info(`Data paginated: Page ${page} of ${totalPages}`);
+    logger.info(`Data paginated: Page ${page} of ${totalPages}`)
     return {
       items: paginatedItems,
       total,
       totalPages,
       currentPage: page,
-    };
+    }
   },
 
   /**
@@ -58,13 +58,13 @@ export const DataProcessingService = {
   formatDate(date: Date | string, formatString = "yyyy-MM-dd"): string {
     try {
       const parsedDate =
-        typeof date === "string" ? parse(date, "yyyy-MM-dd", new Date()) : date;
-      const formattedDate = format(parsedDate, formatString);
-      logger.info(`Date formatted successfully: ${formattedDate}`);
-      return formattedDate;
+        typeof date === "string" ? parse(date, "yyyy-MM-dd", new Date()) : date
+      const formattedDate = format(parsedDate, formatString)
+      logger.info(`Date formatted successfully: ${formattedDate}`)
+      return formattedDate
     } catch (error) {
-      logger.error("Error formatting date:", error);
-      throw new Error("Invalid date format.");
+      logger.error("Error formatting date:", error)
+      throw new Error("Invalid date format.")
     }
   },
 
@@ -75,14 +75,17 @@ export const DataProcessingService = {
    * @returns An object where keys are unique values of the given key and values are grouped arrays.
    */
   aggregateByKey<T>(data: T[], key: keyof T): Record<string, T[]> {
-    return data.reduce((acc, item) => {
-      const groupKey = String(item[key]);
-      if (!acc[groupKey]) {
-        acc[groupKey] = [];
-      }
-      acc[groupKey].push(item);
-      return acc;
-    }, {} as Record<string, T[]>);
+    return data.reduce(
+      (acc, item) => {
+        const groupKey = String(item[key])
+        if (!acc[groupKey]) {
+          acc[groupKey] = []
+        }
+        acc[groupKey].push(item)
+        return acc
+      },
+      {} as Record<string, T[]>,
+    )
   },
 
   /**
@@ -95,14 +98,16 @@ export const DataProcessingService = {
     data: T[],
     numericKey: keyof T,
   ): { sum: number; average: number; min: number; max: number } {
-    const values = data.map((item) => Number(item[numericKey])).filter((v) => !isNaN(v));
-    const sum = values.reduce((acc, val) => acc + val, 0);
-    const average = sum / values.length || 0;
-    const min = Math.min(...values);
-    const max = Math.max(...values);
+    const values = data
+      .map((item) => Number(item[numericKey]))
+      .filter((v) => !Number.isNaN(v))
+    const sum = values.reduce((acc, val) => acc + val, 0)
+    const average = sum / values.length || 0
+    const min = Math.min(...values)
+    const max = Math.max(...values)
 
-    logger.info(`Statistics calculated for key "${String(numericKey)}".`);
-    return { sum, average, min, max };
+    logger.info(`Statistics calculated for key "${String(numericKey)}".`)
+    return { sum, average, min, max }
   },
 
   /**
@@ -117,15 +122,29 @@ export const DataProcessingService = {
     parentKey = "",
     separator = ".",
   ): Record<string, unknown> {
-    return Object.keys(obj).reduce((acc, key) => {
-      const newKey = parentKey ? `${parentKey}${separator}${key}` : key;
-      if (typeof obj[key] === "object" && obj[key] !== null && !Array.isArray(obj[key])) {
-        Object.assign(acc, this.flattenObject(obj[key] as Record<string, unknown>, newKey, separator));
-      } else {
-        acc[newKey] = obj[key];
-      }
-      return acc;
-    }, {} as Record<string, unknown>);
+    return Object.keys(obj).reduce(
+      (acc, key) => {
+        const newKey = parentKey ? `${parentKey}${separator}${key}` : key
+        if (
+          typeof obj[key] === "object" &&
+          obj[key] !== null &&
+          !Array.isArray(obj[key])
+        ) {
+          Object.assign(
+            acc,
+            this.flattenObject(
+              obj[key] as Record<string, unknown>,
+              newKey,
+              separator,
+            ),
+          )
+        } else {
+          acc[newKey] = obj[key]
+        }
+        return acc
+      },
+      {} as Record<string, unknown>,
+    )
   },
 
   /**
@@ -137,15 +156,13 @@ export const DataProcessingService = {
    */
   sortByKey<T>(data: T[], key: keyof T, order: "asc" | "desc" = "asc"): T[] {
     return data.sort((a, b) => {
-      const aValue = a[key];
-      const bValue = b[key];
-      if (aValue < bValue) 
-return order === "asc" ? -1 : 1;
-      if (aValue > bValue) 
-return order === "asc" ? 1 : -1;
-      return 0;
-    });
+      const aValue = a[key]
+      const bValue = b[key]
+      if (aValue < bValue) return order === "asc" ? -1 : 1
+      if (aValue > bValue) return order === "asc" ? 1 : -1
+      return 0
+    })
   },
-};
+}
 
-export default DataProcessingService;
+export default DataProcessingService

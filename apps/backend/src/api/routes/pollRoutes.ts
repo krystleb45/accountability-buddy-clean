@@ -1,20 +1,20 @@
 // src/api/routes/pollRoutes.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Router } from "express";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import { check, param } from "express-validator"
 
 import {
   createPoll,
   getPollResults,
   getPollsByGroup,
   voteOnPoll,
-} from "../controllers/PollController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import catchAsync from "../utils/catchAsync";
+} from "../controllers/PollController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
 /**
  * POST /api/polls/groups/:groupId/polls/create
@@ -27,13 +27,17 @@ router.post(
     param("groupId", "Invalid group ID").isMongoId(),
     check("question", "Poll question is required").notEmpty(),
     check("options", "Poll options are required").isArray({ min: 1 }),
-    check("expirationDate", "Expiration date is required").notEmpty().isISO8601(),
+    check("expirationDate", "Expiration date is required")
+      .notEmpty()
+      .isISO8601(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await createPoll(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await createPoll(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/polls/groups/:groupId/polls
@@ -44,10 +48,12 @@ router.get(
   protect,
   param("groupId", "Invalid group ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await getPollsByGroup(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await getPollsByGroup(req, res, next)
+    },
+  ),
+)
 
 /**
  * POST /api/polls/vote
@@ -61,10 +67,12 @@ router.post(
     check("optionId", "Option ID is required").notEmpty().isMongoId(),
   ],
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await voteOnPoll(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await voteOnPoll(req, res, next)
+    },
+  ),
+)
 
 /**
  * GET /api/polls/polls/:pollId/results
@@ -75,9 +83,11 @@ router.get(
   protect,
   param("pollId", "Invalid poll ID").isMongoId(),
   handleValidationErrors,
-  catchAsync(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await getPollResults(req, res, next);
-  })
-);
+  catchAsync(
+    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await getPollResults(req, res, next)
+    },
+  ),
+)
 
-export default router;
+export default router

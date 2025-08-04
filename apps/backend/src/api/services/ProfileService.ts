@@ -1,15 +1,14 @@
 // src/api/services/ProfileService.ts
-import { createError } from "../middleware/errorHandler";
-import { User } from "../models/User";
-
+import { createError } from "../middleware/errorHandler"
+import { User } from "../models/User"
 
 export interface PublicProfile {
-  username:     string;
-  email:        string;
-  bio?:         string;
-  interests?:   string[];
-  profileImage?:string;
-  coverImage?:  string;
+  username: string
+  email: string
+  bio?: string
+  interests?: string[]
+  profileImage?: string
+  coverImage?: string
 }
 
 class ProfileService {
@@ -17,17 +16,15 @@ class ProfileService {
    * Fetch public profile fields for a given user.
    */
   static async getProfile(userId: string): Promise<PublicProfile> {
-    if (!userId) 
-throw createError("Unauthorized", 401);
+    if (!userId) throw createError("Unauthorized", 401)
 
     const user = await User.findById(userId)
       .select("username email bio interests profileImage coverImage")
       .lean<PublicProfile>()
-      .exec();
+      .exec()
 
-    if (!user) 
-throw createError("User not found", 404);
-    return user;
+    if (!user) throw createError("User not found", 404)
+    return user
   }
 
   /**
@@ -35,13 +32,12 @@ throw createError("User not found", 404);
    */
   static async updateProfile(
     userId: string,
-    updates: Partial<PublicProfile>
+    updates: Partial<PublicProfile>,
   ): Promise<PublicProfile> {
-    if (!userId) 
-throw createError("Unauthorized", 401);
+    if (!userId) throw createError("Unauthorized", 401)
 
     if (Object.keys(updates).length === 0) {
-      throw createError("No updatable fields provided", 400);
+      throw createError("No updatable fields provided", 400)
     }
 
     const updated = await User.findByIdAndUpdate(userId, updates, {
@@ -50,11 +46,10 @@ throw createError("Unauthorized", 401);
     })
       .select("username email bio interests profileImage coverImage")
       .lean<PublicProfile>()
-      .exec();
+      .exec()
 
-    if (!updated) 
-throw createError("User not found", 404);
-    return updated;
+    if (!updated) throw createError("User not found", 404)
+    return updated
   }
 
   /**
@@ -62,51 +57,45 @@ throw createError("User not found", 404);
    */
   static async uploadProfileImage(
     userId: string,
-    file: Express.Multer.File   // <— no need to import anything
+    file: Express.Multer.File, // <— no need to import anything
   ): Promise<PublicProfile> {
-    if (!userId) 
-throw createError("Unauthorized", 401);
-    if (!file) 
-throw createError("No file provided", 400);
+    if (!userId) throw createError("Unauthorized", 401)
+    if (!file) throw createError("No file provided", 400)
 
-    const imageUrl = `/uploads/avatars/${file.filename}`;
+    const imageUrl = `/uploads/avatars/${file.filename}`
     const updated = await User.findByIdAndUpdate(
       userId,
       { profileImage: imageUrl },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     )
       .select("username email bio interests profileImage coverImage")
       .lean<PublicProfile>()
-      .exec();
+      .exec()
 
-    if (!updated) 
-throw createError("User not found", 404);
-    return updated;
+    if (!updated) throw createError("User not found", 404)
+    return updated
   }
 
   static async uploadCoverImage(
     userId: string,
-    file: Express.Multer.File
+    file: Express.Multer.File,
   ): Promise<PublicProfile> {
-    if (!userId) 
-throw createError("Unauthorized", 401);
-    if (!file) 
-throw createError("No file provided", 400);
+    if (!userId) throw createError("Unauthorized", 401)
+    if (!file) throw createError("No file provided", 400)
 
-    const coverUrl = `/uploads/covers/${file.filename}`;
+    const coverUrl = `/uploads/covers/${file.filename}`
     const updated = await User.findByIdAndUpdate(
       userId,
       { coverImage: coverUrl },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     )
       .select("username email bio interests profileImage coverImage")
       .lean<PublicProfile>()
-      .exec();
+      .exec()
 
-    if (!updated) 
-throw createError("User not found", 404);
-    return updated;
+    if (!updated) throw createError("User not found", 404)
+    return updated
   }
 }
 
-export default ProfileService;
+export default ProfileService

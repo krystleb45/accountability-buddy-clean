@@ -1,59 +1,63 @@
 // src/api/models/Event.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Types & Interfaces ---
-export type ParticipantStatus = "invited" | "accepted" | "declined" | "interested";
+export type ParticipantStatus =
+  | "invited"
+  | "accepted"
+  | "declined"
+  | "interested"
 
 export interface IEventParticipant {
-  user: Types.ObjectId;
-  joinedAt: Date;
-  status: ParticipantStatus;
+  user: Types.ObjectId
+  joinedAt: Date
+  status: ParticipantStatus
 }
 
 export interface IEventReminder {
-  message: string;
-  scheduledTime: Date;
-  sent: boolean;
+  message: string
+  scheduledTime: Date
+  sent: boolean
 }
 
 export interface IEvent extends Document {
-  title: string;
-  description?: string;
-  location?: string;
-  startDate: Date;
-  endDate: Date;
-  createdBy: Types.ObjectId;
-  participants: Types.DocumentArray<IEventParticipant>;
-  progress: number;
-  recurrence: "none" | "daily" | "weekly" | "monthly" | "yearly";
-  status: "upcoming" | "ongoing" | "completed" | "canceled";
-  isPublic: boolean;
-  reminders: Types.DocumentArray<IEventReminder>;
-  createdAt: Date;
-  updatedAt: Date;
+  title: string
+  description?: string
+  location?: string
+  startDate: Date
+  endDate: Date
+  createdBy: Types.ObjectId
+  participants: Types.DocumentArray<IEventParticipant>
+  progress: number
+  recurrence: "none" | "daily" | "weekly" | "monthly" | "yearly"
+  status: "upcoming" | "ongoing" | "completed" | "canceled"
+  isPublic: boolean
+  reminders: Types.DocumentArray<IEventReminder>
+  createdAt: Date
+  updatedAt: Date
 
   // Virtuals
-  participantCount: number;
-  activeReminderCount: number;
+  participantCount: number
+  activeReminderCount: number
 
   // Instance methods
-  addReminder: (message: string, scheduledTime: Date) => Promise<IEvent>;
-  getActiveReminders: () => IEventReminder[];
+  addReminder: (message: string, scheduledTime: Date) => Promise<IEvent>
+  getActiveReminders: () => IEventReminder[]
 }
 
 export interface IEventModel extends Model<IEvent> {
   addParticipant: (
     eventId: Types.ObjectId,
     userId: Types.ObjectId,
-    status?: ParticipantStatus
-  ) => Promise<IEvent>;
+    status?: ParticipantStatus,
+  ) => Promise<IEvent>
   removeParticipant: (
     eventId: Types.ObjectId,
-    userId: Types.ObjectId
-  ) => Promise<IEvent>;
+    userId: Types.ObjectId,
+  ) => Promise<IEvent>
 }
 
 // --- Sub‑Schemas ---
@@ -67,8 +71,8 @@ const ParticipantSchema = new Schema<IEventParticipant>(
       default: "invited",
     },
   },
-  { _id: false }
-);
+  { _id: false },
+)
 
 const ReminderSchema = new Schema<IEventReminder>(
   {
@@ -76,8 +80,8 @@ const ReminderSchema = new Schema<IEventReminder>(
     scheduledTime: { type: Date, required: true },
     sent: { type: Boolean, default: false },
   },
-  { _id: false }
-);
+  { _id: false },
+)
 
 // --- Main Schema ---
 const EventSchema = new Schema<IEvent, IEventModel>(
@@ -98,7 +102,7 @@ const EventSchema = new Schema<IEvent, IEventModel>(
       required: true,
       validate: {
         validator(this: IEvent, value: Date): boolean {
-          return value.getTime() > this.startDate.getTime();
+          return value.getTime() > this.startDate.getTime()
         },
         message: "End date must be after start date",
       },
@@ -123,86 +127,86 @@ const EventSchema = new Schema<IEvent, IEventModel>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Compound Indexes (one place for all) ---
-EventSchema.index({ title: 1 });
-EventSchema.index({ startDate: 1, endDate: 1 });
-EventSchema.index({ createdBy: 1 });
-EventSchema.index({ status: 1 });
-EventSchema.index({ isPublic: 1 });
+EventSchema.index({ title: 1 })
+EventSchema.index({ startDate: 1, endDate: 1 })
+EventSchema.index({ createdBy: 1 })
+EventSchema.index({ status: 1 })
+EventSchema.index({ isPublic: 1 })
 
 // --- Pre‑save Hook ---
 EventSchema.pre<IEvent>("save", function (next): void {
   if (this.endDate.getTime() < Date.now() && this.status === "upcoming") {
-    this.status = "completed";
+    this.status = "completed"
   }
-  next();
-});
+  next()
+})
 
 // --- Instance Methods ---
 EventSchema.methods.addReminder = async function (
   this: IEvent,
   message: string,
-  scheduledTime: Date
+  scheduledTime: Date,
 ): Promise<IEvent> {
   if (!message || !scheduledTime) {
-    throw new Error("Message and scheduledTime are required");
+    throw new Error("Message and scheduledTime are required")
   }
-  this.reminders.push({ message, scheduledTime, sent: false });
-  await this.save();
-  return this;
-};
+  this.reminders.push({ message, scheduledTime, sent: false })
+  await this.save()
+  return this
+}
 
-EventSchema.methods.getActiveReminders = function (this: IEvent): IEventReminder[] {
+EventSchema.methods.getActiveReminders = function (
+  this: IEvent,
+): IEventReminder[] {
   return this.reminders.filter(
-    (r) => !r.sent && r.scheduledTime.getTime() > Date.now()
-  );
-};
+    (r) => !r.sent && r.scheduledTime.getTime() > Date.now(),
+  )
+}
 
 // --- Static Methods ---
 EventSchema.statics.addParticipant = async function (
   eventId: Types.ObjectId,
   userId: Types.ObjectId,
-  status: ParticipantStatus = "invited"
+  status: ParticipantStatus = "invited",
 ): Promise<IEvent> {
-  const event = await this.findById(eventId);
-  if (!event) 
-throw new Error("Event not found");
+  const event = await this.findById(eventId)
+  if (!event) throw new Error("Event not found")
   if (event.participants.some((p) => p.user.equals(userId))) {
-    throw new Error("User already a participant");
+    throw new Error("User already a participant")
   }
-  event.participants.push({ user: userId, joinedAt: new Date(), status });
-  await event.save();
-  return event;
-};
+  event.participants.push({ user: userId, joinedAt: new Date(), status })
+  await event.save()
+  return event
+}
 
 EventSchema.statics.removeParticipant = async function (
   eventId: Types.ObjectId,
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<IEvent> {
-  const event = await this.findById(eventId);
-  if (!event) 
-throw new Error("Event not found");
+  const event = await this.findById(eventId)
+  if (!event) throw new Error("Event not found")
   event.participants = event.participants.filter(
-    (p) => !p.user.equals(userId)
-  ) as mongoose.Types.DocumentArray<IEventParticipant>;
-  await event.save();
-  return event;
-};
+    (p) => !p.user.equals(userId),
+  ) as mongoose.Types.DocumentArray<IEventParticipant>
+  await event.save()
+  return event
+}
 
 // --- Virtuals ---
 EventSchema.virtual("participantCount").get(function (this: IEvent): number {
-  return this.participants.length;
-});
+  return this.participants.length
+})
 
 EventSchema.virtual("activeReminderCount").get(function (this: IEvent): number {
   return this.reminders.filter(
-    (r) => !r.sent && r.scheduledTime.getTime() > Date.now()
-  ).length;
-});
+    (r) => !r.sent && r.scheduledTime.getTime() > Date.now(),
+  ).length
+})
 
 // --- Model Export ---
-export const Event = mongoose.model<IEvent, IEventModel>("Event", EventSchema);
-export default Event;
+export const Event = mongoose.model<IEvent, IEventModel>("Event", EventSchema)
+export default Event

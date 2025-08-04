@@ -1,4 +1,4 @@
-import { body, query } from "express-validator";
+import { body, query } from "express-validator"
 
 const validateUserAnalyticsQuery = [
   query("userId")
@@ -28,11 +28,11 @@ const validateUserAnalyticsQuery = [
         req.query.customStartDate &&
         new Date(value) < new Date(req.query.customStartDate)
       ) {
-        throw new Error("Custom end date must be after the custom start date.");
+        throw new Error("Custom end date must be after the custom start date.")
       }
-      return true;
+      return true
     }),
-];
+]
 
 const validateGoalAnalyticsQuery = [
   query("goalId")
@@ -46,7 +46,7 @@ const validateGoalAnalyticsQuery = [
     .withMessage(
       "Metric type must be one of: progress, completionRate, or timeSpent.",
     ),
-];
+]
 
 const validatePlatformAnalyticsQuery = [
   query("metricType")
@@ -78,11 +78,11 @@ const validatePlatformAnalyticsQuery = [
         req.query.customStartDate &&
         new Date(value) < new Date(req.query.customStartDate)
       ) {
-        throw new Error("Custom end date must be after the custom start date.");
+        throw new Error("Custom end date must be after the custom start date.")
       }
-      return true;
+      return true
     }),
-];
+]
 
 const validateAnalyticsReportGeneration = [
   body("reportType")
@@ -96,9 +96,9 @@ const validateAnalyticsReportGeneration = [
     .withMessage("User ID must be a valid UUID.")
     .custom((value, { req }) => {
       if (req.body.reportType === "user" && !value) {
-        throw new Error("User ID is required for user reports.");
+        throw new Error("User ID is required for user reports.")
       }
-      return true;
+      return true
     }),
   body("goalId")
     .optional()
@@ -106,9 +106,9 @@ const validateAnalyticsReportGeneration = [
     .withMessage("Goal ID must be a valid UUID.")
     .custom((value, { req }) => {
       if (req.body.reportType === "goal" && !value) {
-        throw new Error("Goal ID is required for goal reports.");
+        throw new Error("Goal ID is required for goal reports.")
       }
-      return true;
+      return true
     }),
   body("dateRange")
     .optional()
@@ -131,15 +131,15 @@ const validateAnalyticsReportGeneration = [
         req.body.customStartDate &&
         new Date(value) < new Date(req.body.customStartDate)
       ) {
-        throw new Error("Custom end date must be after the custom start date.");
+        throw new Error("Custom end date must be after the custom start date.")
       }
-      return true;
+      return true
     }),
-];
+]
 
 export default {
   validateUserAnalyticsQuery,
   validateGoalAnalyticsQuery,
   validatePlatformAnalyticsQuery,
   validateAnalyticsReportGeneration,
-};
+}

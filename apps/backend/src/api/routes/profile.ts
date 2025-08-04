@@ -1,56 +1,56 @@
 // src/api/routes/profile.ts
-import { Router }    from "express";
-import { check }     from "express-validator";
-import multer        from "multer";
+import { Router } from "express"
+import { check } from "express-validator"
+import multer from "multer"
 
 import {
   getProfile,
   updateProfile,
   uploadCoverImage,
   uploadProfileImage,
-} from "../controllers/ProfileController";
-import { protect }   from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+} from "../controllers/ProfileController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // multer configs:
 //  - avatars into uploads/avatars
 //  - covers  into uploads/covers
-const avatarUpload = multer({ dest: "uploads/avatars" });
-const coverUpload  = multer({ dest: "uploads/covers" });
+const avatarUpload = multer({ dest: "uploads/avatars" })
+const coverUpload = multer({ dest: "uploads/covers" })
 
-router.get("/", protect, getProfile);
+router.get("/", protect, getProfile)
 router.put(
   "/",
   protect,
   [
     check("username").optional().isString(),
-    check("email")   .optional().isEmail(),
-    check("bio")     .optional().isString(),
+    check("email").optional().isEmail(),
+    check("bio").optional().isString(),
     check("interests").optional().isArray(),
     handleValidationErrors,
   ],
-  updateProfile
-);
+  updateProfile,
+)
 
 // alias
-router.put("/update", protect, updateProfile);
+router.put("/update", protect, updateProfile)
 
 // AVATAR → writes into uploads/avatars/<randomFilename>
 router.put(
   "/image",
   protect,
   avatarUpload.single("profileImage"),
-  uploadProfileImage
-);
+  uploadProfileImage,
+)
 
 // COVER → writes into uploads/covers/<randomFilename>
 router.put(
   "/cover",
   protect,
   coverUpload.single("coverImage"),
-  uploadCoverImage
-);
+  uploadCoverImage,
+)
 
-export default router;
+export default router

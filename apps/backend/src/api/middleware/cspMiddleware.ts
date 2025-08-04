@@ -1,4 +1,4 @@
-import helmet from "helmet";
+import helmet from "helmet"
 
 /**
  * Middleware to configure Content Security Policy (CSP) headers.
@@ -9,7 +9,9 @@ const cspMiddleware = helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
     scriptSrc: [
       "'self'",
-      process.env.NODE_ENV === "development" ? "'unsafe-inline'" : "'nonce-random'",
+      process.env.NODE_ENV === "development"
+        ? "'unsafe-inline'"
+        : "'nonce-random'",
     ],
     styleSrc: ["'self'", "'unsafe-inline'"],
     imgSrc: ["'self'", "data:"],
@@ -18,6 +20,6 @@ const cspMiddleware = helmet.contentSecurityPolicy({
     objectSrc: ["'none'"],
     upgradeInsecureRequests: [],
   },
-});
+})
 
-export default cspMiddleware;
+export default cspMiddleware

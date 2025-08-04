@@ -1,7 +1,7 @@
 // src/api/routes/activity.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, param } from "express-validator"
 
 import {
   createActivity,
@@ -12,28 +12,27 @@ import {
   leaveActivity,
   logActivity,
   updateActivity,
-} from "../controllers/ActivityController";
-import { protect } from "../middleware/authMiddleware";
-import validationMiddleware from "../middleware/validationMiddleware";
+} from "../controllers/ActivityController"
+import { protect } from "../middleware/authMiddleware"
+import validationMiddleware from "../middleware/validationMiddleware"
 
-const router = Router();
+const router = Router()
 
 // Throttle mutating endpoints
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { success: false, message: "Too many requests. Please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  },
+})
 
 /**
  * GET /api/activity
  * List user’s activities (paginated via ?page & ?limit)
  */
-router.get(
-  "/",
-  protect,
-  getUserActivities
-);
+router.get("/", protect, getUserActivities)
 
 /**
  * GET /api/activity/:activityId
@@ -45,8 +44,8 @@ router.get(
   validationMiddleware([
     param("activityId", "Invalid activity ID").isMongoId(),
   ]),
-  getActivityById
-);
+  getActivityById,
+)
 
 /**
  * POST /api/activity
@@ -60,8 +59,8 @@ router.post(
     check("title", "Title is required").notEmpty(),
     check("description").optional().isString(),
   ]),
-  createActivity
-);
+  createActivity,
+)
 
 /**
  * PUT /api/activity/:activityId
@@ -76,8 +75,8 @@ router.put(
     check("title").optional().isString(),
     check("description").optional().isString(),
   ]),
-  updateActivity
-);
+  updateActivity,
+)
 
 /**
  * DELETE /api/activity/:activityId
@@ -89,8 +88,8 @@ router.delete(
   validationMiddleware([
     param("activityId", "Invalid activity ID").isMongoId(),
   ]),
-  deleteActivity
-);
+  deleteActivity,
+)
 
 /**
  * POST /api/activity/:activityId/join
@@ -102,8 +101,8 @@ router.post(
   validationMiddleware([
     param("activityId", "Invalid activity ID").isMongoId(),
   ]),
-  joinActivity
-);
+  joinActivity,
+)
 
 /**
  * POST /api/activity/:activityId/leave
@@ -115,8 +114,8 @@ router.post(
   validationMiddleware([
     param("activityId", "Invalid activity ID").isMongoId(),
   ]),
-  leaveActivity
-);
+  leaveActivity,
+)
 
 /**
  * POST /api/activity/log
@@ -131,7 +130,7 @@ router.post(
     check("description").optional().isString(),
     check("metadata").optional().isObject(),
   ]),
-  logActivity
-);
+  logActivity,
+)
 
-export default router;
+export default router

@@ -1,16 +1,16 @@
 // src/api/routes/faq.ts
-import { Router } from "express";
+import { Router } from "express"
 
-import * as faqController from "../controllers/faqController";
-import { protect } from "../middleware/authJwt";
-import catchAsync from "../utils/catchAsync";
+import * as faqController from "../controllers/faqController"
+import { protect } from "../middleware/authJwt"
+import catchAsync from "../utils/catchAsync"
 
-const router = Router();
+const router = Router()
 
-router.get("/", catchAsync(faqController.getAllFaqs));
-router.get("/:id", catchAsync(faqController.getFaqById));
-router.post("/", protect, catchAsync(faqController.createFaq));
-router.put("/:id", protect, catchAsync(faqController.updateFaq));
-router.delete("/:id", protect, catchAsync(faqController.deleteFaq));
+router.get("/", catchAsync(faqController.getAllFaqs))
+router.get("/:id", catchAsync(faqController.getFaqById))
+router.post("/", protect, catchAsync(faqController.createFaq))
+router.put("/:id", protect, catchAsync(faqController.updateFaq))
+router.delete("/:id", protect, catchAsync(faqController.deleteFaq))
 
-export default router;
+export default router

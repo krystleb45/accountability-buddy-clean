@@ -1,7 +1,7 @@
-import type { NextFunction, Request, Response } from "express";
-import type { ValidationChain, ValidationError } from "express-validator";
+import type { NextFunction, Request, Response } from "express"
+import type { ValidationChain, ValidationError } from "express-validator"
 
-import { check, validationResult } from "express-validator";
+import { check, validationResult } from "express-validator"
 
 /**
  * Middleware to handle validation results and send errors in a structured format.
@@ -9,22 +9,26 @@ import { check, validationResult } from "express-validator";
  * @param res - Express response object.
  * @param next - Express next function.
  */
-export function chatValidationMiddleware (req: Request,  res: Response,  next: NextFunction): void {
-  const errors = validationResult(req);
+export function chatValidationMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const errors = validationResult(req)
   if (!errors.isEmpty()) {
     const formattedErrors = errors.array().map((error: ValidationError) => ({
       field: "param" in error ? error.param : "unknown",
       message: error.msg,
-    }));
+    }))
 
     res.status(400).json({
       success: false,
       errors: formattedErrors,
-    });
-    return;
+    })
+    return
   }
 
-  next();
+  next()
 }
 
 /**
@@ -32,14 +36,14 @@ export function chatValidationMiddleware (req: Request,  res: Response,  next: N
  * @param field - The field name to validate.
  * @returns Array of validation chains for the specified field.
  */
-function mongoIdRule (field: string): ValidationChain[] {
+function mongoIdRule(field: string): ValidationChain[] {
   return [
-  check(field)
-    .notEmpty()
-    .withMessage(`${field} is required`)
-    .isMongoId()
-    .withMessage(`Invalid ${field}`),
-]
+    check(field)
+      .notEmpty()
+      .withMessage(`${field} is required`)
+      .isMongoId()
+      .withMessage(`Invalid ${field}`),
+  ]
 }
 
 /**
@@ -55,7 +59,7 @@ export const sendMessageValidation = [
     .escape(),
   ...mongoIdRule("groupId"),
   chatValidationMiddleware,
-];
+]
 
 /**
  * Validation rules for creating a group.
@@ -76,7 +80,7 @@ export const createGroupValidation = [
     .isMongoId()
     .withMessage("Each group member ID must be a valid Mongo ID"),
   chatValidationMiddleware,
-];
+]
 
 /**
  * Validation rules for joining a group.
@@ -85,4 +89,4 @@ export const joinGroupValidation = [
   ...mongoIdRule("groupId"),
   ...mongoIdRule("userId"),
   chatValidationMiddleware,
-];
+]

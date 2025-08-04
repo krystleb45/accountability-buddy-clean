@@ -1,8 +1,8 @@
 // src/api/models/Activity.ts
 
-import type { Document, Model, Types } from "mongoose";
+import type { Document, Model, Types } from "mongoose"
 
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose"
 
 // --- Types & Interfaces ---
 export type ActivityType =
@@ -17,27 +17,32 @@ export type ActivityType =
   | "friend_accept"
   | "comment"
   | "reaction"
-  | "achievement";
+  | "achievement"
 
 export interface IActivity extends Document {
-  user: Types.ObjectId;
-  type: ActivityType;
-  description?: string;
-  metadata: Record<string, any>;
-  participants: Types.ObjectId[];
-  isDeleted: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  user: Types.ObjectId
+  type: ActivityType
+  description?: string
+  metadata: Record<string, any>
+  participants: Types.ObjectId[]
+  isDeleted: boolean
+  createdAt: Date
+  updatedAt: Date
 
   // Instance methods
-  addParticipant: (userId: Types.ObjectId) => Promise<void>;
-  markDeleted: () => Promise<void>;
+  addParticipant: (userId: Types.ObjectId) => Promise<void>
+  markDeleted: () => Promise<void>
 }
 
 export interface IActivityModel extends Model<IActivity> {
-  getRecentForUser: (userId: Types.ObjectId, limit: number) => Promise<IActivity[]>;
-  getByType: (type: ActivityType) => Promise<IActivity[]>;
-  softDeleteByUser: (userId: Types.ObjectId) => Promise<{ deletedCount?: number }>;
+  getRecentForUser: (
+    userId: Types.ObjectId,
+    limit: number,
+  ) => Promise<IActivity[]>
+  getByType: (type: ActivityType) => Promise<IActivity[]>
+  softDeleteByUser: (
+    userId: Types.ObjectId,
+  ) => Promise<{ deletedCount?: number }>
 }
 
 // --- Schema Definition ---
@@ -75,58 +80,70 @@ const ActivitySchema = new Schema<IActivity>(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
-);
+  },
+)
 
 // --- Indexes ---
-ActivitySchema.index({ user: 1, createdAt: -1 });
-ActivitySchema.index({ type: 1 });
-ActivitySchema.index({ isDeleted: 1 });
+ActivitySchema.index({ user: 1, createdAt: -1 })
+ActivitySchema.index({ type: 1 })
+ActivitySchema.index({ isDeleted: 1 })
 
 // --- Pre-save Hook ---
 ActivitySchema.pre<IActivity>("save", function (next) {
   if (this.isModified("description") && this.description) {
-    this.description = this.description.trim();
+    this.description = this.description.trim()
   }
-  next();
-});
+  next()
+})
 
 // --- Instance Methods ---
-ActivitySchema.methods.addParticipant = async function (userId: Types.ObjectId): Promise<void> {
-  if (!this.participants.some((p: { equals: (arg0: Types.ObjectId) => any; }) => p.equals(userId))) {
-    this.participants.push(userId);
-    await this.save();
+ActivitySchema.methods.addParticipant = async function (
+  userId: Types.ObjectId,
+): Promise<void> {
+  if (
+    !this.participants.some((p: { equals: (arg0: Types.ObjectId) => any }) =>
+      p.equals(userId),
+    )
+  ) {
+    this.participants.push(userId)
+    await this.save()
   }
-};
+}
 
 ActivitySchema.methods.markDeleted = async function (): Promise<void> {
-  this.isDeleted = true;
-  await this.save();
-};
+  this.isDeleted = true
+  await this.save()
+}
 
 // --- Static Methods ---
 ActivitySchema.statics.getRecentForUser = function (
   userId: Types.ObjectId,
-  limit: number
+  limit: number,
 ): Promise<IActivity[]> {
   return this.find({ user: userId, isDeleted: false })
     .sort({ createdAt: -1 })
     .limit(limit)
-    .exec();
-};
+    .exec()
+}
 
-ActivitySchema.statics.getByType = function (type: ActivityType): Promise<IActivity[]> {
-  return this.find({ type, isDeleted: false })
-    .sort({ createdAt: -1 })
-    .exec();
-};
+ActivitySchema.statics.getByType = function (
+  type: ActivityType,
+): Promise<IActivity[]> {
+  return this.find({ type, isDeleted: false }).sort({ createdAt: -1 }).exec()
+}
 
 ActivitySchema.statics.softDeleteByUser = function (
-  userId: Types.ObjectId
+  userId: Types.ObjectId,
 ): Promise<{ deletedCount?: number }> {
-  return this.updateMany({ user: userId, isDeleted: false }, { $set: { isDeleted: true } }).exec();
-};
+  return this.updateMany(
+    { user: userId, isDeleted: false },
+    { $set: { isDeleted: true } },
+  ).exec()
+}
 
 // --- Model Export ---
-export const Activity = mongoose.model<IActivity, IActivityModel>("Activity", ActivitySchema);
-export default Activity;
+export const Activity = mongoose.model<IActivity, IActivityModel>(
+  "Activity",
+  ActivitySchema,
+)
+export default Activity

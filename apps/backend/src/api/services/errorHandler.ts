@@ -1,14 +1,14 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 
 /**
  * Custom Error Class to handle different types of errors in a structured way.
  * @extends Error
  */
 export class CustomError extends Error {
-  statusCode: number;
-  details?: Record<string, unknown> | Array<unknown>;
+  statusCode: number
+  details?: Record<string, unknown> | Array<unknown>
 
   /**
    * @param message - The error message
@@ -20,13 +20,13 @@ export class CustomError extends Error {
     statusCode = 500,
     details: Record<string, unknown> | Array<unknown> | null = null,
   ) {
-    super(message);
-    this.statusCode = statusCode;
-    this.details = details || undefined;
+    super(message)
+    this.statusCode = statusCode
+    this.details = details || undefined
 
     // Capture stack trace only in development for debugging
     if (process.env.NODE_ENV === "development") {
-      Error.captureStackTrace(this, this.constructor);
+      Error.captureStackTrace(this, this.constructor)
     }
   }
 }
@@ -39,32 +39,37 @@ export class CustomError extends Error {
  * @param res - Express response object
  * @param next - Express next middleware function
  */
-export function errorHandler (err: CustomError | Error,  req: Request,  res: Response,  _next: NextFunction): void {
-  const statusCode = err instanceof CustomError ? err.statusCode : 500;
+export function errorHandler(
+  err: CustomError | Error,
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+): void {
+  const statusCode = err instanceof CustomError ? err.statusCode : 500
   const errorResponse: Record<string, unknown> = {
     success: false,
     message: err.message || "Internal Server Error",
-  };
+  }
 
   // Include additional error details if available
   if (err instanceof CustomError && err.details) {
-    errorResponse.details = err.details;
+    errorResponse.details = err.details
   }
 
   // Get user ID safely with proper typing
-  const userId = req.user?.id || "Guest";
+  const userId = req.user?.id || "Guest"
 
   // Log the error with additional context
   logger.error(
     `Error: ${err.message} | Status: ${statusCode} | URL: ${req.originalUrl} | Method: ${req.method} | IP: ${req.ip} | User: ${userId}`,
-  );
+  )
 
   // Include stack trace in development environment
   if (process.env.NODE_ENV === "development") {
-    errorResponse.stack = err.stack;
+    errorResponse.stack = err.stack
   }
 
-  res.status(statusCode).json(errorResponse);
+  res.status(statusCode).json(errorResponse)
 }
 
 /**
@@ -73,10 +78,12 @@ export function errorHandler (err: CustomError | Error,  req: Request,  res: Res
  * @param fn - Async function to be wrapped
  * @returns Wrapped async function with error handling
  */
-export function asyncHandler (fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>): ((req: Request, res: Response, next: NextFunction) => void) {
+export function asyncHandler(
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
+): (req: Request, res: Response, next: NextFunction) => void {
   return (req: Request, res: Response, next: NextFunction): void => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
+    Promise.resolve(fn(req, res, next)).catch(next)
+  }
 }
 
 /**
@@ -85,11 +92,11 @@ export function asyncHandler (fn: (req: Request, res: Response, next: NextFuncti
  * @param err - Error object
  * @param req - Express request object
  */
-export function logError (err: Error, req: Request): void {
+export function logError(err: Error, req: Request): void {
   // Add additional logging logic here (e.g., send error details to a monitoring service)
   logger.error(
     `Error Logged: ${err.message} | Status: ${(err as CustomError).statusCode || 500} | URL: ${req.originalUrl}`,
-  );
+  )
 }
 
 export default {
@@ -97,4 +104,4 @@ export default {
   CustomError,
   asyncHandler,
   logError,
-};
+}

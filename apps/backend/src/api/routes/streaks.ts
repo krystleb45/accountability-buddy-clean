@@ -1,34 +1,33 @@
 // src/api/routes/streaks.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
 
 import {
   getStreakLeaderboard,
   getUserStreak,
   logDailyCheckIn,
-} from "../controllers/StreakController";
-import { protect } from "../middleware/authJwt";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+} from "../controllers/StreakController"
+import { protect } from "../middleware/authJwt"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // Throttle check-in requests to 5 per 15 minutes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  message: { success: false, message: "Too many requests. Please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  },
+})
 
 /**
  * GET /api/streaks
  * Get the user's current streak and check-in history
  */
-router.get(
-  "/",
-  protect,
-  getUserStreak
-);
+router.get("/", protect, getUserStreak)
 
 /**
  * POST /api/streaks/check-in
@@ -45,17 +44,13 @@ router.post(
       .withMessage("Date must be in ISO8601 format"),
   ],
   handleValidationErrors,
-  logDailyCheckIn
-);
+  logDailyCheckIn,
+)
 
 /**
  * GET /api/streaks/leaderboard
  * Get the streak leaderboard
  */
-router.get(
-  "/leaderboard",
-  protect,
-  getStreakLeaderboard
-);
+router.get("/leaderboard", protect, getStreakLeaderboard)
 
-export default router;
+export default router

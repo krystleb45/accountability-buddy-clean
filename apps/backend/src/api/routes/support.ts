@@ -1,30 +1,31 @@
-// src/api/routes/support.ts
-import type { Router } from "express";
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response, Router } from "express"
 
-import express from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
-import sanitize from "mongo-sanitize";
+import express from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
+import sanitize from "mongo-sanitize"
 
-import * as supportController from "../controllers/supportController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
+import * as supportController from "../controllers/supportController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 // throttle all support endpoints
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,
-  message: { success: false, message: "Too many requests; please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests; please try again later.",
+  },
+})
 
 // sanitize body helper
-function sanitizeBody (req: Request, _res: Response, next: NextFunction): void {
-  req.body = sanitize(req.body);
-  next();
+function sanitizeBody(req: Request, _res: Response, next: NextFunction): void {
+  req.body = sanitize(req.body)
+  next()
 }
 
 /**
@@ -43,8 +44,8 @@ router.post(
   ],
   handleValidationErrors,
   sanitizeBody,
-  supportController.contactSupport
-);
+  supportController.contactSupport,
+)
 
 /**
  * GET /api/support/tickets
@@ -55,8 +56,8 @@ router.get(
   protect,
   roleBasedAccessControl(["admin"]),
   limiter,
-  supportController.getSupportTickets
-);
+  supportController.getSupportTickets,
+)
 
 /**
  * GET /api/support/tickets/:ticketId
@@ -67,8 +68,8 @@ router.get(
   protect,
   roleBasedAccessControl(["admin"]),
   limiter,
-  supportController.getTicketDetails
-);
+  supportController.getTicketDetails,
+)
 
 /**
  * PUT /api/support/tickets/:ticketId
@@ -80,7 +81,7 @@ router.put(
   roleBasedAccessControl(["admin"]),
   limiter,
   sanitizeBody,
-  supportController.updateSupportTicket
-);
+  supportController.updateSupportTicket,
+)
 
-export default router;
+export default router

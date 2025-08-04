@@ -1,13 +1,13 @@
 // src/api/services/InviteService.ts
-import { Types } from "mongoose";
+import { Types } from "mongoose"
 
-import type { IInvitation } from "../models/Invitation";
+import type { IInvitation } from "../models/Invitation"
 
-import { logger } from "../../utils/winstonLogger";
-import { createError } from "../middleware/errorHandler";
-import Group from "../models/Group";
-import GroupInvitation from "../models/Invitation";
-import NotificationService from "./NotificationService";
+import { logger } from "../../utils/winstonLogger"
+import { createError } from "../middleware/errorHandler"
+import Group from "../models/Group"
+import GroupInvitation from "../models/Invitation"
+import NotificationService from "./NotificationService"
 
 export default class InviteService {
   /**
@@ -16,7 +16,7 @@ export default class InviteService {
   static async sendInvitation(
     senderId: string,
     recipientId: string,
-    groupId: string
+    groupId: string,
   ): Promise<IInvitation> {
     // Validate IDs
     if (
@@ -24,18 +24,18 @@ export default class InviteService {
       !Types.ObjectId.isValid(recipientId) ||
       !Types.ObjectId.isValid(groupId)
     ) {
-      throw createError("Invalid IDs provided", 400);
+      throw createError("Invalid IDs provided", 400)
     }
 
     // Make sure the group exists
-    const group = await Group.findById(groupId);
+    const group = await Group.findById(groupId)
     if (!group) {
-      throw createError("Group not found", 404);
+      throw createError("Group not found", 404)
     }
 
     // Prevent inviting someone who’s already in the group
     if (group.members.some((m) => m.equals(recipientId))) {
-      throw createError("User is already a member of this group", 400);
+      throw createError("User is already a member of this group", 400)
     }
 
     // Prevent duplicate pending invitations
@@ -43,9 +43,9 @@ export default class InviteService {
       groupId,
       recipient: recipientId,
       status: "pending",
-    });
+    })
     if (existing) {
-      throw createError("An invitation is already pending", 400);
+      throw createError("An invitation is already pending", 400)
     }
 
     // Create the invitation
@@ -55,19 +55,19 @@ export default class InviteService {
       recipient: recipientId,
       status: "pending",
       createdAt: new Date(),
-    });
+    })
 
     // Send an in-app notification (senderId, receiverId, message)
     await NotificationService.sendInAppNotification(
       senderId,
       recipientId,
-      `${senderId} has invited you to join the group "${group.name}".`
-    );
+      `${senderId} has invited you to join the group "${group.name}".`,
+    )
 
     logger.info(
-      `Group invitation ${invitation._id} sent by ${senderId} to ${recipientId}`
-    );
-    return invitation;
+      `Group invitation ${invitation._id} sent by ${senderId} to ${recipientId}`,
+    )
+    return invitation
   }
 
   /**
@@ -75,48 +75,48 @@ export default class InviteService {
    */
   static async acceptInvitation(
     userId: string,
-    invitationId: string
+    invitationId: string,
   ): Promise<void> {
     if (
       !Types.ObjectId.isValid(userId) ||
       !Types.ObjectId.isValid(invitationId)
     ) {
-      throw createError("Invalid IDs provided", 400);
+      throw createError("Invalid IDs provided", 400)
     }
 
-    const invitation = await GroupInvitation.findById(invitationId);
+    const invitation = await GroupInvitation.findById(invitationId)
     if (!invitation || invitation.recipient.toString() !== userId) {
-      throw createError("Invitation not found or access denied", 404);
+      throw createError("Invitation not found or access denied", 404)
     }
     if (invitation.status !== "pending") {
-      throw createError("Invitation is not pending", 400);
+      throw createError("Invitation is not pending", 400)
     }
 
     // Mark accepted
-    invitation.status = "accepted";
-    await invitation.save();
+    invitation.status = "accepted"
+    await invitation.save()
 
     // Add the user to the group
-    const group = await Group.findById(invitation.groupId);
+    const group = await Group.findById(invitation.groupId)
     if (!group) {
-      throw createError("Group not found", 404);
+      throw createError("Group not found", 404)
     }
-    group.members.push(new Types.ObjectId(userId));
-    await group.save();
+    group.members.push(new Types.ObjectId(userId))
+    await group.save()
 
     // Notify both parties
     await NotificationService.sendInAppNotification(
       userId,
       invitation.sender.toString(),
-      `${userId} accepted your invitation to join "${group.name}".`
-    );
+      `${userId} accepted your invitation to join "${group.name}".`,
+    )
     await NotificationService.sendInAppNotification(
       invitation.sender.toString(),
       userId,
-      `You have joined the group "${group.name}".`
-    );
+      `You have joined the group "${group.name}".`,
+    )
 
-    logger.info(`Invitation ${invitationId} accepted by ${userId}`);
+    logger.info(`Invitation ${invitationId} accepted by ${userId}`)
   }
 
   /**
@@ -124,34 +124,34 @@ export default class InviteService {
    */
   static async rejectInvitation(
     userId: string,
-    invitationId: string
+    invitationId: string,
   ): Promise<void> {
     if (
       !Types.ObjectId.isValid(userId) ||
       !Types.ObjectId.isValid(invitationId)
     ) {
-      throw createError("Invalid IDs provided", 400);
+      throw createError("Invalid IDs provided", 400)
     }
 
-    const invitation = await GroupInvitation.findById(invitationId);
+    const invitation = await GroupInvitation.findById(invitationId)
     if (!invitation || invitation.recipient.toString() !== userId) {
-      throw createError("Invitation not found or access denied", 404);
+      throw createError("Invitation not found or access denied", 404)
     }
     if (invitation.status !== "pending") {
-      throw createError("Invitation is not pending", 400);
+      throw createError("Invitation is not pending", 400)
     }
 
-    invitation.status = "rejected";
-    await invitation.save();
+    invitation.status = "rejected"
+    await invitation.save()
 
     // Notify the sender
     await NotificationService.sendInAppNotification(
       userId,
       invitation.sender.toString(),
-      `${userId} has rejected your invitation to join group "${invitation.groupId}".`
-    );
+      `${userId} has rejected your invitation to join group "${invitation.groupId}".`,
+    )
 
-    logger.info(`Invitation ${invitationId} rejected by ${userId}`);
+    logger.info(`Invitation ${invitationId} rejected by ${userId}`)
   }
 
   /**
@@ -159,32 +159,32 @@ export default class InviteService {
    */
   static async cancelInvitation(
     senderId: string,
-    invitationId: string
+    invitationId: string,
   ): Promise<void> {
     if (
       !Types.ObjectId.isValid(senderId) ||
       !Types.ObjectId.isValid(invitationId)
     ) {
-      throw createError("Invalid IDs provided", 400);
+      throw createError("Invalid IDs provided", 400)
     }
 
-    const invitation = await GroupInvitation.findById(invitationId);
+    const invitation = await GroupInvitation.findById(invitationId)
     if (!invitation || invitation.sender.toString() !== senderId) {
-      throw createError("Invitation not found or access denied", 404);
+      throw createError("Invitation not found or access denied", 404)
     }
     if (invitation.status !== "pending") {
-      throw createError("Cannot cancel a non-pending invitation", 400);
+      throw createError("Cannot cancel a non-pending invitation", 400)
     }
 
-    await invitation.deleteOne();
+    await invitation.deleteOne()
 
     // Notify the recipient
     await NotificationService.sendInAppNotification(
       senderId,
       invitation.recipient.toString(),
-      `Your invitation to join group "${invitation.groupId}" has been canceled.`
-    );
+      `Your invitation to join group "${invitation.groupId}" has been canceled.`,
+    )
 
-    logger.info(`Invitation ${invitationId} canceled by ${senderId}`);
+    logger.info(`Invitation ${invitationId} canceled by ${senderId}`)
   }
 }

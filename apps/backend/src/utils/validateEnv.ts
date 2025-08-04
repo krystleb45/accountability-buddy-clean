@@ -1,5 +1,5 @@
 // src/utils/validateEnv.ts
-import { logger } from "./winstonLogger";
+import { logger } from "./winstonLogger"
 
 const requiredEnvVars: string[] = [
   "MONGO_URI",
@@ -10,23 +10,25 @@ const requiredEnvVars: string[] = [
   "STRIPE_WEBHOOK_SECRET",
   "ALLOWED_ORIGINS",
   "SESSION_SECRET",
-];
+]
 
-const optionalButRecommended: string[] = ["EMAIL_USER", "EMAIL_CLIENT_ID"];
+const optionalButRecommended: string[] = ["EMAIL_USER", "EMAIL_CLIENT_ID"]
 
 export function validateEnv(): void {
-  const missing = requiredEnvVars.filter((key) => !process.env[key]);
+  const missing = requiredEnvVars.filter((key) => !process.env[key])
 
   if (missing.length > 0) {
-    logger.error(`❌ Missing required environment variables:\n${missing.join("\n")}`);
-    process.exit(1);
+    logger.error(
+      `❌ Missing required environment variables:\n${missing.join("\n")}`,
+    )
+    process.exit(1)
   }
 
   optionalButRecommended.forEach((key) => {
     if (!process.env[key]) {
-      logger.warn(`⚠️ Recommended env var not set: ${key}`);
+      logger.warn(`⚠️ Recommended env var not set: ${key}`)
     }
-  });
+  })
 
-  logger.debug("✅ All required environment variables are present.");
+  logger.debug("✅ All required environment variables are present.")
 }

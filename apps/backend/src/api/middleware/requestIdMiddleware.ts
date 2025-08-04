@@ -1,30 +1,36 @@
-import type { NextFunction, Request, Response } from "express-serve-static-core";
+import type { NextFunction, Request, Response } from "express-serve-static-core"
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"
 
-import { logger } from "../../utils/winstonLogger";
+import { logger } from "../../utils/winstonLogger"
 // Extend the Express Request interface to include the custom property
 declare module "express-serve-static-core" {
   interface Request {
-    requestId?: string; // Declare requestId as an optional string
+    requestId?: string // Declare requestId as an optional string
   }
 }
 
 /**
  * Middleware to generate a unique request ID and set it in request and response
  */
-function requestIdMiddleware (req: Request, res: Response, next: NextFunction): void {
+function requestIdMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   try {
-    const requestId = uuidv4();
-    req.requestId = requestId; // Set requestId in the request object
-    res.setHeader("X-Request-ID", requestId); // Set requestId in the response headers
+    const requestId = uuidv4()
+    req.requestId = requestId // Set requestId in the request object
+    res.setHeader("X-Request-ID", requestId) // Set requestId in the response headers
 
-    logger.info(`[REQUEST-ID] Generated requestId: ${requestId}`); // Log the requestId for traceability
+    logger.info(`[REQUEST-ID] Generated requestId: ${requestId}`) // Log the requestId for traceability
   } catch (error) {
-    logger.error(`[REQUEST-ID] Failed to generate requestId: ${(error as Error).message}`);
+    logger.error(
+      `[REQUEST-ID] Failed to generate requestId: ${(error as Error).message}`,
+    )
   }
 
-  next();
+  next()
 }
 
-export default requestIdMiddleware;
+export default requestIdMiddleware

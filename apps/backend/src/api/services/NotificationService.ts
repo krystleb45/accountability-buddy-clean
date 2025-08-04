@@ -1,34 +1,34 @@
 // src/api/services/NotificationService.ts
-import { Types } from "mongoose";
+import { Types } from "mongoose"
 
-import type { INotification } from "../models/Notification";
+import type { INotification } from "../models/Notification"
 
-import { createError } from "../middleware/errorHandler";
-import Notification from "../models/Notification";
+import { createError } from "../middleware/errorHandler"
+import Notification from "../models/Notification"
 
 interface SendArgs {
-  senderId: string;
-  receiverId: string;
-  message: string;
-  type?: string;
-  link?: string;
+  senderId: string
+  receiverId: string
+  message: string
+  type?: string
+  link?: string
 }
 
 interface ListResult {
-  notifications: INotification[];
-  total: number;
+  notifications: INotification[]
+  total: number
 }
 interface ListOpts {
-  page: number;
-  limit: number;
+  page: number
+  limit: number
 }
 
 class NotificationService {
   /** internal helper */
   private static async sendInApp(args: SendArgs): Promise<INotification> {
-    const { senderId, receiverId, message, type = "info", link } = args;
+    const { senderId, receiverId, message, type = "info", link } = args
     if (!Types.ObjectId.isValid(receiverId)) {
-      throw createError("Invalid receiverId", 400);
+      throw createError("Invalid receiverId", 400)
     }
     return Notification.create({
       sender: senderId,
@@ -38,7 +38,7 @@ class NotificationService {
       link,
       read: false,
       createdAt: new Date(),
-    });
+    })
   }
 
   /**
@@ -49,20 +49,20 @@ class NotificationService {
     receiverId: string,
     message: string,
     type: string = "info",
-    link?: string
+    link?: string,
   ): Promise<INotification> {
-    return this.sendInApp({ senderId, receiverId, message, type, link });
+    return this.sendInApp({ senderId, receiverId, message, type, link })
   }
 
   /** list and paginate a user’s notifications */
   static async listForUser(
     userId: string,
-    opts: ListOpts
+    opts: ListOpts,
   ): Promise<ListResult> {
     if (!Types.ObjectId.isValid(userId)) {
-      throw createError("Invalid user ID", 400);
+      throw createError("Invalid user ID", 400)
     }
-    const skip = (opts.page - 1) * opts.limit;
+    const skip = (opts.page - 1) * opts.limit
     const [notifications, total] = await Promise.all([
       Notification.find({ user: userId })
         .sort({ createdAt: -1 })
@@ -71,39 +71,39 @@ class NotificationService {
         .lean()
         .exec(),
       Notification.countDocuments({ user: userId }),
-    ]);
-    return { notifications, total };
+    ])
+    return { notifications, total }
   }
 
   /** mark a set of notifications read for a user */
   static async markRead(userId: string, ids: string[]): Promise<number> {
     if (!Types.ObjectId.isValid(userId)) {
-      throw createError("Invalid user ID", 400);
+      throw createError("Invalid user ID", 400)
     }
     const objectIds = ids
       .filter(Types.ObjectId.isValid)
-      .map((id) => new Types.ObjectId(id));
+      .map((id) => new Types.ObjectId(id))
     const res = await Notification.updateMany(
       { user: userId, _id: { $in: objectIds }, read: false },
-      { read: true }
-    );
-    return res.modifiedCount;
+      { read: true },
+    )
+    return res.modifiedCount
   }
 
   /** delete a single notification if it belongs to the user */
   static async remove(userId: string, notifId: string): Promise<void> {
     if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(notifId)) {
-      throw createError("Invalid ID", 400);
+      throw createError("Invalid ID", 400)
     }
     const existing = await Notification.findOne({
       _id: notifId,
       user: userId,
-    });
+    })
     if (!existing) {
-      throw createError("Notification not found or access denied", 404);
+      throw createError("Notification not found or access denied", 404)
     }
-    await existing.deleteOne();
+    await existing.deleteOne()
   }
 }
 
-export default NotificationService;
+export default NotificationService

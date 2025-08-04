@@ -1,6 +1,6 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import compression from "compression";
+import compression from "compression"
 
 /**
  * Middleware for request compression using gzip and Brotli.
@@ -11,11 +11,11 @@ import compression from "compression";
 const compressionMiddleware: (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => void = compression({
   // Filter responses to compress based on Content-Type
   filter: (req: Request, _res: Response): boolean => {
-    const contentType = req.headers["content-type"] || "";
+    const contentType = req.headers["content-type"] || ""
 
     // Compress text, JSON, CSS, JavaScript, and HTML content
     const compressibleTypes = [
@@ -24,11 +24,11 @@ const compressionMiddleware: (
       "application/javascript",
       "text/css",
       "text/html",
-    ];
+    ]
 
     return compressibleTypes.some((type) =>
       contentType.toLowerCase().includes(type),
-    );
+    )
   },
 
   // Compress responses larger than 1 KB
@@ -36,7 +36,7 @@ const compressionMiddleware: (
 
   // Use Brotli compression if supported, otherwise fallback to Gzip
   brotli: {}, // Brotli support can be toggled here
-  gzip: true,   // Ensure gzip is always enabled as a fallback
-});
+  gzip: true, // Ensure gzip is always enabled as a fallback
+})
 
-export default compressionMiddleware;
+export default compressionMiddleware

@@ -1,27 +1,26 @@
 // src/api/routes/milestone.ts
-import { Router } from "express";
-import rateLimit from "express-rate-limit";
-import { check, param } from "express-validator";
+import { Router } from "express"
+import rateLimit from "express-rate-limit"
+import { check, param } from "express-validator"
 
-import * as milestoneController from "../controllers/MilestoneController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
+import * as milestoneController from "../controllers/MilestoneController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
 
-const router = Router();
+const router = Router()
 
 // ─── Rate limiter ────────────────────────────────────────────────────────────
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: { success: false, message: "Too many requests. Please try again later." },
-});
+  message: {
+    success: false,
+    message: "Too many requests. Please try again later.",
+  },
+})
 
 // ─── GET all milestones ──────────────────────────────────────────────────────
-router.get(
-  "/",
-  protect,
-  milestoneController.getUserMilestones
-);
+router.get("/", protect, milestoneController.getUserMilestones)
 
 // ─── POST create a milestone ─────────────────────────────────────────────────
 router.post(
@@ -36,8 +35,8 @@ router.post(
     check("dueDate", "Invalid date format").optional().isISO8601(),
   ],
   handleValidationErrors,
-  milestoneController.addMilestone
-);
+  milestoneController.addMilestone,
+)
 
 // ─── PUT update a milestone ─────────────────────────────────────────────────
 router.put(
@@ -52,19 +51,17 @@ router.put(
     check("dueDate").optional().isISO8601(),
   ],
   handleValidationErrors,
-  milestoneController.updateMilestone
-);
+  milestoneController.updateMilestone,
+)
 
 // ─── DELETE a milestone ─────────────────────────────────────────────────────
 router.delete(
   "/:milestoneId",
   protect,
   limiter,
-  [
-    param("milestoneId", "Invalid milestone ID").isMongoId(),
-  ],
+  [param("milestoneId", "Invalid milestone ID").isMongoId()],
   handleValidationErrors,
-  milestoneController.deleteMilestone
-);
+  milestoneController.deleteMilestone,
+)
 
-export default router;
+export default router

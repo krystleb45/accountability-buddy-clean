@@ -1,37 +1,37 @@
 // src/scripts/cleanupUsers.ts
 
-import dotenv from "dotenv";
-import mongoose from "mongoose";
+import dotenv from "dotenv"
+import mongoose from "mongoose"
 
-import { User } from "../api/models/User";
-import { loadEnvironment } from "../utils/loadEnv";
-import { logger } from "../utils/winstonLogger";
+import { User } from "../api/models/User"
+import { loadEnvironment } from "../utils/loadEnv"
+import { logger } from "../utils/winstonLogger"
 
 // Load .env and any additional env logic
-loadEnvironment();
-dotenv.config();
+loadEnvironment()
+dotenv.config()
 
 /**
  * Deletes all User documents from the database.
  */
 async function main(): Promise<void> {
-  const mongoUri = process.env.MONGO_URI;
+  const mongoUri = process.env.MONGO_URI
   if (!mongoUri) {
-    logger.error("MONGO_URI must be defined in environment variables.");
-    process.exit(1);
+    logger.error("MONGO_URI must be defined in environment variables.")
+    process.exit(1)
   }
 
   try {
-    await mongoose.connect(mongoUri);
-    const result = await User.deleteMany({});
-    logger.info(`✅ Deleted ${result.deletedCount} users.`);
+    await mongoose.connect(mongoUri)
+    const result = await User.deleteMany({})
+    logger.info(`✅ Deleted ${result.deletedCount} users.`)
   } catch (err) {
-    logger.error(`❌ Error cleaning up users: ${(err as Error).message}`);
+    logger.error(`❌ Error cleaning up users: ${(err as Error).message}`)
   } finally {
-    await mongoose.disconnect();
-    logger.info("🔌 MongoDB disconnected.");
+    await mongoose.disconnect()
+    logger.info("🔌 MongoDB disconnected.")
   }
 }
 
 // Invoke the script
-void main();
+void main()

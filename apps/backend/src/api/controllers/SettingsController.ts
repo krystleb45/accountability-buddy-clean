@@ -1,36 +1,42 @@
 // src/api/controllers/SettingsController.ts
-import type { Request, Response } from "express";
+import type { Request, Response } from "express"
 
-import sanitize from "mongo-sanitize";
+import sanitize from "mongo-sanitize"
 
-import SettingsService from "../services/SettingsService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import SettingsService from "../services/SettingsService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 export const getUserSettings = catchAsync(
   async (req: Request, res: Response) => {
-    const user = await SettingsService.getSettings(req.user!.id);
+    const user = await SettingsService.getSettings(req.user!.id)
     sendResponse(res, 200, true, "User settings fetched successfully", {
       settings: user.settings,
-    });
-  }
-);
+    })
+  },
+)
 
 export const updateUserSettings = catchAsync(
   async (req: Request, res: Response) => {
-    const safeUpdates = sanitize(req.body);
-    const user = await SettingsService.updateSettings(req.user!.id, safeUpdates);
-    sendResponse(res, 200, true, "Account settings updated successfully", { user });
-  }
-);
+    const safeUpdates = sanitize(req.body)
+    const user = await SettingsService.updateSettings(req.user!.id, safeUpdates)
+    sendResponse(res, 200, true, "Account settings updated successfully", {
+      user,
+    })
+  },
+)
 
 export const updateUserPassword = catchAsync(
   async (req: Request, res: Response) => {
-    const { currentPassword, newPassword } = req.body;
-    await SettingsService.updatePassword(req.user!.id, currentPassword, newPassword);
-    sendResponse(res, 200, true, "Password updated successfully");
-  }
-);
+    const { currentPassword, newPassword } = req.body
+    await SettingsService.updatePassword(
+      req.user!.id,
+      currentPassword,
+      newPassword,
+    )
+    sendResponse(res, 200, true, "Password updated successfully")
+  },
+)
 
 export const updateNotificationPreferences = catchAsync(
   async (req: Request, res: Response) => {
@@ -38,22 +44,22 @@ export const updateNotificationPreferences = catchAsync(
       email: req.body.emailNotifications,
       sms: req.body.smsNotifications,
       push: req.body.pushNotifications,
-    });
-    sendResponse(res, 200, true, "Notification preferences updated", { notifications: prefs });
-  }
-);
+    })
+    sendResponse(res, 200, true, "Notification preferences updated", {
+      notifications: prefs,
+    })
+  },
+)
 
-export const updateEmail = catchAsync(
-  async (req: Request, res: Response) => {
-    const newEmail = sanitize(req.body.newEmail);
-    const email = await SettingsService.updateEmail(req.user!.id, newEmail);
-    sendResponse(res, 200, true, "Email updated successfully", { email });
-  }
-);
+export const updateEmail = catchAsync(async (req: Request, res: Response) => {
+  const newEmail = sanitize(req.body.newEmail)
+  const email = await SettingsService.updateEmail(req.user!.id, newEmail)
+  sendResponse(res, 200, true, "Email updated successfully", { email })
+})
 
 export const deactivateUserAccount = catchAsync(
   async (req: Request, res: Response) => {
-    await SettingsService.deactivateAccount(req.user!.id);
-    sendResponse(res, 200, true, "Account deactivated successfully");
-  }
-);
+    await SettingsService.deactivateAccount(req.user!.id)
+    sendResponse(res, 200, true, "Account deactivated successfully")
+  },
+)

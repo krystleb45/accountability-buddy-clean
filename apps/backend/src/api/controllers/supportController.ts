@@ -1,12 +1,14 @@
-// src/api/controllers/SupportController.ts
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import type { CreateTicketDTO, UpdateTicketDTO } from "../services/SupportTicketService";
+import type {
+  CreateTicketDTO,
+  UpdateTicketDTO,
+} from "../services/SupportTicketService"
 
-import { logger } from "../../utils/winstonLogger";
-import SupportTicketService from "../services/SupportTicketService";
-import catchAsync from "../utils/catchAsync";
-import sendResponse from "../utils/sendResponse";
+import { logger } from "../../utils/winstonLogger"
+import SupportTicketService from "../services/SupportTicketService"
+import catchAsync from "../utils/catchAsync"
+import sendResponse from "../utils/sendResponse"
 
 /**
  * @desc    Contact support (create a new ticket)
@@ -15,15 +17,15 @@ import sendResponse from "../utils/sendResponse";
  */
 export const contactSupport = catchAsync(
   async (
-    req: Request<{}, {}, CreateTicketDTO>,
+    req: Request<unknown, unknown, CreateTicketDTO>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const ticket = await SupportTicketService.createTicket(req.body);
-    logger.info(`New support ticket ${ticket._id} created`);
-    sendResponse(res, 201, true, "Support request submitted", { ticket });
-  }
-);
+    const ticket = await SupportTicketService.createTicket(req.body)
+    logger.info(`New support ticket ${ticket._id} created`)
+    sendResponse(res, 201, true, "Support request submitted", { ticket })
+  },
+)
 
 /**
  * @desc    Get all support tickets
@@ -32,10 +34,10 @@ export const contactSupport = catchAsync(
  */
 export const getSupportTickets = catchAsync(
   async (_req: Request, res: Response, _next: NextFunction): Promise<void> => {
-    const tickets = await SupportTicketService.listTickets();
-    sendResponse(res, 200, true, "Support tickets fetched", { tickets });
-  }
-);
+    const tickets = await SupportTicketService.listTickets()
+    sendResponse(res, 200, true, "Support tickets fetched", { tickets })
+  },
+)
 
 /**
  * @desc    Get a single ticket
@@ -46,12 +48,12 @@ export const getTicketDetails = catchAsync(
   async (
     req: Request<{ ticketId: string }>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
-    const ticket = await SupportTicketService.getTicket(req.params.ticketId);
-    sendResponse(res, 200, true, "Ticket details fetched", { ticket });
-  }
-);
+    const ticket = await SupportTicketService.getTicket(req.params.ticketId)
+    sendResponse(res, 200, true, "Ticket details fetched", { ticket })
+  },
+)
 
 /**
  * @desc    Update a support ticket
@@ -60,14 +62,14 @@ export const getTicketDetails = catchAsync(
  */
 export const updateSupportTicket = catchAsync(
   async (
-    req: Request<{ ticketId: string }, {}, UpdateTicketDTO>,
+    req: Request<{ ticketId: string }, unknown, UpdateTicketDTO>,
     res: Response,
-    _next: NextFunction
+    _next: NextFunction,
   ): Promise<void> => {
     const ticket = await SupportTicketService.updateTicket(
       req.params.ticketId,
-      req.body
-    );
-    sendResponse(res, 200, true, "Ticket updated successfully", { ticket });
-  }
-);
+      req.body,
+    )
+    sendResponse(res, 200, true, "Ticket updated successfully", { ticket })
+  },
+)

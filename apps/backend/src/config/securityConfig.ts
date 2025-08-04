@@ -1,54 +1,58 @@
-import type { CorsOptions } from "cors";
-import type { Application, NextFunction, Request, Response} from "express";
+import type { CorsOptions } from "cors"
+import type { Application, NextFunction, Request, Response } from "express"
 
-import cors from "cors";
-import * as express from "express";
-import rateLimit from "express-rate-limit";
-import helmet from "helmet";
-import xssClean from "xss-clean";
+import cors from "cors"
+import * as express from "express"
+import rateLimit from "express-rate-limit"
+import helmet from "helmet"
+import xssClean from "xss-clean"
 
-import { logger } from "../utils/winstonLogger";
+import { logger } from "../utils/winstonLogger"
 
-function parseAllowedOrigins (): string[] {
-  const origins = process.env.ALLOWED_ORIGINS || "http://localhost:3000";
-  return origins.split(",").map((origin) => origin.trim());
+function parseAllowedOrigins(): string[] {
+  const origins = process.env.ALLOWED_ORIGINS || "http://localhost:3000"
+  return origins.split(",").map((origin) => origin.trim())
 }
 
 // ✅ Dynamic CORS logic
-function configureCORS (): CorsOptions {
-  const allowedOrigins = parseAllowedOrigins();
+function configureCORS(): CorsOptions {
+  const allowedOrigins = parseAllowedOrigins()
 
   return {
-    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void): void => {
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ): void => {
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
+        callback(null, true)
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error("Not allowed by CORS"))
       }
     },
     credentials: true,
     optionsSuccessStatus: 200,
-  };
+  }
 }
 
-export function applySecurityMiddlewares (app: Application): void {
+export function applySecurityMiddlewares(app: Application): void {
   // ✅ Helmet with optional CSP for production
   app.use(
     helmet({
-      contentSecurityPolicy: process.env.NODE_ENV === "production"
-        ? {
-          useDefaults: true,
-          directives: {
-            "script-src": ["'self'", "https://cdn.jsdelivr.net"],
-            "img-src": ["'self'", "data:"],
-            "connect-src": ["'self'", "https://api.stripe.com"],
-          },
-        }
-        : false, // Disable CSP in dev to avoid local issues
-    })
-  );
+      contentSecurityPolicy:
+        process.env.NODE_ENV === "production"
+          ? {
+              useDefaults: true,
+              directives: {
+                "script-src": ["'self'", "https://cdn.jsdelivr.net"],
+                "img-src": ["'self'", "data:"],
+                "connect-src": ["'self'", "https://api.stripe.com"],
+              },
+            }
+          : false, // Disable CSP in dev to avoid local issues
+    }),
+  )
 
-  app.use(cors(configureCORS()));
+  app.use(cors(configureCORS()))
 
   // ✅ Rate limiter
   app.use(
@@ -58,24 +62,24 @@ export function applySecurityMiddlewares (app: Application): void {
       message: "Too many requests, please try again later.",
       standardHeaders: true,
       legacyHeaders: false,
-    })
-  );
+    }),
+  )
 
   // ✅ Protect against XSS
-  app.use(xssClean());
+  app.use(xssClean())
 
   // ✅ Custom payload limit (prevents body overflow attacks)
-  app.use(express.json({ limit: process.env.PAYLOAD_LIMIT || "20kb" }));
+  app.use(express.json({ limit: process.env.PAYLOAD_LIMIT || "20kb" }))
 
   // ✅ Centralized error handler for middleware
   app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-    logger.error(`Security middleware error: ${err.message}`);
+    logger.error(`Security middleware error: ${err.message}`)
     res.status(500).json({
       success: false,
       error: "Internal Server Error - Security Issue",
       details: err.message,
-    });
-  });
+    })
+  })
 
-  logger.info("✅ Security middlewares applied.");
+  logger.info("✅ Security middlewares applied.")
 }

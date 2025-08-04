@@ -1,9 +1,9 @@
-import type { NextFunction, Request, Response, Router } from "express";
+import type { NextFunction, Request, Response, Router } from "express"
 
-import express from "express";
-import rateLimit from "express-rate-limit";
-import { check } from "express-validator";
-import sanitize from "mongo-sanitize";
+import express from "express"
+import rateLimit from "express-rate-limit"
+import { check } from "express-validator"
+import sanitize from "mongo-sanitize"
 
 import {
   createReport,
@@ -11,12 +11,12 @@ import {
   getAllReports,
   getReportById,
   resolveReport,
-} from "../controllers/ReportController";
-import { protect } from "../middleware/authMiddleware";
-import handleValidationErrors from "../middleware/handleValidationErrors";
-import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl";
+} from "../controllers/ReportController"
+import { protect } from "../middleware/authMiddleware"
+import handleValidationErrors from "../middleware/handleValidationErrors"
+import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 
-const router: Router = express.Router();
+const router: Router = express.Router()
 
 // ─── rate limiter ───────────────────────────────────────────────────────────────
 const reportLimiter = rateLimit({
@@ -26,7 +26,7 @@ const reportLimiter = rateLimit({
     success: false,
     message: "Too many reports from this IP, please try again later.",
   },
-});
+})
 
 // ─── validation chain ────────────────────────────────────────────────────────────
 const reportValidation = [
@@ -39,13 +39,13 @@ const reportValidation = [
   check("reason", "Reason is required and max 300 chars")
     .notEmpty()
     .isLength({ max: 300 }),
-];
+]
 
 // ─── sanitizer ──────────────────────────────────────────────────────────────────
-function sanitizeInput (req: Request,  _res: Response,  next: NextFunction): void {
-  req.body = sanitize(req.body);
-  req.params = sanitize(req.params);
-  next();
+function sanitizeInput(req: Request, _res: Response, next: NextFunction): void {
+  req.body = sanitize(req.body)
+  req.params = sanitize(req.params)
+  next()
 }
 
 // ─── Create ─────────────────────────────────────────────────────────────────────
@@ -56,39 +56,24 @@ router.post(
   reportValidation,
   sanitizeInput,
   handleValidationErrors,
-  createReport
-);
+  createReport,
+)
 
 // ─── Read all (admin only) ───────────────────────────────────────────────────────
-router.get(
-  "/",
-  protect,
-  roleBasedAccessControl(["admin"]),
-  getAllReports
-);
+router.get("/", protect, roleBasedAccessControl(["admin"]), getAllReports)
 
 // ─── Read one ────────────────────────────────────────────────────────────────────
-router.get(
-  "/:id",
-  protect,
-  roleBasedAccessControl(["admin"]),
-  getReportById
-);
+router.get("/:id", protect, roleBasedAccessControl(["admin"]), getReportById)
 
 // ─── Resolve ─────────────────────────────────────────────────────────────────────
 router.put(
   "/:id/resolve",
   protect,
   roleBasedAccessControl(["admin"]),
-  resolveReport
-);
+  resolveReport,
+)
 
 // ─── Delete ──────────────────────────────────────────────────────────────────────
-router.delete(
-  "/:id",
-  protect,
-  roleBasedAccessControl(["admin"]),
-  deleteReport
-);
+router.delete("/:id", protect, roleBasedAccessControl(["admin"]), deleteReport)
 
-export default router;
+export default router

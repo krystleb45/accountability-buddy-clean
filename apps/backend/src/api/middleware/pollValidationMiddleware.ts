@@ -1,84 +1,117 @@
-import type { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express"
 
-import { Types } from "mongoose";
+import { Types } from "mongoose"
 
-import Poll from "../models/Poll"; // Poll model to validate poll existence
+import Poll from "../models/Poll" // Poll model to validate poll existence
 
 // Middleware to validate poll creation
-async function validatePollCreation (req: Request,  res: Response,  next: NextFunction): Promise<void> {
-  const { groupId, question, options, expirationDate } = req.body;
+async function validatePollCreation(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const { groupId, question, options, expirationDate } = req.body
 
   // Validate required fields
-  if (!groupId || !question || !options || options.length < 2 || !expirationDate) {
-    res.status(400).json({ success: false, message: "All fields are required and options must have at least two choices." });
-    return;
+  if (
+    !groupId ||
+    !question ||
+    !options ||
+    options.length < 2 ||
+    !expirationDate
+  ) {
+    res.status(400).json({
+      success: false,
+      message:
+        "All fields are required and options must have at least two choices.",
+    })
+    return
   }
 
   // Validate that expirationDate is in the future
-  const expiration = new Date(expirationDate);
+  const expiration = new Date(expirationDate)
   if (expiration <= new Date()) {
-    res.status(400).json({ success: false, message: "Poll expiration date must be in the future." });
-    return;
+    res.status(400).json({
+      success: false,
+      message: "Poll expiration date must be in the future.",
+    })
+    return
   }
 
   // Validate poll options - Ensure all options are non-empty strings
   for (const option of options) {
-    if (!option.option || typeof option.option !== "string" || option.option.trim().length === 0) {
-      res.status(400).json({ success: false, message: "Each poll option must be a non-empty string." });
-      return;
+    if (
+      !option.option ||
+      typeof option.option !== "string" ||
+      option.option.trim().length === 0
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "Each poll option must be a non-empty string.",
+      })
+      return
     }
   }
 
   // Validate groupId is a valid ObjectId
   if (!Types.ObjectId.isValid(groupId)) {
-    res.status(400).json({ success: false, message: "Invalid group ID format." });
-    return;
+    res
+      .status(400)
+      .json({ success: false, message: "Invalid group ID format." })
+    return
   }
 
   // If validation passes, proceed to the next middleware/controller
-  next();
+  next()
 }
 
 // Middleware to validate poll voting
-async function validatePollVote (req: Request,  res: Response,  next: NextFunction): Promise<void> {
-  const { pollId, optionId, userId } = req.body;
+async function validatePollVote(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const { pollId, optionId, userId } = req.body
 
   // Validate required fields
   if (!pollId || !optionId || !userId) {
-    res.status(400).json({ success: false, message: "Poll ID, Option ID, and User ID are required." });
-    return;
+    res.status(400).json({
+      success: false,
+      message: "Poll ID, Option ID, and User ID are required.",
+    })
+    return
   }
 
   // Validate that pollId is a valid ObjectId
   if (!Types.ObjectId.isValid(pollId)) {
-    res.status(400).json({ success: false, message: "Invalid poll ID format." });
-    return;
+    res.status(400).json({ success: false, message: "Invalid poll ID format." })
+    return
   }
 
   // Check if the poll exists and is active
-  const poll = await Poll.findById(pollId);
+  const poll = await Poll.findById(pollId)
   if (!poll) {
-    res.status(404).json({ success: false, message: "Poll not found." });
-    return;
+    res.status(404).json({ success: false, message: "Poll not found." })
+    return
   }
 
   if (poll.status === "expired") {
-    res.status(400).json({ success: false, message: "Poll has expired." });
-    return;
+    res.status(400).json({ success: false, message: "Poll has expired." })
+    return
   }
 
   // Validate that optionId exists in the poll options
-  const option = poll.options.find((opt) => opt._id.toString() === optionId);
+  const option = poll.options.find((opt) => opt._id.toString() === optionId)
   if (!option) {
-    res.status(400).json({ success: false, message: "Invalid option ID." });
-    return;
+    res.status(400).json({ success: false, message: "Invalid option ID." })
+    return
   }
 
   // If validation passes, proceed to the next middleware/controller
-  next();
+  next()
 }
 
 export default {
   validatePollCreation,
   validatePollVote,
-};
+}
