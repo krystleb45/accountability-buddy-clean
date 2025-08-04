@@ -8,8 +8,6 @@ import dotenvFlow from "dotenv-flow"
 import mongoose from "mongoose"
 import { createServer } from "node:http"
 
-import app from "./app"
-import socketServer from "./sockets/index"
 import { loadSecretsFromAWS } from "./utils/loadSecrets"
 import { validateEnv } from "./utils/validateEnv"
 import { logger } from "./utils/winstonLogger"
@@ -27,7 +25,7 @@ process.on("unhandledRejection", (reason) => {
 try {
   if (process.env.NODE_ENV !== "production") {
     dotenvFlow.config()
-    // console.log("✅ Environment configuration loaded from .env files");
+    logger.info("✅ Environment configuration loaded from .env files")
   } else {
     // console.log("ℹ️ Production mode: Using Railway environment variables directly");
   }
@@ -78,6 +76,9 @@ async function startServer(): Promise<void> {
     // 2) Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URI!)
     logger.info("✅ MongoDB connected")
+
+    const app = await import("./app").then((mod) => mod.default)
+    const socketServer = await import("./sockets").then((mod) => mod.default)
 
     // 3) Create HTTP server and setup Socket.IO with all features
     const httpServer = createServer(app)

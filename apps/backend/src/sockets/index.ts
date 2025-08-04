@@ -1,4 +1,3 @@
-// src/sockets/index.ts - FIXED: Register AnonymousMilitarySocketService
 import type { Server as HttpServer } from "node:http"
 import type { Socket } from "socket.io"
 

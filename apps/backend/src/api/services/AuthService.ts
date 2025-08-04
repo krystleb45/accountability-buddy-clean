@@ -1,4 +1,3 @@
-// src/api/services/AuthService.ts
 import type { JwtPayload, SignOptions } from "jsonwebtoken"
 import type { StringValue } from "ms"
 
@@ -18,8 +17,6 @@ const {
   SALT_ROUNDS = "12",
   ACCESS_TOKEN_EXPIRES_IN = "1h",
 } = process.env
-
-logger.info(`${ACCESS_TOKEN_SECRET}`)
 
 if (!ACCESS_TOKEN_SECRET) {
   logger.error("ACCESS_TOKEN_SECRET must be defined in .env")
