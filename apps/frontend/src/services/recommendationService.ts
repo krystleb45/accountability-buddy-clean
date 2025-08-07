@@ -1,7 +1,7 @@
 // src/services/recommendationService.ts
 import type { AxiosError } from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface Book {
   id: string

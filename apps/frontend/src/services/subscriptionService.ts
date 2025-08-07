@@ -1,6 +1,6 @@
 // src/services/subscriptionService.ts
 import { getAuthHeader } from "@/services/authService"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface SubscriptionStatus {
   hasActiveSubscription: boolean

@@ -4,7 +4,7 @@ import type { AxiosResponse } from "axios"
 import axios from "axios"
 
 import { getAuthHeader } from "@/services/authService"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 // ---------------------
 // Type Definitions

@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react"
 
 import type { RecentActivity } from "@/types/Activity.types"
 
-import { http } from "@/utils/http" // our central axios instance
+import { http } from "@/lib/http" // our central axios instance
 
 import styles from "./Activities.module.css"
 

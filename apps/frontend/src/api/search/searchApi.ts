@@ -1,6 +1,6 @@
 // src/search/searchApi.ts
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export type SearchType = "all" | "users" | "goals" // extend as needed
 

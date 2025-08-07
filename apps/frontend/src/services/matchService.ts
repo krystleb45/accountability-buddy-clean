@@ -1,7 +1,7 @@
 // src/services/matchService.ts
 import axios from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface Match {
   id: string

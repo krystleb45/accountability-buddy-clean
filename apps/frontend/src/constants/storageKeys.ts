@@ -1,12 +1,11 @@
-// src/constants/storageKeys.ts
-
 /** Keys for sessionStorage/localStorage */
 export const STORAGE_KEYS = {
-  GOALS: "goals",
-  TASKS: "tasks",
-  USER_SETTINGS: "userSettings",
-  AUTH_TOKEN: "authToken", // ← renamed from JWT_TOKEN
-  REFRESH_TOKEN: "refreshToken",
+  GOALS: "ab_goals",
+  TASKS: "ab_tasks",
+  USER_SETTINGS: "ab_user_settings",
+  AUTH_TOKEN: "ab_auth_token",
+  REFRESH_TOKEN: "ab_refresh_token",
+  NEWSLETTER_DISMISSED: "ab_newsletter_dismissed",
 } as const
 
 /** Union of all storage‐key strings */

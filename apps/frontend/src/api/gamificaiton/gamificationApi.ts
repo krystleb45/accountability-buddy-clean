@@ -4,7 +4,7 @@ import axios from "axios"
 
 import type { Badge, UserProgress } from "@/types/Gamification.types"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface LeaderboardEntry {
   profilePicture: string

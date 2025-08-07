@@ -1,7 +1,7 @@
 // src/faq/faqApi.ts
 import axios from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 // FAQ type
 export interface Faq {

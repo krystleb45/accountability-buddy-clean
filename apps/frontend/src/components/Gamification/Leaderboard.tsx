@@ -7,7 +7,7 @@ import type { LeaderboardEntry } from "@/types/Gamification.types"
 
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner"
 import { getAvatarUrl } from "@/utils/avatarUtils"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 import styles from "./LeaderboardCard.module.css"
 

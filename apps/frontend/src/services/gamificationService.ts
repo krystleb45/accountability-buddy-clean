@@ -3,7 +3,7 @@ import axios from "axios"
 
 import type { BadgeData, UserProgress } from "@/types/Gamification.types"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 import type { ApiBadge } from "../api/badge/badgeApi"
 

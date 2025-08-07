@@ -1,7 +1,7 @@
 // src/services/adminAnalyticsService.ts
 import axios from "axios" // for axios.isAxiosError
 
-import { http } from "@/utils/http" // your shared axios instance
+import { http } from "@/lib/http" // your shared axios instance
 
 // ── Types ─────────────────────────────────────────────────────
 

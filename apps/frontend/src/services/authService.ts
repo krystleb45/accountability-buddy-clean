@@ -3,7 +3,7 @@ import type { AxiosError } from "axios"
 
 import { jwtDecode } from "jwt-decode"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface LoginCredentials {
   email: string

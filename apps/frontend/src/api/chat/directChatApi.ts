@@ -2,7 +2,7 @@
 
 import axios from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 /**
  * A direct message (group or private)

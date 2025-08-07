@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 import axios from "axios" // for axios.isAxiosError type guard
 
-import { http } from "@/utils/http" // centralized Axios instance
+import { http } from "@/lib/http" // centralized Axios instance
 
 // -----------------------------------------------------------------------------
 // Type Definitions

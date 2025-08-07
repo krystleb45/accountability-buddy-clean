@@ -1,5 +1,5 @@
 // src/services/badgeService.ts
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 /** Badge definitions */
 export interface Badge {

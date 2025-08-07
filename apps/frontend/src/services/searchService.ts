@@ -1,5 +1,5 @@
 // src/services/searchService.ts
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export type SearchType = "user" | "group" | "goal" | "post" | "task"
 

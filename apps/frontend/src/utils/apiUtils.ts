@@ -10,7 +10,7 @@ import type {
 
 import { API_ENDPOINTS, getApiUrl } from "@/config/api/apiConfig"
 
-import { http } from "./http"
+import { http } from "../lib/http"
 
 /** Logs the raw error and re-throws a user-friendly one */
 function handleApiError(error: unknown): never {

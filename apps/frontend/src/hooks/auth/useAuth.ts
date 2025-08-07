@@ -3,7 +3,7 @@ import axios from "axios"
 import { useCallback, useEffect, useState } from "react"
 
 import { API } from "@/constants/apiEndpoints"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface User {
   id: string

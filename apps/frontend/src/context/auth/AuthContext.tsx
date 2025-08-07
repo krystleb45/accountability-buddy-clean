@@ -16,7 +16,7 @@ import React, {
 
 import { ROUTES } from "@/constants/routePaths"
 import { STORAGE_KEYS } from "@/constants/storageKeys"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface User {
   id: string

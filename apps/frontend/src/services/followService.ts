@@ -1,7 +1,7 @@
 // src/services/followService.ts
 import axios from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 /** Minimal user shape returned by the follow endpoints */
 export interface FollowUser {

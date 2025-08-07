@@ -3,7 +3,7 @@ import type { Socket } from "socket.io-client"
 
 import { io } from "socket.io-client"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface ChatMessage {
   id: string

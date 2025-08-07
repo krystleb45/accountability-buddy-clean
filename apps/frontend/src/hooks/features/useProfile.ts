@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react"
 import type { User } from "@/types/User.types"
 
 import { API } from "@/constants/apiEndpoints"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface UseProfileReturn {
   profile: User | null

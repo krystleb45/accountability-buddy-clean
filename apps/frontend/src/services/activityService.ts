@@ -1,5 +1,5 @@
 // src/services/activityService.ts
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface Activity {
   id: string

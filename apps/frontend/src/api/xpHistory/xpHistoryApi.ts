@@ -4,7 +4,7 @@ import type { AxiosResponse } from "axios"
 
 import type { XpEntry } from "@/services/xpHistoryService"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface ApiResponse<T> {
   success: boolean

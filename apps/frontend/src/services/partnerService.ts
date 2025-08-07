@@ -3,7 +3,7 @@ import type { AxiosResponse } from "axios"
 
 import axios from "axios" // Removed unused AxiosError import
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface Partner {
   id: string

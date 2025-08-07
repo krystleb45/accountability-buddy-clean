@@ -1,15 +1,14 @@
-// src/context/data/APIContext.tsx
 "use client"
 
 import type { AxiosRequestConfig } from "axios"
 import type { ReactNode } from "react"
 
 import axios from "axios"
-import React, { createContext, useCallback, useState } from "react"
+import React, { createContext, use, useCallback, useMemo, useState } from "react"
 
 import { RESPONSE_ERROR_MESSAGES } from "@/constants/responseMessages"
 import { STATUS_CODES } from "@/constants/statusCodes"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface APIContextType {
   isLoading: boolean
@@ -68,8 +67,15 @@ export const APIProvider: React.FC<{ children: ReactNode }> = ({
     setApiError(null)
   }, [])
 
+  const contextValue = useMemo(() => ({
+    isLoading,
+    apiError,
+    callAPI,
+    clearApiError,
+  }), [isLoading, apiError, callAPI, clearApiError])
+
   return (
-    <APIContext value={{ isLoading, apiError, callAPI, clearApiError }}>
+    <APIContext value={contextValue}>
       {children}
     </APIContext>
   )

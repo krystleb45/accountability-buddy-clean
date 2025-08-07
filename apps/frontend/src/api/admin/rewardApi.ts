@@ -1,7 +1,7 @@
 // src/admin/rewardApi.ts
 import axios from "axios" // for isAxiosError check
 
-import { http } from "@/utils/http" // our shared Axios instance
+import { http } from "@/lib/http" // our shared Axios instance
 
 // ----------------------------------------------------------------------------------
 // Type Definitions

@@ -1,5 +1,5 @@
 // src/services/settingsService.ts
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface UserSettings {
   emailNotifications: boolean

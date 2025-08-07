@@ -2,7 +2,7 @@
 
 import axios from "axios" // for axios.isAxiosError type-guard
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 // ---------------------
 // Type Definitions

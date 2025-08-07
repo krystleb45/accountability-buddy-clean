@@ -2,7 +2,7 @@ import type { AxiosResponse } from "axios"
 
 import axios from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface ApiErrorResponse {
   message: string

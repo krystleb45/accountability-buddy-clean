@@ -6,7 +6,7 @@ import type { AxiosRequestConfig } from "axios"
 import { isAxiosError } from "axios" // ← import this
 import { useEffect, useRef, useState } from "react"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface UseFetchResult<T> {
   data: T | null

@@ -3,7 +3,7 @@
 import axios from "axios"
 
 import { getAuthHeader } from "@/services/authService"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 interface ApiErrorResponse {
   message: string

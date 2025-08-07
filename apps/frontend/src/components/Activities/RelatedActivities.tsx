@@ -8,7 +8,7 @@ import React, { useEffect, useState } from "react"
 
 import type { RelatedActivity } from "@/types/Activity.types"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 import styles from "./Activities.module.css"
 

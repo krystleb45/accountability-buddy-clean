@@ -4,7 +4,7 @@ import type { AxiosError } from "axios"
 
 import axios from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 /**
  * A user collaboration goal

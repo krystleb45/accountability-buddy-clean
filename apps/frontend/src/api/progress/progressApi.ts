@@ -9,7 +9,7 @@ import type {
   UpdateProgressResponse,
 } from "@/services/progressService"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 function logError(fn: string, error: unknown): void {
   if (axios.isAxiosError(error)) {

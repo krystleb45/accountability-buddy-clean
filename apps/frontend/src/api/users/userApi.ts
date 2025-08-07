@@ -2,7 +2,7 @@
 
 import type { AxiosResponse } from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 // pull in your domain types from the service layer…
 import type {

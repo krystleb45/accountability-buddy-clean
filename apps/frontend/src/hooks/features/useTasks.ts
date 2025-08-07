@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import type { Task, TaskFilters } from "@/types/Tasks.types"
 
 import { API } from "@/constants/apiEndpoints"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface UseTasksReturn {
   tasks: Task[]

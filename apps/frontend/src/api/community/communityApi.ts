@@ -4,7 +4,7 @@
 // -----------------------------------------------------------------------------
 import axios from "axios" // for error checking only
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 // -----------------------------------------------------------------------------
 // Type Definitions

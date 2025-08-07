@@ -3,7 +3,7 @@
 // Only import the AxiosError *type* for error narrowing
 import type { AxiosError } from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 // ---------------------
 // Type Definitions

@@ -1,7 +1,7 @@
 // src/admin/adminApi.ts
 import axios from "axios" // for type‐guarding only
 
-import { http } from "@/utils/http" // our shared Axios/HTTP client
+import { http } from "@/lib/http" // our shared Axios/HTTP client
 
 // --------------------------------------------
 // Types (must match your backend response shape)

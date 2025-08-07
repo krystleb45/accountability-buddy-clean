@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react"
 
 import { API } from "@/constants/apiEndpoints"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface MilitaryResource {
   id: string

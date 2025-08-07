@@ -1,7 +1,7 @@
 // src/services/auditService.ts
 import { AxiosHeaders } from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 import { getAuthHeader } from "./authService"
 

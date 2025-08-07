@@ -1,6 +1,6 @@
 import type { LeaderboardEntry } from "@/types/Gamification.types"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 /**
  * Fetch sorted, paginated leaderboard.

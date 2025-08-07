@@ -1,5 +1,5 @@
 // src/services/paymentService.ts
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface CheckoutSessionResponse {
   id: string

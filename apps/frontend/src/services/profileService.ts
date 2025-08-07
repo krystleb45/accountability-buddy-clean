@@ -1,5 +1,5 @@
 // src/services/profileService.ts
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface ProfileData {
   id: string

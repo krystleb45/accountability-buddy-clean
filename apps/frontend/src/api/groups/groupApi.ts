@@ -1,7 +1,7 @@
 // src/api/groups/groupApi.ts - UPDATED to use real API
 import axios from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface Member {
   id: string

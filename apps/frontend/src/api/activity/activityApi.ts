@@ -1,7 +1,7 @@
 // src/activity/activityApi.ts
 import axios from "axios" // only for type‐guards
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 export interface Activity {
   _id: string

@@ -4,7 +4,7 @@ import type { InternalAxiosRequestConfig } from "axios"
 import axios, { AxiosHeaders } from "axios"
 
 import { getAuthHeader } from "@/services/authService"
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 // ——— Type Definitions —————————————————————————————————————————————
 export interface User {

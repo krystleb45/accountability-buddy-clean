@@ -1,7 +1,7 @@
 // src/badges/badgeApi.ts
 import { isAxiosError } from "axios"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 //
 // —————————————————————————————————————————————————————

@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import React, { useEffect, useState } from "react"
 import { Tooltip } from "react-tooltip"
 
-import { http } from "@/utils/http"
+import { http } from "@/lib/http"
 
 import styles from "./BadgeSystem.module.css"
 

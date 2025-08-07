@@ -1,14 +1,13 @@
 import config from "@ab/eslint-config/base"
 import { combine, react } from "@antfu/eslint-config"
 import nextPlugin from "@next/eslint-plugin-next"
+import tailwindPlugin from "eslint-plugin-better-tailwindcss"
 import cypressPlugin from "eslint-plugin-cypress"
 import jestPlugin from "eslint-plugin-jest"
-import tailwind from "eslint-plugin-tailwindcss"
 
 export default combine(
   react(),
   config,
-  ...tailwind.configs["flat/recommended"],
   {
     plugins: {
       "@next/next": nextPlugin,
@@ -44,6 +43,28 @@ export default combine(
       "no-console": "warn",
       "no-alert": "warn",
       "react-hooks-extra/no-direct-set-state-in-use-effect": "warn",
+    },
+  },
+  {
+    settings: {
+      "better-tailwindcss": {
+        entryPoint: "src/app/global.css",
+      },
+    },
+    plugins: {
+      "better-tailwindcss": tailwindPlugin,
+    },
+    rules: {
+      // enable all recommended rules to report an error
+      ...tailwindPlugin.configs["recommended-error"].rules,
+
+      // or configure rules individually
+      "better-tailwindcss/no-unregistered-classes": [
+        "error",
+        {
+          ignore: ["dark", "toaster"],
+        },
+      ],
     },
   },
 )
