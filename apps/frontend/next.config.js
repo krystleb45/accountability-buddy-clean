@@ -1,26 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  poweredByHeader: false,
-
-  // Disable static optimization to avoid SSR errors
-  output: "standalone",
-
-  env: {
-    BACKEND_URL: process.env.BACKEND_URL,
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  },
-
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "localhost",
-      },
-    ],
-    formats: ["image/avif", "image/webp"],
-  },
-
   async rewrites() {
     const backend = (
       process.env.BACKEND_URL || "http://localhost:5050"
@@ -36,18 +15,6 @@ const nextConfig = {
       },
     ]
   },
-
-  webpack(config, { isServer }) {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-      }
-    }
-    return config
-  },
-
-  trailingSlash: false,
 }
 
 module.exports = nextConfig

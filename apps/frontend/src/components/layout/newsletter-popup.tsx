@@ -82,8 +82,8 @@ export function NewsletterPopup({
     setErrorMessage("")
 
     try {
-      const response = await http.post("/newsletter/subscribe", {
-        data: { email },
+      const response = await http.post("/newsletter/signup", {
+        email,
       })
 
       const data = response.data
@@ -93,15 +93,22 @@ export function NewsletterPopup({
       } else {
         setStatus("success")
       }
-      setTimeout(() => setIsVisible(false), 4000)
     } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes("already subscribed")) {
+          setStatus("already_subscribed")
+        } else {
+          setStatus("error")
+          setErrorMessage(error.message)
+        }
+
+        return
+      }
+
       setStatus("error")
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "An unexpected error occurred. Please try again later.",
-      )
-      setTimeout(() => setStatus("idle"), 4000)
+      setErrorMessage("An unexpected error occurred. Please try again later.")
+    } finally {
+      setTimeout(() => setIsVisible(false), 4000)
     }
   }
 

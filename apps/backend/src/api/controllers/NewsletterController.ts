@@ -1,11 +1,12 @@
 // src/api/controllers/NewsletterController.ts
 import type { NextFunction, Request, Response } from "express"
 
+import status from "http-status"
+
 import { logger } from "../../utils/winstonLogger"
 import Newsletter from "../models/Newsletter"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
-
 /**
  * @desc    Subscribe to the newsletter
  * @route   POST /api/newsletter/signup
@@ -18,16 +19,12 @@ export const signupNewsletter = catchAsync(
     _next: NextFunction,
   ): Promise<void> => {
     const { email } = req.body
-    if (!email?.trim()) {
-      sendResponse(res, 400, false, "Email is required.")
-      return
-    }
 
     // find or create subscriber
     const subscriber = await Newsletter.findOrCreate(email.trim().toLowerCase())
 
     if (subscriber.status === "subscribed") {
-      sendResponse(res, 400, false, "Email is already subscribed.")
+      sendResponse(res, status.CONFLICT, false, "Email is already subscribed.")
       return
     }
 

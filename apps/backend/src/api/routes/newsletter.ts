@@ -1,9 +1,9 @@
-// src/api/routes/newsletter.ts
 import type { NextFunction, Request, Response } from "express"
 
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
+import z from "zod"
 
 import {
   getSubscribers,
@@ -12,6 +12,7 @@ import {
 } from "../controllers/NewsletterController"
 import { protect, restrictTo } from "../middleware/authMiddleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import { validate } from "../middleware/validation-middleware"
 import catchAsync from "../utils/catchAsync"
 
 const router = Router()
@@ -24,7 +25,7 @@ const newsletterRateLimiter = rateLimit({
   legacyHeaders: false,
   message: {
     success: false,
-    message: "Too many signup attempts from this IP, please try again later.",
+    message: "Too many signup attempts, please try again later.",
   },
 })
 
@@ -35,8 +36,11 @@ const newsletterRateLimiter = rateLimit({
 router.post(
   "/signup",
   newsletterRateLimiter,
-  [check("email", "A valid email is required").isEmail()],
-  handleValidationErrors,
+  validate({
+    bodySchema: z.object({
+      email: z.email("Invalid email address").nonempty("Email is required"),
+    }),
+  }),
   catchAsync(
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       await signupNewsletter(req, res, next)

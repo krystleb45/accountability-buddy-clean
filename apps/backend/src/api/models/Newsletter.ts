@@ -3,7 +3,7 @@ import type { Document, Model } from "mongoose"
 
 import mongoose, { Schema } from "mongoose"
 import crypto from "node:crypto"
-import validator from "validator"
+import z from "zod"
 
 // --- Interface for Newsletter Document ---
 export interface INewsletter extends Document {
@@ -36,7 +36,8 @@ const NewsletterSchema = new Schema<INewsletter, INewsletterModel>(
       trim: true,
       lowercase: true,
       validate: {
-        validator: (email: string): boolean => validator.isEmail(email),
+        validator: (email: string): boolean =>
+          z.email().safeParse(email).success,
         message: "Please provide a valid email address",
       },
     },

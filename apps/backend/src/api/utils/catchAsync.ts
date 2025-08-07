@@ -1,4 +1,3 @@
-// src/utils/catchAsync.ts
 import type { NextFunction, RequestHandler, Response } from "express"
 
 import { logger } from "../../utils/winstonLogger"
@@ -11,7 +10,6 @@ function catchAsync<T = any>(
 ): RequestHandler {
   return async (req, res, next) => {
     try {
-      // now returns a Promise<void>
       await fn(req as T, res, next)
     } catch (err) {
       logger.error(

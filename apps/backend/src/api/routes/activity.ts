@@ -1,7 +1,7 @@
-// src/api/routes/activity.ts
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
-import { check, param } from "express-validator"
+import { isMongoId } from "validator"
+import z from "zod"
 
 import {
   createActivity,
@@ -14,7 +14,7 @@ import {
   updateActivity,
 } from "../controllers/ActivityController"
 import { protect } from "../middleware/authMiddleware"
-import validationMiddleware from "../middleware/validationMiddleware"
+import validate from "../middleware/validation-middleware"
 
 const router = Router()
 
@@ -41,9 +41,11 @@ router.get("/", protect, getUserActivities)
 router.get(
   "/:activityId",
   protect,
-  validationMiddleware([
-    param("activityId", "Invalid activity ID").isMongoId(),
-  ]),
+  validate({
+    paramsSchema: z.object({
+      activityId: z.string().refine((value) => isMongoId(value)),
+    }),
+  }),
   getActivityById,
 )
 
@@ -55,10 +57,12 @@ router.post(
   "/",
   protect,
   limiter,
-  validationMiddleware([
-    check("title", "Title is required").notEmpty(),
-    check("description").optional().isString(),
-  ]),
+  validate({
+    bodySchema: z.object({
+      title: z.string().nonempty("Activity title is required"),
+      description: z.string().optional(),
+    }),
+  }),
   createActivity,
 )
 
@@ -70,11 +74,15 @@ router.put(
   "/:activityId",
   protect,
   limiter,
-  validationMiddleware([
-    param("activityId", "Invalid activity ID").isMongoId(),
-    check("title").optional().isString(),
-    check("description").optional().isString(),
-  ]),
+  validate({
+    paramsSchema: z.object({
+      activityId: z.string().refine((value) => isMongoId(value)),
+    }),
+    bodySchema: z.object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+    }),
+  }),
   updateActivity,
 )
 
@@ -85,9 +93,11 @@ router.put(
 router.delete(
   "/:activityId",
   protect,
-  validationMiddleware([
-    param("activityId", "Invalid activity ID").isMongoId(),
-  ]),
+  validate({
+    paramsSchema: z.object({
+      activityId: z.string().refine((value) => isMongoId(value)),
+    }),
+  }),
   deleteActivity,
 )
 
@@ -98,9 +108,11 @@ router.delete(
 router.post(
   "/:activityId/join",
   protect,
-  validationMiddleware([
-    param("activityId", "Invalid activity ID").isMongoId(),
-  ]),
+  validate({
+    paramsSchema: z.object({
+      activityId: z.string().refine((value) => isMongoId(value)),
+    }),
+  }),
   joinActivity,
 )
 
@@ -111,9 +123,11 @@ router.post(
 router.post(
   "/:activityId/leave",
   protect,
-  validationMiddleware([
-    param("activityId", "Invalid activity ID").isMongoId(),
-  ]),
+  validate({
+    paramsSchema: z.object({
+      activityId: z.string().refine((value) => isMongoId(value)),
+    }),
+  }),
   leaveActivity,
 )
 
@@ -125,11 +139,13 @@ router.post(
   "/log",
   protect,
   limiter,
-  validationMiddleware([
-    check("title", "Activity type is required").notEmpty(),
-    check("description").optional().isString(),
-    check("metadata").optional().isObject(),
-  ]),
+  validate({
+    bodySchema: z.object({
+      title: z.string().nonempty("Activity type is required"),
+      description: z.string().optional(),
+      metadata: z.object().optional(),
+    }),
+  }),
   logActivity,
 )
 
