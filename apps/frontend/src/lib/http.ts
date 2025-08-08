@@ -1,4 +1,4 @@
-// src/utils/http.ts - FIXED: Use sessionStorage token instead of NextAuth
+// src/lib/http.ts - Simplified with NextAuth.js integration
 "use client"
 
 import type {
@@ -9,8 +9,7 @@ import type {
 } from "axios"
 
 import axios from "axios"
-
-import { STORAGE_KEYS } from "@/constants/storageKeys"
+import { getSession } from "next-auth/react"
 
 // All API requests should go through the Next.js API proxy (not directly to Express).
 const BASE_URL = "/api"
@@ -20,13 +19,22 @@ export const http: AxiosInstance = axios.create({
   withCredentials: true,
 })
 
-function getAccessToken(): string | null {
+async function getAccessToken(): Promise<string | null> {
+  // Only run on client side
   if (typeof window === "undefined") {
     return null
   }
 
   try {
-    return sessionStorage.getItem(STORAGE_KEYS.AUTH_TOKEN)
+    const session = await getSession()
+    const token = session?.user?.accessToken
+
+    // Ensure we have a valid token string
+    if (typeof token === "string" && token.length > 0) {
+      return token
+    }
+
+    return null
   } catch (error) {
     console.error("Error getting session token:", error)
     return null
@@ -34,11 +42,13 @@ function getAccessToken(): string | null {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Request interceptor: attach Bearer token from sessionStorage
+// Request interceptor: attach Bearer token from NextAuth session
 // ─────────────────────────────────────────────────────────────────────────────
 http.interceptors.request.use(
-  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
-    const token = getAccessToken()
+  async (
+    config: InternalAxiosRequestConfig,
+  ): Promise<InternalAxiosRequestConfig> => {
+    const token = await getAccessToken()
 
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
@@ -79,11 +89,10 @@ http.interceptors.response.use(
 
     switch (err.response.status) {
       case 401:
-        console.error("Authentication failed - redirecting to login")
-        // Clear invalid token and redirect
+        console.error("Authentication failed")
+        // NextAuth.js handles session cleanup automatically
         if (typeof window !== "undefined") {
-          sessionStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
-          window.location.href = "/login"
+          window.location.href = "/api/auth/signin"
         }
         break
       case 403:

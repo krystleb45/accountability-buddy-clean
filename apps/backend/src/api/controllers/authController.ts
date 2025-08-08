@@ -106,20 +106,13 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
 //
 // ─── POST /api/auth/login ────────────────────────────────────────────────────
 //
-export const login: RequestHandler = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body as { email?: string; password?: string }
+export async function login(req, res, next) {
+  const { email, password } = req.body as { email: string; password: string }
 
-  if (!email || !password) {
-    return next(createError("Email and password are required", 400))
-  }
-
-  const normalizedEmail = email.toLowerCase().trim()
-  logger.info("→ [login] received payload:", { email: normalizedEmail })
+  logger.info("→ [login] received payload:", { email })
 
   // 1) Lookup user
-  const user = await User.findOne({ email: normalizedEmail }).select(
-    "+password",
-  )
+  const user = await User.findOne({ email }).select("+password")
   if (!user) {
     return next(createError("Invalid credentials", 401))
   }
@@ -132,23 +125,25 @@ export const login: RequestHandler = catchAsync(async (req, res, next) => {
 
   // 3) Issue tokens
   const accessToken = await AuthService.generateToken({
-    _id: user._id.toString(), // Changed back to _id to match AuthService
+    _id: user._id.toString(),
     role: user.role,
   })
 
   // 4) Send response with subscription data
-  res.status(200).json({
-    id: user._id.toString(),
-    name: user.username,
-    email: user.email,
-    role: user.role,
-    subscriptionTier: user.subscriptionTier,
-    subscription_status: user.subscription_status,
-    trial_end_date: user.trial_end_date?.toISOString(),
-    isInTrial: user.isInTrial(),
-    accessToken,
+  sendResponse(res, 200, true, "Login successful", {
+    user: {
+      id: user._id.toString(),
+      name: user.username,
+      email: user.email,
+      role: user.role,
+      subscriptionTier: user.subscriptionTier,
+      subscription_status: user.subscription_status,
+      trial_end_date: user.trial_end_date?.toISOString(),
+      isInTrial: user.isInTrial(),
+      accessToken,
+    },
   })
-})
+}
 
 //
 // ─── POST /api/auth/refresh-token ──────────────────────────────────────────

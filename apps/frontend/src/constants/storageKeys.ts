@@ -3,8 +3,6 @@ export const STORAGE_KEYS = {
   GOALS: "ab_goals",
   TASKS: "ab_tasks",
   USER_SETTINGS: "ab_user_settings",
-  AUTH_TOKEN: "ab_auth_token",
-  REFRESH_TOKEN: "ab_refresh_token",
   NEWSLETTER_DISMISSED: "ab_newsletter_dismissed",
 } as const
 

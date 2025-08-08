@@ -2,7 +2,6 @@ import type { ReactNode } from "react"
 
 import { Navbar } from "@/components/navbar"
 
-import { AuthTokenSyncer } from "./auth-token-syncer"
 import { NewsletterPopup } from "./newsletter-popup"
 
 interface LayoutComponentProps {
@@ -14,9 +13,6 @@ export function LayoutComponent({
 }: LayoutComponentProps): React.ReactElement {
   return (
     <>
-      {/* Keeps your token in sync from NextAuth to your axios interceptor */}
-      <AuthTokenSyncer />
-
       <Navbar />
 
       {/* Main content */}

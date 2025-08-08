@@ -33,8 +33,7 @@ const AuthService = {
   },
 
   async comparePassword(password: string, hash: string): Promise<boolean> {
-    // ← use the synchronous compare so we actually get true/false
-    return bcrypt.compareSync(password, hash)
+    return bcrypt.compare(password, hash)
   },
 
   async generateToken(user: { _id: string; role: string }): Promise<string> {

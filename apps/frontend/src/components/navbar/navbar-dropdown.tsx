@@ -142,6 +142,7 @@ export function NavbarDropdown() {
               className={item.className}
               variant={item.id === "logout" ? "destructive" : "default"}
               asChild={!!item.path}
+              onClick={item.onClick}
             >
               {item.path ? (
                 <Link href={item.path}>

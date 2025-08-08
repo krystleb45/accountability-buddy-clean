@@ -1,14 +1,11 @@
-// src/api/routes/auth.ts
-
-import type { RequestHandler } from "express"
-
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
-import { check, validationResult } from "express-validator"
+import z from "zod"
 
-import { logger } from "../../utils/winstonLogger"
 import authController from "../controllers/authController"
 import { protect } from "../middleware/authMiddleware"
+import validate from "../middleware/validation-middleware"
+import catchAsync from "../utils/catchAsync"
 
 const router = Router()
 
@@ -19,35 +16,19 @@ const authLimiter = rateLimit({
   message: "Too many authentication attempts. Please try again later.",
 })
 
-// ─── wrapper to catch sync+async errors ──────────────────────────────────
-function wrap(handler: RequestHandler): RequestHandler {
-  return async (req, res, next) => {
-    try {
-      await handler(req, res, next)
-    } catch (err) {
-      logger.error(`Auth route error: ${(err as Error).message}`)
-      next(err)
-    }
-  }
-}
-
 // ─── POST /api/auth/register ─────────────────────────────────────────────
 router.post(
   "/register",
   authLimiter,
-  [
-    check("email", "Valid email is required").isEmail(),
-    check("username", "Username is required").notEmpty(),
-    check("password", "Password must be ≥8 characters").isLength({ min: 8 }),
-  ],
-  wrap(async (req, res, next) => {
-    const errs = validationResult(req)
-    if (!errs.isEmpty()) {
-      res.status(400).json({ success: false, errors: errs.array() })
-      return // void
-    }
+  validate({
+    bodySchema: z.object({
+      email: z.email("Email must be valid"),
+      password: z.string().min(8, "Password must be at least 8 characters"),
+      username: z.string().nonempty("Username is required"),
+    }),
+  }),
+  catchAsync(async (req, res, next) => {
     await authController.register(req, res, next)
-    // ensure void
   }),
 )
 
@@ -55,16 +36,13 @@ router.post(
 router.post(
   "/login",
   authLimiter,
-  [
-    check("email", "Valid email is required").isEmail(),
-    check("password", "Password is required").notEmpty(),
-  ],
-  wrap(async (req, res, next) => {
-    const errs = validationResult(req)
-    if (!errs.isEmpty()) {
-      res.status(400).json({ success: false, errors: errs.array() })
-      return
-    }
+  validate({
+    bodySchema: z.object({
+      email: z.email("Email must be valid").trim().toLowerCase(),
+      password: z.string().min(8, "Password must be at least 8 characters"),
+    }),
+  }),
+  catchAsync(async (req, res, next) => {
     await authController.login(req, res, next)
   }),
 )
@@ -72,13 +50,12 @@ router.post(
 // ─── POST /api/auth/refresh-token ───────────────────────────────────────
 router.post(
   "/refresh-token",
-  [check("refreshToken", "Refresh token is required").notEmpty()],
-  wrap(async (req, res, next) => {
-    const errs = validationResult(req)
-    if (!errs.isEmpty()) {
-      res.status(400).json({ success: false, errors: errs.array() })
-      return
-    }
+  validate({
+    bodySchema: z.object({
+      refreshToken: z.string().nonempty("Refresh token is required"),
+    }),
+  }),
+  catchAsync(async (req, res, next) => {
     await authController.refreshToken(req, res, next)
   }),
 )
@@ -86,7 +63,7 @@ router.post(
 // ─── POST /api/auth/logout ───────────────────────────────────────────────
 router.post(
   "/logout",
-  wrap(async (req, res, next) => {
+  catchAsync(async (req, res, next) => {
     await authController.logout(req, res, next)
   }),
 )
@@ -95,7 +72,7 @@ router.post(
 router.get(
   "/me",
   protect,
-  wrap(async (req, res, next) => {
+  catchAsync(async (req, res, next) => {
     await authController.getCurrentUser(req, res, next)
   }),
 )

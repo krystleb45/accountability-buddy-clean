@@ -1,4 +1,4 @@
-export * from "./Auth.types"
+export * from "./auth.types"
 export * from "./Errors.types"
 export * from "./Gamification.types"
 export * from "./NetworkErrors.types"
