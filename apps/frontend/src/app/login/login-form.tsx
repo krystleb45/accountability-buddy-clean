@@ -123,7 +123,7 @@ export function LoginForm() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-3xl">Login</CardTitle>
         </CardHeader>
         <CardContent className="border-b pb-6">
           <Form {...form}>
