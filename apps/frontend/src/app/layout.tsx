@@ -3,9 +3,22 @@ import "./global.css"
 import type { Metadata } from "next"
 import type { ReactNode } from "react"
 
+import { Geist_Mono, Inter } from "next/font/google"
+
 import { LayoutComponent } from "@/components/layout"
 import { Providers } from "@/components/providers"
 import { Toaster } from "@/components/ui/sonner"
+import { cn } from "@/lib/utils"
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+})
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist",
+})
 
 export const metadata: Metadata = {
   title: "Accountability Buddy",
@@ -21,7 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           content="Accountability Buddy"
         />
       </head>
-      <body>
+      <body className={cn(inter.variable, geistMono.variable)}>
         <Providers>
           <LayoutComponent>{children}</LayoutComponent>
         </Providers>

@@ -1,4 +1,3 @@
-// src/app/api/auth/[...nextauth]/route.ts - FIXED VERSION
 import type { NextAuthOptions } from "next-auth"
 
 import NextAuth from "next-auth"

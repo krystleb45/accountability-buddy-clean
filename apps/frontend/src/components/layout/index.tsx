@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-import Navbar from "@/components/Navbar/Navbar"
+import { Navbar } from "@/components/navbar"
 
 import { AuthTokenSyncer } from "./auth-token-syncer"
 import { NewsletterPopup } from "./newsletter-popup"
@@ -25,14 +25,14 @@ export function LayoutComponent({
       {/* Global footer */}
       <footer
         className={`
-          w-full bg-black py-6 text-center text-base text-white
+          w-full bg-muted py-6 text-center text-base text-muted-foreground
           md:text-lg
         `}
       >
         <p>&copy; {new Date().getFullYear()} Accountability Buddy.</p>
       </footer>
 
-      <NewsletterPopup showAfterSeconds={5} />
+      <NewsletterPopup showAfterSeconds={45} />
     </>
   )
 }
