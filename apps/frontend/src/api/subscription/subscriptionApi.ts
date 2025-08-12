@@ -229,7 +229,9 @@ export function canUserPerformAction(
   action: keyof UserLimits,
 ): boolean {
   const limits = PLAN_LIMITS[userPlan]
-  if (!limits) return false
+  if (!limits) {
+    return false
+  }
 
   return limits[action] === true || limits[action] === -1
 }
@@ -239,15 +241,21 @@ export function hasReachedGoalLimit(
   currentGoalCount: number,
 ): boolean {
   const limits = PLAN_LIMITS[userPlan]
-  if (!limits) return true
+  if (!limits) {
+    return true
+  }
 
-  if (limits.maxGoals === -1) return false // unlimited
+  if (limits.maxGoals === -1) {
+    return false
+  } // unlimited
   return currentGoalCount >= limits.maxGoals
 }
 
 export function getPlanFeatureList(planId: string): string[] {
   const limits = PLAN_LIMITS[planId]
-  if (!limits) return []
+  if (!limits) {
+    return []
+  }
 
   const features: string[] = []
 
@@ -257,18 +265,42 @@ export function getPlanFeatureList(planId: string): string[] {
     features.push(`Up to ${limits.maxGoals} goals`)
   }
 
-  if (limits.hasStreakTracker) features.push("Streak tracker")
-  if (limits.hasDailyPrompts) features.push("Daily prompts")
-  if (limits.hasGroupChat) features.push("Group chat access")
-  if (limits.hasDMMessaging) features.push("Direct messaging")
-  if (limits.hasBadgeSystem) features.push("Badge system & XP")
-  if (limits.hasAdvancedAnalytics) features.push("Advanced analytics")
-  if (limits.hasPrivateRooms) features.push("Private chatrooms")
-  if (limits.hasWeeklyMeetings) features.push("Weekly accountability meetings")
-  if (limits.hasPrioritySupport) features.push("Priority support")
-  if (limits.hasEarlyAccess) features.push("Early feature access")
-  if (limits.hasLeaderboardPerks) features.push("Leaderboard perks")
-  if (limits.hasCoachMatching) features.push("Coach matching")
+  if (limits.hasStreakTracker) {
+    features.push("Streak tracker")
+  }
+  if (limits.hasDailyPrompts) {
+    features.push("Daily prompts")
+  }
+  if (limits.hasGroupChat) {
+    features.push("Group chat access")
+  }
+  if (limits.hasDMMessaging) {
+    features.push("Direct messaging")
+  }
+  if (limits.hasBadgeSystem) {
+    features.push("Badge system & XP")
+  }
+  if (limits.hasAdvancedAnalytics) {
+    features.push("Advanced analytics")
+  }
+  if (limits.hasPrivateRooms) {
+    features.push("Private chatrooms")
+  }
+  if (limits.hasWeeklyMeetings) {
+    features.push("Weekly accountability meetings")
+  }
+  if (limits.hasPrioritySupport) {
+    features.push("Priority support")
+  }
+  if (limits.hasEarlyAccess) {
+    features.push("Early feature access")
+  }
+  if (limits.hasLeaderboardPerks) {
+    features.push("Leaderboard perks")
+  }
+  if (limits.hasCoachMatching) {
+    features.push("Coach matching")
+  }
 
   return features
 }

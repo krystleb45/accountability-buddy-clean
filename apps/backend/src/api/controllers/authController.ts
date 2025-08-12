@@ -1,5 +1,6 @@
 // src/api/controllers/authController.ts - Updated with subscription support
 
+import type { PRICING } from "@ab/shared/pricing"
 import type { RequestHandler } from "express"
 
 import { logger } from "../../utils/winstonLogger"
@@ -10,44 +11,22 @@ import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
 interface RegisterRequestBody {
-  email?: string
-  password?: string
-  username?: string
-  selectedPlan?: string
-  billingCycle?: "monthly" | "yearly"
+  email: string
+  password: string
+  username: string
+  name: string
+  selectedPlan: (typeof PRICING)[number]["id"]
+  billingCycle: "monthly" | "yearly"
 }
 
 //
 // ─── POST /api/auth/register ─────────────────────────────────────────────────
 //
 export const register: RequestHandler = catchAsync(async (req, res, next) => {
-  const {
-    email,
-    password,
-    username,
-    selectedPlan = "free-trial",
-    billingCycle = "monthly",
-  } = req.body as RegisterRequestBody
-
-  if (!email || !password || !username) {
-    return next(
-      createError("Email, username, and password are all required", 400),
-    )
-  }
+  const { email, password, username, name, selectedPlan, billingCycle } =
+    req.body as RegisterRequestBody
 
   const normalizedEmail = email.toLowerCase().trim()
-
-  // Validate subscription plan
-  const validPlans = ["free-trial", "basic", "pro", "elite"]
-  if (!validPlans.includes(selectedPlan)) {
-    return next(createError("Invalid subscription plan selected", 400))
-  }
-
-  // Validate billing cycle
-  const validCycles = ["monthly", "yearly"]
-  if (!validCycles.includes(billingCycle)) {
-    return next(createError("Invalid billing cycle selected", 400))
-  }
 
   // Check for existing user
   const existing = await User.findOne({
@@ -61,6 +40,7 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
 
   // Hash password - let the User model handle this in pre-save middleware
   const user = new User({
+    name,
     email: normalizedEmail,
     username,
     password, // Will be hashed by pre-save middleware

@@ -59,8 +59,7 @@ export interface IUser extends Document {
   resetPasswordToken?: string
   resetPasswordExpires?: Date
   twoFactorSecret?: string
-  firstName?: string
-  lastName?: string
+  name?: string
 
   // Enhanced Stripe/Subscription fields
   stripeCustomerId?: string
@@ -159,8 +158,7 @@ const UserSchema: Schema<IUser> = new Schema(
     bio: { type: String, default: "" },
     profileImage: { type: String, default: "" },
     coverImage: { type: String, default: "" },
-    firstName: { type: String },
-    lastName: { type: String },
+    name: { type: String },
     role: {
       type: String,
       enum: ["user", "admin", "moderator", "military"],

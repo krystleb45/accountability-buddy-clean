@@ -1,3 +1,4 @@
+import { PRICING } from "@ab/shared/pricing"
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import z from "zod"
@@ -25,6 +26,9 @@ router.post(
       email: z.email("Email must be valid"),
       password: z.string().min(8, "Password must be at least 8 characters"),
       username: z.string().nonempty("Username is required"),
+      name: z.string().min(2),
+      selectedPlan: z.enum(PRICING.map((plan) => plan.id)),
+      billingCycle: z.enum(["monthly", "yearly"]).default("yearly"),
     }),
   }),
   catchAsync(async (req, res, next) => {

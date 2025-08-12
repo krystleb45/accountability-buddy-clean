@@ -166,12 +166,7 @@ export function LoginForm() {
                 )}
               />
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full"
-                size="lg"
-              >
+              <Button type="submit" disabled={loading} className="w-full">
                 {loading ? "Logging in…" : "Login"}
               </Button>
             </form>

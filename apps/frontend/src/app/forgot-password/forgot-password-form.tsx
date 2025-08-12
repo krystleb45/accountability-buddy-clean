@@ -97,7 +97,7 @@ export function ForgotPasswordForm() {
                   )}
                 />
 
-                <Button type="submit" size="lg" className="w-full">
+                <Button type="submit" className="w-full">
                   Send Reset Link
                 </Button>
               </form>
