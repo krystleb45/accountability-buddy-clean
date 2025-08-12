@@ -21,7 +21,8 @@ export function LayoutComponent({
       {/* Global footer */}
       <footer
         className={`
-          w-full bg-muted py-6 text-center text-base text-muted-foreground
+          w-full border-t bg-popover py-6 text-center text-base
+          text-muted-foreground
           md:text-lg
         `}
       >

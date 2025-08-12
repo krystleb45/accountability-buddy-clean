@@ -1,0 +1,16 @@
+{
+  "name": "@ab/shared",
+  "version": "1.0.0",
+  "description": "shared across frontend and backend",
+  "exports": {
+    "./pricing": "./src/pricing.ts"
+  },
+  "scripts": {
+    "lint": "eslint --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@ab/eslint-config": "*"
+  }
+}
