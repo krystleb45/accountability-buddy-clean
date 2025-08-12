@@ -2,7 +2,7 @@
 
 import type { Metadata } from "next"
 
-import HomeClient from "./page.client"
+import { Home } from "./home"
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL!
 
@@ -27,5 +27,5 @@ export const metadata: Metadata = {
 }
 
 export default function HomePage() {
-  return <HomeClient />
+  return <Home />
 }

@@ -2,7 +2,7 @@
 "use client"
 
 import { format } from "date-fns"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import React from "react"
 
 import type { Challenge } from "@/api/challenge/challengeApi"

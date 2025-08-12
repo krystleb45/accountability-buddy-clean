@@ -1,7 +1,7 @@
 // src/components/Profile/StreakReminder.tsx
 "use client"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { BellRing } from "lucide-react"
 import React, { useEffect, useState } from "react"
 

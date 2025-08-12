@@ -1,7 +1,7 @@
 // src/app/friends/page.client.tsx
 "use client"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 import React, { useCallback, useEffect, useState } from "react"

@@ -3,7 +3,7 @@
 
 import type { FormEvent } from "react"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import React from "react"
 
 import { useForgotPassword } from "@/hooks/useForgotPassword"

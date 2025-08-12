@@ -1,7 +1,7 @@
 // src/app/task-creation/page.client.tsx
 "use client"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import React, { useEffect, useState } from "react"
 
 import type { Task, TaskInput } from "@/api/tasks/taskApi"

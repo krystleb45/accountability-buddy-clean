@@ -3,7 +3,7 @@
 
 import type { Metadata } from "next"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import React, { useEffect, useState } from "react"
 import { FaFire, FaPlus, FaUsers } from "react-icons/fa"
 

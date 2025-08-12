@@ -3,7 +3,7 @@
 
 import type { ReactElement } from "react"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 

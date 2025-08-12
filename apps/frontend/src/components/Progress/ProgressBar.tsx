@@ -2,7 +2,7 @@
 "use client"
 
 import clsx from "clsx"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import React from "react"
 
 type ColorKey = "green" | "blue" | "yellow" | "purple" | "gray"

@@ -1,7 +1,7 @@
 // src/app/community/groups/[groupId]/client.tsx - CLEAN VERSION
 "use client"
 
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import { useParams, useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"

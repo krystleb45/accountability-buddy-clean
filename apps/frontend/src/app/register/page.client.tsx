@@ -1,7 +1,7 @@
 // src/app/register/page.client.tsx - Final version using your existing API structure
 "use client"
 
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React, { useState } from "react"

@@ -59,8 +59,8 @@ const buttonVariants = cva(
           has-[>svg]:px-2.5
         `,
         lg: `
-          h-10 rounded-md px-6
-          has-[>svg]:px-4
+          h-12 rounded-md px-8 text-xl
+          has-[>svg]:px-6
         `,
         icon: "size-9",
       },

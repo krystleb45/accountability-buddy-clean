@@ -3,7 +3,7 @@
 
 import type { FormEvent } from "react"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import Link from "next/link"
 import React, { useState } from "react"
 

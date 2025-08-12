@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { CheckCircle, LoaderCircle, Mail, Sparkles } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { useEffect, useMemo, useState } from "react"
