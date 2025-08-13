@@ -2,7 +2,6 @@
   "name": "@ab/backend",
   "version": "1.0.0",
   "description": "Backend for the Accountability Buddy platform",
-  "author": "Your Name or Team",
   "license": "ISC",
   "keywords": [
     "accountability",
@@ -11,13 +10,10 @@
     "goal-tracking",
     "real-time"
   ],
-  "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development NODE_OPTIONS='--max-old-space-size=4096 --no-deprecation -r ts-node/register' nodemon",
     "test": "cross-env NODE_ENV=test jest",
     "build": "tsc --build",
-    "build:railway": "tsc --project tsconfig.railway.json",
-    "build:js": "tsc --allowJs --checkJs false --noEmit false src/**/*.ts --outDir dist",
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
