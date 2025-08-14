@@ -1,14 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
+    "jsx": "react-jsx",
     "lib": ["ES2020"],
     "baseUrl": ".",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "paths": {
-      "@src/*": ["src/*"],
-      "@test/*": ["src/test/*"]
-    },
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "noEmitOnError": false,
     "outDir": "dist",
@@ -22,6 +19,10 @@
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "ts-node": {
     "transpileOnly": true,
-    "files": true
+    "files": true,
+    "compilerOptions": {
+      "module": "CommonJS",
+      "moduleResolution": "node"
+    }
   }
 }
