@@ -125,5 +125,3 @@ export const MessageReaction = mongoose.model<
   IMessageReaction,
   IMessageReactionModel
 >("MessageReaction", MessageReactionSchema)
-
-export default MessageReaction

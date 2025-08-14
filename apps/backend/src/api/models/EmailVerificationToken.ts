@@ -98,7 +98,9 @@ EmailVerificationTokenSchema.statics.findValid = async function (
   token: string,
 ): Promise<IEmailVerificationToken | null> {
   const doc = await this.findOne({ token })
-  if (!doc || doc.isExpired()) return null
+  if (!doc || doc.isExpired()) {
+    return null
+  }
   return doc
 }
 

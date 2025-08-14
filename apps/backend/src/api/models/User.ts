@@ -360,7 +360,9 @@ UserSchema.virtual("isActive").set(function (value: boolean) {
 UserSchema.pre("save", function (next) {
   if (this.isModified("goals")) {
     this.goals?.forEach((goal) => {
-      if (!goal.createdAt) goal.createdAt = new Date()
+      if (!goal.createdAt) {
+        goal.createdAt = new Date()
+      }
       goal.updatedAt = new Date()
     })
   }
@@ -407,7 +409,9 @@ UserSchema.methods.canCreateGoal = function (): boolean {
   const limit = goalLimits[tier] ?? 3 // default to 3 if tier not found
 
   // Return true for unlimited plans
-  if (limit === -1) return true
+  if (limit === -1) {
+    return true
+  }
 
   // FIXED: Use the same status values as GoalManagementService
   // Note: This method is now mainly for quick checks -
@@ -481,7 +485,9 @@ UserSchema.methods.isInTrial = function (): boolean {
 }
 
 UserSchema.methods.getDaysUntilTrialEnd = function (): number {
-  if (!this.trial_end_date) return 0
+  if (!this.trial_end_date) {
+    return 0
+  }
   const now = new Date()
   const trialEnd = new Date(this.trial_end_date)
   const diffTime = trialEnd.getTime() - now.getTime()

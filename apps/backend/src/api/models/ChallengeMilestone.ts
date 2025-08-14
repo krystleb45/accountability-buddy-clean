@@ -100,5 +100,3 @@ export const ChallengeMilestone = mongoose.model<
   IChallengeMilestone,
   IChallengeMilestoneModel
 >("ChallengeMilestone", ChallengeMilestoneSchema)
-
-export default ChallengeMilestone
