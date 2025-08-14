@@ -21,8 +21,8 @@ if (!fs.existsSync(logDir)) {
 const customLogFormat = format.printf(
   ({ timestamp, level, message, stack }) => {
     return stack
-      ? `${timestamp} [${level}]: ${message} - ${stack}` // Log stack trace if present
-      : `${timestamp} [${level}]: ${message}`
+      ? `[${timestamp}] ${level}: ${message} - ${stack}` // Log stack trace if present
+      : `[${timestamp}] ${level}: ${message}`
   },
 )
 
@@ -67,7 +67,7 @@ if (process.env.NODE_ENV !== "production") {
       format: format.combine(
         format.colorize(),
         format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        format.simple(),
+        customLogFormat,
       ),
     }),
   )
@@ -86,11 +86,5 @@ logger.rejections.handle(
 logger.on("error", (err) => {
   logger.error("Logger error:", err)
 })
-
-// ✅ Flush logs before exiting
-// process.on("exit", () => {
-//  logger.info("Logger shutdown.");
-//  logger.end();
-// });
 
 export { logger, logStructured }
