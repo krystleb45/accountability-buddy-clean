@@ -1,12 +1,17 @@
-// src/api/controllers/authController.ts - Updated with subscription support
-
 import type { PRICING } from "@ab/shared/pricing"
 import type { RequestHandler } from "express"
+import type { AuthenticatedRequest } from "src/types/AuthenticatedRequest"
+import type { UserObject } from "src/types/mongoose.gen"
 
+import { getVerifyEmailTemplate } from "@ab/transactional"
+
+import appConfig from "../../config/appConfig"
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
+import EmailVerificationToken from "../models/EmailVerificationToken"
 import { User } from "../models/User"
 import AuthService from "../services/AuthService"
+import { sendHtmlEmail } from "../services/emailService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
@@ -57,30 +62,8 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
     `✅ User registered successfully: ${normalizedEmail} with plan: ${selectedPlan}`,
   )
 
-  // Issue tokens
-  const accessToken = await AuthService.generateToken({
-    _id: user._id.toString(), // Changed back to _id to match AuthService
-    role: user.role,
-  })
-
-  // Prepare user data for response (matching your frontend expectations)
-  const userData = {
-    id: user._id.toString(),
-    username: user.username,
-    email: user.email,
-    role: user.role,
-    subscriptionTier: user.subscriptionTier,
-    subscription_status: user.subscription_status,
-    trial_end_date: user.trial_end_date?.toISOString(),
-    isInTrial: user.isInTrial(),
-  }
-
   // Return success response with token and user data
-  sendResponse(res, 201, true, "User registered successfully", {
-    token: accessToken,
-    user: userData,
-    accessToken,
-  })
+  sendResponse(res, 201, true, "User registered successfully")
 })
 
 //
@@ -89,7 +72,7 @@ export const register: RequestHandler = catchAsync(async (req, res, next) => {
 export async function login(req, res, next) {
   const { email, password } = req.body as { email: string; password: string }
 
-  logger.info("→ [login] received payload:", { email })
+  logger.debug("→ [login] received payload:", { email })
 
   // 1) Lookup user
   const user = await User.findOne({ email }).select("+password")
@@ -109,19 +92,11 @@ export async function login(req, res, next) {
     role: user.role,
   })
 
+  const userData: UserObject = user.toObject()
+
   // 4) Send response with subscription data
   sendResponse(res, 200, true, "Login successful", {
-    user: {
-      id: user._id.toString(),
-      name: user.username,
-      email: user.email,
-      role: user.role,
-      subscriptionTier: user.subscriptionTier,
-      subscription_status: user.subscription_status,
-      trial_end_date: user.trial_end_date?.toISOString(),
-      isInTrial: user.isInTrial(),
-      accessToken,
-    },
+    user: { ...userData, accessToken },
   })
 }
 
@@ -161,12 +136,9 @@ export const logout: RequestHandler = (_req, res) => {
 //
 export const getCurrentUser: RequestHandler = catchAsync(
   async (req, res, next) => {
-    const userId = (req as any).user?.id as string | undefined
-    if (!userId) {
-      return next(createError("Not authenticated", 401))
-    }
+    const userId = (req as AuthenticatedRequest).user!.id
 
-    const user = await User.findById(userId).select("-password").lean()
+    const user = await User.findById(userId).select("-password")
     if (!user) {
       return next(createError("User not found", 404))
     }
@@ -177,24 +149,93 @@ export const getCurrentUser: RequestHandler = catchAsync(
       user.trial_end_date &&
       new Date() > user.trial_end_date
     ) {
-      await User.findByIdAndUpdate(userId, {
-        subscription_status: "expired",
-      })
       user.subscription_status = "expired"
+      await user.save()
     }
 
+    const userData: UserObject = user.toObject()
+
     sendResponse(res, 200, true, "User fetched successfully", {
-      user: {
-        id: user._id.toString(),
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        subscriptionTier: user.subscriptionTier,
-        subscription_status: user.subscription_status,
-        trial_end_date: user.trial_end_date?.toISOString(),
-        isInTrial: user.isInTrial(),
-      },
+      user: userData,
     })
+  },
+)
+
+// ─── POST /api/auth/send-verification-email ────────────────────────────────
+export const sendVerificationEmail: RequestHandler = catchAsync(
+  async (req: AuthenticatedRequest, res) => {
+    const userId = req.user!.id
+
+    const user = await User.findById(userId)
+
+    if (user.isVerified) {
+      sendResponse(res, 200, true, "Email already verified", {})
+      return
+    }
+
+    const reuseWindowMs = 15 * 60 * 1000 // 15 minutes
+    const now = Date.now()
+
+    // Try reusing most recent, unexpired token within reuse window
+    const existingTokenDoc = await EmailVerificationToken.findOne({
+      user: user._id,
+    })
+      .sort({ createdAt: -1 })
+      .exec()
+
+    const canReuse =
+      existingTokenDoc &&
+      !existingTokenDoc.isExpired() &&
+      now - existingTokenDoc.createdAt.getTime() < reuseWindowMs
+
+    const tokenDoc = canReuse
+      ? existingTokenDoc
+      : await EmailVerificationToken.generate(user._id)
+
+    const frontendUrl = appConfig.frontendUrl.replace(/\/$/, "")
+    const verifyUrl = `${frontendUrl}/verify-email?token=${encodeURIComponent(tokenDoc.token)}`
+
+    const { html, text } = await getVerifyEmailTemplate(
+      verifyUrl,
+      `${appConfig.frontendUrl}/logo.png`,
+    )
+
+    logger.debug(`Verification URL: ${verifyUrl}`)
+
+    await sendHtmlEmail(
+      user.email,
+      "Accountability Buddy — Verify your email",
+      html,
+      text,
+    )
+
+    sendResponse(res, 200, true, "Verification email sent", {})
+  },
+)
+
+// ─── GET /api/auth/verify-email ───────────────────────────────────────────
+export const verifyEmail: RequestHandler = catchAsync(
+  async (req, res, next) => {
+    const token = (req.query.token as string).trim()
+
+    const tokenDoc = await EmailVerificationToken.findValid(token)
+    if (!tokenDoc) {
+      return next(createError("Invalid or expired token", 400))
+    }
+
+    const user = await User.findById(tokenDoc.user)
+    if (!user) {
+      return next(createError("User not found", 404))
+    }
+
+    if (!user.isVerified) {
+      user.isVerified = true
+      await user.save()
+    }
+
+    await tokenDoc.deleteOne()
+
+    sendResponse(res, 200, true, "Email verified successfully")
   },
 )
 
@@ -204,4 +245,6 @@ export default {
   refreshToken,
   logout,
   getCurrentUser,
+  sendVerificationEmail,
+  verifyEmail,
 }

@@ -1,37 +1,23 @@
-import type { NextRequest } from "next/server"
-
 import axios, { isAxiosError } from "axios"
+import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 
-interface RegisterRequest {
-  name: string
-  username: string
-  email: string
-  password: string
-  selectedPlan?: string
-  billingCycle?: "monthly" | "yearly"
-}
+import type { User } from "@/types/mongoose.gen"
 
-interface JsonResponse {
-  success: boolean
-  message: string
-  data?: any
-}
+import { authOptions } from "../[...nextauth]/route"
 
-export async function POST(
-  req: NextRequest,
-): Promise<NextResponse<JsonResponse>> {
-  let body: Partial<RegisterRequest>
+export async function GET() {
   try {
-    body = await req.json()
-  } catch {
-    return NextResponse.json(
-      { success: false, message: "Invalid JSON payload" },
-      { status: 400 },
-    )
-  }
+    const session = await getServerSession(authOptions)
+    const token = session?.user?.accessToken
 
-  try {
+    if (!token) {
+      return NextResponse.json(
+        { success: false, message: "User not authenticated" },
+        { status: 401 },
+      )
+    }
+
     // Get backend URL from environment variables
     const backendUrl = process.env.BACKEND_URL
 
@@ -43,17 +29,15 @@ export async function POST(
     }
 
     // Use native fetch instead of http utility
-    const response = await axios.post<{
+    const response = await axios.get<{
       success: boolean
       message?: string
-      data?: any
-    }>(`${backendUrl}/api/auth/register`, {
-      name: body.name,
-      username: body.username,
-      email: body.email,
-      password: body.password,
-      selectedPlan: body.selectedPlan,
-      billingCycle: body.billingCycle,
+      data?: { user: User }
+    }>("/auth/me", {
+      baseURL: `${backendUrl}/api`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
 
     // Get the response data
@@ -61,7 +45,10 @@ export async function POST(
 
     if (!data.success) {
       return NextResponse.json(
-        { success: false, message: data.message ?? "Registration failed." },
+        {
+          success: false,
+          message: data.message ?? "Failed to get user details",
+        },
         { status: response.status },
       )
     }
@@ -69,13 +56,12 @@ export async function POST(
     return NextResponse.json(
       {
         success: true,
-        message: data.message ?? "Registration successful.",
         data: data.data,
       },
       { status: response.status },
     )
   } catch (err: unknown) {
-    console.error("Unexpected error in /api/auth/register:", err)
+    console.error("Unexpected error in /api/auth/me:", err)
 
     if (isAxiosError(err)) {
       return NextResponse.json(

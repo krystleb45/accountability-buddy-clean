@@ -2,9 +2,12 @@
 
 import type { ReactNode } from "react"
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { SessionProvider } from "next-auth/react"
 
-import APIProvider from "@/context/data/APIContext"
+import { AuthProvider } from "@/context/auth/auth-context"
+
+const queryClient = new QueryClient()
 
 interface Props {
   children: ReactNode
@@ -12,8 +15,10 @@ interface Props {
 
 export function Providers({ children }: Props) {
   return (
-    <SessionProvider>
-      <APIProvider>{children}</APIProvider>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <AuthProvider>{children}</AuthProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   )
 }

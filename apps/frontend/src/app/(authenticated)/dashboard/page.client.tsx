@@ -10,9 +10,9 @@ import { fetchDashboardStats } from "@/api/dashboard/dashboardApi"
 import Dashboard from "@/components/Dashboard/Dashboard"
 import GamificationService from "@/services/gamificationService"
 
-import type { StreakData } from "../../api/goal/goalsApi"
+import type { StreakData } from "../../../api/goal/goalsApi"
 
-import { fetchUserStreak } from "../../api/goal/goalsApi"
+import { fetchUserStreak } from "../../../api/goal/goalsApi"
 
 export default function DashboardClient() {
   const { data: session, status } = useSession()
@@ -67,7 +67,11 @@ export default function DashboardClient() {
   // loading / redirect state
   if (loading || status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-black text-white
+        `}
+      >
         <p>Loading dashboard…</p>
       </div>
     )
@@ -82,7 +86,11 @@ export default function DashboardClient() {
     !stats
   ) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-red-500">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-black text-red-500
+        `}
+      >
         <p>
           {status !== "authenticated"
             ? "Log in to view your dashboard."

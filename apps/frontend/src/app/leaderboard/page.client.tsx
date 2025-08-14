@@ -9,7 +9,7 @@ import type { LeaderboardEntry } from "@/types/Gamification.types"
 
 import { fetchLeaderboard } from "@/api/leaderboard/leaderboardApi"
 import LeaderboardCard from "@/components/Gamification/LeaderboardCard"
-import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner"
+import LoadingSpinner from "@/components/loading-spinner"
 
 export default function LeaderboardPage() {
   const [rows, setRows] = useState<LeaderboardEntry[]>([])

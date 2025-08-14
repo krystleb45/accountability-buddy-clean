@@ -17,6 +17,7 @@ export function Navbar() {
         sticky top-0 z-50 flex items-center justify-between border-b
         bg-gradient-to-br from-secondary/50 to-background/50 px-8 py-4 shadow
         backdrop-blur-2xl
+        *:flex-1
       `}
       data-testid="navbar"
     >
@@ -56,7 +57,7 @@ export function Navbar() {
       )}
 
       {/* User / Auth section */}
-      <div>
+      <div className="flex justify-end">
         {authStatus === "loading" ? (
           <Skeleton
             className="h-8 w-20 rounded-lg"

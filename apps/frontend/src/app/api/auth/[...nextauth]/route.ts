@@ -45,6 +45,7 @@ export const authOptions: NextAuthOptions = {
           // )
 
           const payload = res.data
+
           // console.log(
           //   "🔍 [NEXTAUTH] Backend login payload keys:",
           //   Object.keys(payload),

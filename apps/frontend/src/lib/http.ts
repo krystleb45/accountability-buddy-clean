@@ -1,4 +1,3 @@
-// src/lib/http.ts - Simplified with NextAuth.js integration
 "use client"
 
 import type {

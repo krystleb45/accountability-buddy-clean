@@ -26,6 +26,7 @@ function ChoosePlanPage() {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [verificationEmailSent, setVerificationEmailSent] = useState(false)
 
   useEffect(() => {
     if (error) {
@@ -34,6 +35,15 @@ function ChoosePlanPage() {
       })
     }
   }, [error])
+
+  useEffect(() => {
+    if (verificationEmailSent) {
+      toast.success("Verification email sent successfully!", {
+        duration: 5000,
+        description: "Please check your inbox to verify your account.",
+      })
+    }
+  }, [verificationEmailSent])
 
   const handleSubmit = async () => {
     setLoading(true)
@@ -61,6 +71,14 @@ function ChoosePlanPage() {
         password: createAccountState?.password,
         redirect: false,
       })
+
+      try {
+        await http.post("/auth/send-verification-email")
+        setVerificationEmailSent(true)
+      } catch (error) {
+        console.error("Error sending verification email:", error)
+        setVerificationEmailSent(false)
+      }
 
       // If free trial, redirect to dashboard
       if (selectedPlan === "free-trial") {

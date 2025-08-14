@@ -20,7 +20,6 @@ interface JwtPayload {
 
 /**
  * Protects routes by verifying Bearer JWT tokens from Authorization header
- * ONLY reads from Authorization header - no cookie fallback
  */
 export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
   // Extract token from Authorization header ONLY
