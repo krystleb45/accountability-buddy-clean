@@ -1,0 +1,23 @@
+{
+  "name": "@ab/transactional",
+  "version": "1.0.0",
+  "description": "Transactional email templates",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@react-email/components": "0.5.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "scripts": {
+    "dev": "email dev -p 3001"
+  },
+  "devDependencies": {
+    "@ab/eslint-config": "*",
+    "@react-email/preview-server": "^4.2.8",
+    "react-email": "4.2.8"
+  },
+  "exports": {
+    ".": "./index.tsx"
+  }
+}
