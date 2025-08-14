@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -68,7 +69,31 @@ export function LoginForm() {
   })
 
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+
+  const { mutate: login, isPending: loading } = useMutation({
+    mutationFn: async (data: LoginFormInputs) => {
+      const res = await signIn("credentials", {
+        redirect: false,
+        callbackUrl,
+        email: data.email,
+        password: data.password,
+      })
+      if (res?.error) {
+        throw new Error(res.error)
+      }
+      return res
+    },
+    onSuccess: (res) => {
+      if (res?.url) {
+        router.push(res.url)
+      } else {
+        router.push(callbackUrl)
+      }
+    },
+    onError: (error) => {
+      setError(error.message)
+    },
+  })
 
   // Map NextAuth error codes into our whitelist of messages
   useEffect(() => {
@@ -92,31 +117,9 @@ export function LoginForm() {
   }, [error])
 
   const handleSubmit = async (data: LoginFormInputs) => {
-    setLoading(true)
     setError(null)
 
-    try {
-      const res = await signIn("credentials", {
-        redirect: false,
-        callbackUrl,
-        email: data.email,
-        password: data.password,
-      })
-
-      if (res?.error) {
-        setError(messages.CredentialsSignin)
-      } else {
-        router.push(res?.url ?? callbackUrl)
-      }
-    } catch (err: unknown) {
-      const msg =
-        err instanceof Error
-          ? err.message
-          : "An unexpected error occurred. Please try again."
-      setError(msg)
-    } finally {
-      setLoading(false)
-    }
+    login(data)
   }
 
   return (
