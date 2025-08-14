@@ -11,7 +11,7 @@
     "real-time"
   ],
   "scripts": {
-    "dev": "cross-env NODE_ENV=development NODE_OPTIONS='--max-old-space-size=4096 --no-deprecation -r ts-node/register' nodemon",
+    "dev": "cross-env NODE_ENV=development NODE_OPTIONS='--max-old-space-size=4096 --no-deprecation' nodemon",
     "test": "cross-env NODE_ENV=test jest",
     "build": "tsc --build",
     "start": "cross-env NODE_ENV=production node dist/server.js",
@@ -34,12 +34,16 @@
     "reset:test": "npm run cleanup:all && npm run seed:test",
     "reset:prod": "npm run cleanup:all && npm run seed:prod",
     "email-worker": "ts-node src/queues/emailWorker.ts",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "generate-types": "mtgen -o ./src/types",
+    "generate-types-for-frontend": "mtgen -o ../frontend/src/types --no-mongoose --dates-as-strings"
   },
   "dependencies": {
     "@ab/shared": "*",
+    "@ab/transactional": "*",
     "@aws-sdk/client-s3": "^3.758.0",
     "@aws-sdk/s3-request-presigner": "^3.758.0",
+    "@mailchimp/mailchimp_transactional": "^1.0.59",
     "@redis/client": "^1.6.0",
     "@sentry/node": "^9.10.1",
     "@types/newrelic": "^9.14.8",
@@ -118,6 +122,7 @@
     "@types/hpp": "^0.2.6",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
+    "@types/mailchimp__mailchimp_transactional": "^1.0.11",
     "@types/mongo-sanitize": "^1.0.3",
     "@types/mongoose": "^5.11.96",
     "@types/morgan": "^1.9.9",
@@ -144,6 +149,7 @@
     "ioredis-mock": "^8.9.0",
     "jest": "^29.7.0",
     "mongodb-memory-server": "^10.1.4",
+    "mongoose-tsgen": "^9.5.3",
     "nodemon": "^3.1.9",
     "supertest": "^6.3.4",
     "ts-jest": "^29.3.2",
