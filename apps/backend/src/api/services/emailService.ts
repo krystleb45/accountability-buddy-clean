@@ -1,59 +1,42 @@
-import type { SendMailOptions, TransportOptions } from "nodemailer"
-
-import nodemailer from "nodemailer"
+import mailchimp from "@mailchimp/mailchimp_transactional"
 
 import { logger } from "../../utils/winstonLogger"
 
-// Configure email transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: Number.parseInt(process.env.EMAIL_PORT || "587", 10),
-  secure: process.env.EMAIL_PORT === "465",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-} as TransportOptions)
+const mailchimpClient = mailchimp(process.env.MAILCHIMP_TRANSACTIONAL_API_KEY)
+
+export async function emailServiceHealthCheck(): Promise<boolean> {
+  const res = await mailchimpClient.users.ping()
+
+  if (res instanceof Error) {
+    logger.error(
+      "❌ Email service is unhealthy:",
+      res.response.data || res.message,
+    )
+    throw new TypeError("❌ Email service is unhealthy")
+  }
+
+  return res === "PONG!"
+}
 
 export async function sendEmail(
   to: string,
   subject: string,
-  text = "",
-  options: Partial<SendMailOptions> = {},
-  retries = 3,
+  text: string,
+  options: Partial<Omit<mailchimp.MessagesSendRequest, "message">> = {},
 ): Promise<void> {
   if (!to || !subject) {
     throw new Error("Recipient email and subject are required")
   }
 
-  const mailOptions: SendMailOptions = {
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-    to,
-    subject,
-    text,
+  await mailchimpClient.messages.send({
+    message: {
+      from_email: process.env.EMAIL_USER!,
+      to: [{ email: to }],
+      subject,
+      text,
+    },
     ...options,
-  }
-
-  let attempt = 0
-  while (attempt < retries) {
-    try {
-      await transporter.sendMail(mailOptions)
-      logger.info(`Email successfully sent to ${to}`)
-      return
-    } catch (err: unknown) {
-      attempt++
-      const errMsg = err instanceof Error ? err.message : String(err)
-      logger.error(`Attempt ${attempt} to send email failed: ${errMsg}`)
-      if (attempt >= retries) {
-        throw new Error(`Failed to send email after ${retries} attempts`)
-      }
-      // back‐off before retrying
-      await new Promise((r) => setTimeout(r, 2000))
-    }
-  }
+  })
 }
 
 /**
@@ -61,62 +44,33 @@ export async function sendEmail(
  * @param to - Recipient email address.
  * @param subject - Email subject.
  * @param html - HTML content for the email.
+ * @param text - Optional plain text content for the email.
  * @param options - Additional email options.
  */
 export async function sendHtmlEmail(
   to: string,
   subject: string,
   html: string,
-  options: Partial<SendMailOptions> = {},
+  text?: string,
+  options: Partial<Omit<mailchimp.MessagesSendRequest, "message">> = {},
 ): Promise<void> {
   if (!html) {
     throw new Error("HTML content is required for sending an HTML email")
   }
 
-  const mailOptions: Partial<SendMailOptions> = {
-    html,
+  const res = await mailchimpClient.messages.send({
+    message: {
+      from_email: process.env.EMAIL_USER!,
+      to: [{ email: to }],
+      subject,
+      html,
+      text,
+    },
     ...options,
-  }
+  })
 
-  await sendEmail(to, subject, "", mailOptions)
-}
-
-/**
- * Sends an email with attachments.
- * @param to - Recipient email address.
- * @param subject - Email subject.
- * @param text - Plain text content (optional if HTML is provided).
- * @param attachments - Array of attachment objects.
- */
-export async function sendEmailWithAttachments(
-  to: string,
-  subject: string,
-  text: string,
-  attachments: Array<{ filename: string; path: string }> = [],
-): Promise<void> {
-  if (!Array.isArray(attachments)) {
-    throw new TypeError("Attachments must be provided as an array")
-  }
-
-  const mailOptions: Partial<SendMailOptions> = {
-    text,
-    attachments,
-  }
-
-  await sendEmail(to, subject, text, mailOptions)
-}
-
-/**
- * Verifies the SMTP connection to ensure the server is ready to send emails.
- */
-export async function verifySmtpConnection(): Promise<void> {
-  try {
-    await transporter.verify()
-    logger.info("SMTP server is ready to take messages")
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error"
-    logger.error(`SMTP connection verification failed: ${errorMessage}`)
-    throw new Error("Failed to verify SMTP connection")
+  if (res instanceof Error) {
+    logger.error("❌ Failed to send email:", res.response.data || res.message)
+    throw new TypeError("❌ Failed to send email")
   }
 }

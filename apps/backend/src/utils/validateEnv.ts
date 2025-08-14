@@ -1,4 +1,3 @@
-// src/utils/validateEnv.ts
 import { logger } from "./winstonLogger"
 
 const requiredEnvVars: string[] = [
@@ -10,9 +9,11 @@ const requiredEnvVars: string[] = [
   "STRIPE_WEBHOOK_SECRET",
   "ALLOWED_ORIGINS",
   "SESSION_SECRET",
+  "MAILCHIMP_TRANSACTIONAL_API_KEY",
+  "EMAIL_USER",
 ]
 
-const optionalButRecommended: string[] = ["EMAIL_USER", "EMAIL_CLIENT_ID"]
+const optionalButRecommended: string[] = []
 
 export function validateEnv(): void {
   const missing = requiredEnvVars.filter((key) => !process.env[key])

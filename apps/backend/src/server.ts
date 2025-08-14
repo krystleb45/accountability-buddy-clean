@@ -77,6 +77,15 @@ async function startServer(): Promise<void> {
     await mongoose.connect(process.env.MONGO_URI!)
     logger.info("✅ MongoDB connected")
 
+    // 2a) Check up on email service
+    const emailService = await import("./api/services/emailService")
+    const emailServiceHealthy = await emailService.emailServiceHealthCheck()
+    if (!emailServiceHealthy) {
+      logger.error("❌ Email service is unhealthy")
+    } else {
+      logger.info("📧 Email service is healthy")
+    }
+
     const app = await import("./app").then((mod) => mod.default)
     const socketServer = await import("./sockets").then((mod) => mod.default)
 
