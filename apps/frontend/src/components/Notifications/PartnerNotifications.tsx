@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from "react"
 
 import ApiService from "../../services/apiService"
-import LoadingSpinner from "../LoadingSpinner/LoadingSpinner"
+import { LoadingSpinner } from "../loading-spinner"
 import styles from "./PartnerNotifications.module.css"
 
 interface RawNotification {
@@ -99,7 +99,10 @@ const PartnerNotifications: React.FC = () => {
           {notifications.map((notif) => (
             <li
               key={notif.id}
-              className={`${styles.item} ${notif.isRead ? styles.read : styles.unread}`}
+              className={`
+                ${styles.item}
+                ${notif.isRead ? styles.read : styles.unread}
+              `}
             >
               <p className={styles.message}>{notif.message}</p>
               <div className={styles.actions}>

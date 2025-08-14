@@ -9,7 +9,7 @@ import {
   fetchRewards as apiFetchRewards,
   redeemReward,
 } from "../../api/reward/rewardApi"
-import LoadingSpinner from "../LoadingSpinner/LoadingSpinner"
+import { LoadingSpinner } from "../loading-spinner"
 import styles from "./PointShop.module.css"
 import RewardCard from "./RewardCard"
 

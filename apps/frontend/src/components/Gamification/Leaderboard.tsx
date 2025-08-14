@@ -5,9 +5,9 @@ import React, { useCallback, useEffect, useState } from "react"
 
 import type { LeaderboardEntry } from "@/types/Gamification.types"
 
-import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner"
-import { getAvatarUrl } from "@/utils/avatarUtils"
+import { LoadingSpinner } from "@/components/loading-spinner"
 import { http } from "@/lib/http"
+import { getAvatarUrl } from "@/utils/avatarUtils"
 
 import styles from "./LeaderboardCard.module.css"
 

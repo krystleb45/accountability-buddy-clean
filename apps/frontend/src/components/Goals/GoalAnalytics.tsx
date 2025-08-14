@@ -17,7 +17,7 @@ import { Bar, Line } from "react-chartjs-2"
 
 import goalService from "@/services/goalService"
 
-import LoadingSpinner from "../LoadingSpinner/LoadingSpinner"
+import { LoadingSpinner } from "../loading-spinner"
 import styles from "./GoalAnalytics.module.css"
 
 // Register Chart.js components
