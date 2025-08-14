@@ -51,27 +51,6 @@ router.post(
   }),
 )
 
-// ─── POST /api/auth/refresh-token ───────────────────────────────────────
-router.post(
-  "/refresh-token",
-  validate({
-    bodySchema: z.object({
-      refreshToken: z.string().nonempty("Refresh token is required"),
-    }),
-  }),
-  catchAsync(async (req, res, next) => {
-    await authController.refreshToken(req, res, next)
-  }),
-)
-
-// ─── POST /api/auth/logout ───────────────────────────────────────────────
-router.post(
-  "/logout",
-  catchAsync(async (req, res, next) => {
-    await authController.logout(req, res, next)
-  }),
-)
-
 // ─── GET /api/auth/me ────────────────────────────────────────────────────
 router.get(
   "/me",

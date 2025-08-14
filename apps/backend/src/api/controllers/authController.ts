@@ -101,37 +101,6 @@ export async function login(req, res, next) {
 }
 
 //
-// ─── POST /api/auth/refresh-token ──────────────────────────────────────────
-//
-export const refreshToken: RequestHandler = catchAsync(
-  async (req, res, next) => {
-    const { refreshToken: oldToken } = req.body as { refreshToken?: string }
-    if (!oldToken) {
-      return next(createError("Refresh token is required", 401))
-    }
-
-    try {
-      // this returns a new access token
-      const newAccessToken = await AuthService.refreshToken(oldToken)
-      sendResponse(res, 200, true, "Token refreshed successfully", {
-        accessToken: newAccessToken,
-      })
-    } catch (err) {
-      logger.error(`Refresh token error: ${(err as Error).message}`)
-      next(createError("Invalid or expired refresh token", 401))
-    }
-  },
-)
-
-//
-// ─── POST /api/auth/logout ─────────────────────────────────────────────────
-//
-export const logout: RequestHandler = (_req, res) => {
-  // optionally revoke tokens here
-  sendResponse(res, 200, true, "Logged out successfully", {})
-}
-
-//
 // ─── GET /api/auth/me ────────────────────────────────────────────────────────
 //
 export const getCurrentUser: RequestHandler = catchAsync(
@@ -242,8 +211,6 @@ export const verifyEmail: RequestHandler = catchAsync(
 export default {
   register,
   login,
-  refreshToken,
-  logout,
   getCurrentUser,
   sendVerificationEmail,
   verifyEmail,
