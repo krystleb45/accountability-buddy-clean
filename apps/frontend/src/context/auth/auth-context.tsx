@@ -32,7 +32,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const {
     data: user,
-    isLoading: loading,
+    isPending: loading,
     refetch,
     error,
   } = useQuery({

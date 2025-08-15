@@ -9,7 +9,7 @@ import { useAuth } from "@/context/auth/auth-context"
 import { http } from "@/utils"
 
 export function VerifyEmailBanner() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
 
   const { mutate: sendVerificationEmail, isPending: sendingVerificationEmail } =
     useMutation({
@@ -24,7 +24,7 @@ export function VerifyEmailBanner() {
       },
     })
 
-  if (user?.isVerified) {
+  if (user?.isVerified || loading) {
     return null
   }
 
