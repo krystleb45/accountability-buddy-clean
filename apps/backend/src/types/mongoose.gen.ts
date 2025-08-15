@@ -2641,114 +2641,6 @@ export type CustomReminderDocument = mongoose.Document<
   }
 
 /**
- * Lean version of EmailVerificationTokenDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `EmailVerificationTokenDocument.toObject()`. To avoid conflicts with model names, use the type alias `EmailVerificationTokenObject`.
- * ```
- * const emailverificationtokenObject = emailverificationtoken.toObject();
- * ```
- */
-export type EmailVerificationToken = {
-  user: User["_id"] | User
-  token: string
-  expiresAt: Date
-  _id: mongoose.Types.ObjectId
-  createdAt?: Date
-  updatedAt?: Date
-}
-
-/**
- * Lean version of EmailVerificationTokenDocument (type alias of `EmailVerificationToken`)
- *
- * Use this type alias to avoid conflicts with model names:
- * ```
- * import { EmailVerificationToken } from "../models"
- * import { EmailVerificationTokenObject } from "../interfaces/mongoose.gen.ts"
- *
- * const emailverificationtokenObject: EmailVerificationTokenObject = emailverificationtoken.toObject();
- * ```
- */
-export type EmailVerificationTokenObject = EmailVerificationToken
-
-/**
- * Mongoose Query type
- *
- * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
- */
-export type EmailVerificationTokenQuery = mongoose.Query<
-  any,
-  EmailVerificationTokenDocument,
-  EmailVerificationTokenQueries
-> &
-  EmailVerificationTokenQueries
-
-/**
- * Mongoose Query helper types
- *
- * This type represents `EmailVerificationTokenSchema.query`. For most use cases, you should not need to use this type explicitly.
- */
-export type EmailVerificationTokenQueries = {}
-
-export type EmailVerificationTokenMethods = {
-  isExpired: (this: EmailVerificationTokenDocument, ...args: any[]) => any
-}
-
-export type EmailVerificationTokenStatics = {
-  generate: (this: EmailVerificationTokenModel, ...args: any[]) => any
-  findValid: (this: EmailVerificationTokenModel, ...args: any[]) => any
-}
-
-/**
- * Mongoose Model type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const EmailVerificationToken = mongoose.model<EmailVerificationTokenDocument, EmailVerificationTokenModel>("EmailVerificationToken", EmailVerificationTokenSchema);
- * ```
- */
-export type EmailVerificationTokenModel = mongoose.Model<
-  EmailVerificationTokenDocument,
-  EmailVerificationTokenQueries
-> &
-  EmailVerificationTokenStatics
-
-/**
- * Mongoose Schema type
- *
- * Assign this type to new EmailVerificationToken schema instances:
- * ```
- * const EmailVerificationTokenSchema: EmailVerificationTokenSchema = new mongoose.Schema({ ... })
- * ```
- */
-export type EmailVerificationTokenSchema = mongoose.Schema<
-  EmailVerificationTokenDocument,
-  EmailVerificationTokenModel,
-  EmailVerificationTokenMethods,
-  EmailVerificationTokenQueries
->
-
-/**
- * Mongoose Document type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const EmailVerificationToken = mongoose.model<EmailVerificationTokenDocument, EmailVerificationTokenModel>("EmailVerificationToken", EmailVerificationTokenSchema);
- * ```
- */
-export type EmailVerificationTokenDocument = mongoose.Document<
-  mongoose.Types.ObjectId,
-  EmailVerificationTokenQueries
-> &
-  EmailVerificationTokenMethods & {
-    user: UserDocument["_id"] | UserDocument
-    token: string
-    expiresAt: Date
-    _id: mongoose.Types.ObjectId
-    createdAt?: Date
-    updatedAt?: Date
-  }
-
-/**
  * Lean version of EventParticipantDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `EventDocument.toObject()`.
@@ -9170,8 +9062,6 @@ export type User = {
     directMessagesOnly?: boolean
   }
   activeStatus?: "online" | "offline"
-  resetPasswordToken?: string
-  resetPasswordExpires?: Date
   settings: {
     notifications: {
       email?: boolean
@@ -9227,7 +9117,6 @@ export type UserMethods = {
   isInTrial: (this: UserDocument, ...args: any[]) => any
   getDaysUntilTrialEnd: (this: UserDocument, ...args: any[]) => any
   comparePassword: (this: UserDocument, ...args: any[]) => any
-  generateResetToken: (this: UserDocument, ...args: any[]) => any
   updatePoints: (this: UserDocument, ...args: any[]) => any
   updateStreak: (this: UserDocument, ...args: any[]) => any
   awardBadge: (this: UserDocument, ...args: any[]) => any
@@ -9376,8 +9265,6 @@ export type UserDocument = mongoose.Document<
       directMessagesOnly?: boolean
     }
     activeStatus?: "online" | "offline"
-    resetPasswordToken?: string
-    resetPasswordExpires?: Date
     settings: {
       notifications: {
         email?: boolean
@@ -9615,6 +9502,114 @@ export type UserProgressLogDocument = mongoose.Document<
     note?: string
     _id: mongoose.Types.ObjectId
     createdAt?: Date
+  }
+
+/**
+ * Lean version of VerificationTokenDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `VerificationTokenDocument.toObject()`. To avoid conflicts with model names, use the type alias `VerificationTokenObject`.
+ * ```
+ * const verificationtokenObject = verificationtoken.toObject();
+ * ```
+ */
+export type VerificationToken = {
+  user: User["_id"] | User
+  token: string
+  expiresAt: Date
+  _id: mongoose.Types.ObjectId
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+/**
+ * Lean version of VerificationTokenDocument (type alias of `VerificationToken`)
+ *
+ * Use this type alias to avoid conflicts with model names:
+ * ```
+ * import { VerificationToken } from "../models"
+ * import { VerificationTokenObject } from "../interfaces/mongoose.gen.ts"
+ *
+ * const verificationtokenObject: VerificationTokenObject = verificationtoken.toObject();
+ * ```
+ */
+export type VerificationTokenObject = VerificationToken
+
+/**
+ * Mongoose Query type
+ *
+ * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
+ */
+export type VerificationTokenQuery = mongoose.Query<
+  any,
+  VerificationTokenDocument,
+  VerificationTokenQueries
+> &
+  VerificationTokenQueries
+
+/**
+ * Mongoose Query helper types
+ *
+ * This type represents `VerificationTokenSchema.query`. For most use cases, you should not need to use this type explicitly.
+ */
+export type VerificationTokenQueries = {}
+
+export type VerificationTokenMethods = {
+  isExpired: (this: VerificationTokenDocument, ...args: any[]) => any
+}
+
+export type VerificationTokenStatics = {
+  generate: (this: VerificationTokenModel, ...args: any[]) => any
+  findValid: (this: VerificationTokenModel, ...args: any[]) => any
+}
+
+/**
+ * Mongoose Model type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const VerificationToken = mongoose.model<VerificationTokenDocument, VerificationTokenModel>("VerificationToken", VerificationTokenSchema);
+ * ```
+ */
+export type VerificationTokenModel = mongoose.Model<
+  VerificationTokenDocument,
+  VerificationTokenQueries
+> &
+  VerificationTokenStatics
+
+/**
+ * Mongoose Schema type
+ *
+ * Assign this type to new VerificationToken schema instances:
+ * ```
+ * const VerificationTokenSchema: VerificationTokenSchema = new mongoose.Schema({ ... })
+ * ```
+ */
+export type VerificationTokenSchema = mongoose.Schema<
+  VerificationTokenDocument,
+  VerificationTokenModel,
+  VerificationTokenMethods,
+  VerificationTokenQueries
+>
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const VerificationToken = mongoose.model<VerificationTokenDocument, VerificationTokenModel>("VerificationToken", VerificationTokenSchema);
+ * ```
+ */
+export type VerificationTokenDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  VerificationTokenQueries
+> &
+  VerificationTokenMethods & {
+    user: UserDocument["_id"] | UserDocument
+    token: string
+    expiresAt: Date
+    _id: mongoose.Types.ObjectId
+    createdAt?: Date
+    updatedAt?: Date
   }
 
 /**

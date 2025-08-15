@@ -575,23 +575,6 @@ export type CustomReminder = {
 }
 
 /**
- * Lean version of EmailVerificationTokenDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `EmailVerificationTokenDocument.toObject()`. To avoid conflicts with model names, use the type alias `EmailVerificationTokenObject`.
- * ```
- * const emailverificationtokenObject = emailverificationtoken.toObject();
- * ```
- */
-export type EmailVerificationToken = {
-  user: User["_id"] | User
-  token: string
-  expiresAt: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of EventParticipantDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `EventDocument.toObject()`.
@@ -1978,8 +1961,6 @@ export type User = {
     directMessagesOnly?: boolean
   }
   activeStatus?: "online" | "offline"
-  resetPasswordToken?: string
-  resetPasswordExpires?: string
   settings: {
     notifications: {
       email?: boolean
@@ -2032,6 +2013,23 @@ export type UserProgressLog = {
   note?: string
   _id: string
   createdAt?: string
+}
+
+/**
+ * Lean version of VerificationTokenDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `VerificationTokenDocument.toObject()`. To avoid conflicts with model names, use the type alias `VerificationTokenObject`.
+ * ```
+ * const verificationtokenObject = verificationtoken.toObject();
+ * ```
+ */
+export type VerificationToken = {
+  user: User["_id"] | User
+  token: string
+  expiresAt: string
+  _id: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 /**

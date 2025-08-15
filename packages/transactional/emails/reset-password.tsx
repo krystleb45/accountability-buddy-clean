@@ -13,16 +13,16 @@ import {
 import { colors } from "../colors"
 import { CSSProperties } from "react"
 
-interface VerifyEmailProps {
+interface ResetPasswordProps {
   link: string
   logoUrl?: string
 }
 
-export const VerifyEmail = ({ link, logoUrl }: VerifyEmailProps) => (
+export const ResetPassword = ({ link, logoUrl }: ResetPasswordProps) => (
   <Html>
     <Head />
     <Body style={main}>
-      <Preview>Confirm your email address</Preview>
+      <Preview>Reset your password</Preview>
       <Container style={container}>
         {logoUrl && (
           <Section style={logoContainer}>
@@ -38,10 +38,11 @@ export const VerifyEmail = ({ link, logoUrl }: VerifyEmailProps) => (
             />
           </Section>
         )}
-        <Heading style={h1}>Confirm your email address</Heading>
+        <Heading style={h1}>Reset your password</Heading>
+
         <Text style={heroText}>
-          Please confirm your email address by clicking the button below. This
-          link expires in 24 hours.
+          Please click the button below to reset your password. This link
+          expires in 10 minutes.
         </Text>
 
         <Section style={buttonSection}>
@@ -56,20 +57,26 @@ export const VerifyEmail = ({ link, logoUrl }: VerifyEmailProps) => (
               borderRadius: "8px",
             }}
           >
-            Verify Email
+            Reset Password
           </Button>
+        </Section>
+
+        <Section style={warningSection}>
+          <Text style={heroText}>
+            If you did not request a password reset, please ignore this email.
+          </Text>
         </Section>
       </Container>
     </Body>
   </Html>
 )
 
-VerifyEmail.PreviewProps = {
+ResetPassword.PreviewProps = {
   link: "https://example.com?token=123456abcdef",
   logoUrl: "http://localhost:3000/logo.png",
-} as VerifyEmailProps
+} as ResetPasswordProps
 
-export default VerifyEmail
+export default ResetPassword
 
 const main = {
   backgroundColor: colors.background,
@@ -105,5 +112,9 @@ const heroText = {
 }
 
 const buttonSection: CSSProperties = {
+  margin: "48px 0",
+}
+
+const warningSection = {
   margin: "48px 0",
 }

@@ -1,7 +1,8 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect, useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { Loader } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
@@ -17,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { http } from "@/utils"
 
 const forgotPasswordFormSchema = z.object({
   email: z.email("Invalid email address").nonempty("Email is required"),
@@ -25,9 +27,6 @@ const forgotPasswordFormSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordFormSchema>
 
 export function ForgotPasswordForm() {
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
   const form = useForm({
     resolver: zodResolver(forgotPasswordFormSchema),
     defaultValues: {
@@ -35,31 +34,23 @@ export function ForgotPasswordForm() {
     },
   })
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error, {
-        duration: 5000,
+  const { mutate: sendResetLink, isPending: isSending } = useMutation({
+    mutationFn: async (data: ForgotPasswordFormData) => {
+      const response = await http.post("/auth/forget-password", {
+        email: data.email,
       })
-    }
-  }, [error])
+      return response.data
+    },
+    onSuccess: () => {
+      toast.success("You will receive an email if your account exists")
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
 
   async function handleSubmit(data: ForgotPasswordFormData) {
-    setError(null)
-    try {
-      // TODO: implement password reset functionality
-      const res = await fetch("/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email }),
-      })
-      if (!res.ok) {
-        const body = await res.json()
-        throw new Error(body.message || "Failed to send reset link")
-      }
-      setSubmitted(true)
-    } catch (err) {
-      setError((err as Error).message)
-    }
+    sendResetLink(data)
   }
 
   return (
@@ -69,40 +60,35 @@ export function ForgotPasswordForm() {
           <CardTitle className="text-3xl">Forgot Password</CardTitle>
         </CardHeader>
         <CardContent>
-          {submitted ? (
-            <p className="text-center text-primary">
-              If that email is registered, you’ll receive a reset link shortly.
-            </p>
-          ) : (
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(handleSubmit)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Enter your email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="Enter your email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <Button type="submit" className="w-full">
-                  Send Reset Link
-                </Button>
-              </form>
-            </Form>
-          )}
+              <Button type="submit" className="w-full" disabled={isSending}>
+                {isSending && <Loader className="animate-spin" />} Send Reset
+                Link
+              </Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

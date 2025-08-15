@@ -91,7 +91,13 @@ export function LoginForm() {
       }
     },
     onError: (error) => {
-      setError(error.message)
+      const err = error.message
+
+      if (Object.keys(messages).includes(err)) {
+        setError(messages[err as keyof AuthErrorMessages])
+      } else {
+        setError(err)
+      }
     },
   })
 

@@ -3,7 +3,6 @@ import type { CallbackError, Document, Model, Types } from "mongoose"
 
 import bcrypt from "bcryptjs"
 import mongoose, { Schema } from "mongoose"
-import crypto from "node:crypto"
 
 export interface UserSettings {
   notifications?: {
@@ -56,8 +55,6 @@ export interface IUser extends Document {
   following: Types.ObjectId[]
   points: number
   rewards: Types.ObjectId[]
-  resetPasswordToken?: string
-  resetPasswordExpires?: Date
   twoFactorSecret?: string
   name?: string
 
@@ -301,10 +298,6 @@ const UserSchema: Schema<IUser> = new Schema(
       default: "offline",
     },
 
-    // Security
-    resetPasswordToken: { type: String },
-    resetPasswordExpires: { type: Date },
-
     // Settings
     settings: {
       notifications: {
@@ -500,16 +493,6 @@ UserSchema.methods.comparePassword = async function (
   candidatePassword: string,
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password)
-}
-
-UserSchema.methods.generateResetToken = function (): string {
-  const resetToken = crypto.randomBytes(20).toString("hex")
-  this.resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex")
-  this.resetPasswordExpires = new Date(Date.now() + 10 * 60 * 1000)
-  return resetToken
 }
 
 UserSchema.methods.updatePoints = async function (
