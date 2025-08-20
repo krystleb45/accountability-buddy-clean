@@ -4,13 +4,13 @@ import { Router } from "express"
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { logger } from "../../utils/winstonLogger"
-import { protect } from "../middleware/authJwt"
+import { protect } from "../middleware/auth-middleware"
 import { createError } from "../middleware/errorHandler"
 import {
   validateFeatureAccess,
   validateSubscription,
 } from "../middleware/subscription-validation"
-import Goal from "../models/Goal"
+import { Goal } from "../models/Goal"
 import { User } from "../models/User"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"

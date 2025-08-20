@@ -8,7 +8,7 @@ import {
   getUserStreak,
   logDailyCheckIn,
 } from "../controllers/StreakController"
-import { protect } from "../middleware/authJwt"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

@@ -16,6 +16,8 @@ const sensitiveLimiter = rateLimit({
   message: "Too many requests.",
 })
 
+router.use(protect)
+
 // Profile
 router.get("/profile", protect, userCtrl.getUserProfile)
 router.put(

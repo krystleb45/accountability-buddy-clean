@@ -13,9 +13,6 @@ import xssClean from "xss-clean"
 
 import { logger } from "./utils/winstonLogger"
 
-// JWT guard
-import { protect } from "./api/middleware/authJwt"
-
 // ─── Public route imports ─────────────────────────────────────
 import anonymousMilitaryChatRoutes from "./api/routes/anonymousMilitaryChatRoutes"
 import authRoutes from "./api/routes/auth"
@@ -172,7 +169,7 @@ app.use("/api/anonymous-military-chat", anonymousMilitaryChatRoutes)
 
 // Now add all protected routes
 app.use("/api/military-support", militarySupportRoutes)
-app.use("/api/users", protect, userRoutes)
+app.use("/api/users", userRoutes)
 app.use("/api/support", supportRoutes)
 app.use("/api/reminders", reminderRoutes)
 app.use("/api/messages", messageRoutes)

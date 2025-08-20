@@ -2,7 +2,7 @@
 import { Router } from "express"
 
 import * as faqController from "../controllers/faqController"
-import { protect } from "../middleware/authJwt"
+import { protect } from "../middleware/auth-middleware"
 import catchAsync from "../utils/catchAsync"
 
 const router = Router()

@@ -8,7 +8,7 @@ import {
   resetProgress,
   updateProgress,
 } from "../controllers/ProgressController"
-import { protect } from "../middleware/authJwt" // ← fix this import
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()
