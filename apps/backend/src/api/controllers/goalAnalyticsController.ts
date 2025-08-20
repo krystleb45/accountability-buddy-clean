@@ -1,6 +1,6 @@
 import type { Request, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { createError } from "../middleware/errorHandler"
 import GoalAnalyticsService from "../services/GoalAnalyticsService"
@@ -77,7 +77,9 @@ export const getGoalAnalyticsByDateRange = catchAsync(
  */
 export const getGlobalGoalAnalytics = catchAsync(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    if (req.user?.role !== "admin") throw createError("Access denied", 403)
+    if (req.user?.role !== "admin") {
+      throw createError("Access denied", 403)
+    }
     const analytics = await GoalAnalyticsService.getAll()
     sendResponse(res, 200, true, "Global goal analytics fetched successfully", {
       analytics,

@@ -1,45 +1,33 @@
-// src/api/services/GoalManagementService.ts - Updated with subscription support
-import mongoose from "mongoose"
+import type { Goal as IGoal, UserDocument } from "src/types/mongoose.gen"
 
-import type { IGoal } from "../models/Goal"
+import status from "http-status"
+import mongoose from "mongoose"
 
 import { logger } from "../../utils/winstonLogger"
 import { CustomError } from "../middleware/errorHandler"
-import Goal from "../models/Goal"
+import { Goal } from "../models/Goal"
 import { User } from "../models/User"
+import { UserService } from "./user-service"
 
-interface NewGoalData {
-  title: string
-  description?: string
-  deadline: Date
-  category: string
-  target?: number
-}
-
-class GoalManagementService {
+export class GoalService {
   /**
    * Fetch all public (non-archived) goals.
    */
-  static async getPublicGoals(): Promise<IGoal[]> {
+  static async getPublicGoals() {
     const goals = await Goal.find({ status: { $ne: "archived" } })
       .sort({ createdAt: -1 })
       .exec()
-    logger.info(`Fetched ${goals.length} public goals`)
     return goals
   }
 
   /**
    * Fetch all goals for a given user.
    */
-  static async getUserGoals(userId: string): Promise<IGoal[]> {
+  static async getUserGoals(userId: string) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new CustomError("Invalid user ID", 400)
     }
-    const goals = await Goal.find({ user: userId })
-      .sort({ createdAt: -1 })
-      .exec()
-    logger.info(`Fetched ${goals.length} goals for user ${userId}`)
-    return goals
+    return await Goal.find({ user: userId }).sort({ createdAt: -1 }).exec()
   }
 
   /**
@@ -50,43 +38,22 @@ class GoalManagementService {
       throw new CustomError("Invalid user ID", 400)
     }
 
-    const count = await Goal.countDocuments({
+    return await Goal.countDocuments({
       user: userId,
       status: { $in: ["not-started", "in-progress"] },
     })
-
-    logger.info(`User ${userId} has ${count} active goals`)
-    return count
   }
 
   /**
    * Check if user can create more goals based on their subscription
    */
-  static async canUserCreateGoal(userId: string): Promise<{
-    canCreate: boolean
-    reason?: string
-    currentCount: number
-    maxAllowed: number
-  }> {
+  static async canUserCreateGoal(userId: string) {
     try {
-      const user = await User.findById(userId)
-      if (!user) {
-        return {
-          canCreate: false,
-          reason: "User not found",
-          currentCount: 0,
-          maxAllowed: 0,
-        }
-      }
+      const user = await UserService.getUserById(userId)
 
       // Check subscription status first
-      if (!["active", "trial", "trialing"].includes(user.subscription_status)) {
-        return {
-          canCreate: false,
-          reason: "Active subscription required",
-          currentCount: 0,
-          maxAllowed: 0,
-        }
+      if (!user.isSubscriptionActive()) {
+        throw new CustomError("Active subscription required", status.FORBIDDEN)
       }
 
       const currentCount = await this.getActiveGoalCount(userId)
@@ -146,11 +113,7 @@ class GoalManagementService {
   /**
    * Track progress on a goal; if ≥100, mark complete.
    */
-  static async trackProgress(
-    goalId: string,
-    userId: string,
-    progress: number,
-  ): Promise<IGoal> {
+  static async trackProgress(goalId: string, userId: string, progress: number) {
     if (
       !mongoose.Types.ObjectId.isValid(goalId) ||
       !mongoose.Types.ObjectId.isValid(userId)
@@ -206,10 +169,7 @@ class GoalManagementService {
   /**
    * Fetch a specific user's goal by ID.
    */
-  static async getUserGoalById(
-    userId: string,
-    goalId: string,
-  ): Promise<IGoal | null> {
+  static async getUserGoalById(userId: string, goalId: string) {
     if (
       !mongoose.Types.ObjectId.isValid(userId) ||
       !mongoose.Types.ObjectId.isValid(goalId)
@@ -223,10 +183,11 @@ class GoalManagementService {
    * Create a new goal.
    * Note: Subscription validation should be done in middleware/controller before calling this
    */
-  static async createGoal(userId: string, data: NewGoalData): Promise<IGoal> {
+  static async createGoal(userId: string, data: Partial<IGoal>) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new CustomError("Invalid user ID", 400)
     }
+
     const user = await User.findById(userId)
     if (!user) {
       throw new CustomError("User not found", 404)
@@ -234,11 +195,6 @@ class GoalManagementService {
 
     const goal = new Goal({
       user: userId,
-      title: data.title,
-      description: data.description ?? "",
-      category: data.category,
-      dueDate: data.deadline,
-      target: data.target,
       progress: 0,
       status: "not-started",
       milestones: [],
@@ -247,6 +203,7 @@ class GoalManagementService {
       isPinned: false,
       points: 0,
       completedAt: undefined,
+      ...data,
     })
 
     await goal.save()
@@ -260,13 +217,8 @@ class GoalManagementService {
   static async updateGoal(
     goalId: string,
     userId: string,
-    updates: {
-      title?: string
-      description?: string
-      dueDate?: Date
-      category?: string
-    },
-  ): Promise<IGoal | null> {
+    updates: Partial<IGoal>,
+  ) {
     if (
       !mongoose.Types.ObjectId.isValid(goalId) ||
       !mongoose.Types.ObjectId.isValid(userId)
@@ -288,7 +240,7 @@ class GoalManagementService {
   /**
    * Permanently delete a goal.
    */
-  static async deleteGoal(goalId: string, userId: string): Promise<boolean> {
+  static async deleteGoal(goalId: string, userId: string) {
     if (
       !mongoose.Types.ObjectId.isValid(goalId) ||
       !mongoose.Types.ObjectId.isValid(userId)
@@ -308,19 +260,9 @@ class GoalManagementService {
   /**
    * Get subscription-aware goal summary for user
    */
-  static async getGoalSummaryWithLimits(userId: string): Promise<{
-    totalGoals: number
-    activeGoals: number
-    completedGoals: number
-    subscription: {
-      tier: string
-      canCreateMore: boolean
-      goalLimit: number
-      isUnlimited: boolean
-    }
-  }> {
+  static async getGoalSummaryWithLimits(userId: string) {
     try {
-      const user = await User.findById(userId)
+      const user: UserDocument = await User.findById(userId)
       if (!user) {
         throw new CustomError("User not found", 404)
       }
@@ -357,5 +299,3 @@ class GoalManagementService {
     }
   }
 }
-
-export default GoalManagementService

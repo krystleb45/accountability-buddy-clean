@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit"
 import { check, param } from "express-validator"
 
 import goalMessageController from "../controllers/GoalMessageController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

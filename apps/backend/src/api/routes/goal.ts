@@ -2,12 +2,11 @@
 import { Router } from "express"
 
 import * as goalController from "../controllers/GoalController"
-import { protect } from "../middleware/authJwt"
+import { protect } from "../middleware/auth-middleware"
 import {
   trialPrompt,
-  validateGoalLimit,
   validateSubscription,
-} from "../middleware/subscriptionValidation"
+} from "../middleware/subscription-validation"
 
 const router = Router()
 
@@ -26,12 +25,7 @@ router.get("/", validateSubscription, goalController.getUserGoals)
  * Create a new goal
  * Requires subscription + goal limit validation
  */
-router.post(
-  "/",
-  validateSubscription,
-  validateGoalLimit,
-  goalController.createGoal,
-)
+router.post("/", validateSubscription, goalController.createGoal)
 
 /**
  * GET /api/goals/public

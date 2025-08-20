@@ -9,13 +9,13 @@ import {
   getGoalAnalyticsById,
   getUserGoalAnalytics,
 } from "../controllers/goalAnalyticsController"
-import { protect } from "../middleware/authJwt"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import {
   trialPrompt,
   validateFeatureAccess,
   validateSubscription,
-} from "../middleware/subscriptionValidation"
+} from "../middleware/subscription-validation"
 
 const router = Router()
 

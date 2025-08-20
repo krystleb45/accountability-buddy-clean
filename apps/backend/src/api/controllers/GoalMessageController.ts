@@ -1,7 +1,7 @@
 // src/api/controllers/GoalMessageController.ts
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { createError } from "../middleware/errorHandler"
 import GoalMessageService from "../services/GoalMessageService"

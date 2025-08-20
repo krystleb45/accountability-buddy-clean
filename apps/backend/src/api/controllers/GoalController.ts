@@ -1,13 +1,13 @@
 // src/api/controllers/goalController.ts - FIXED: TypeScript errors
 import type { NextFunction, Request, Response } from "express"
+import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
 import mongoose from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
-
 import { createError } from "../middleware/errorHandler"
+import { Reminder } from "../models/Reminder"
 import { User } from "../models/User"
-import GoalManagementService from "../services/GoalManagementService"
+import { GoalService } from "../services/goal-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
@@ -60,47 +60,30 @@ export const createGoal = catchAsync(
       return next(createError("User not found", 404))
     }
 
-    // console.log(`🔍 Goal creation check for user ${user.email}:`);
-    // console.log(`  Subscription tier: ${user.subscriptionTier}`);
-    // console.log(`  Subscription status: ${user.subscription_status}`);
+    const canCreateGoal = await GoalService.canUserCreateGoal(userId)
+    const goalLimit = canCreateGoal.maxAllowed
 
-    // Get REAL active goal count from database
-    const currentActiveGoals =
-      await GoalManagementService.getActiveGoalCount(userId)
-    // console.log(`  Current active goals: ${currentActiveGoals}`);
-
-    // FIXED: Use helper function instead of user method
-    const goalLimit = getGoalLimitForTier(user.subscriptionTier)
-    // console.log(`  Goal limit: ${goalLimit}`);
-
-    // Check if user can create more goals
-    const canCreateFromCount =
-      goalLimit === -1 || currentActiveGoals < goalLimit
-    // console.log(`  canCreateFromCount: ${canCreateFromCount}`);
-
-    if (!canCreateFromCount) {
-      const message =
-        goalLimit === -1
-          ? "Unable to create goal due to subscription restrictions"
-          : `Goal limit reached. Your ${user.subscriptionTier} plan allows ${goalLimit} active goals. You currently have ${currentActiveGoals}.`
-
-      // console.log(`❌ Goal creation blocked: ${message}`);
-      return next(createError(message, 403))
+    if (!canCreateGoal.canCreate) {
+      return next(
+        createError(
+          canCreateGoal.reason || "You cannot create more goals at this time",
+          403,
+        ),
+      )
     }
 
     // console.log("✅ Goal creation allowed");
 
     // Create the goal - FIXED: Pass description properly
-    const createdGoal = await GoalManagementService.createGoal(userId, {
+    const createdGoal = await GoalService.createGoal(userId, {
       title,
       description: description || "", // Handle undefined description
       category,
-      deadline: due,
+      dueDate: due,
     })
 
     // Get updated count after creation - FIXED: Use correct variable name
-    const updatedActiveGoalCount =
-      await GoalManagementService.getActiveGoalCount(userId)
+    const updatedActiveGoalCount = await GoalService.getActiveGoalCount(userId)
 
     // Include subscription info in response for frontend
     const responseData = {
@@ -108,7 +91,7 @@ export const createGoal = catchAsync(
       subscription: {
         tier: user.subscriptionTier,
         goalLimit,
-        currentGoalCount: updatedActiveGoalCount, // FIXED: Use correct variable
+        currentGoalCount: updatedActiveGoalCount,
         hasUnlimitedGoals: goalLimit === -1,
         canCreateMore: goalLimit === -1 || updatedActiveGoalCount < goalLimit,
       },
@@ -133,9 +116,8 @@ export const getUserGoals = catchAsync(
       return next(createError("User not found", 404))
     }
 
-    const goals = await GoalManagementService.getUserGoals(userId)
-    const activeGoalCount =
-      await GoalManagementService.getActiveGoalCount(userId)
+    const goals = await GoalService.getUserGoals(userId)
+    const activeGoalCount = await GoalService.getActiveGoalCount(userId)
 
     // FIXED: Use helper functions instead of user methods
     const goalLimit = getGoalLimitForTier(user.subscriptionTier)
@@ -144,19 +126,16 @@ export const getUserGoals = catchAsync(
 
     // Helper functions for trial info
     const isInTrial = (): boolean => {
-      if (
-        user.subscription_status === "trial" ||
-        user.subscription_status === "trialing"
-      ) {
-        if (user.trial_end_date) {
-          return new Date() < new Date(user.trial_end_date)
-        }
+      if (user.subscription_status === "trial" && user.trial_end_date) {
+        return new Date() < new Date(user.trial_end_date)
       }
       return false
     }
 
     const getDaysUntilTrialEnd = (): number => {
-      if (!user.trial_end_date) return 0
+      if (!user.trial_end_date) {
+        return 0
+      }
       const now = new Date()
       const trialEnd = new Date(user.trial_end_date)
       const diffTime = trialEnd.getTime() - now.getTime()
@@ -202,7 +181,7 @@ export const getStreakDates = catchAsync(
       return next(createError("User not found", 404))
     }
 
-    const dates = await GoalManagementService.getStreakDates(userId)
+    const dates = await GoalService.getStreakDates(userId)
 
     // FIXED: Use helper functions for feature access
     const hasAdvancedAnalytics = (tier: string): boolean => {
@@ -211,10 +190,7 @@ export const getStreakDates = catchAsync(
     }
 
     const isInTrial = (): boolean => {
-      if (
-        user.subscription_status === "trial" ||
-        user.subscription_status === "trialing"
-      ) {
+      if (user.subscription_status === "trial") {
         if (user.trial_end_date) {
           return new Date() < new Date(user.trial_end_date)
         }
@@ -248,7 +224,7 @@ export const getStreakDates = catchAsync(
 // Export all your other existing methods unchanged
 export const getPublicGoals = catchAsync(
   async (_req: Request, res: Response): Promise<void> => {
-    const goals = await GoalManagementService.getPublicGoals()
+    const goals = await GoalService.getPublicGoals()
     sendResponse(res, 200, true, "Public goals retrieved successfully", {
       goals,
     })
@@ -268,7 +244,7 @@ export const updateGoalProgress = catchAsync(
 
     const userId = req.user!.id!
 
-    const goal = await GoalManagementService.trackProgress(
+    const goal = await GoalService.trackProgress(
       goalId,
       userId,
       req.body.progress,
@@ -294,25 +270,27 @@ export const getGoalById = catchAsync(
       return next(createError("Unauthorized", 401))
     }
 
-    const goal = await GoalManagementService.getUserGoalById(userId, goalId)
+    const goal = await GoalService.getUserGoalById(userId, goalId)
     if (!goal) {
       return next(createError("Goal not found", 404))
     }
 
-    // Remap dueDate → deadline so frontend sees `deadline`
+    const reminders = await Promise.all(
+      goal.reminders.map(async (r) => {
+        const userReminder = await Reminder.findById(r._id)
+        return {
+          id: userReminder._id.toString(),
+          date: userReminder.remindAt.toISOString().slice(0, 10),
+          time: userReminder.remindAt.toISOString().slice(11, 16),
+        }
+      }),
+    )
+
+    const goalObj = goal.toObject()
+
     const safe = {
-      id: goal._id.toString(),
-      title: goal.title,
-      description: goal.description,
-      deadline: goal.dueDate?.toISOString() || null,
-      category: goal.category,
-      progress: goal.progress,
-      reminders: goal.reminders.map((r) => ({
-        id: r._id!.toString(),
-        goalId,
-        date: r.remindAt.toISOString().slice(0, 10),
-        time: r.remindAt.toISOString().slice(11, 16),
-      })),
+      ...goalObj,
+      reminders,
     }
 
     res.status(200).json({ success: true, message: "Goal fetched", data: safe })
@@ -332,7 +310,7 @@ export const completeGoal = catchAsync(
 
     const userId = req.user!.id!
 
-    const goal = await GoalManagementService.completeGoal(goalId, userId)
+    const goal = await GoalService.completeGoal(goalId, userId)
     sendResponse(res, 200, true, "Goal marked as complete", { goal })
   },
 )
@@ -354,7 +332,9 @@ export const updateGoal = catchAsync(
     const { goalId } = req.params
     const authReq = req as AuthenticatedRequest
     const userId = authReq.user?.id
-    if (!userId) return next(createError("Unauthorized", 401))
+    if (!userId) {
+      return next(createError("Unauthorized", 401))
+    }
 
     // Build partial update object explicitly
     const updates: {
@@ -381,8 +361,10 @@ export const updateGoal = catchAsync(
       updates.dueDate = d
     }
 
-    const goal = await GoalManagementService.updateGoal(goalId, userId, updates)
-    if (!goal) return next(createError("Goal not found", 404))
+    const goal = await GoalService.updateGoal(goalId, userId, updates)
+    if (!goal) {
+      return next(createError("Goal not found", 404))
+    }
 
     sendResponse(res, 200, true, "Goal updated successfully", { goal })
   },
@@ -397,10 +379,14 @@ export const deleteGoal = catchAsync(
     const { goalId } = req.params
     const authReq = req as AuthenticatedRequest
     const userId = authReq.user?.id
-    if (!userId) return next(createError("Unauthorized", 401))
+    if (!userId) {
+      return next(createError("Unauthorized", 401))
+    }
 
-    const success = await GoalManagementService.deleteGoal(goalId, userId)
-    if (!success) return next(createError("Goal not found", 404))
+    const success = await GoalService.deleteGoal(goalId, userId)
+    if (!success) {
+      return next(createError("Goal not found", 404))
+    }
 
     sendResponse(res, 200, true, "Goal deleted successfully", {})
   },
