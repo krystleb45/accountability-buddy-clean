@@ -2,7 +2,7 @@ import type { Response } from "express"
 
 import mongoose from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 import type { IMilestone } from "../models/Milestone"
 
 import Milestone from "../models/Milestone"

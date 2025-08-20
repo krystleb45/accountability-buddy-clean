@@ -13,7 +13,7 @@ import {
   getCustomReminders,
   updateCustomReminder,
 } from "../controllers/ReminderController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import checkSubscription from "../middleware/checkSubscription"
 
 const router: Router = express.Router()

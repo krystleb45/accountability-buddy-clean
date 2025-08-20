@@ -4,7 +4,7 @@ import rateLimit, { ipKeyGenerator } from "express-rate-limit"
 import z from "zod"
 
 import authController from "../controllers/auth-controller"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import validate from "../middleware/validation-middleware"
 import catchAsync from "../utils/catchAsync"
 

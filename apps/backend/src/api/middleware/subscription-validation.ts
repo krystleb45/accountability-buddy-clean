@@ -1,11 +1,14 @@
-// src/api/middleware/subscriptionValidation.ts - Fixed goal count validation
-
 import type { NextFunction, Request, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import { isAfter } from "date-fns"
+import status from "http-status"
+
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { logger } from "../../utils/winstonLogger"
 import { User } from "../models/User"
+import sendResponse from "../utils/sendResponse"
+import { createError } from "./errorHandler"
 
 /**
  * Middleware to validate subscription status
@@ -21,68 +24,54 @@ export async function validateSubscription(
     const userId = authReq.user?.id
 
     if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      })
-      return
+      return next(createError("User not authenticated", status.UNAUTHORIZED))
     }
 
     // Fetch the user from the database
     const user = await User.findById(userId)
     if (!user) {
-      res.status(404).json({
-        success: false,
-        message: "User not found",
-      })
-      return
+      return next(createError("User not found", status.NOT_FOUND))
     }
 
     // Check if trial has expired and update status
     if (
       user.isInTrial() &&
       user.trial_end_date &&
-      new Date() > user.trial_end_date
+      isAfter(new Date(), user.trial_end_date)
     ) {
       user.subscription_status = "expired"
       await user.save()
       logger.info(`Trial expired for user ${userId}`)
     }
 
-    // Check subscription status - allow active subscriptions and valid trials
-    const validStatuses = ["active", "trial", "trialing"]
-    const hasValidSubscription = validStatuses.includes(
-      user.subscription_status,
-    )
+    const hasValidSubscription = user.isSubscriptionActive()
 
     if (!hasValidSubscription) {
       const daysLeft = user.getDaysUntilTrialEnd()
-      res.status(403).json({
-        success: false,
-        message:
-          daysLeft > 0
-            ? `Your trial expires in ${daysLeft} days. Please upgrade to continue.`
-            : "Your subscription has expired or the free trial has ended. Please renew your subscription.",
-        subscriptionStatus: user.subscription_status,
-        subscriptionTier: user.subscriptionTier,
-        isInTrial: user.isInTrial(),
-        daysUntilTrialEnd: daysLeft,
-        upgradeRequired: true,
-      })
+      sendResponse(
+        res,
+        status.FORBIDDEN,
+        false,
+        daysLeft > 0
+          ? `Your trial expires in ${daysLeft} days. Please upgrade to continue.`
+          : "Your subscription has expired or the free trial has ended. Please renew your subscription.",
+      )
       return
     }
 
     // If everything is valid, proceed to next middleware
-    logger.info(
+    logger.debug(
       `✅ Subscription validation passed for user ${userId} (${user.subscriptionTier})`,
     )
     next()
   } catch (error) {
     logger.error("❌ Error in subscription validation middleware:", error)
-    res.status(500).json({
-      success: false,
-      message: "Server error during subscription validation",
-    })
+    next(
+      createError(
+        "Server error during subscription validation",
+        status.INTERNAL_SERVER_ERROR,
+      ),
+    )
   }
 }
 
@@ -160,97 +149,8 @@ export function validateFeatureAccess(requiredFeature: string) {
 }
 
 /**
- * Middleware to check if user can create more goals
- * FIXED: Now uses the correct service to count goals from Goal collection
- */
-export async function validateGoalLimit(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  try {
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-
-    if (!userId) {
-      res.status(401).json({
-        success: false,
-        message: "User not authenticated",
-      })
-      return
-    }
-
-    const user = await User.findById(userId)
-    if (!user) {
-      res.status(404).json({
-        success: false,
-        message: "User not found",
-      })
-      return
-    }
-
-    logger.info(
-      `🔍 Goal limit validation for user ${user.email} (${user.subscriptionTier})`,
-    )
-
-    // Check subscription status first
-    const validStatuses = ["active", "trial", "trialing"]
-    if (!validStatuses.includes(user.subscription_status)) {
-      logger.info(`❌ Invalid subscription status: ${user.subscription_status}`)
-      res.status(403).json({
-        success: false,
-        message: "Active subscription required to create goals",
-        upgradeRequired: true,
-      })
-      return
-    }
-
-    // Get the goal limit for this user's tier
-    const maxGoals = user.getGoalLimit()
-    logger.info(`  Goal limit for ${user.subscriptionTier}: ${maxGoals}`)
-
-    // If unlimited goals (maxGoals = -1), allow creation
-    if (maxGoals === -1) {
-      logger.info(`✅ Unlimited goals allowed for ${user.subscriptionTier}`)
-      next()
-      return
-    }
-
-    // FIXED: Use the proper service to get actual goal count from Goal collection
-    const GoalManagementService = (
-      await import("../services/GoalManagementService")
-    ).default
-    const currentGoals = await GoalManagementService.getActiveGoalCount(userId)
-
-    logger.info(`  Current active goals: ${currentGoals}/${maxGoals}`)
-
-    // Check if user has reached their limit
-    if (currentGoals >= maxGoals) {
-      logger.info(`❌ Goal limit reached: ${currentGoals}/${maxGoals}`)
-      res.status(403).json({
-        success: false,
-        message: `Goal limit reached. Your ${user.subscriptionTier} plan allows ${maxGoals} active goals. You currently have ${currentGoals}.`,
-        currentGoals,
-        maxGoals,
-        currentPlan: user.subscriptionTier,
-        upgradeRequired: true,
-      })
-      return
-    }
-
-    logger.info(`✅ Goal creation allowed: ${currentGoals}/${maxGoals}`)
-    next()
-  } catch (error) {
-    logger.error("❌ Error validating goal limit:", error)
-    res.status(500).json({
-      success: false,
-      message: "Server error during goal limit validation",
-    })
-  }
-}
-
-/**
  * Middleware for trial users - shows upgrade prompts but allows access
+ *
  * Use this for features you want to encourage upgrades for
  */
 export function trialPrompt(featureName: string) {

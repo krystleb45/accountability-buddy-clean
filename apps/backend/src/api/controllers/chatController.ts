@@ -1,13 +1,13 @@
 // src/api/controllers/dashboardController.ts - Updated with subscription awareness
 import type { Request, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import CollaborationService from "../services/CollaborationGoalService"
-import GoalManagementService from "../services/GoalManagementService"
+import { GoalService } from "../services/goal-service"
 import ProgressService from "../services/ProgressService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
@@ -35,7 +35,7 @@ export const getDashboardStats = catchAsync(
     const goals = await ProgressService.getProgress(userId)
     const totalGoals = goals.length
     const completedGoals = goals.filter((g) => g.status === "completed").length
-    const activeGoals = await GoalManagementService.getActiveGoalCount(userId)
+    const activeGoals = await GoalService.getActiveGoalCount(userId)
 
     // 2) collaborations count
     const collaborations = await CollaborationService.countForUser(userId)
@@ -140,7 +140,7 @@ export const getDashboardOverview = catchAsync(
     }
 
     // Get recent goals for dashboard display
-    const recentGoals = await GoalManagementService.getUserGoals(userId)
+    const recentGoals = await GoalService.getUserGoals(userId)
     const activeGoals = recentGoals
       .filter((goal) => ["not-started", "in-progress"].includes(goal.status))
       .slice(0, 5)
@@ -154,8 +154,7 @@ export const getDashboardOverview = catchAsync(
       }))
 
     // Get goal summary with subscription limits
-    const goalSummary =
-      await GoalManagementService.getGoalSummaryWithLimits(userId)
+    const goalSummary = await GoalService.getGoalSummaryWithLimits(userId)
 
     // Get collaborations
     const collaborations = await CollaborationService.countForUser(userId)
@@ -254,8 +253,8 @@ export const getAnalytics = catchAsync(async (req: Request, res: Response) => {
   }
 
   // Get analytics data
-  const goals = await GoalManagementService.getUserGoals(userId)
-  const streakDates = await GoalManagementService.getStreakDates(userId)
+  const goals = await GoalService.getUserGoals(userId)
+  const streakDates = await GoalService.getStreakDates(userId)
 
   const analytics = {
     goalCompletion: {
@@ -345,7 +344,7 @@ export const getSubscriptionStatus = catchAsync(
       },
 
       usage: {
-        currentGoals: await GoalManagementService.getActiveGoalCount(userId),
+        currentGoals: await GoalService.getActiveGoalCount(userId),
       },
     }
 

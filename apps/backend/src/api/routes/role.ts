@@ -4,7 +4,7 @@ import { Router } from "express"
 import rateLimit from "express-rate-limit"
 
 import * as RoleCtrl from "../controllers/RoleController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 
 const router = Router()

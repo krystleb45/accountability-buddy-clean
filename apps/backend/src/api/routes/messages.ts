@@ -5,12 +5,12 @@ import { check, param, query } from "express-validator"
 import { isValidObjectId } from "mongoose"
 
 import * as MessageController from "../controllers/MessageController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import {
   validateFeatureAccess,
   validateSubscription,
-} from "../middleware/subscriptionValidation"
+} from "../middleware/subscription-validation"
 import catchAsync from "../utils/catchAsync"
 
 const router = Router()

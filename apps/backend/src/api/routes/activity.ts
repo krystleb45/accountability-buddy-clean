@@ -13,7 +13,7 @@ import {
   logActivity,
   updateActivity,
 } from "../controllers/ActivityController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import validate from "../middleware/validation-middleware"
 
 const router = Router()

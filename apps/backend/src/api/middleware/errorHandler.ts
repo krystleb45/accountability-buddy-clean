@@ -18,7 +18,9 @@ export class CustomError extends Error {
     this.name = this.constructor.name
     this.statusCode = statusCode
     this.isOperational = isOperational
-    if (details != null) this.details = details
+    if (details != null) {
+      this.details = details
+    }
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
@@ -49,7 +51,6 @@ export function errorHandler(
         }
 
   // Always log the full error
-  console.error(err) // so you see the stack in your console
   logger.error(
     `Error: ${message} | Status: ${statusCode}${
       details ? ` | Details: ${JSON.stringify(details)}` : ""
@@ -64,7 +65,9 @@ export function errorHandler(
 
   // In dev, also send back the details and stack
   if (process.env.NODE_ENV === "development") {
-    if (details != null) payload.details = details
+    if (details != null) {
+      payload.details = details
+    }
     if (err instanceof Error && err.stack) {
       payload.stack = err.stack
     }

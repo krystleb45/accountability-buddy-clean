@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
 import * as BadgeController from "../controllers/BadgeController"
-import { protect, restrictTo } from "../middleware/authMiddleware"
+import { protect, restrictTo } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

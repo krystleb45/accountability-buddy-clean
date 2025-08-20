@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
 import historyController from "../controllers/HistoryController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

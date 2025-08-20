@@ -1,50 +1,13 @@
-// src/api/models/Reminder.ts
-
-import type { Document, Model, Types } from "mongoose"
+import type {
+  ReminderSchema as IReminderSchema,
+  ReminderDocument,
+  ReminderModel,
+} from "src/types/mongoose.gen"
 
 import mongoose, { Schema } from "mongoose"
 
-// --- Recurrence and ReminderType ---
-type Recurrence = "none" | "daily" | "weekly" | "monthly"
-type ReminderType = "email" | "sms" | "app"
-
-// --- Reminder Document Interface ---
-export interface IReminder extends Document {
-  user: Types.ObjectId
-  message: string
-  goal?: Types.ObjectId
-  remindAt: Date
-  recurrence: Recurrence
-  isActive: boolean
-  isSent: boolean
-  reminderType: ReminderType
-  email?: string
-  lastSent?: Date
-  endRepeat?: Date
-  createdAt: Date
-  updatedAt: Date
-
-  // Virtuals
-  isRecurring: boolean
-
-  // Instance methods
-  deactivate: () => Promise<IReminder>
-  markAsSent: () => Promise<IReminder>
-}
-
-// --- Reminder Model Static Interface ---
-export interface IReminderModel extends Model<IReminder> {
-  getUpcomingRemindersForUser: (userId: Types.ObjectId) => Promise<IReminder[]>
-  getUpcomingRemindersInRange: (start: Date, end: Date) => Promise<IReminder[]>
-  getUserReminders: (
-    userId: Types.ObjectId,
-    filters?: Partial<IReminder>,
-  ) => Promise<IReminder[]>
-  markAsSent: (reminderId: string) => Promise<IReminder | null>
-}
-
 // --- Schema Definition ---
-const ReminderSchema = new Schema<IReminder, IReminderModel>(
+const ReminderSchema: IReminderSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     message: { type: String, required: true, trim: true, maxlength: 255 },
@@ -82,7 +45,7 @@ const ReminderSchema = new Schema<IReminder, IReminderModel>(
     endRepeat: {
       type: Date,
       validate: {
-        validator(this: IReminder, value: Date): boolean {
+        validator(this, value: Date): boolean {
           return !value || value.getTime() > this.remindAt.getTime()
         },
         message: "End repeat must be after remindAt",
@@ -104,12 +67,12 @@ ReminderSchema.index({ isSent: 1 })
 ReminderSchema.index({ goal: 1 })
 
 // --- Virtual ---
-ReminderSchema.virtual("isRecurring").get(function (this: IReminder): boolean {
+ReminderSchema.virtual("isRecurring").get(function (this): boolean {
   return this.recurrence !== "none"
 })
 
 // --- Middleware ---
-ReminderSchema.pre<IReminder>("save", function (next): void {
+ReminderSchema.pre("save", function (next): void {
   if (this.isModified("message")) {
     this.message = this.message.trim()
   }
@@ -122,70 +85,44 @@ ReminderSchema.pre<IReminder>("save", function (next): void {
 })
 
 // --- Instance Methods ---
-ReminderSchema.methods.deactivate = async function (
-  this: IReminder,
-): Promise<IReminder> {
-  this.isActive = false
-  return this.save()
-}
-
-ReminderSchema.methods.markAsSent = async function (
-  this: IReminder,
-): Promise<IReminder> {
-  this.isSent = true
-  this.lastSent = new Date()
-  return this.save()
+ReminderSchema.methods = {
+  async deactivate(this) {
+    this.isActive = false
+    return this.save()
+  },
+  async markAsSent(this) {
+    this.isSent = true
+    this.lastSent = new Date()
+    return this.save()
+  },
 }
 
 // --- Static Methods ---
-ReminderSchema.statics.getUpcomingRemindersForUser = function (
-  this: IReminderModel,
-  userId: Types.ObjectId,
-): Promise<IReminder[]> {
-  return this.find({
-    user: userId,
-    remindAt: { $gte: new Date() },
-    isSent: false,
-    isActive: true,
-  })
-    .sort({ remindAt: 1 })
-    .exec()
-}
-
-ReminderSchema.statics.getUpcomingRemindersInRange = function (
-  this: IReminderModel,
-  start: Date,
-  end: Date,
-): Promise<IReminder[]> {
-  return this.find({
-    isActive: true,
-    remindAt: { $gte: start, $lte: end },
-    isSent: false,
-  }).exec()
-}
-
-ReminderSchema.statics.getUserReminders = function (
-  this: IReminderModel,
-  userId: Types.ObjectId,
-  filters: Partial<IReminder> = {},
-): Promise<IReminder[]> {
-  return this.find({ user: userId, ...filters } as any).exec()
-}
-
-ReminderSchema.statics.markAsSent = async function (
-  this: IReminderModel,
-  reminderId: string,
-): Promise<IReminder | null> {
-  const rem = await this.findById(reminderId).exec()
-  if (!rem) return null
-  rem.isSent = true
-  rem.lastSent = new Date()
-  return rem.save()
+ReminderSchema.statics = {
+  getUpcomingRemindersForUser(this, userId: mongoose.Types.ObjectId) {
+    return this.find({
+      user: userId,
+      remindAt: { $gte: new Date() },
+      isSent: false,
+      isActive: true,
+    })
+      .sort({ remindAt: 1 })
+      .exec()
+  },
+  getUpcomingRemindersInRange(this, start: Date, end: Date) {
+    return this.find({
+      isActive: true,
+      remindAt: { $gte: start, $lte: end },
+      isSent: false,
+    }).exec()
+  },
+  getUserReminders(this, userId: mongoose.Types.ObjectId, filters = {}) {
+    return this.find({ user: userId, ...filters } as any).exec()
+  },
 }
 
 // --- Model Export ---
-export const Reminder = mongoose.model<IReminder, IReminderModel>(
-  "Reminder",
-  ReminderSchema,
-)
-export default Reminder
+export const Reminder: ReminderModel = mongoose.model<
+  ReminderDocument,
+  ReminderModel
+>("Reminder", ReminderSchema)

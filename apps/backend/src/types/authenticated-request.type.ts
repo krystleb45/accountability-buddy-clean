@@ -1,7 +1,6 @@
-// backend/src/types/AuthenticatedRequest.ts
 import type { Request } from "express"
 
-import type { IUser } from "./AuthenticatedUser"
+import type { User } from "./mongoose.gen"
 
 // Generic interface that allows typing params
 export interface AuthenticatedRequest<
@@ -10,7 +9,13 @@ export interface AuthenticatedRequest<
   ReqBody = any,
   ReqQuery = any,
 > extends Omit<Request<P, ResBody, ReqBody, ReqQuery>, "user"> {
-  user?: Partial<IUser>
+  user?: Omit<User, "subscription_status" | "password"> & {
+    subscription_status?: Exclude<
+      User["subscription_status"],
+      "canceled" | "past_due"
+    >
+    id: string
+  }
   params: P // Properly typed params
 }
 

@@ -1,7 +1,7 @@
 // src/api/controllers/partnerController.ts
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import PartnerService from "../services/PartnerService"
 import catchAsync from "../utils/catchAsync"

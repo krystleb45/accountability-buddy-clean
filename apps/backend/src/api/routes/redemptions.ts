@@ -6,7 +6,7 @@ import {
   getMyRedemptions,
   getRedemptionsByDate,
 } from "../controllers/RedemptionController"
-import { protect, restrictTo } from "../middleware/authMiddleware"
+import { protect, restrictTo } from "../middleware/auth-middleware"
 
 const router = Router()
 

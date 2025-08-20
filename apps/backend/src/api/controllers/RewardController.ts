@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express"
 
 import { Types } from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import Redemption from "../models/Redemption"
 import RewardService from "../services/rewardService"

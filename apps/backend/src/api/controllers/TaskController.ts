@@ -1,6 +1,6 @@
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 import type { ITask } from "../models/Task"
 
 import TaskService from "../services/TaskService"

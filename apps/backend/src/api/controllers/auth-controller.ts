@@ -1,6 +1,6 @@
 import type { PRICING } from "@ab/shared/pricing"
 import type { RequestHandler } from "express"
-import type { AuthenticatedRequest } from "src/types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 import type {
   UserObject,
   VerificationTokenDocument,

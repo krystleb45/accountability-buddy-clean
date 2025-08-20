@@ -1,7 +1,7 @@
 // src/api/controllers/integrationController.ts
 import type { Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 import type { IntegrationSettings } from "../models/Integration"
 
 import IntegrationService from "../services/IntegrationService"

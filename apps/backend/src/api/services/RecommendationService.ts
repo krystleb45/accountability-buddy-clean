@@ -10,7 +10,7 @@ import type { IUser } from "../models/User"
 import BlogService from "./blogService"
 import BookService from "./bookRecommendationService"
 import FriendshipService from "./FriendService"
-import GoalService from "./GoalManagementService"
+import GoalService from "./goal-service"
 
 export interface RecommendationResult<T> {
   items: T[]

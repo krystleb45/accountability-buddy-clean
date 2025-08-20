@@ -5,11 +5,11 @@ import express, { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import stripeClient from "../../utils/stripe"
 import { logger } from "../../utils/winstonLogger"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import Subscription from "../models/Subscription"
 import catchAsync from "../utils/catchAsync"

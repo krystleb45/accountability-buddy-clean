@@ -5,7 +5,7 @@ import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
 import * as TriggerController from "../controllers/notificationsTriggersController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

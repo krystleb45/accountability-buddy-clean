@@ -8,7 +8,7 @@ import {
   getPartnerNotifications,
   notifyPartner,
 } from "../controllers/partnerController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

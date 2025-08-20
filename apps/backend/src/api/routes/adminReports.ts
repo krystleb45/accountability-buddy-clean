@@ -2,7 +2,7 @@
 import { Router } from "express"
 
 import * as ReportController from "../controllers/ReportController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 
 const router = Router()

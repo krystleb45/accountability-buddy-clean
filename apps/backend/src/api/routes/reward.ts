@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
 import * as RewardController from "../controllers/RewardController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 

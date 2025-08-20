@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit"
 import { param } from "express-validator"
 
 import * as MatchController from "../controllers/MatchController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import catchAsync from "../utils/catchAsync"
 

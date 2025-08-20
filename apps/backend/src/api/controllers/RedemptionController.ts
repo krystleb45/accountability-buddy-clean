@@ -1,7 +1,7 @@
 // src/api/controllers/RedemptionController.ts
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import RedemptionService from "../services/RedemptionService"
 import catchAsync from "../utils/catchAsync"

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import FeedService from "../services/FeedService"
 import catchAsync from "../utils/catchAsync"

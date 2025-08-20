@@ -3,7 +3,7 @@ import type { RequestHandler } from "express"
 import jwt from "jsonwebtoken"
 import sanitize from "mongo-sanitize"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { logger } from "../../utils/winstonLogger"
 import { User } from "../models/User"

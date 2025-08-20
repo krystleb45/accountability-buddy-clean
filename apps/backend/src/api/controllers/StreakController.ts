@@ -2,7 +2,7 @@ import type { Request, Response } from "express"
 
 import mongoose from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import * as StreakService from "../services/StreakService"
 import catchAsync from "../utils/catchAsync"

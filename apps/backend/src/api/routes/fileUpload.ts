@@ -2,7 +2,7 @@
 import { Router } from "express"
 
 import * as fileController from "../controllers/FileUploadController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 
 const router = Router()
 

@@ -1,9 +1,9 @@
-// src/api/middleware/authJwt.ts - Fixed to handle both _id and userId
 import type { RequestHandler } from "express"
+import type { UserObject } from "src/types/mongoose.gen"
 
 import jwt from "jsonwebtoken"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { logger } from "../../utils/winstonLogger"
 import { User } from "../models/User"
@@ -67,9 +67,7 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
   }
 
   // Load user from database
-  const userDoc = await User.findById(userIdFromToken)
-    .select("-password")
-    .lean()
+  const userDoc = await User.findById(userIdFromToken).select("-password")
 
   if (!userDoc) {
     logger.warn(`❌ User not found: ${userIdFromToken}`)
@@ -82,7 +80,6 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
   ): "active" | "trial" | "expired" => {
     switch (status) {
       case "active":
-      case "trialing":
         return "active"
       case "trial":
         return "trial"
@@ -94,23 +91,13 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
     }
   }
 
+  const user: UserObject = userDoc.toObject()
+
   // Attach user to request object
   ;(req as AuthenticatedRequest).user = {
-    id: userDoc._id.toString(),
-    username: userDoc.username,
-    email: userDoc.email,
-    role: userDoc.role,
-    isAdmin: userDoc.role === "admin",
-    permissions: userDoc.permissions ?? [],
-    trial_start_date: userDoc.trial_start_date,
-    subscription_status: mapSubscriptionStatus(userDoc.subscription_status),
-    next_billing_date: userDoc.next_billing_date,
-    points: userDoc.points ?? 0,
-    rewards: userDoc.rewards ?? [],
-    streakCount: userDoc.streakCount ?? 0,
-    isVerified: userDoc.isVerified,
-    createdAt: userDoc.createdAt,
-    updatedAt: userDoc.updatedAt,
+    ...user,
+    subscription_status: mapSubscriptionStatus(user.subscription_status),
+    id: user._id.toString(),
   }
 
   logger.info(`✅ Authenticated user: ${userDoc.email}`)
@@ -131,7 +118,7 @@ export function restrictTo(
       return next(createError("Unauthorized: No user attached", 401))
     }
 
-    if (!roles.includes(authReq.user.role as any)) {
+    if (!roles.includes(authReq.user.role)) {
       logger.warn(
         `❌ Access denied for ${authReq.user.email}. Has role: ${authReq.user.role}, requires one of: ${roles.join(", ")}`,
       )

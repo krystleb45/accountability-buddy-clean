@@ -3573,34 +3573,6 @@ export type GamificationDocument = mongoose.Document<
   }
 
 /**
- * Lean version of GoalMilestoneDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`.
- * ```
- * const goalObject = goal.toObject();
- * ```
- */
-export type GoalMilestone = {
-  title: string
-  deadline: Date
-  completed?: boolean
-}
-
-/**
- * Lean version of GoalReminderDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`.
- * ```
- * const goalObject = goal.toObject();
- * ```
- */
-export type GoalReminder = {
-  message: string
-  remindAt: Date
-  status?: "pending" | "sent"
-}
-
-/**
  * Lean version of GoalDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`. To avoid conflicts with model names, use the type alias `GoalObject`.
@@ -3617,18 +3589,15 @@ export type Goal = {
   status?: "not-started" | "in-progress" | "completed" | "archived"
   progress?: number
   completedAt?: Date
-  milestones: GoalMilestone[]
+  milestones: (Milestone["_id"] | Milestone)[]
   tags: string[]
   priority?: "high" | "medium" | "low"
-  reminders: GoalReminder[]
+  reminders: (Reminder["_id"] | Reminder)[]
   isPinned?: boolean
   points?: number
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  milestoneCount: number
-  completedMilestoneCount: number
-  reminderCount: number
 }
 
 /**
@@ -3660,14 +3629,15 @@ export type GoalQuery = mongoose.Query<any, GoalDocument, GoalQueries> &
 export type GoalQueries = {}
 
 export type GoalMethods = {
-  addReminder: (this: GoalDocument, ...args: any[]) => any
-  markMilestoneComplete: (this: GoalDocument, ...args: any[]) => any
+  addReminder: (
+    this: GoalDocument,
+    message: string,
+    remindAt: Date
+  ) => Promise<any>
+  markMilestoneComplete: (this: GoalDocument, index: number) => Promise<any>
 }
 
-export type GoalStatics = {
-  findByUser: (this: GoalModel, ...args: any[]) => any
-  archiveCompleted: (this: GoalModel, ...args: any[]) => any
-}
+export type GoalStatics = {}
 
 /**
  * Mongoose Model type
@@ -3695,28 +3665,6 @@ export type GoalSchema = mongoose.Schema<
 >
 
 /**
- * Mongoose Subdocument type
- *
- * Type of `GoalDocument["milestones"]` element.
- */
-export type GoalMilestoneDocument = mongoose.Types.Subdocument<any> & {
-  title: string
-  deadline: Date
-  completed?: boolean
-}
-
-/**
- * Mongoose Subdocument type
- *
- * Type of `GoalDocument["reminders"]` element.
- */
-export type GoalReminderDocument = mongoose.Types.Subdocument<any> & {
-  message: string
-  remindAt: Date
-  status?: "pending" | "sent"
-}
-
-/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -3737,18 +3685,17 @@ export type GoalDocument = mongoose.Document<
     status?: "not-started" | "in-progress" | "completed" | "archived"
     progress?: number
     completedAt?: Date
-    milestones: mongoose.Types.DocumentArray<GoalMilestoneDocument>
+    milestones: mongoose.Types.Array<
+      MilestoneDocument["_id"] | MilestoneDocument
+    >
     tags: mongoose.Types.Array<string>
     priority?: "high" | "medium" | "low"
-    reminders: mongoose.Types.DocumentArray<GoalReminderDocument>
+    reminders: mongoose.Types.Array<ReminderDocument["_id"] | ReminderDocument>
     isPinned?: boolean
     points?: number
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    milestoneCount: number
-    completedMilestoneCount: number
-    reminderCount: number
   }
 
 /**
@@ -5376,12 +5323,12 @@ export type MilestoneQuery = mongoose.Query<
 export type MilestoneQueries = {}
 
 export type MilestoneMethods = {
-  isPastDue: (this: MilestoneDocument, ...args: any[]) => any
+  isPastDue: (this: MilestoneDocument) => boolean
 }
 
 export type MilestoneStatics = {
-  findUpcoming: (this: MilestoneModel, ...args: any[]) => any
-  findOverdue: (this: MilestoneModel, ...args: any[]) => any
+  findUpcoming: (this: MilestoneModel, daysAhead?: number) => any
+  findOverdue: (this: MilestoneModel) => any
 }
 
 /**
@@ -7508,15 +7455,25 @@ export type ReminderQuery = mongoose.Query<
 export type ReminderQueries = {}
 
 export type ReminderMethods = {
-  deactivate: (this: ReminderDocument, ...args: any[]) => any
-  markAsSent: (this: ReminderDocument, ...args: any[]) => any
+  deactivate: (this: ReminderDocument) => Promise<any>
+  markAsSent: (this: ReminderDocument) => Promise<any>
 }
 
 export type ReminderStatics = {
-  getUpcomingRemindersForUser: (this: ReminderModel, ...args: any[]) => any
-  getUpcomingRemindersInRange: (this: ReminderModel, ...args: any[]) => any
-  getUserReminders: (this: ReminderModel, ...args: any[]) => any
-  markAsSent: (this: ReminderModel, ...args: any[]) => any
+  getUpcomingRemindersForUser: (
+    this: ReminderModel,
+    userId: mongoose.Types.ObjectId
+  ) => any
+  getUpcomingRemindersInRange: (
+    this: ReminderModel,
+    start: Date,
+    end: Date
+  ) => any
+  getUserReminders: (
+    this: ReminderModel,
+    userId: mongoose.Types.ObjectId,
+    filters?: {}
+  ) => any
 }
 
 /**
@@ -8953,34 +8910,6 @@ export type TrackerDocument = mongoose.Document<
   }
 
 /**
- * Lean version of UserGoalDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
- * ```
- * const userObject = user.toObject();
- * ```
- */
-export type UserGoal = {
-  title: string
-  category:
-    | "fitness"
-    | "study"
-    | "career"
-    | "personal"
-    | "health"
-    | "finance"
-    | "hobby"
-    | "travel"
-  description?: string
-  targetDate?: Date
-  status?: "active" | "completed" | "paused"
-  priority?: "low" | "medium" | "high"
-  createdAt?: Date
-  updatedAt?: Date
-  _id: mongoose.Types.ObjectId
-}
-
-/**
  * Lean version of UserDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserObject`.
@@ -9011,7 +8940,6 @@ export type User = {
   badges: (Badge["_id"] | Badge)[]
   pinnedGoals: (Goal["_id"] | Goal)[]
   featuredAchievements: (Achievement["_id"] | Achievement)[]
-  goals: UserGoal[]
   location: {
     country?: string
     state?: string
@@ -9032,13 +8960,7 @@ export type User = {
   }
   stripeCustomerId?: string
   stripeSubscriptionId?: string
-  subscription_status?:
-    | "trial"
-    | "active"
-    | "expired"
-    | "canceled"
-    | "past_due"
-    | "trialing"
+  subscription_status?: "trial" | "active" | "expired" | "canceled" | "past_due"
   subscriptionTier?: "free-trial" | "basic" | "pro" | "elite"
   trial_start_date?: Date
   trial_end_date?: Date
@@ -9051,11 +8973,6 @@ export type User = {
     newBillingCycle?: "monthly" | "yearly"
     changeDate?: Date
   }
-  completedGoals?: number
-  streak?: number
-  streakCount?: number
-  lastGoalCompletedAt?: Date
-  points?: number
   interests: string[]
   chatPreferences: {
     preferredGroups: (Chat["_id"] | Chat)[]
@@ -9077,8 +8994,8 @@ export type User = {
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  profilePicture: string
-  isActive: boolean
+  profilePicture: any
+  isActive: any
 }
 
 /**
@@ -9110,16 +9027,19 @@ export type UserQuery = mongoose.Query<any, UserDocument, UserQueries> &
 export type UserQueries = {}
 
 export type UserMethods = {
-  canCreateGoal: (this: UserDocument, ...args: any[]) => any
-  canCreateGoalSimple: (this: UserDocument, ...args: any[]) => any
-  hasFeatureAccess: (this: UserDocument, ...args: any[]) => any
-  isSubscriptionActive: (this: UserDocument, ...args: any[]) => any
-  isInTrial: (this: UserDocument, ...args: any[]) => any
-  getDaysUntilTrialEnd: (this: UserDocument, ...args: any[]) => any
-  comparePassword: (this: UserDocument, ...args: any[]) => any
-  updatePoints: (this: UserDocument, ...args: any[]) => any
-  updateStreak: (this: UserDocument, ...args: any[]) => any
-  awardBadge: (this: UserDocument, ...args: any[]) => any
+  hasFeatureAccess: (this: UserDocument, feature: string) => any
+  isSubscriptionActive: (this: UserDocument) => boolean
+  isInTrial: (this: UserDocument) => boolean
+  getDaysUntilTrialEnd: (this: UserDocument) => number
+  comparePassword: (
+    this: UserDocument,
+    candidatePassword: string
+  ) => Promise<any>
+  awardBadge: (
+    this: UserDocument,
+    badgeId: mongoose.Types.ObjectId
+  ) => Promise<void>
+  getGoalLimit: (this: UserDocument) => number
 }
 
 export type UserStatics = {}
@@ -9148,32 +9068,6 @@ export type UserSchema = mongoose.Schema<
   UserMethods,
   UserQueries
 >
-
-/**
- * Mongoose Subdocument type
- *
- * Type of `UserDocument["goals"]` element.
- */
-export type UserGoalDocument =
-  mongoose.Types.Subdocument<mongoose.Types.ObjectId> & {
-    title: string
-    category:
-      | "fitness"
-      | "study"
-      | "career"
-      | "personal"
-      | "health"
-      | "finance"
-      | "hobby"
-      | "travel"
-    description?: string
-    targetDate?: Date
-    status?: "active" | "completed" | "paused"
-    priority?: "low" | "medium" | "high"
-    createdAt?: Date
-    updatedAt?: Date
-    _id: mongoose.Types.ObjectId
-  }
 
 /**
  * Mongoose Document type
@@ -9214,7 +9108,6 @@ export type UserDocument = mongoose.Document<
     featuredAchievements: mongoose.Types.Array<
       AchievementDocument["_id"] | AchievementDocument
     >
-    goals: mongoose.Types.DocumentArray<UserGoalDocument>
     location: {
       country?: string
       state?: string
@@ -9241,7 +9134,6 @@ export type UserDocument = mongoose.Document<
       | "expired"
       | "canceled"
       | "past_due"
-      | "trialing"
     subscriptionTier?: "free-trial" | "basic" | "pro" | "elite"
     trial_start_date?: Date
     trial_end_date?: Date
@@ -9254,11 +9146,6 @@ export type UserDocument = mongoose.Document<
       newBillingCycle?: "monthly" | "yearly"
       changeDate?: Date
     }
-    completedGoals?: number
-    streak?: number
-    streakCount?: number
-    lastGoalCompletedAt?: Date
-    points?: number
     interests: mongoose.Types.Array<string>
     chatPreferences: {
       preferredGroups: mongoose.Types.Array<ChatDocument["_id"] | ChatDocument>
@@ -9280,8 +9167,8 @@ export type UserDocument = mongoose.Document<
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    profilePicture: string
-    isActive: boolean
+    profilePicture: any
+    isActive: any
   }
 
 /**

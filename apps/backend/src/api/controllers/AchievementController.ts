@@ -1,8 +1,7 @@
 // src/api/controllers/AchievementController.ts
 import type { NextFunction, Request, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
-import type { IUser } from "../models/User"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 import type {
   CreateAchievementDTO,
   UpdateAchievementDTO,
@@ -99,7 +98,7 @@ export const getLeaderboardAchievements = catchAsync(
 /** POST /api/achievements/check-streak (or wherever you call it) */
 export const checkStreakAchievements = catchAsync(
   async (req: AuthenticatedRequest, _res: Response) => {
-    const user = req.user as IUser
+    const user = req.user
     await AchievementService.checkStreakAchievements(user)
   },
 )

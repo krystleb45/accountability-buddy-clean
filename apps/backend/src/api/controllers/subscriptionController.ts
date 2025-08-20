@@ -2,12 +2,12 @@
 
 import type { RequestHandler } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
-import GoalManagementService from "../services/GoalManagementService"
+import { GoalService } from "../services/goal-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
@@ -241,10 +241,9 @@ export const getUserLimits: RequestHandler = catchAsync(
       return next(createError("User not found", 404))
     }
 
-    // FIXED: Use helper functions and GoalManagementService instead of user methods
+    // FIXED: Use helper functions and GoalService instead of user methods
     const goalLimit = getGoalLimitForTier(user.subscriptionTier)
-    const currentGoalCount =
-      await GoalManagementService.getActiveGoalCount(userId)
+    const currentGoalCount = await GoalService.getActiveGoalCount(userId)
     const canCreateMore = canCreateMoreGoals(
       user.subscriptionTier,
       currentGoalCount,

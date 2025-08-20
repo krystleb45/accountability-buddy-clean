@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import PollResultService from "../services/PollResultService"
 import catchAsync from "../utils/catchAsync"

@@ -1,9 +1,9 @@
 // src/api/controllers/userController.ts
 import type { Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import UserService from "../services/UserService"
+import UserService from "../services/user-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 

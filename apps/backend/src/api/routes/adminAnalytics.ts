@@ -1,10 +1,9 @@
-// src/api/routes/adminAnalytics.ts
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check, validationResult } from "express-validator"
 
 import * as AnalyticsController from "../controllers/AnalyticsController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 import catchAsync from "../utils/catchAsync"
 

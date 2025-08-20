@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit"
 import { check, query } from "express-validator"
 
 import gamificationController from "../controllers/gamificationController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

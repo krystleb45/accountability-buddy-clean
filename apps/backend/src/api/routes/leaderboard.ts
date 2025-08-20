@@ -10,7 +10,7 @@ import {
   resetLeaderboard,
   updateLeaderboardForUser,
 } from "../controllers/LeaderboardController"
-import { protect, restrictTo } from "../middleware/authMiddleware"
+import { protect, restrictTo } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import catchAsync from "../utils/catchAsync"
 

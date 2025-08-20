@@ -6,7 +6,7 @@ import { check } from "express-validator"
 import sanitize from "mongo-sanitize"
 
 import * as supportController from "../controllers/supportController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 

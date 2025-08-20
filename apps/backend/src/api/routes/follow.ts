@@ -5,7 +5,7 @@ import { Router } from "express"
 import { param } from "express-validator"
 
 import FollowController from "../controllers/FollowController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import catchAsync from "../utils/catchAsync"
 

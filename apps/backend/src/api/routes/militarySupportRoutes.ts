@@ -5,7 +5,7 @@ import { Router } from "express"
 import { check } from "express-validator"
 
 import * as militarySupportController from "../controllers/militarySupportController"
-import { militaryAuth, protect } from "../middleware/authMiddleware"
+import { militaryAuth, protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import catchAsync from "../utils/catchAsync"
 

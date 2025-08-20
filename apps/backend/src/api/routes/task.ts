@@ -10,7 +10,7 @@ import {
   getUserStreak,
   logDailyCheckIn,
 } from "../controllers/StreakController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import catchAsync from "../utils/catchAsync"
 

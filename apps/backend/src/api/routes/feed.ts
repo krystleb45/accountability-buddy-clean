@@ -4,7 +4,7 @@ import rateLimit from "express-rate-limit"
 import { check, param } from "express-validator"
 
 import * as feedController from "../controllers/feedController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

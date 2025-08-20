@@ -10,7 +10,7 @@ import {
   signupNewsletter,
   unsubscribeNewsletter,
 } from "../controllers/NewsletterController"
-import { protect, restrictTo } from "../middleware/authMiddleware"
+import { protect, restrictTo } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import { validate } from "../middleware/validation-middleware"
 import catchAsync from "../utils/catchAsync"

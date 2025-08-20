@@ -5,7 +5,7 @@ import { Router } from "express"
 import rateLimit from "express-rate-limit"
 
 import * as AuditController from "../controllers/AuditController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 
 const router = Router()
 

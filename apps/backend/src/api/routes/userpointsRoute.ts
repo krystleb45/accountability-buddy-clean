@@ -3,7 +3,7 @@ import { Router } from "express"
 import { check } from "express-validator"
 
 import * as PointController from "../controllers/pointController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

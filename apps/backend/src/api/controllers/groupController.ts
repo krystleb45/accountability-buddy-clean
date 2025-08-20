@@ -1,6 +1,6 @@
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import GroupService from "../services/GroupService"
 import catchAsync from "../utils/catchAsync"

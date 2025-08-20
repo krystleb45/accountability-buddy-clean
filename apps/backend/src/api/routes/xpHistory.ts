@@ -5,7 +5,7 @@ import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
 import * as xpCtrl from "../controllers/xpHistoryController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import { roleBasedAccessControl } from "../middleware/roleBasedAccessControl"
 

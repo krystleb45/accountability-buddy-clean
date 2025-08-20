@@ -5,9 +5,9 @@ import rateLimit from "express-rate-limit"
 import { check, param } from "express-validator"
 import mongoose from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import CollaborationGoal from "../models/CollaborationGoal"
 import catchAsync from "../utils/catchAsync"

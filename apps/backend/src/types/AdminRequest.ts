@@ -1,6 +1,6 @@
 // types/AdminRequest.ts
 import type { IUser } from "../api/models/User" // adjust the path as needed
-import type { AuthenticatedRequest } from "./AuthenticatedRequest"
+import type { AuthenticatedRequest } from "./authenticated-request.type"
 
 export type AdminRequest<
   P = Record<string, string>,

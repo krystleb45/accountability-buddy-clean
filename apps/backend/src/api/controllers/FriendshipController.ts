@@ -1,7 +1,7 @@
 // src/api/controllers/FriendshipController.ts
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import FriendService from "../services/FriendService"
 import catchAsync from "../utils/catchAsync"

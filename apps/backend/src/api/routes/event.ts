@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit"
 import { check, param } from "express-validator"
 import mongoose from "mongoose"
 
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import Event from "../models/Event"
 import catchAsync from "../utils/catchAsync"

@@ -6,12 +6,12 @@ import rateLimit from "express-rate-limit"
 import { check, param } from "express-validator"
 
 import * as chatController from "../controllers/chatController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import {
   validateFeatureAccess,
   validateSubscription,
-} from "../middleware/subscriptionValidation"
+} from "../middleware/subscription-validation"
 import catchAsync from "../utils/catchAsync"
 
 const router = Router()

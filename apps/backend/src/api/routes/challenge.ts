@@ -10,7 +10,7 @@ import {
   joinChallenge,
   leaveChallenge,
 } from "../controllers/ChallengeController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()

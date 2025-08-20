@@ -5,7 +5,7 @@ import rateLimit from "express-rate-limit"
 import mongoose from "mongoose"
 
 import * as AchievementController from "../controllers/AchievementController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 
 const router: Router = express.Router()
 

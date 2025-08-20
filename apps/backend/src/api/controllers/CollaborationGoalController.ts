@@ -3,7 +3,7 @@ import type { Response } from "express"
 
 import sanitize from "mongo-sanitize"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import CollaborationGoalService from "../services/CollaborationGoalService"
 import catchAsync from "../utils/catchAsync"

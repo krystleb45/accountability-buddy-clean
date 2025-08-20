@@ -3,7 +3,7 @@ import type { NextFunction, Response } from "express"
 import sanitize from "mongo-sanitize"
 import mongoose from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/AuthenticatedRequest"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import { createError } from "../middleware/errorHandler"
 import CustomReminder from "../models/CustomReminder"

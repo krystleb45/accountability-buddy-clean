@@ -9,7 +9,7 @@ import {
   uploadCoverImage,
   uploadProfileImage,
 } from "../controllers/ProfileController"
-import { protect } from "../middleware/authMiddleware"
+import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 
 const router = Router()
