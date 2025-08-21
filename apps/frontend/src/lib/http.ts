@@ -8,7 +8,8 @@ import type {
 } from "axios"
 
 import axios from "axios"
-import { getSession } from "next-auth/react"
+import { getSession, signOut } from "next-auth/react"
+import { toast } from "sonner"
 
 // All API requests should go through the Next.js API proxy (not directly to Express).
 const BASE_URL = "/api"
@@ -89,9 +90,9 @@ http.interceptors.response.use(
     switch (err.response.status) {
       case 401:
         console.error("Authentication failed")
-        // NextAuth.js handles session cleanup automatically
         if (typeof window !== "undefined") {
-          window.location.href = "/api/auth/signin"
+          toast.info("Please login to continue")
+          signOut()
         }
         break
       case 403:

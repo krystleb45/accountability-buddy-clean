@@ -16,7 +16,8 @@ interface Props {
 export function Providers({ children }: Props) {
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider>
+      {/* Refetch every hour because access tokens expires in an hour */}
+      <SessionProvider refetchInterval={60 * 60}>
         <AuthProvider>{children}</AuthProvider>
       </SessionProvider>
     </QueryClientProvider>
