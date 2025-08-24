@@ -6,9 +6,9 @@ import { getServerSession } from "next-auth/next"
 import dynamic from "next/dynamic"
 import { redirect } from "next/navigation"
 
-import type { Activity as APIActivity } from "@/api/activity/activityApi"
+import type { Activity as APIActivity } from "@/api/activity/activity-api"
 
-import { fetchActivityById } from "@/api/activity/activityApi"
+import { fetchActivityById } from "@/api/activity/activity-api"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 interface Props {

@@ -2,13 +2,13 @@
 
 import React from "react"
 
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+
 export interface DashboardStatCardProps {
   title: string
   value: string | number
-  /** Optional icon as React node (e.g., emoji or SVG) */
+  /** Optional icon as React node (e.g., Lucide, emoji or SVG) */
   icon?: React.ReactNode
-  /** Background color for the icon container */
-  color?: string
 }
 
 /**
@@ -18,26 +18,27 @@ const DashboardStatCard: React.FC<DashboardStatCardProps> = ({
   title,
   value,
   icon,
-  color = "#3b82f6", // Default to blue-500
 }) => (
-  <dl className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow duration-300 hover:shadow-md">
-    {icon && (
-      <dt>
-        <div
-          role="img"
-          aria-label={`${title} icon`}
-          className="flex size-12 items-center justify-center rounded-lg text-xl text-white"
-          style={{ backgroundColor: color }}
-        >
-          {icon}
-        </div>
-      </dt>
-    )}
-    <div>
-      <dt className="text-sm font-medium text-gray-500">{title}</dt>
-      <dd className="text-2xl font-semibold text-gray-900">{value}</dd>
-    </div>
-  </dl>
+  <Card>
+    <CardHeader>
+      <CardTitle>{title}</CardTitle>
+    </CardHeader>
+    <CardContent className="mt-auto">
+      <div className="flex items-center gap-4">
+        {icon && (
+          <div
+            className={`
+              shrink-0 text-primary
+              [&_svg:not([class*='size-'])]:size-8
+            `}
+          >
+            {icon}
+          </div>
+        )}
+        <p className="text-4xl font-bold">{value}</p>
+      </div>
+    </CardContent>
+  </Card>
 )
 
 export default DashboardStatCard

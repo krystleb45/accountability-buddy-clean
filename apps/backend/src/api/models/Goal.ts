@@ -9,29 +9,38 @@ import mongoose, { Schema } from "mongoose"
 
 import { Milestone } from "./Milestone"
 
+export const commonSchemaWithCollaborationGoal = new Schema({
+  title: { type: String, required: true, trim: true, maxlength: 255 },
+  description: { type: String, trim: true, maxlength: 1000 },
+  status: {
+    type: String,
+    enum: ["not-started", "in-progress", "completed", "archived"],
+    default: "not-started",
+  },
+  progress: { type: Number, default: 0, min: 0, max: 100 },
+  completedAt: { type: Date },
+  milestones: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Milestone",
+    },
+  ],
+  visibility: {
+    type: String,
+    enum: ["public", "private"],
+    default: "private",
+  },
+})
+
 // --- Main Schema ---
 const GoalSchema: IGoalSchema = new Schema(
   {
+    ...commonSchemaWithCollaborationGoal.obj,
+
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    title: { type: String, required: true, trim: true, maxlength: 255 },
-    description: { type: String, trim: true, maxlength: 1000 },
     category: { type: String, trim: true, maxlength: 100, required: true },
     dueDate: { type: Date, required: true },
 
-    status: {
-      type: String,
-      enum: ["not-started", "in-progress", "completed", "archived"],
-      default: "not-started",
-    },
-    progress: { type: Number, default: 0, min: 0, max: 100 },
-    completedAt: { type: Date },
-
-    milestones: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Milestone",
-      },
-    ],
     tags: { type: [String], default: [] },
     priority: {
       type: String,
@@ -51,6 +60,7 @@ const GoalSchema: IGoalSchema = new Schema(
     timestamps: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    discriminatorKey: "kind",
   },
 )
 

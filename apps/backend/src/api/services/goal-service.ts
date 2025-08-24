@@ -95,6 +95,7 @@ export class GoalService {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new CustomError("Invalid user ID", 400)
     }
+
     const completed = await Goal.find({
       user: userId,
       status: "completed",

@@ -233,23 +233,6 @@ export type Badge = {
 }
 
 /**
- * Lean version of BadgeProgressDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `BadgeProgressDocument.toObject()`. To avoid conflicts with model names, use the type alias `BadgeProgressObject`.
- * ```
- * const badgeprogressObject = badgeprogress.toObject();
- * ```
- */
-export type BadgeProgress = {
-  user: User["_id"] | User
-  badgeType: string
-  progress: number
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of BlogPostCommentDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `BlogPostDocument.toObject()`.
@@ -493,21 +476,6 @@ export type CheckIn = {
 }
 
 /**
- * Lean version of CollaborationGoalMilestoneDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `CollaborationGoalDocument.toObject()`.
- * ```
- * const collaborationgoalObject = collaborationgoal.toObject();
- * ```
- */
-export type CollaborationGoalMilestone = {
-  title: string
-  dueDate: string
-  completed?: boolean
-  _id: string
-}
-
-/**
  * Lean version of CollaborationGoalDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `CollaborationGoalDocument.toObject()`. To avoid conflicts with model names, use the type alias `CollaborationGoalObject`.
@@ -516,22 +484,21 @@ export type CollaborationGoalMilestone = {
  * ```
  */
 export type CollaborationGoal = {
-  goalTitle: string
-  description: string
+  title: string
+  description?: string
+  status?: "not-started" | "in-progress" | "completed" | "archived"
+  progress?: number
+  completedAt?: string
+  milestones: (Milestone["_id"] | Milestone)[]
+  visibility?: "public" | "private"
   createdBy: User["_id"] | User
   participants: (User["_id"] | User)[]
   target: number
-  progress?: number
-  status?: "pending" | "in-progress" | "completed" | "canceled"
-  completedAt?: string
-  milestones: CollaborationGoalMilestone[]
-  visibility?: "public" | "private"
   _id: string
   createdAt?: string
   updatedAt?: string
-  participantCount: number
-  milestoneCount: number
-  completedMilestonesCount: number
+  participantCount: any
+  milestoneCount: any
 }
 
 /**
@@ -768,34 +735,6 @@ export type Gamification = {
 }
 
 /**
- * Lean version of GoalMilestoneDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`.
- * ```
- * const goalObject = goal.toObject();
- * ```
- */
-export type GoalMilestone = {
-  title: string
-  deadline: string
-  completed?: boolean
-}
-
-/**
- * Lean version of GoalReminderDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`.
- * ```
- * const goalObject = goal.toObject();
- * ```
- */
-export type GoalReminder = {
-  message: string
-  remindAt: string
-  status?: "pending" | "sent"
-}
-
-/**
  * Lean version of GoalDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`. To avoid conflicts with model names, use the type alias `GoalObject`.
@@ -804,26 +743,24 @@ export type GoalReminder = {
  * ```
  */
 export type Goal = {
-  user: User["_id"] | User
   title: string
   description?: string
-  category: string
-  dueDate: string
   status?: "not-started" | "in-progress" | "completed" | "archived"
   progress?: number
   completedAt?: string
-  milestones: GoalMilestone[]
+  milestones: (Milestone["_id"] | Milestone)[]
+  visibility?: "public" | "private"
+  user: User["_id"] | User
+  category: string
+  dueDate: string
   tags: string[]
   priority?: "high" | "medium" | "low"
-  reminders: GoalReminder[]
+  reminders: (Reminder["_id"] | Reminder)[]
   isPinned?: boolean
   points?: number
   _id: string
   createdAt?: string
   updatedAt?: string
-  milestoneCount: number
-  completedMilestoneCount: number
-  reminderCount: number
 }
 
 /**
@@ -1165,6 +1102,7 @@ export type Milestone = {
   title: string
   description: string
   dueDate: string
+  completed?: boolean
   _id: string
   createdAt?: string
   updatedAt?: string
@@ -1852,34 +1790,6 @@ export type Tracker = {
 }
 
 /**
- * Lean version of UserGoalDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
- * ```
- * const userObject = user.toObject();
- * ```
- */
-export type UserGoal = {
-  title: string
-  category:
-    | "fitness"
-    | "study"
-    | "career"
-    | "personal"
-    | "health"
-    | "finance"
-    | "hobby"
-    | "travel"
-  description?: string
-  targetDate?: string
-  status?: "active" | "completed" | "paused"
-  priority?: "low" | "medium" | "high"
-  createdAt?: string
-  updatedAt?: string
-  _id: string
-}
-
-/**
  * Lean version of UserDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserObject`.
@@ -1910,7 +1820,6 @@ export type User = {
   badges: (Badge["_id"] | Badge)[]
   pinnedGoals: (Goal["_id"] | Goal)[]
   featuredAchievements: (Achievement["_id"] | Achievement)[]
-  goals: UserGoal[]
   location: {
     country?: string
     state?: string
@@ -1931,13 +1840,7 @@ export type User = {
   }
   stripeCustomerId?: string
   stripeSubscriptionId?: string
-  subscription_status?:
-    | "trial"
-    | "active"
-    | "expired"
-    | "canceled"
-    | "past_due"
-    | "trialing"
+  subscription_status?: "trial" | "active" | "expired" | "canceled" | "past_due"
   subscriptionTier?: "free-trial" | "basic" | "pro" | "elite"
   trial_start_date?: string
   trial_end_date?: string
@@ -1950,11 +1853,6 @@ export type User = {
     newBillingCycle?: "monthly" | "yearly"
     changeDate?: string
   }
-  completedGoals?: number
-  streak?: number
-  streakCount?: number
-  lastGoalCompletedAt?: string
-  points?: number
   interests: string[]
   chatPreferences: {
     preferredGroups: (Chat["_id"] | Chat)[]
@@ -1976,24 +1874,8 @@ export type User = {
   _id: string
   createdAt?: string
   updatedAt?: string
-  profilePicture: string
-  isActive: boolean
-}
-
-/**
- * Lean version of UserActivityDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `UserActivityDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserActivityObject`.
- * ```
- * const useractivityObject = useractivity.toObject();
- * ```
- */
-export type UserActivity = {
-  user: User["_id"] | User
-  activityType: string
-  details: string
-  _id: string
-  createdAt?: string
+  profilePicture: any
+  isActive: any
 }
 
 /**

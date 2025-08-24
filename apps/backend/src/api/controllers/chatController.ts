@@ -6,7 +6,7 @@ import type { AuthenticatedRequest } from "../../types/authenticated-request.typ
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
-import CollaborationService from "../services/CollaborationGoalService"
+import CollaborationService from "../services/collaboration-goal-service"
 import { GoalService } from "../services/goal-service"
 import ProgressService from "../services/ProgressService"
 import catchAsync from "../utils/catchAsync"

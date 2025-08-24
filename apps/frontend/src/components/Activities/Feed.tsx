@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from "react"
 
-import { fetchActivities } from "@/api/activity/activityApi"
+import { fetchActivities } from "@/api/activity/activity-api"
 
 import Post from "./Post"
 

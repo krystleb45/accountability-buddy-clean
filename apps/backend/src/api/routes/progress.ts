@@ -7,7 +7,7 @@ import {
   getProgressDashboard,
   resetProgress,
   updateProgress,
-} from "../controllers/ProgressController"
+} from "../controllers/progress-controller"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 

@@ -4,9 +4,9 @@
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 
-import type { Activity as APIActivity } from "@/api/activity/activityApi"
+import type { Activity as APIActivity } from "@/api/activity/activity-api"
 
-import { fetchActivityById } from "@/api/activity/activityApi"
+import { fetchActivityById } from "@/api/activity/activity-api"
 
 interface ClientProps {
   id: string

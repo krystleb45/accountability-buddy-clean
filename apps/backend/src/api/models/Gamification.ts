@@ -1,17 +1,12 @@
-import type { Document, Model, Types } from "mongoose"
+import type {
+  GamificationDocument,
+  GamificationModel,
+  GamificationSchema as IGamificationSchema,
+} from "src/types/mongoose.gen"
 
 import mongoose, { Schema } from "mongoose"
 
-export interface IGamification extends Document {
-  userId: Types.ObjectId
-  level: number
-  points: number
-  addPoints: (amount: number) => Promise<IGamification>
-}
-
-export interface IGamificationModel extends Model<IGamification> {}
-
-const GamificationSchema = new Schema<IGamification>(
+const GamificationSchema: IGamificationSchema = new Schema(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -30,22 +25,23 @@ const GamificationSchema = new Schema<IGamification>(
 /**
  * Instance method to add points (and bump level once per 100 points).
  */
-GamificationSchema.methods.addPoints = async function (
-  this: IGamification,
-  amount: number,
-): Promise<IGamification> {
-  this.points += amount
-  // simple level-up logic: 1 level per 100 points
-  const newLevel = Math.floor(this.points / 100) + 1
-  if (newLevel > this.level) {
-    this.level = newLevel
-  }
-  await this.save()
-  return this
+GamificationSchema.methods = {
+  async addPoints(this, amount: number) {
+    this.points += amount
+    // simple level-up logic: 1 level per 100 points
+    const newLevel = Math.floor(this.points / 100) + 1
+    if (newLevel > this.level) {
+      this.level = newLevel
+    }
+    await this.save()
+    return this
+  },
+  getPointsToNextLevel(this) {
+    return 100 - (this.points - (this.level === 1 ? 0 : this.level) * 100)
+  },
 }
 
-export const Gamification = mongoose.model<IGamification, IGamificationModel>(
-  "Gamification",
-  GamificationSchema,
-)
-export default Gamification
+export const Gamification: GamificationModel = mongoose.model<
+  GamificationDocument,
+  GamificationModel
+>("Gamification", GamificationSchema)

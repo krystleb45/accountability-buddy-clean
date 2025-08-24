@@ -5,9 +5,9 @@ import { motion } from "motion/react"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
 
-import type { Activity as ApiActivity } from "@/api/activity/activityApi"
+import type { Activity as ApiActivity } from "@/api/activity/activity-api"
 
-import { fetchActivities } from "@/api/activity/activityApi"
+import { fetchActivities } from "@/api/activity/activity-api"
 
 interface ActivityDisplay {
   description: string

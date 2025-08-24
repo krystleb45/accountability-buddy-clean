@@ -8,7 +8,7 @@ import type { IGoal } from "../models/Goal"
 import type { IUser } from "../models/User"
 
 import BlogService from "./blogService"
-import BookService from "./bookRecommendationService"
+import BookService from "./book-service"
 import FriendshipService from "./FriendService"
 import GoalService from "./goal-service"
 

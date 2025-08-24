@@ -12,7 +12,7 @@ import {
   leaveActivity,
   logActivity,
   updateActivity,
-} from "../controllers/ActivityController"
+} from "../controllers/activity-controller"
 import { protect } from "../middleware/auth-middleware"
 import validate from "../middleware/validation-middleware"
 
@@ -29,13 +29,24 @@ const limiter = rateLimit({
 })
 
 /**
- * GET /api/activity
+ * GET /api/activities
  * List user’s activities (paginated via ?page & ?limit)
  */
-router.get("/", protect, getUserActivities)
+router.get(
+  "/",
+  protect,
+  validate({
+    querySchema: z.object({
+      page: z.coerce.number().default(1),
+      limit: z.coerce.number().min(1).default(10),
+      type: z.string().optional(),
+    }),
+  }),
+  getUserActivities,
+)
 
 /**
- * GET /api/activity/:activityId
+ * GET /api/activities/:activityId
  * Fetch a single activity
  */
 router.get(
@@ -50,7 +61,7 @@ router.get(
 )
 
 /**
- * POST /api/activity
+ * POST /api/activities
  * Create a new activity
  */
 router.post(
@@ -67,7 +78,7 @@ router.post(
 )
 
 /**
- * PUT /api/activity/:activityId
+ * PUT /api/activities/:activityId
  * Update an existing activity
  */
 router.put(
@@ -87,7 +98,7 @@ router.put(
 )
 
 /**
- * DELETE /api/activity/:activityId
+ * DELETE /api/activities/:activityId
  * Soft-delete an activity
  */
 router.delete(
@@ -102,7 +113,7 @@ router.delete(
 )
 
 /**
- * POST /api/activity/:activityId/join
+ * POST /api/activities/:activityId/join
  * Join an activity
  */
 router.post(
@@ -117,7 +128,7 @@ router.post(
 )
 
 /**
- * POST /api/activity/:activityId/leave
+ * POST /api/activities/:activityId/leave
  * Leave an activity
  */
 router.post(
@@ -132,7 +143,7 @@ router.post(
 )
 
 /**
- * POST /api/activity/log
+ * POST /api/activities/log
  * Legacy logging endpoint
  */
 router.post(

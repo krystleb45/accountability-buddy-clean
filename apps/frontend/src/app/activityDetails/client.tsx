@@ -4,7 +4,7 @@
 import { motion } from "motion/react"
 import React, { useEffect, useState } from "react"
 
-import { fetchActivities } from "@/api/activity/activityApi"
+import { fetchActivities } from "@/api/activity/activity-api"
 
 interface Activity {
   _id: string

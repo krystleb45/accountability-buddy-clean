@@ -4,10 +4,12 @@ import type { NextFunction, Request, Response } from "express"
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check, query } from "express-validator"
+import z from "zod"
 
 import gamificationController from "../controllers/gamificationController"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import validate from "../middleware/validation-middleware"
 
 const router = Router()
 
@@ -29,21 +31,13 @@ router.get(
   "/leaderboard",
   protect,
   leaderboardLimiter,
-  [
-    query("page")
-      .optional()
-      .isInt({ min: 1 })
-      .withMessage("Page must be a positive integer"),
-    query("limit")
-      .optional()
-      .isInt({ min: 1, max: 100 })
-      .withMessage("Limit must be between 1 and 100"),
-  ],
-  handleValidationErrors,
-  // Wrap in an async function so it returns Promise<void>
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    await gamificationController.getLeaderboard(req, res, next)
-  },
+  validate({
+    querySchema: z.object({
+      page: z.coerce.number().min(1).default(1),
+      limit: z.coerce.number().min(1).max(100).default(10),
+    }),
+  }),
+  gamificationController.getLeaderboard,
 )
 
 // throttle to 10 requests per 15 minutes

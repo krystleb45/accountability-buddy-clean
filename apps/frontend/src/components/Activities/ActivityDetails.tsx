@@ -1,4 +1,3 @@
-// src/components/Activities/ActivityDetails.tsx
 "use client"
 
 import type { ReactElement } from "react"
@@ -7,7 +6,7 @@ import { motion } from "motion/react"
 import { useParams } from "next/navigation"
 import React, { useEffect, useState } from "react"
 
-import { fetchActivityById } from "@/api/activity/activityApi"
+import { fetchActivityById } from "@/api/activity/activity-api"
 
 interface Activity {
   _id: string
@@ -67,9 +66,11 @@ export default function ActivityDetails(): ReactElement {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="mx-auto max-w-2xl rounded-lg bg-gray-900 p-6 text-white shadow-lg"
+      className={`
+        mx-auto max-w-2xl rounded-lg bg-gray-900 p-6 text-white shadow-lg
+      `}
     >
-      <h2 className="text-2xl font-bold text-kelly-green">{activity.title}</h2>
+      <h2 className="text-kelly-green text-2xl font-bold">{activity.title}</h2>
       <p className="text-gray-400">
         {activity.description ?? "No description provided."}
       </p>

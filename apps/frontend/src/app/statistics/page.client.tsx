@@ -5,11 +5,10 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
 
-import { fetchDashboardStats } from "@/api/dashboard/dashboardApi"
-import { fetchUserStreak } from "@/api/goal/goalsApi"
+import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
+import { fetchUserStreak } from "@/api/goal/goal-api"
 import Card, { CardContent } from "@/components/cards/Card"
 import cardStyles from "@/components/cards/Card.module.css"
-import "@/styles/global.css"
 import UserStatisticsChart from "@/components/charts/UserStatisticsChart"
 
 interface Stats {
@@ -32,8 +31,9 @@ export default function StatisticsClient() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (status !== "authenticated" || !session?.user?.id) return
-
+    if (status !== "authenticated" || !session?.user?.id) {
+      return
+    }
     ;(async () => {
       setLoading(true)
       try {
@@ -74,25 +74,41 @@ export default function StatisticsClient() {
     })()
   }, [status, session])
 
-  if (loading)
+  if (loading) {
     return (
       <p className="mt-10 text-center text-gray-400">Loading statistics…</p>
     )
+  }
   if (error) return <p className="mt-10 text-center text-red-500">{error}</p>
   if (!stats) return null
 
   return (
-    <div className="mx-auto w-full max-w-6xl rounded-lg bg-black p-6 text-white shadow-lg">
+    <div
+      className={`
+      mx-auto w-full max-w-6xl rounded-lg bg-black p-6 text-white shadow-lg
+    `}
+    >
       <h1 className="mb-6 text-center text-3xl font-bold text-green-400">
         📊 Your Statistics
       </h1>
       <div className="mb-4 text-center">
-        <Link href="/dashboard" className="text-blue-400 hover:underline">
+        <Link
+          href="/dashboard"
+          className={`
+          text-blue-400
+          hover:underline
+        `}
+        >
           ← Back to Dashboard
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div
+        className={`
+        grid grid-cols-1 gap-6
+        md:grid-cols-2
+      `}
+      >
         {/* Goal Progress Card */}
         <Card className={cardStyles.card ?? ""}>
           <CardContent>
@@ -105,7 +121,10 @@ export default function StatisticsClient() {
             <p>Completion Rate: {stats.completedGoalsPercentage}%</p>
             <Link
               href="/goals"
-              className="mt-3 block text-center text-blue-400 hover:underline"
+              className={`
+                mt-3 block text-center text-blue-400
+                hover:underline
+              `}
             >
               View Goals
             </Link>
@@ -120,7 +139,11 @@ export default function StatisticsClient() {
             </h2>
             <p>Current Streak: {stats.currentStreak} days</p>
             <p>Longest Streak: {stats.longestStreak} days</p>
-            <div className="mt-3 h-4 w-full overflow-hidden rounded-lg bg-gray-800">
+            <div
+              className={`
+              mt-3 h-4 w-full overflow-hidden rounded-lg bg-gray-800
+            `}
+            >
               <div
                 className="h-4 bg-green-500"
                 style={{
@@ -136,7 +159,12 @@ export default function StatisticsClient() {
       </div>
 
       {/* Achievements Section (full width) */}
-      <Card className={`mt-6 ${cardStyles.card ?? ""}`}>
+      <Card
+        className={`
+        mt-6
+        ${cardStyles.card ?? ""}
+      `}
+      >
         <CardContent>
           <h2 className="text-center text-2xl font-semibold text-yellow-300">
             🏆 Achievements
@@ -152,7 +180,10 @@ export default function StatisticsClient() {
           )}
           <Link
             href="/achievements"
-            className="mt-3 block text-center text-blue-400 hover:underline"
+            className={`
+              mt-3 block text-center text-blue-400
+              hover:underline
+            `}
           >
             View All Achievements
           </Link>
@@ -160,7 +191,12 @@ export default function StatisticsClient() {
       </Card>
 
       {/* Collaboration Goals Section */}
-      <Card className={`mt-6 ${cardStyles.card ?? ""}`}>
+      <Card
+        className={`
+        mt-6
+        ${cardStyles.card ?? ""}
+      `}
+      >
         <CardContent>
           <h2 className="text-center text-2xl font-semibold text-pink-300">
             🤝 Collaboration Goals
@@ -175,7 +211,10 @@ export default function StatisticsClient() {
           </ul>
           <Link
             href="/collaborations"
-            className="mt-3 block text-center text-blue-400 hover:underline"
+            className={`
+              mt-3 block text-center text-blue-400
+              hover:underline
+            `}
           >
             View Collaborations
           </Link>
@@ -183,7 +222,12 @@ export default function StatisticsClient() {
       </Card>
 
       {/* Statistics Chart Section (full width) */}
-      <Card className={`mt-6 ${cardStyles.card ?? ""}`}>
+      <Card
+        className={`
+        mt-6
+        ${cardStyles.card ?? ""}
+      `}
+      >
         <CardContent>
           <UserStatisticsChart
             totalGoals={stats.totalGoals}

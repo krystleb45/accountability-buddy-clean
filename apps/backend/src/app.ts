@@ -21,7 +21,9 @@ import healthRoutes from "./api/routes/healthRoutes"
 import webhooksRoutes from "./api/routes/webhooks"
 
 // ─── Protected route imports ──────────────────────────────────
-import { errorHandler } from "./api/middleware/errorHandler"
+import status from "http-status"
+
+import { createError, errorHandler } from "./api/middleware/errorHandler"
 import notFoundMiddleware from "./api/middleware/notFoundMiddleware"
 import achievementRoutes from "./api/routes/achievement"
 import activityRoutes from "./api/routes/activity"
@@ -29,7 +31,7 @@ import adminAnalyticsRoutes from "./api/routes/adminAnalytics"
 import adminReports from "./api/routes/adminReports"
 import adminRoutes from "./api/routes/adminRoutes"
 import auditRoutes from "./api/routes/audit"
-import badgeRoutes from "./api/routes/badgeRoutes"
+import badgeRoutes from "./api/routes/badge"
 import blogRoutes from "./api/routes/blog"
 import booksRoutes from "./api/routes/books"
 import challengeRoutes from "./api/routes/challenge"
@@ -49,7 +51,6 @@ import goalAnalyticsRoutes from "./api/routes/goalAnalyticsRoutes"
 import goalMessageRoutes from "./api/routes/goalMessage"
 import groupRoutes from "./api/routes/groupRoute"
 import historyRoutes from "./api/routes/history"
-import leaderboardRoutes from "./api/routes/leaderboard"
 import matchRoutes from "./api/routes/matches"
 import messageRoutes from "./api/routes/messages"
 import milestoneRoutes from "./api/routes/milestone"
@@ -125,6 +126,14 @@ app.use(
   rateLimit({
     windowMs: 15 * 60_000,
     max: 500,
+    handler: (req, res, next, options) => {
+      next(
+        createError(
+          options.message || "Rate limit exceeded",
+          status.TOO_MANY_REQUESTS,
+        ),
+      )
+    },
   }),
 )
 app.use(
@@ -207,7 +216,6 @@ app.use("/api/feedback", feedbackRoutes)
 app.use("/api/file-uploads", fileUploadRoutes)
 app.use("/api/analytics", goalAnalyticsRoutes)
 app.use("/api/history", historyRoutes)
-app.use("/api/leaderboard", leaderboardRoutes)
 app.use("/api/milestone", milestoneRoutes)
 app.use("/api/newsletter", newsletterRoutes)
 app.use("/api/notification-triggers", notificationTriggersRoutes)

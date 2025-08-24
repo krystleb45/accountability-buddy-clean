@@ -119,7 +119,6 @@ export const authOptions: NextAuthOptions = {
     signIn: "/login",
     error: "/login",
   },
-  debug: true, // Enable debug mode
 }
 
 const handler = NextAuth(authOptions)

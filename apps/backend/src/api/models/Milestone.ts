@@ -25,6 +25,10 @@ const MilestoneSchema: IMilestoneSchema = new Schema(
       type: Date,
       required: [true, "Due date is required"],
     },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

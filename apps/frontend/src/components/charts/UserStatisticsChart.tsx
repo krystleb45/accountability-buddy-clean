@@ -1,9 +1,6 @@
-// src/components/charts/UserStatisticsChart.tsx
 "use client"
 
 import React from "react"
-
-import "../../styles/global.css"
 import {
   Bar,
   BarChart,

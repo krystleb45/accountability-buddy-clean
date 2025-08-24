@@ -60,7 +60,8 @@ export type AccountabilityPartnershipMethods = {}
 export type AccountabilityPartnershipStatics = {
   findBetweenUsers: (
     this: AccountabilityPartnershipModel,
-    ...args: any[]
+    u1: string,
+    u2: string
   ) => any
 }
 
@@ -287,14 +288,24 @@ export type ActivityQuery = mongoose.Query<
 export type ActivityQueries = {}
 
 export type ActivityMethods = {
-  addParticipant: (this: ActivityDocument, ...args: any[]) => any
-  markDeleted: (this: ActivityDocument, ...args: any[]) => any
+  addParticipant: (
+    this: ActivityDocument,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<void>
+  markDeleted: (this: ActivityDocument) => Promise<void>
 }
 
 export type ActivityStatics = {
-  getRecentForUser: (this: ActivityModel, ...args: any[]) => any
-  getByType: (this: ActivityModel, ...args: any[]) => any
-  softDeleteByUser: (this: ActivityModel, ...args: any[]) => any
+  getRecentForUser: (
+    this: ActivityModel,
+    userId: mongoose.Types.ObjectId,
+    limit: number
+  ) => any
+  getByType: (this: ActivityModel, type: any) => any
+  softDeleteByUser: (
+    this: ActivityModel,
+    userId: mongoose.Types.ObjectId
+  ) => any
 }
 
 /**
@@ -1104,13 +1115,13 @@ export type BadgeQuery = mongoose.Query<any, BadgeDocument, BadgeQueries> &
 export type BadgeQueries = {}
 
 export type BadgeMethods = {
-  updateProgress: (this: BadgeDocument, ...args: any[]) => any
+  updateProgress: (this: BadgeDocument, amount: number) => Promise<any>
 }
 
 export type BadgeStatics = {
-  getNextLevel: (this: BadgeModel, ...args: any[]) => any
-  isExpired: (this: BadgeModel, ...args: any[]) => any
-  awardPointsForBadge: (this: BadgeModel, ...args: any[]) => any
+  getNextLevel: (this: BadgeModel, currentLevel: any) => any
+  isExpired: (this: BadgeModel, expiresAt?: Date) => boolean
+  awardPointsForBadge: (this: BadgeModel, badgeType: any) => any
 }
 
 /**
@@ -1495,15 +1506,25 @@ export type BookQuery = mongoose.Query<any, BookDocument, BookQueries> &
 export type BookQueries = {}
 
 export type BookMethods = {
-  addLike: (this: BookDocument, ...args: any[]) => any
-  removeLike: (this: BookDocument, ...args: any[]) => any
-  addComment: (this: BookDocument, ...args: any[]) => any
-  removeComment: (this: BookDocument, ...args: any[]) => any
+  addLike: (this: BookDocument, userId: mongoose.Types.ObjectId) => Promise<any>
+  removeLike: (
+    this: BookDocument,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<any>
+  addComment: (
+    this: BookDocument,
+    userId: mongoose.Types.ObjectId,
+    text: string
+  ) => Promise<any>
+  removeComment: (
+    this: BookDocument,
+    commentId: mongoose.Types.ObjectId
+  ) => Promise<boolean>
 }
 
 export type BookStatics = {
-  findByCategory: (this: BookModel, ...args: any[]) => any
-  findRecent: (this: BookModel, ...args: any[]) => any
+  findByCategory: (this: BookModel, category: string, limit?: number) => any
+  findRecent: (this: BookModel, limit?: number) => any
 }
 
 /**
@@ -2263,21 +2284,6 @@ export type CheckInDocument = mongoose.Document<
   }
 
 /**
- * Lean version of CollaborationGoalMilestoneDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `CollaborationGoalDocument.toObject()`.
- * ```
- * const collaborationgoalObject = collaborationgoal.toObject();
- * ```
- */
-export type CollaborationGoalMilestone = {
-  title: string
-  dueDate: Date
-  completed?: boolean
-  _id: mongoose.Types.ObjectId
-}
-
-/**
  * Lean version of CollaborationGoalDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `CollaborationGoalDocument.toObject()`. To avoid conflicts with model names, use the type alias `CollaborationGoalObject`.
@@ -2286,22 +2292,21 @@ export type CollaborationGoalMilestone = {
  * ```
  */
 export type CollaborationGoal = {
-  goalTitle: string
-  description: string
+  title: string
+  description?: string
+  status?: "not-started" | "in-progress" | "completed" | "archived"
+  progress?: number
+  completedAt?: Date
+  milestones: (Milestone["_id"] | Milestone)[]
+  visibility?: "public" | "private"
   createdBy: User["_id"] | User
   participants: (User["_id"] | User)[]
   target: number
-  progress?: number
-  status?: "pending" | "in-progress" | "completed" | "canceled"
-  completedAt?: Date
-  milestones: CollaborationGoalMilestone[]
-  visibility?: "public" | "private"
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  participantCount: number
-  milestoneCount: number
-  completedMilestonesCount: number
+  participantCount: any
+  milestoneCount: any
 }
 
 /**
@@ -2337,9 +2342,18 @@ export type CollaborationGoalQuery = mongoose.Query<
 export type CollaborationGoalQueries = {}
 
 export type CollaborationGoalMethods = {
-  updateProgress: (this: CollaborationGoalDocument, ...args: any[]) => any
-  addParticipant: (this: CollaborationGoalDocument, ...args: any[]) => any
-  completeMilestone: (this: CollaborationGoalDocument, ...args: any[]) => any
+  updateProgress: (
+    this: CollaborationGoalDocument,
+    newProgress: number
+  ) => Promise<any>
+  addParticipant: (
+    this: CollaborationGoalDocument,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<any>
+  completeMilestone: (
+    this: CollaborationGoalDocument,
+    index: number
+  ) => Promise<any>
 }
 
 export type CollaborationGoalStatics = {
@@ -2376,19 +2390,6 @@ export type CollaborationGoalSchema = mongoose.Schema<
 >
 
 /**
- * Mongoose Subdocument type
- *
- * Type of `CollaborationGoalDocument["milestones"]` element.
- */
-export type CollaborationGoalMilestoneDocument =
-  mongoose.Types.Subdocument<mongoose.Types.ObjectId> & {
-    title: string
-    dueDate: Date
-    completed?: boolean
-    _id: mongoose.Types.ObjectId
-  }
-
-/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -2401,22 +2402,23 @@ export type CollaborationGoalDocument = mongoose.Document<
   CollaborationGoalQueries
 > &
   CollaborationGoalMethods & {
-    goalTitle: string
-    description: string
+    title: string
+    description?: string
+    status?: "not-started" | "in-progress" | "completed" | "archived"
+    progress?: number
+    completedAt?: Date
+    milestones: mongoose.Types.Array<
+      MilestoneDocument["_id"] | MilestoneDocument
+    >
+    visibility?: "public" | "private"
     createdBy: UserDocument["_id"] | UserDocument
     participants: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     target: number
-    progress?: number
-    status?: "pending" | "in-progress" | "completed" | "canceled"
-    completedAt?: Date
-    milestones: mongoose.Types.DocumentArray<CollaborationGoalMilestoneDocument>
-    visibility?: "public" | "private"
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    participantCount: number
-    milestoneCount: number
-    completedMilestonesCount: number
+    participantCount: any
+    milestoneCount: any
   }
 
 /**
@@ -3518,6 +3520,7 @@ export type GamificationQueries = {}
 
 export type GamificationMethods = {
   addPoints: (this: GamificationDocument, ...args: any[]) => any
+  getPointsToNextLevel: (this: GamificationDocument, ...args: any[]) => any
 }
 
 export type GamificationStatics = {}
@@ -3581,15 +3584,16 @@ export type GamificationDocument = mongoose.Document<
  * ```
  */
 export type Goal = {
-  user: User["_id"] | User
   title: string
   description?: string
-  category: string
-  dueDate: Date
   status?: "not-started" | "in-progress" | "completed" | "archived"
   progress?: number
   completedAt?: Date
   milestones: (Milestone["_id"] | Milestone)[]
+  visibility?: "public" | "private"
+  user: User["_id"] | User
+  category: string
+  dueDate: Date
   tags: string[]
   priority?: "high" | "medium" | "low"
   reminders: (Reminder["_id"] | Reminder)[]
@@ -3637,7 +3641,14 @@ export type GoalMethods = {
   markMilestoneComplete: (this: GoalDocument, index: number) => Promise<any>
 }
 
-export type GoalStatics = {}
+export type GoalStatics = {
+  findByUser: (
+    this: GoalModel,
+    userId: mongoose.Types.ObjectId,
+    filter?: {}
+  ) => any
+  archiveCompleted: (this: GoalModel) => Promise<{ nDeleted: any }>
+}
 
 /**
  * Mongoose Model type
@@ -3677,17 +3688,18 @@ export type GoalDocument = mongoose.Document<
   GoalQueries
 > &
   GoalMethods & {
-    user: UserDocument["_id"] | UserDocument
     title: string
     description?: string
-    category: string
-    dueDate: Date
     status?: "not-started" | "in-progress" | "completed" | "archived"
     progress?: number
     completedAt?: Date
     milestones: mongoose.Types.Array<
       MilestoneDocument["_id"] | MilestoneDocument
     >
+    visibility?: "public" | "private"
+    user: UserDocument["_id"] | UserDocument
+    category: string
+    dueDate: Date
     tags: mongoose.Types.Array<string>
     priority?: "high" | "medium" | "low"
     reminders: mongoose.Types.Array<ReminderDocument["_id"] | ReminderDocument>
@@ -4698,9 +4710,16 @@ export type LeaderboardQueries = {}
 export type LeaderboardMethods = {}
 
 export type LeaderboardStatics = {
-  updateLeaderboard: (this: LeaderboardModel, ...args: any[]) => any
-  recalculateRanks: (this: LeaderboardModel, ...args: any[]) => any
-  getTop: (this: LeaderboardModel, ...args: any[]) => any
+  updateLeaderboard: (
+    this: LeaderboardModel,
+    userId: mongoose.Types.ObjectId,
+    points: number,
+    goals: number,
+    milestones: number,
+    streak: number
+  ) => Promise<any>
+  recalculateRanks: (this: LeaderboardModel) => Promise<void>
+  getTop: (this: LeaderboardModel, n: number) => any
 }
 
 /**
@@ -5285,6 +5304,7 @@ export type Milestone = {
   title: string
   description: string
   dueDate: Date
+  completed?: boolean
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
@@ -5376,6 +5396,7 @@ export type MilestoneDocument = mongoose.Document<
     title: string
     description: string
     dueDate: Date
+    completed?: boolean
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
@@ -9169,113 +9190,6 @@ export type UserDocument = mongoose.Document<
     updatedAt?: Date
     profilePicture: any
     isActive: any
-  }
-
-/**
- * Lean version of UserActivityDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `UserActivityDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserActivityObject`.
- * ```
- * const useractivityObject = useractivity.toObject();
- * ```
- */
-export type UserActivity = {
-  user: User["_id"] | User
-  activityType: string
-  details: string
-  _id: mongoose.Types.ObjectId
-  createdAt?: Date
-}
-
-/**
- * Lean version of UserActivityDocument (type alias of `UserActivity`)
- *
- * Use this type alias to avoid conflicts with model names:
- * ```
- * import { UserActivity } from "../models"
- * import { UserActivityObject } from "../interfaces/mongoose.gen.ts"
- *
- * const useractivityObject: UserActivityObject = useractivity.toObject();
- * ```
- */
-export type UserActivityObject = UserActivity
-
-/**
- * Mongoose Query type
- *
- * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
- */
-export type UserActivityQuery = mongoose.Query<
-  any,
-  UserActivityDocument,
-  UserActivityQueries
-> &
-  UserActivityQueries
-
-/**
- * Mongoose Query helper types
- *
- * This type represents `UserActivitySchema.query`. For most use cases, you should not need to use this type explicitly.
- */
-export type UserActivityQueries = {}
-
-export type UserActivityMethods = {
-  summary: (this: UserActivityDocument, ...args: any[]) => any
-}
-
-export type UserActivityStatics = {
-  logActivity: (this: UserActivityModel, ...args: any[]) => any
-  getActivitiesForUser: (this: UserActivityModel, ...args: any[]) => any
-  getRecent: (this: UserActivityModel, ...args: any[]) => any
-}
-
-/**
- * Mongoose Model type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const UserActivity = mongoose.model<UserActivityDocument, UserActivityModel>("UserActivity", UserActivitySchema);
- * ```
- */
-export type UserActivityModel = mongoose.Model<
-  UserActivityDocument,
-  UserActivityQueries
-> &
-  UserActivityStatics
-
-/**
- * Mongoose Schema type
- *
- * Assign this type to new UserActivity schema instances:
- * ```
- * const UserActivitySchema: UserActivitySchema = new mongoose.Schema({ ... })
- * ```
- */
-export type UserActivitySchema = mongoose.Schema<
-  UserActivityDocument,
-  UserActivityModel,
-  UserActivityMethods,
-  UserActivityQueries
->
-
-/**
- * Mongoose Document type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const UserActivity = mongoose.model<UserActivityDocument, UserActivityModel>("UserActivity", UserActivitySchema);
- * ```
- */
-export type UserActivityDocument = mongoose.Document<
-  mongoose.Types.ObjectId,
-  UserActivityQueries
-> &
-  UserActivityMethods & {
-    user: UserDocument["_id"] | UserDocument
-    activityType: string
-    details: string
-    _id: mongoose.Types.ObjectId
-    createdAt?: Date
   }
 
 /**

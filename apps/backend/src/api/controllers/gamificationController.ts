@@ -1,7 +1,8 @@
 // src/api/controllers/gamificationController.ts
 import type { NextFunction, Request, Response } from "express"
+import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
-import GamificationService from "../services/GamificationService"
+import GamificationService from "../services/gamification-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
@@ -12,16 +13,17 @@ export default {
    * @access  Private
    */
   getLeaderboard: catchAsync(
-    async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
-      // parse & default
-      const page = Math.max(
-        1,
-        Number.parseInt(req.query.page as string, 10) || 1,
-      )
-      const limit = Math.min(
-        100,
-        Math.max(1, Number.parseInt(req.query.limit as string, 10) || 10),
-      )
+    async (
+      req: AuthenticatedRequest<
+        unknown,
+        unknown,
+        unknown,
+        { page: number; limit: number }
+      >,
+      res: Response,
+      _next: NextFunction,
+    ) => {
+      const { page, limit } = req.query
 
       // delegate to service
       const { entries, pagination } = await GamificationService.getLeaderboard(

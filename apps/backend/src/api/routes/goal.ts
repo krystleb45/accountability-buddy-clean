@@ -1,7 +1,7 @@
 // src/api/routes/goalRoutes.ts - Updated with subscription restrictions
 import { Router } from "express"
 
-import * as goalController from "../controllers/GoalController"
+import * as goalController from "../controllers/goal-controller"
 import { protect } from "../middleware/auth-middleware"
 import {
   trialPrompt,

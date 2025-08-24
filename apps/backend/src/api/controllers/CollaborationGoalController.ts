@@ -5,7 +5,7 @@ import sanitize from "mongo-sanitize"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import CollaborationGoalService from "../services/CollaborationGoalService"
+import CollaborationGoalService from "../services/collaboration-goal-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 

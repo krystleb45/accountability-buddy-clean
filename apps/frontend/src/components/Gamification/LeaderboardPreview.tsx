@@ -1,11 +1,13 @@
-// src/components/Gamification/LeaderboardPreview.tsx
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import Image from "next/image"
+import { useEffect } from "react"
+import { toast } from "sonner"
 
-import type { LeaderboardEntry } from "@/types/Gamification.types"
+import { fetchLeaderboard } from "@/api/gamification/gamification-api"
 
-import { getAvatarUrl } from "@/utils/avatarUtils"
+import { LoadingSpinner } from "../loading-spinner"
 
 export interface UserPreview {
   id: string
@@ -15,104 +17,62 @@ export interface UserPreview {
   rank: number
 }
 
-export interface LeaderboardPreviewProps {
-  users?: UserPreview[]
-  sortBy?: "points" | "completedGoals" | "streakCount"
-  timeRange?: "all" | "weekly" | "monthly"
-  title?: string
-}
-
-const LeaderboardPreview: React.FC<LeaderboardPreviewProps> = ({
-  users,
-  sortBy = "points",
-  timeRange = "weekly",
-  title,
-}) => {
-  const [topEntries, setTopEntries] = useState<UserPreview[]>(users ?? [])
-  const [loading, setLoading] = useState<boolean>(users == null)
-  const [error, setError] = useState<string | null>(null)
+export function LeaderboardPreview() {
+  const {
+    data: topEntries,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ["leaderboard", { page: 1, limit: 5 }],
+    queryFn: () => fetchLeaderboard({ page: 1, limit: 5 }),
+  })
 
   useEffect(() => {
-    if (users) return
-
-    const loadTop = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const res = await fetch(
-          `/api/leaderboard?sortBy=${sortBy}&timeRange=${timeRange}`,
-          { cache: "no-store" },
-        )
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-
-        const json = await res.json()
-
-        // normalize into an array
-        const raw: LeaderboardEntry[] = Array.isArray(json)
-          ? json
-          : Array.isArray(json.data?.leaderboard)
-            ? json.data.leaderboard
-            : Array.isArray(json.entries)
-              ? json.entries
-              : []
-
-        // take first 3
-        const slice = raw.slice(0, 3)
-
-        const mapped: UserPreview[] = slice.map((e, i) => ({
-          id: e.userId,
-          name: e.displayName,
-          avatarUrl: getAvatarUrl(e),
-          points: e.score,
-          rank: i + 1,
-        }))
-
-        setTopEntries(mapped)
-      } catch (err) {
-        console.error("Failed to load leaderboard preview:", err)
-        setError("Could not load leaderboard.")
-      } finally {
-        setLoading(false)
-      }
+    if (error) {
+      toast.error("Error fetching leaderboard", {
+        description: error.message,
+      })
     }
+  }, [error])
 
-    loadTop()
-  }, [users, sortBy, timeRange])
-
-  if (loading) return <p className="text-gray-400">Loading leaderboard…</p>
-  if (error) return <p className="text-center text-red-500">{error}</p>
-
-  const headerTitle = title ?? "🏆 Top Performers"
+  if (isPending) {
+    return <LoadingSpinner />
+  }
 
   return (
-    <div className="rounded-lg bg-gray-900 p-4 shadow-md">
-      <h3 className="mb-3 text-lg font-semibold text-green-400">
-        {headerTitle}
-      </h3>
-      <ul className="space-y-2">
-        {topEntries.map((u) => (
+    <ul className="space-y-2">
+      {topEntries?.entries.length ? (
+        topEntries.entries.map((l, rank) => (
           <li
-            key={u.id}
-            className="flex items-center justify-between rounded bg-gray-800 p-2 transition hover:bg-gray-700"
+            key={l._id}
+            className="flex items-center justify-between rounded bg-muted p-2"
           >
             <div className="flex items-center gap-3">
               <span className="text-xl">
-                {u.rank === 1 ? "🥇" : u.rank === 2 ? "🥈" : "🥉"}
+                {rank === 0
+                  ? "🥇"
+                  : rank === 1
+                    ? "🥈"
+                    : rank === 2
+                      ? "🥉"
+                      : null}
               </span>
-              <img
-                src={u.avatarUrl}
-                alt={u.name}
-                className="size-8 rounded-full border border-green-400"
+              <Image
+                src={l.userId.profilePicture}
+                alt={l.userId.username}
+                width={32}
+                height={32}
+                className="size-8 overflow-hidden rounded-full border"
               />
-              <span className="font-medium text-white">{u.name}</span>
+              <span className="font-medium">{l.userId.username}</span>
             </div>
-            <span className="font-bold text-yellow-400">{u.points} XP</span>
           </li>
-        ))}
-      </ul>
-      {/* NO inner “View Full…” link */}
-    </div>
+        ))
+      ) : (
+        <li className="text-muted-foreground">
+          There is no leaderboard data available.
+        </li>
+      )}
+    </ul>
   )
 }
-
-export default LeaderboardPreview

@@ -1,126 +1,146 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
-import React, { useEffect, useState } from "react"
+import { useEffect, useMemo } from "react"
+import { toast } from "sonner"
 
-import type { DashboardStats } from "@/api/dashboard/dashboardApi"
-import type { BadgeData, UserProgress } from "@/types/Gamification.types"
-
-import { fetchDashboardStats } from "@/api/dashboard/dashboardApi"
+import { fetchActivities } from "@/api/activity/activity-api"
+import { fetchUserBadges } from "@/api/badge/badge-api"
+import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
+import { fetchDashboardProgress } from "@/api/progress/progress-api"
 import Dashboard from "@/components/Dashboard/Dashboard"
-import GamificationService from "@/services/gamificationService"
+import { LoadingSpinner } from "@/components/loading-spinner"
+import { useAuth } from "@/context/auth/auth-context"
 
-import type { StreakData } from "../../../api/goal/goalsApi"
-
-import { fetchUserStreak } from "../../../api/goal/goalsApi"
+import { fetchUserStreak } from "../../../api/goal/goal-api"
 
 export default function DashboardClient() {
-  const { data: session, status } = useSession()
-  const [streakData, setStreakData] = useState<StreakData | null>(null)
-  const [userProgress, setUserProgress] = useState<UserProgress | null>(null)
-  const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [badges, setBadges] = useState<BadgeData[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { status } = useSession()
+  const { user } = useAuth()
+
+  const {
+    data: rawStreak,
+    isPending: isLoadingStreak,
+    error: streakError,
+  } = useQuery({
+    queryKey: ["raw-streak"],
+    queryFn: fetchUserStreak,
+  })
+
+  const {
+    data: progressData,
+    isPending: isLoadingProgress,
+    error: progressError,
+  } = useQuery({
+    queryKey: ["dashboard-progress"],
+    queryFn: fetchDashboardProgress,
+  })
+
+  const {
+    data: stats,
+    isPending: isLoadingDashboardStats,
+    error: dashboardStatsError,
+  } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: fetchDashboardStats,
+  })
+
+  const {
+    data: recentActivities,
+    isPending: isLoadingActivities,
+    error: activitiesError,
+  } = useQuery({
+    queryKey: ["activities", { page: 1, limit: 5 }],
+    queryFn: () =>
+      fetchActivities({
+        page: 1,
+        limit: 5,
+      }),
+  })
+
+  const {
+    data: userBadges,
+    isPending: isLoadingBadges,
+    error: badgesError,
+  } = useQuery({
+    queryKey: ["badges"],
+    queryFn: fetchUserBadges,
+  })
+
+  const loading = useMemo(
+    () =>
+      isLoadingStreak ||
+      isLoadingProgress ||
+      isLoadingDashboardStats ||
+      isLoadingActivities ||
+      isLoadingBadges ||
+      status === "loading",
+    [
+      isLoadingStreak,
+      isLoadingProgress,
+      isLoadingDashboardStats,
+      isLoadingActivities,
+      isLoadingBadges,
+      status,
+    ],
+  )
+
+  const error = useMemo(
+    () =>
+      streakError ||
+      progressError ||
+      dashboardStatsError ||
+      activitiesError ||
+      badgesError,
+    [
+      streakError,
+      progressError,
+      dashboardStatsError,
+      activitiesError,
+      badgesError,
+    ],
+  )
 
   useEffect(() => {
-    // once auth is known, bail early if unauthenticated
-    if (status !== "loading" && status !== "authenticated") {
-      setLoading(false)
+    if (!error) {
       return
     }
 
-    if (status === "authenticated") {
-      ;(async () => {
-        setLoading(true)
-        try {
-          // fetchUserStreak() calls /api/goals/streak-dates under the hood
-          const [rawStreak, progressData, dashboardStats] = await Promise.all([
-            fetchUserStreak(),
-            GamificationService.fetchUserProgressFromToken(),
-            fetchDashboardStats(),
-          ])
-
-          if (!rawStreak || !progressData) {
-            throw new Error("Failed to load dashboard data.")
-          }
-
-          setStreakData({
-            completionDates: rawStreak.completionDates ?? [],
-            currentStreak: rawStreak.currentStreak ?? 0,
-            longestStreak: rawStreak.longestStreak ?? 0,
-            goalProgress: rawStreak.goalProgress ?? 0,
-          })
-          setUserProgress(progressData)
-          setStats(dashboardStats)
-          setBadges((progressData.badges ?? []).slice(0, 3))
-        } catch (e: any) {
-          console.error(e)
-          setError(e.message || "Something went wrong.")
-        } finally {
-          setLoading(false)
-        }
-      })()
-    }
-  }, [status])
+    toast.error(error.message, {
+      duration: 5000,
+    })
+  }, [error])
 
   // loading / redirect state
-  if (loading || status === "loading") {
+  if (loading) {
     return (
-      <div
-        className={`
-          flex min-h-screen items-center justify-center bg-black text-white
-        `}
-      >
-        <p>Loading dashboard…</p>
+      <div className="flex min-h-screen items-center justify-center">
+        <LoadingSpinner />
       </div>
     )
   }
 
-  // unauthenticated or error
-  if (
-    status !== "authenticated" ||
-    error ||
-    !streakData ||
-    !userProgress ||
-    !stats
-  ) {
-    return (
-      <div
-        className={`
-          flex min-h-screen items-center justify-center bg-black text-red-500
-        `}
-      >
-        <p>
-          {status !== "authenticated"
-            ? "Log in to view your dashboard."
-            : error || "Dashboard data is unavailable."}
-        </p>
-      </div>
-    )
-  }
-
-  const recentActivities = [
-    "✅ Completed 'Workout 5 times a week'",
-    "🎯 Joined Productivity Boosters group",
-    "🤝 Sent encouragement to a friend",
-  ]
-
-  return (
+  return !error &&
+    !!stats &&
+    !!progressData &&
+    !!rawStreak &&
+    !!recentActivities &&
+    !!userBadges ? (
     <div className="mx-auto max-w-7xl p-6">
       <Dashboard
-        userName={session?.user.name || ""}
+        userName={user?.name || user?.username || ""}
         userStats={{
           totalGoals: stats.totalGoals,
           completedGoals: stats.completedGoals,
           collaborations: stats.collaborations,
+          completionRate: stats.completionRate,
         }}
-        recentActivities={recentActivities}
-        userProgress={userProgress}
-        recentBadges={badges}
-        points={userProgress.points}
-        streakData={streakData}
+        streakData={rawStreak}
+        userProgress={progressData}
+        recentActivities={recentActivities.activities}
+        userBadges={userBadges}
       />
     </div>
-  )
+  ) : null
 }

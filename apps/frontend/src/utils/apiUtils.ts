@@ -1,6 +1,6 @@
 // src/utils/apiUtils.ts
 
-import { isAxiosError } from "axios"
+import axios, { isAxiosError } from "axios"
 
 import type {
   BillingHistoryItem,
@@ -141,4 +141,10 @@ export function formatDate(iso: string): string {
     month: "long",
     day: "numeric",
   })
+}
+
+export function getApiErrorMessage(err: Error): string {
+  return axios.isAxiosError(err) && err.response
+    ? err.response.data.message
+    : err.message
 }

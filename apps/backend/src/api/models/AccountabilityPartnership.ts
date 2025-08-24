@@ -1,55 +1,37 @@
-// src/api/models/AccountabilityPartnership.ts
-import type { Document, Model } from "mongoose"
+import type {
+  AccountabilityPartnershipDocument,
+  AccountabilityPartnershipModel,
+  AccountabilityPartnershipSchema as IAccountabilityPartnershipSchema,
+} from "src/types/mongoose.gen"
 
 import mongoose, { Schema } from "mongoose"
 
-export interface IAccountabilityPartnership extends Document {
-  user1: mongoose.Types.ObjectId
-  user2: mongoose.Types.ObjectId
-  createdAt: Date
-  updatedAt: Date
-}
+const AccountabilityPartnershipSchema: IAccountabilityPartnershipSchema =
+  new Schema(
+    {
+      user1: { type: Schema.Types.ObjectId, ref: "User", required: true },
+      user2: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    },
+    {
+      timestamps: true,
+    },
+  )
 
-interface IAccountabilityPartnershipModel
-  extends Model<IAccountabilityPartnership> {
-  findBetweenUsers: (
-    u1: string,
-    u2: string,
-  ) => Promise<IAccountabilityPartnership | null>
-}
-
-const AccountabilityPartnershipSchema = new Schema<
-  IAccountabilityPartnership,
-  IAccountabilityPartnershipModel
->(
-  {
-    user1: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    user2: { type: Schema.Types.ObjectId, ref: "User", required: true },
+AccountabilityPartnershipSchema.statics = {
+  findBetweenUsers(this, u1: string, u2: string) {
+    const id1 = new mongoose.Types.ObjectId(u1)
+    const id2 = new mongoose.Types.ObjectId(u2)
+    return this.findOne({
+      $or: [
+        { user1: id1, user2: id2 },
+        { user1: id2, user2: id1 },
+      ],
+    }).exec()
   },
-  {
-    timestamps: true,
-  },
-)
-
-// now give it an explicit return type
-AccountabilityPartnershipSchema.statics.findBetweenUsers = function (
-  this: IAccountabilityPartnershipModel,
-  u1: string,
-  u2: string,
-): Promise<IAccountabilityPartnership | null> {
-  const id1 = new mongoose.Types.ObjectId(u1)
-  const id2 = new mongoose.Types.ObjectId(u2)
-  return this.findOne({
-    $or: [
-      { user1: id1, user2: id2 },
-      { user1: id2, user2: id1 },
-    ],
-  }).exec()
 }
 
-const AccountabilityPartnership = mongoose.model<
-  IAccountabilityPartnership,
-  IAccountabilityPartnershipModel
->("AccountabilityPartnership", AccountabilityPartnershipSchema)
-
-export default AccountabilityPartnership
+export const AccountabilityPartnership: AccountabilityPartnershipModel =
+  mongoose.model<
+    AccountabilityPartnershipDocument,
+    AccountabilityPartnershipModel
+  >("AccountabilityPartnership", AccountabilityPartnershipSchema)

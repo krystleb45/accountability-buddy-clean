@@ -1,25 +1,66 @@
-// src/components/Dashboard/Dashboard.tsx
 "use client"
 
+import type { LucideIcon } from "lucide-react"
+
+import { formatDistanceToNow } from "date-fns"
+import {
+  Award,
+  BookOpenText,
+  ChartBar,
+  ChartNoAxesColumnIncreasing,
+  Crosshair,
+  FileText,
+  Flame,
+  Goal,
+  Handshake,
+  Percent,
+  Scroll,
+  SquareCheckBig,
+  Trophy,
+  Users,
+} from "lucide-react"
 import { motion } from "motion/react"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import Link from "next/link"
 import React from "react"
 
-import type { Badge, UserProgress } from "@/types/Gamification.types"
+import type { StreakData } from "@/api/goal/goal-api"
+import type { DashboardProgress } from "@/api/progress/progress-api"
+import type { Activity, Badge as IBadge } from "@/types/mongoose.gen"
 
-import LeaderboardPreview from "@/components/Gamification/LeaderboardPreview"
+import { LeaderboardPreview } from "@/components/Gamification/LeaderboardPreview"
+import { cn } from "@/lib/utils"
 
-import styles from "./Dashboard.module.css"
-import PointsBalance from "./PointsBalance"
+import { Badge } from "../ui/badge"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card"
+import DashboardStatCard from "./DashboardStatCard"
 
-interface Card {
+type ICard = {
   label: string
-  emoji: string
-  subtitle: string
-  onClick: () => void
-  content: React.ReactNode
-}
+  icon: LucideIcon
+  subtitle?: string
+  content?: React.ReactNode
+  containerClassName?: string
+} & (
+  | {
+      link: string
+      onClick?: never
+    }
+  | {
+      link?: never
+      onClick: () => void
+    }
+  | {
+      link?: never
+      onClick?: never
+    }
+)
 
 export interface DashboardProps {
   userName: string
@@ -27,280 +68,312 @@ export interface DashboardProps {
     totalGoals: number
     completedGoals: number
     collaborations: number
+    completionRate: number
   }
-  recentActivities: string[]
-  userProgress: UserProgress
-  recentBadges: Badge[]
-  points: number
-  streakData: {
-    currentStreak: number
-    goalProgress: number
-  }
-  onAction?: (action: string) => void
+  recentActivities: Activity[]
+  userProgress: DashboardProgress
+  userBadges: IBadge[]
+  streakData: StreakData
 }
+
+const MotionCard = motion.create(Card)
 
 const Dashboard: React.FC<DashboardProps> = ({
   userName,
   userStats,
   recentActivities,
   userProgress,
-  recentBadges,
-  points,
+  userBadges,
   streakData,
-  onAction = () => {},
 }) => {
-  const router = useRouter()
-  const pct =
-    typeof streakData.goalProgress === "number" ? streakData.goalProgress : 0
+  const pct = userStats.completionRate
+  const pointsToNextLevel = userProgress.pointsToNextLevel
 
-  // top‐level Goals card
-  const goalsCard: Card = {
+  const goalsCard: ICard = {
     label: "Goals",
-    emoji: "🎯",
+    icon: Goal,
     subtitle: "Track your progress and explore suggested goals.",
-    onClick: () => router.push("/goals"),
+    link: "/goals",
     content: (
       <>
-        <p className="mt-2 text-lg font-bold text-yellow-400 sm:text-xl">
-          🔥 {streakData.currentStreak}-Day Streak
-        </p>
-        <div className="mt-4 h-4 w-full rounded-lg bg-gray-700">
+        <div className="flex items-baseline justify-between">
+          <p
+            className={`
+              mt-2 flex items-center gap-2 text-lg font-bold text-chart-3
+              sm:text-xl
+            `}
+          >
+            {streakData.dates?.length > 0 ? <Flame /> : null}{" "}
+            {streakData.dates?.length || 0}-Day Streak
+          </p>
+          <p
+            className={`
+              mt-6 text-sm text-muted-foreground
+              sm:text-base
+            `}
+          >
+            <span className="font-bold text-foreground">{pct.toFixed(1)}%</span>{" "}
+            Completed
+          </p>
+        </div>
+        <div className="mt-2 h-4 w-full rounded-lg bg-muted">
           <div
-            className="h-full rounded-lg bg-green-500"
+            className="h-full rounded-lg bg-primary"
             style={{ width: `${pct}%` }}
           />
         </div>
-        <p className="mt-1 text-sm text-gray-300 sm:text-base">
-          {pct.toFixed(1)}% Completed
-        </p>
       </>
     ),
   }
-
-  // the other fixed cards
-  const otherCards: Card[] = [
+  // // the other fixed cards
+  const otherCards: ICard[] = [
     {
-      label: "Community",
-      emoji: "🤝",
-      subtitle: "Connect with friends, join groups, and collaborate.",
-      onClick: () => router.push("/community"),
-      content: (
-        <div className="flex justify-center space-x-4">
-          <span className="rounded bg-green-600 px-3 py-1 text-white">
-            Friends
-          </span>
-          <span className="rounded bg-green-600 px-3 py-1 text-white">
-            Groups
-          </span>
-        </div>
-      ),
-    },
-    {
-      label: "Your Stats",
-      emoji: "📊",
-      subtitle: "Stats Overview",
-      onClick: () => router.push("/statistics"),
+      label: "Your Progress",
+      icon: ChartNoAxesColumnIncreasing,
       content: (
         <>
-          <p className="mt-2 text-lg font-bold text-yellow-400 sm:text-xl">
-            Total Goals: {userStats.totalGoals}
-          </p>
-          <p className="mt-2 text-lg font-bold text-yellow-400 sm:text-xl">
-            Completed Goals: {userStats.completedGoals}
-          </p>
-          <p className="mt-2 text-lg font-bold text-yellow-400 sm:text-xl">
-            Collaborations: {userStats.collaborations}
+          <div
+            className={`
+              flex justify-between
+              *:flex-1 *:shrink-0
+            `}
+          >
+            <div
+              className={`
+                flex items-center gap-2 text-sm text-primary
+                sm:text-base
+              `}
+            >
+              <span className="flex items-center gap-2 text-xl font-semibold">
+                <Crosshair />
+                XP:
+              </span>
+              <p className="text-xl font-bold">{userProgress.points}</p>
+            </div>
+            <div
+              className={`
+                flex items-center justify-end gap-2 text-sm text-chart-2
+                sm:text-base
+              `}
+            >
+              <span className="flex items-center gap-2 text-xl font-semibold">
+                <ChartNoAxesColumnIncreasing />
+                Level:
+              </span>
+              <p className="text-xl font-bold">{userProgress.level}</p>
+            </div>
+          </div>
+          <div className="mt-6 h-3 w-full rounded-full bg-muted">
+            <div
+              className="h-3 rounded-full bg-primary"
+              style={{ width: `${100 - pointsToNextLevel}%` }}
+            />
+          </div>
+          <p
+            className={`
+              mt-2 text-xs text-muted-foreground
+              sm:text-sm
+            `}
+          >
+            {userProgress.pointsToNextLevel ?? 0} XP to next level
           </p>
         </>
       ),
     },
+    {
+      label: "Your Stats",
+      icon: ChartBar,
+      subtitle: "Stats Overview",
+      link: "/statistics",
+      containerClassName: "sm:col-span-2 sm:row-span-2",
+      content: (
+        <div
+          className={`
+            grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-3
+          `}
+        >
+          <DashboardStatCard
+            title="Total Goals"
+            value={userStats.totalGoals}
+            icon={<Goal className="text-chart-2" />}
+          />
+          <DashboardStatCard
+            title="Completed Goals"
+            value={userStats.completedGoals}
+            icon={<SquareCheckBig className="text-chart-1" />}
+          />
+          <DashboardStatCard
+            title="Collaborations"
+            value={userStats.collaborations}
+            icon={<Users className="text-chart-3" />}
+          />
+          <DashboardStatCard
+            title="Completion Rate"
+            value={`${userStats.completionRate.toFixed(1)}%`}
+            icon={<Percent className="text-chart-5" />}
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Recent Activities",
+      icon: Scroll,
+      content:
+        recentActivities.length > 0 ? (
+          <ul className="list-disc pl-6">
+            {recentActivities.map((a) => (
+              <li key={a._id}>
+                <Badge className="text-sm font-bold tracking-wider uppercase">
+                  {a.type}
+                </Badge>{" "}
+                {a.createdAt && (
+                  <span className="text-sm text-muted-foreground">
+                    {formatDistanceToNow(new Date(a.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                )}{" "}
+                <span>{a.description}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-center text-muted-foreground">
+            No recent activities found
+          </p>
+        ),
+    },
+    {
+      label: "Recent Badges",
+      icon: Award,
+      subtitle: "Your earned badges",
+      content:
+        userBadges.length > 0 ? (
+          <div className="flex flex-wrap justify-center gap-4">
+            {userBadges.slice(0, 3).map((b) => (
+              <div key={b._id} className="text-sm">
+                <Image
+                  src={b.badgeIconUrl || "/placeholder-badge.png"}
+                  alt={b.description || b.badgeType}
+                  width={48}
+                  height={48}
+                  className="mx-auto"
+                />
+                <p className="mt-1">{b.description}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground">No badges earned yet</p>
+        ),
+    },
+    {
+      label: "Leaderboard",
+      icon: Trophy,
+      content: <LeaderboardPreview />,
+    },
+    {
+      label: "Community",
+      icon: Handshake,
+      subtitle: "Connect with friends, join groups, and collaborate.",
+      link: "/community",
+    },
+    {
+      label: "Blog",
+      icon: FileText,
+      subtitle: "Read the latest articles and insights.",
+      link: "/blog",
+    },
+    {
+      label: "Books",
+      icon: BookOpenText,
+      subtitle: "Explore recommended reads.",
+      link: "/books",
+    },
   ]
 
   return (
-    <div
-      className={`${styles.dashboardContainer} rounded-lg bg-black p-6 text-white shadow-lg`}
-    >
+    <div className="rounded-lg p-6 shadow-lg">
       {/* Header */}
-      <header className="mb-6">
-        <h1 className="mb-4 text-3xl font-bold">Welcome back, {userName}!</h1>
+      <header className="mb-10">
+        <h1 className="text-3xl font-bold">
+          Welcome back{userName ? `, ${userName}` : ""}!
+        </h1>
       </header>
-
       {/* Goals Full-Width Card */}
       <div className="mb-8">
-        <motion.div
-          role="button"
-          aria-label="View goals and streak"
-          whileHover={{ scale: 1.05 }}
-          onTap={() => {
-            onAction("goals")
-            goalsCard.onClick()
-          }}
-          className="block w-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
-        >
-          <h2 className="text-2xl font-semibold text-kelly-green sm:text-3xl">
-            {goalsCard.emoji} {goalsCard.label}
-          </h2>
-          <p className="text-gray-400">{goalsCard.subtitle}</p>
-          {goalsCard.content}
-        </motion.div>
+        <Link href={goalsCard.link} aria-label="View goals and streak">
+          <MotionCard whileHover={{ scale: 1.02 }}>
+            <CardHeader className="text-center">
+              <CardTitle
+                className={`
+                  flex items-center justify-center gap-4 text-2xl font-semibold
+                  sm:text-3xl
+                `}
+              >
+                <goalsCard.icon size={36} className="text-primary" />{" "}
+                {goalsCard.label}
+              </CardTitle>
+              <CardDescription className="text-lg">
+                {goalsCard.subtitle}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>{goalsCard.content}</CardContent>
+          </MotionCard>
+        </Link>
       </div>
 
       {/* Main Tiles Grid */}
-      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {otherCards.map((c) => (
-          <motion.div
-            key={c.label}
-            role="button"
-            aria-label={`View ${c.label.toLowerCase()}`}
-            whileHover={{ scale: 1.05 }}
-            onTap={() => {
-              onAction(c.label.toLowerCase())
-              c.onClick()
-            }}
-            className="block size-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
-          >
-            <h2 className="text-2xl font-semibold text-kelly-green sm:text-3xl">
-              {c.emoji} {c.label}
-            </h2>
-            <p className="mb-4 text-gray-400">{c.subtitle}</p>
-            {c.content}
-          </motion.div>
-        ))}
+      <div
+        className={`
+          mb-6 grid grid-flow-dense grid-cols-1 gap-6
+          sm:grid-cols-2
+          lg:grid-cols-3
+        `}
+      >
+        {otherCards.map((c) => {
+          const cardContent = (
+            <MotionCard whileHover={{ scale: 1.02 }} className="h-full">
+              <CardHeader className="text-center">
+                <CardTitle
+                  className={`
+                    flex items-center justify-center gap-4 text-2xl
+                    font-semibold
+                    sm:text-3xl
+                  `}
+                >
+                  <c.icon size={36} className="text-primary" /> {c.label}
+                </CardTitle>
+                <CardDescription className="text-lg">
+                  {c.subtitle}
+                </CardDescription>
+              </CardHeader>
+              {c.content && (
+                <CardContent className="mt-auto">{c.content}</CardContent>
+              )}
+            </MotionCard>
+          )
 
-        {/* Your Progress */}
-        <motion.section
-          whileHover={{ scale: 1.02 }}
-          className="rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
-        >
-          <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-            🏆 Your Progress
-          </h3>
-          <p className="text-sm text-green-400 sm:text-base">
-            XP: {userProgress.points}
-          </p>
-          <p className="text-sm text-blue-300 sm:text-base">
-            Level: {userProgress.level}
-          </p>
-          <div className="mt-2 h-2 w-full rounded-full bg-gray-700">
-            <div
-              className="h-2 rounded-full bg-green-500"
-              style={{ width: `${userProgress.progressToNextLevel ?? 0}%` }}
-            />
-          </div>
-          <p className="mt-1 text-xs text-gray-300 sm:text-sm">
-            {userProgress.pointsToNextLevel ?? 0} XP to next level
-          </p>
-        </motion.section>
+          if (c.link) {
+            return (
+              <Link
+                href={c.link}
+                aria-label={`View ${c.label.toLowerCase()}`}
+                key={c.label}
+                className={cn("block", c.containerClassName)}
+              >
+                {cardContent}
+              </Link>
+            )
+          }
 
-        {/* Points Balance */}
-        <div className="sm:col-span-2 lg:col-span-1">
-          <PointsBalance points={points} />
-        </div>
-
-        {/* Recent Activities */}
-        <motion.section
-          whileHover={{ scale: 1.02 }}
-          className="rounded-lg bg-gray-900 p-4 shadow-lg transition hover:shadow-xl"
-        >
-          <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-            📜 Recent Activities
-          </h3>
-          {recentActivities.length > 0 ? (
-            <ul className="list-inside list-disc text-gray-200">
-              {recentActivities.map((a, i) => (
-                <li key={i}>{a}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-center text-gray-400">
-              No recent activities found
-            </p>
-          )}
-        </motion.section>
-
-        {/* Blog */}
-        <motion.div
-          role="button"
-          aria-label="Read the blog"
-          whileHover={{ scale: 1.05 }}
-          onTap={() => {
-            onAction("blog")
-            router.push("/blog")
-          }}
-          className="block size-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
-        >
-          <h2 className="text-2xl font-semibold text-kelly-green sm:text-3xl">
-            📝 Blog
-          </h2>
-          <p className="text-gray-400">Read the latest posts and updates.</p>
-        </motion.div>
-
-        {/* Books */}
-        <motion.div
-          role="button"
-          aria-label="View book recommendations"
-          whileHover={{ scale: 1.05 }}
-          onTap={() => {
-            onAction("books")
-            router.push("/books")
-          }}
-          className="block size-full cursor-pointer rounded-lg bg-gray-900 p-6 text-center shadow-lg transition hover:shadow-xl"
-        >
-          <h2 className="text-2xl font-semibold text-kelly-green sm:text-3xl">
-            📚 Books
-          </h2>
-          <p className="text-gray-400">Explore recommended reads.</p>
-        </motion.div>
-
-        {/* Leaderboard */}
-        <motion.div
-          role="button"
-          aria-label="View full leaderboard"
-          whileHover={{ scale: 1.02 }}
-          onTap={() => {
-            onAction("leaderboard")
-            router.push("/leaderboard")
-          }}
-          className="block size-full cursor-pointer rounded-lg bg-gray-900 p-4 text-center shadow-lg transition hover:shadow-xl"
-        >
-          <h3 className="mb-2 text-xl font-bold text-white sm:text-2xl">
-            🏆 Leaderboard
-          </h3>
-          <LeaderboardPreview
-            sortBy="points"
-            timeRange="weekly"
-            title="Top Performers"
-          />
-        </motion.div>
-      </div>
-
-      {/* Recent Badges */}
-      {recentBadges.length > 0 && (
-        <div className="mb-6">
-          <motion.section
-            whileHover={{ scale: 1.02 }}
-            className="rounded-lg bg-gray-900 p-4 text-center shadow-lg transition hover:shadow-xl"
-          >
-            <h3 className="mb-2 text-xl font-bold text-yellow-400 sm:text-2xl">
-              🎖️ Recent Badges
-            </h3>
-            <div className="flex flex-wrap justify-center gap-4">
-              {recentBadges.slice(0, 3).map((b) => (
-                <div key={b.id} className="text-sm text-white">
-                  <Image
-                    src={b.imageUrl || "/placeholder-badge.png"}
-                    alt={b.name}
-                    width={48}
-                    height={48}
-                    className="mx-auto"
-                  />
-                  <p className="mt-1">{b.name}</p>
-                </div>
-              ))}
+          return (
+            <div key={c.label} className={c.containerClassName}>
+              {cardContent}
             </div>
-          </motion.section>
-        </div>
-      )}
+          )
+        })}
+      </div>
     </div>
   )
 }

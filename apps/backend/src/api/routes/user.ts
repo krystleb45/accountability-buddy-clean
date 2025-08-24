@@ -1,9 +1,7 @@
-// src/api/routes/user.ts
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
-import { getLeaderboard } from "../controllers/LeaderboardController"
 import * as userCtrl from "../controllers/userController"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
@@ -77,7 +75,6 @@ router.delete("/unfeature-achievement", protect, userCtrl.unfeatureAchievement)
 router.get("/featured-achievements", protect, userCtrl.getFeaturedAchievements)
 
 // Leaderboard & stats
-router.get("/leaderboard", getLeaderboard)
 router.get("/:userId/statistics", protect, userCtrl.getUserStatistics)
 
 // Admin block/unblock
