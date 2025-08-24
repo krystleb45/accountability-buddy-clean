@@ -948,27 +948,6 @@ export type Invitation = {
 }
 
 /**
- * Lean version of LeaderboardDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `LeaderboardDocument.toObject()`. To avoid conflicts with model names, use the type alias `LeaderboardObject`.
- * ```
- * const leaderboardObject = leaderboard.toObject();
- * ```
- */
-export type Leaderboard = {
-  user: User["_id"] | User
-  completedGoals?: number
-  completedMilestones?: number
-  totalPoints?: number
-  streakDays?: number
-  rank?: number | null
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  rankDescription: string
-}
-
-/**
  * Lean version of LevelRewardDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `LevelDocument.toObject()`.
@@ -1438,23 +1417,6 @@ export type Profile = {
   email: string
   bio?: string
   profilePicture?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of ProgressDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ProgressDocument.toObject()`. To avoid conflicts with model names, use the type alias `ProgressObject`.
- * ```
- * const progressObject = progress.toObject();
- * ```
- */
-export type Progress = {
-  user: User["_id"] | User
-  goal: Goal["_id"] | Goal
-  progress: number
   _id: string
   createdAt?: string
   updatedAt?: string
