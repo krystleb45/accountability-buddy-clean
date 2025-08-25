@@ -7,7 +7,19 @@ import { SessionProvider } from "next-auth/react"
 
 import { AuthProvider } from "@/context/auth/auth-context"
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry(failureCount, error) {
+        if (error.message.includes("Authentication failed")) {
+          return false
+        }
+
+        return failureCount < 3
+      },
+    },
+  },
+})
 
 interface Props {
   children: ReactNode

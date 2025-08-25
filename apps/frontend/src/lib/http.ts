@@ -94,7 +94,7 @@ http.interceptors.response.use(
           toast.info("Please login to continue")
           signOut()
         }
-        break
+        throw new Error("Authentication failed. Please login again.")
       case 403:
         console.error("Access denied")
         throw new Error("Access denied. Please check your permissions.")
