@@ -58,7 +58,13 @@ export default function BookListClient() {
 
       {/* Always show Back link immediately under the heading */}
       <div className="mb-6 text-center">
-        <a href="/dashboard" className="text-lg text-green-400 hover:underline">
+        <a
+          href="/dashboard"
+          className={`
+            text-lg text-green-400
+            hover:underline
+          `}
+        >
           ← Back to Dashboard
         </a>
       </div>
@@ -84,7 +90,10 @@ export default function BookListClient() {
               href={featuredBook.purchaseLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-block text-green-400 hover:underline"
+              className={`
+                mt-2 inline-block text-green-400
+                hover:underline
+              `}
             >
               Buy on Amazon →
             </a>
@@ -92,7 +101,12 @@ export default function BookListClient() {
         </div>
       )}
 
-      <div className="mb-6 flex flex-col items-center gap-4 md:flex-row md:justify-between">
+      <div
+        className={`
+          mb-6 flex flex-col items-center gap-4
+          md:flex-row md:justify-between
+        `}
+      >
         <input
           type="text"
           placeholder="🔎 Search books..."
@@ -100,14 +114,18 @@ export default function BookListClient() {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setSearchQuery(e.target.value)
           }
-          className="flex-1 rounded-lg border border-gray-600 bg-gray-900 p-3 text-white"
+          className={`
+            flex-1 rounded-lg border border-gray-600 bg-gray-900 p-3 text-white
+          `}
         />
         <select
           value={selectedCategory}
           onChange={(e: ChangeEvent<HTMLSelectElement>) =>
             setSelectedCategory(e.target.value)
           }
-          className="rounded-lg border border-gray-600 bg-gray-900 p-3 text-white"
+          className={`
+            rounded-lg border border-gray-600 bg-gray-900 p-3 text-white
+          `}
         >
           <option value="All">📂 All Categories</option>
           <option value="Productivity">⚡ Productivity</option>
@@ -117,14 +135,23 @@ export default function BookListClient() {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={`
+          grid grid-cols-1 gap-6
+          md:grid-cols-2
+          lg:grid-cols-3
+        `}
+      >
         {filteredBooks.length === 0 ? (
           <p className="w-full text-center text-gray-400">No books found.</p>
         ) : (
           filteredBooks.map((book) => (
             <div
               key={book.id}
-              className="rounded-lg bg-gray-900 p-4 shadow-lg transition hover:scale-105 hover:shadow-xl"
+              className={`
+                rounded-lg bg-gray-900 p-4 shadow-lg transition
+                hover:scale-105 hover:shadow-xl
+              `}
             >
               {book.imageUrl && (
                 <img
@@ -136,7 +163,12 @@ export default function BookListClient() {
               <h2 className="text-xl font-bold text-green-300">{book.title}</h2>
               <p className="mb-2 text-sm text-gray-400">by {book.author}</p>
               <p className="mb-3 text-gray-300">{book.summary}</p>
-              <span className="mb-3 inline-block rounded-full bg-green-700 px-3 py-1 text-xs font-bold text-white">
+              <span
+                className={`
+                  mb-3 inline-block rounded-full bg-green-700 px-3 py-1 text-xs
+                  font-bold text-white
+                `}
+              >
                 {book.category}
               </span>
               {book.purchaseLink && (
@@ -144,7 +176,10 @@ export default function BookListClient() {
                   href={book.purchaseLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-green-400 hover:underline"
+                  className={`
+                    block text-green-400
+                    hover:underline
+                  `}
                 >
                   Buy on Amazon →
                 </a>

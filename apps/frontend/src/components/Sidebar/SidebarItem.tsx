@@ -26,7 +26,10 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
 
   return (
     <div
-      className={`${styles.item} ${isActive ? styles.active : ""}`}
+      className={`
+        ${styles.item}
+        ${isActive ? styles.active : ""}
+      `}
       role="button"
       tabIndex={0}
       aria-pressed={isActive}

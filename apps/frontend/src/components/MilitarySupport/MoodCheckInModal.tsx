@@ -1,5 +1,3 @@
-// src/components/MilitarySupport/MoodCheckInModal.tsx
-
 "use client"
 
 import { Heart, MessageCircle, X } from "lucide-react"
@@ -73,13 +71,25 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
   )
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white shadow-xl">
+    <div
+      className={`
+        fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4
+      `}
+    >
+      <div
+        className={`
+          max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white
+          shadow-xl
+        `}
+      >
         {/* Header */}
         <div className="relative rounded-t-lg bg-blue-600 p-6 text-white">
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 text-white transition-colors hover:text-gray-200"
+            className={`
+              absolute top-4 right-4 text-white transition-colors
+              hover:text-gray-200
+            `}
           >
             <X className="size-5" />
           </button>
@@ -106,18 +116,32 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
             <div className="space-y-3">
               {MOOD_OPTIONS.map((option) => (
                 <button
+                  type="button"
                   key={option.value}
                   onClick={() => setSelectedMood(option.value)}
-                  className={`w-full rounded-lg border-2 p-4 text-left transition-all duration-200 hover:shadow-md ${
-                    selectedMood === option.value
-                      ? "border-blue-500 bg-blue-50 shadow-md"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
+                  className={`
+                    w-full rounded-lg border-2 p-4 text-left transition-all
+                    duration-200
+                    hover:shadow-md
+                    ${
+                      selectedMood === option.value
+                        ? "border-blue-500 bg-blue-50 shadow-md"
+                        : `
+                          border-gray-200
+                          hover:border-gray-300
+                        `
+                    }
+                  `}
                 >
                   <div className="flex items-center space-x-4">
                     <span className="text-2xl">{option.emoji}</span>
                     <div>
-                      <div className={`font-medium ${option.color}`}>
+                      <div
+                        className={`
+                          font-medium
+                          ${option.color}
+                        `}
+                      >
                         {option.label}
                       </div>
                       <div className="text-sm text-gray-500">
@@ -135,13 +159,23 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
             <div className="mb-6 rounded-lg bg-gray-50 p-4">
               <div className="mb-3 flex items-center space-x-3">
                 <span className="text-2xl">{selectedMoodOption.emoji}</span>
-                <span className={`font-medium ${selectedMoodOption.color}`}>
+                <span
+                  className={`
+                    font-medium
+                    ${selectedMoodOption.color}
+                  `}
+                >
                   {selectedMoodOption.label}
                 </span>
               </div>
 
               {selectedMoodOption.value <= 2 && (
-                <div className="rounded border border-red-200 bg-red-50 p-3 text-sm text-gray-600">
+                <div
+                  className={`
+                    rounded border border-red-200 bg-red-50 p-3 text-sm
+                    text-gray-600
+                  `}
+                >
                   <p className="mb-1 font-medium text-red-800">
                     Remember, you're not alone.
                   </p>
@@ -153,7 +187,12 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
               )}
 
               {selectedMoodOption.value === 3 && (
-                <div className="rounded border border-yellow-200 bg-yellow-50 p-3 text-sm text-gray-600">
+                <div
+                  className={`
+                    rounded border border-yellow-200 bg-yellow-50 p-3 text-sm
+                    text-gray-600
+                  `}
+                >
                   <p>
                     Some days are harder than others. Consider connecting with
                     others in our chat rooms.
@@ -162,7 +201,12 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
               )}
 
               {selectedMoodOption.value >= 4 && (
-                <div className="rounded border border-green-200 bg-green-50 p-3 text-sm text-gray-600">
+                <div
+                  className={`
+                    rounded border border-green-200 bg-green-50 p-3 text-sm
+                    text-gray-600
+                  `}
+                >
                   <p>
                     Great to hear you're doing well! Consider sharing your
                     positivity with others in our community.
@@ -177,7 +221,10 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
             {!showNote ? (
               <button
                 onClick={() => setShowNote(true)}
-                className="flex items-center space-x-2 text-blue-600 transition-colors hover:text-blue-700"
+                className={`
+                  flex items-center space-x-2 text-blue-600 transition-colors
+                  hover:text-blue-700
+                `}
               >
                 <MessageCircle className="size-4" />
                 <span className="text-sm">
@@ -193,7 +240,10 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="This helps us understand how our community is doing..."
-                  className="w-full resize-none rounded-lg border border-gray-300 p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  className={`
+                    w-full resize-none rounded-lg border border-gray-300 p-3
+                    focus:border-blue-500 focus:ring-2 focus:ring-blue-500
+                  `}
                   rows={3}
                   maxLength={500}
                 />
@@ -208,14 +258,23 @@ export default function MoodCheckInModal({ isOpen, onClose, onSubmit }: Props) {
           <div className="flex space-x-3">
             <button
               onClick={handleSkip}
-              className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-600 transition-colors hover:bg-gray-50"
+              className={`
+                flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-600
+                transition-colors
+                hover:bg-gray-50
+              `}
             >
               Skip for now
             </button>
             <button
               onClick={handleSubmit}
               disabled={selectedMood === null || isSubmitting}
-              className="flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+              className={`
+                flex-1 rounded-lg bg-blue-600 px-4 py-2 text-white
+                transition-colors
+                hover:bg-blue-700
+                disabled:cursor-not-allowed disabled:bg-gray-400
+              `}
             >
               {isSubmitting ? "Submitting..." : "Submit Check-In"}
             </button>

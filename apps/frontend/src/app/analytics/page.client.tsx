@@ -94,22 +94,43 @@ export default function AnalyticsClient() {
           Gain insights into platform performance, user activity, and more.
         </p>
       </header>
-      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <section className="rounded-lg bg-white p-6 shadow transition hover:shadow-lg">
+      <main
+        className={`
+          mx-auto grid max-w-6xl grid-cols-1 gap-6
+          md:grid-cols-2
+          lg:grid-cols-3
+        `}
+      >
+        <section
+          className={`
+            rounded-lg bg-white p-6 shadow transition
+            hover:shadow-lg
+          `}
+        >
           <h2 className="mb-2 text-2xl font-semibold">📊 Traffic Overview</h2>
           <p className="mb-4 text-gray-600">Goals completed by all users.</p>
           <p className="text-3xl font-bold text-gray-800">
             {trafficData?.totalVisitors ?? "—"}
           </p>
         </section>
-        <section className="rounded-lg bg-white p-6 shadow transition hover:shadow-lg">
+        <section
+          className={`
+            rounded-lg bg-white p-6 shadow transition
+            hover:shadow-lg
+          `}
+        >
           <h2 className="mb-2 text-2xl font-semibold">👥 User Activity</h2>
           <p className="mb-4 text-gray-600">Milestones achieved by users.</p>
           <p className="text-3xl font-bold text-gray-800">
             {userActivity?.activeUsers ?? "—"}
           </p>
         </section>
-        <section className="rounded-lg bg-white p-6 shadow transition hover:shadow-lg">
+        <section
+          className={`
+            rounded-lg bg-white p-6 shadow transition
+            hover:shadow-lg
+          `}
+        >
           <h2 className="mb-2 text-2xl font-semibold">💰 Revenue Insights</h2>
           <p className="mb-4 text-gray-600">
             Calculated custom metric “revenue.”

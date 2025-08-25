@@ -14,7 +14,12 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
   participantCount,
   onSettingsClick,
 }) => (
-  <header className="flex items-center justify-between rounded-t-2xl bg-gray-900 px-4 py-3 text-white shadow-md">
+  <header
+    className={`
+      flex items-center justify-between rounded-t-2xl bg-gray-900 px-4 py-3
+      text-white shadow-md
+    `}
+  >
     {/* Title & Count */}
     <div className="flex items-center space-x-2">
       <h1 className="text-xl font-bold text-[#4CBB17]">{title}</h1>
@@ -32,7 +37,10 @@ const ChatRoomHeader: React.FC<ChatRoomHeaderProps> = ({
     {onSettingsClick && (
       <button
         onClick={onSettingsClick}
-        className="p-2 text-gray-400 transition hover:text-[#4CBB17]"
+        className={`
+          p-2 text-gray-400 transition
+          hover:text-[#4CBB17]
+        `}
         aria-label="Chat Settings"
       >
         <FaCog size={20} />

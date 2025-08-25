@@ -1,4 +1,3 @@
-// src/components/PointShop/ConfirmationDialog.tsx
 import React, { useEffect, useRef } from "react"
 
 interface ConfirmationDialogProps {
@@ -32,7 +31,9 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       role="button"
       tabIndex={0}
       aria-label="Close confirmation dialog"
-      className="confirmation-dialog-overlay fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className={`
+        fixed inset-0 z-50 flex items-center justify-center bg-black/50
+      `}
       onClick={onCancel}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -45,7 +46,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirmation-dialog-label"
-        className="confirmation-dialog-content w-full max-w-sm rounded-lg bg-white p-6 shadow-lg"
+        className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg"
         ref={panelRef}
       >
         <h2
@@ -55,19 +56,25 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           Confirmation
         </h2>
         <p className="mb-6">{message}</p>
-        <div className="confirmation-dialog-actions flex justify-end gap-3">
+        <div className="flex justify-end gap-3">
           <button
             type="button"
             onClick={onCancel}
             tabIndex={0} // Move tabIndex here
-            className="rounded bg-gray-200 px-4 py-2 transition hover:bg-gray-300"
+            className={`
+              rounded bg-gray-200 px-4 py-2 transition
+              hover:bg-gray-300
+            `}
           >
             {cancelLabel}
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
+            className={`
+              rounded bg-green-600 px-4 py-2 text-white transition
+              hover:bg-green-700
+            `}
           >
             {confirmLabel}
           </button>

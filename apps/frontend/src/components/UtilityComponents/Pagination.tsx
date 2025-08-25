@@ -39,10 +39,10 @@ const Pagination: React.FC<PaginationProps> = ({
   }
 
   return (
-    <nav className="pagination" aria-label="Pagination Navigation">
+    <nav aria-label="Pagination Navigation">
       {/* Previous Button */}
       <button
-        className="pagination-button"
+        type="button"
         onClick={handlePrevious}
         disabled={currentPage === 1}
         aria-label="Go to previous page"
@@ -51,11 +51,14 @@ const Pagination: React.FC<PaginationProps> = ({
       </button>
 
       {/* Page Numbers */}
-      <ul className="pagination-list">
+      <ul>
         {getPageNumbers().map((page) => (
-          <li key={page} className="pagination-item">
+          <li key={page}>
             <button
-              className={`pagination-button ${page === currentPage ? "active" : ""}`}
+              // className={`
+              //   pagination-button
+              //   ${page === currentPage ? "active" : ""}
+              // `}
               onClick={() => onPageChange(page)}
               aria-current={page === currentPage ? "page" : undefined}
               aria-label={`Go to page ${page}`}
@@ -68,7 +71,6 @@ const Pagination: React.FC<PaginationProps> = ({
 
       {/* Next Button */}
       <button
-        className="pagination-button"
         onClick={handleNext}
         disabled={currentPage === totalPages}
         aria-label="Go to next page"

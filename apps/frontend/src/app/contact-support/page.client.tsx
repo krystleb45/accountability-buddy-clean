@@ -50,7 +50,9 @@ export default function ContactSupportForm() {
 
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md space-y-6 rounded-lg bg-gray-900 p-8 shadow-lg"
+        className={`
+          w-full max-w-md space-y-6 rounded-lg bg-gray-900 p-8 shadow-lg
+        `}
       >
         {success && (
           <div className="text-center font-medium text-green-400">
@@ -76,7 +78,13 @@ export default function ContactSupportForm() {
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="Your Name"
-            className="block w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className={`
+              block w-full rounded-md border border-gray-700 bg-gray-800 px-3
+              py-2 text-white
+              placeholder:text-gray-400
+              focus:border-green-500 focus:ring-2 focus:ring-green-500
+              focus:outline-none
+            `}
           />
         </div>
 
@@ -95,7 +103,13 @@ export default function ContactSupportForm() {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="you@example.com"
-            className="block w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className={`
+              block w-full rounded-md border border-gray-700 bg-gray-800 px-3
+              py-2 text-white
+              placeholder:text-gray-400
+              focus:border-green-500 focus:ring-2 focus:ring-green-500
+              focus:outline-none
+            `}
           />
         </div>
 
@@ -114,13 +128,23 @@ export default function ContactSupportForm() {
             onChange={(e) => setMessage(e.target.value)}
             required
             placeholder="Type your message here…"
-            className="block w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder:text-gray-400 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+            className={`
+              block w-full rounded-md border border-gray-700 bg-gray-800 px-3
+              py-2 text-white
+              placeholder:text-gray-400
+              focus:border-green-500 focus:ring-2 focus:ring-green-500
+              focus:outline-none
+            `}
           />
         </div>
 
         <button
           type="submit"
-          className="w-full rounded-md bg-green-500 py-3 font-semibold uppercase text-white transition duration-150 hover:bg-green-600"
+          className={`
+            w-full rounded-md bg-green-500 py-3 font-semibold text-white
+            uppercase transition duration-150
+            hover:bg-green-600
+          `}
         >
           Send Message
         </button>

@@ -37,7 +37,10 @@ const Notification: React.FC<NotificationProps> = ({
 
   return (
     <div
-      className={`${styles.notification} ${styles[type]}`}
+      className={`
+        ${styles.notification}
+        ${styles[type]}
+      `}
       role="alert"
       aria-live="assertive"
     >

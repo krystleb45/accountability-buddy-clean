@@ -83,7 +83,10 @@ const ReminderForm: React.FC<ReminderFormProps> = ({ goalId, onSave }) => {
 
       <button
         type="submit"
-        className="w-full rounded-lg bg-green-500 py-3 text-black transition hover:bg-green-400"
+        className={`
+          w-full rounded-lg bg-green-500 py-3 text-black transition
+          hover:bg-green-400
+        `}
         aria-label="Save reminder"
       >
         Save Reminder

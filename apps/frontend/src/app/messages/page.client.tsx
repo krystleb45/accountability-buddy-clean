@@ -471,11 +471,18 @@ export default function AdvancedMessagesClient() {
     <div className="min-h-screen bg-black text-white">
       <div className="flex h-screen">
         {/* Enhanced Sidebar */}
-        <div className="flex w-1/3 flex-col border-r border-gray-700 bg-gray-900">
+        <div
+          className={`
+          flex w-1/3 flex-col border-r border-gray-700 bg-gray-900
+        `}
+        >
           <div className="border-b border-gray-700 p-4">
             <Link
               href="/community"
-              className="mb-4 inline-flex items-center text-green-400 hover:text-green-300"
+              className={`
+                mb-4 inline-flex items-center text-green-400
+                hover:text-green-300
+              `}
             >
               ← Back to Community
             </Link>
@@ -490,7 +497,10 @@ export default function AdvancedMessagesClient() {
             {/* Search Toggle */}
             <button
               onClick={() => setShowSearch(!showSearch)}
-              className="mt-2 rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-500"
+              className={`
+                mt-2 rounded bg-blue-600 px-3 py-1 text-sm text-white
+                hover:bg-blue-500
+              `}
             >
               🔍 Search Messages
             </button>
@@ -510,7 +520,11 @@ export default function AdvancedMessagesClient() {
                   placeholder="Search messages..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded border border-gray-600 bg-gray-800 px-3 py-2 text-white focus:border-blue-400 focus:outline-none"
+                  className={`
+                    w-full rounded border border-gray-600 bg-gray-800 px-3 py-2
+                    text-white
+                    focus:border-blue-400 focus:outline-none
+                  `}
                 />
 
                 {filteredMessages.length > 0 && (
@@ -563,7 +577,12 @@ export default function AdvancedMessagesClient() {
         {/* Enhanced Main Chat Area */}
         <div className="flex flex-1 flex-col">
           {/* Feature Banner */}
-          <div className="bg-gradient-to-r from-purple-600 to-blue-600 p-3 text-center font-bold text-white">
+          <div
+            className={`
+              bg-gradient-to-r from-purple-600 to-blue-600 p-3 text-center
+              font-bold text-white
+            `}
+          >
             💬 Edit • Delete • React • Search • Files • Groups 📎
           </div>
 
@@ -571,7 +590,13 @@ export default function AdvancedMessagesClient() {
           <div className="border-b border-gray-700 bg-gray-900 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-blue-500 font-bold text-white">
+                <div
+                  className={`
+                    flex size-10 items-center justify-center rounded-full
+                    bg-gradient-to-r from-green-500 to-blue-500 font-bold
+                    text-white
+                  `}
+                >
                   {getDisplayName()[0]?.toUpperCase() || "A"}
                 </div>
                 <div>
@@ -591,13 +616,21 @@ export default function AdvancedMessagesClient() {
                 {!showingThreads && (
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-500"
+                    className={`
+                      rounded bg-blue-600 px-3 py-1 text-sm text-white
+                      hover:bg-blue-500
+                    `}
                   >
                     📎 Files
                   </button>
                 )}
                 {currentGroup && (
-                  <button className="rounded bg-purple-600 px-3 py-1 text-sm text-white hover:bg-purple-500">
+                  <button
+                    className={`
+                      rounded bg-purple-600 px-3 py-1 text-sm text-white
+                      hover:bg-purple-500
+                    `}
+                  >
                     👥 Members
                   </button>
                 )}
@@ -607,7 +640,14 @@ export default function AdvancedMessagesClient() {
 
           {/* Enhanced Messages Area */}
           <div
-            className={`flex-1 overflow-y-auto bg-gray-800 p-4 ${isDragging ? "border-2 border-dashed border-green-400 bg-gray-700" : ""}`}
+            className={`
+              flex-1 overflow-y-auto bg-gray-800 p-4
+              ${
+                isDragging
+                  ? `border-2 border-dashed border-green-400 bg-gray-700`
+                  : ""
+              }
+            `}
             style={{ height: "calc(100vh - 240px)" }}
             onDragOver={(e) => {
               e.preventDefault()
@@ -642,13 +682,21 @@ export default function AdvancedMessagesClient() {
                     <div className="mt-4 space-y-2">
                       <Link
                         href="/community"
-                        className="mr-2 inline-block rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-500"
+                        className={`
+                          mr-2 inline-block rounded-lg bg-green-600 px-4 py-2
+                          text-white transition
+                          hover:bg-green-500
+                        `}
                       >
                         Browse Community
                       </Link>
                       <Link
                         href="/friends"
-                        className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-500"
+                        className={`
+                          inline-block rounded-lg bg-blue-600 px-4 py-2
+                          text-white transition
+                          hover:bg-blue-500
+                        `}
                       >
                         View Friends
                       </Link>
@@ -661,7 +709,10 @@ export default function AdvancedMessagesClient() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="cursor-pointer rounded-lg bg-gray-700 p-4 transition hover:bg-gray-600"
+                      className={`
+                        cursor-pointer rounded-lg bg-gray-700 p-4 transition
+                        hover:bg-gray-600
+                      `}
                       onClick={() => {
                         // Navigate to specific conversation
                         if (
@@ -683,7 +734,13 @@ export default function AdvancedMessagesClient() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           {/* Avatar */}
-                          <div className="flex size-12 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-blue-500 font-bold text-white">
+                          <div
+                            className={`
+                              flex size-12 items-center justify-center
+                              rounded-full bg-gradient-to-r from-green-500
+                              to-blue-500 font-bold text-white
+                            `}
+                          >
                             {thread.messageType === "group"
                               ? (thread.group?.name || "G")[0]?.toUpperCase() ||
                                 "G"
@@ -721,7 +778,12 @@ export default function AdvancedMessagesClient() {
 
                         {/* Unread count */}
                         {thread.unreadCount > 0 && (
-                          <div className="rounded-full bg-red-500 px-2 py-1 text-xs font-bold text-white">
+                          <div
+                            className={`
+                              rounded-full bg-red-500 px-2 py-1 text-xs
+                              font-bold text-white
+                            `}
+                          >
                             {thread.unreadCount}
                           </div>
                         )}
@@ -748,18 +810,33 @@ export default function AdvancedMessagesClient() {
                         key={`${message._id}-${index}`}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className={`flex ${message.senderId === session?.user?.id ? "justify-end" : "justify-start"}`}
+                        className={`
+                          flex
+                          ${
+                            message.senderId === session?.user?.id
+                              ? `justify-end`
+                              : `justify-start`
+                          }
+                        `}
                       >
                         <div
-                          className={`group relative max-w-xs rounded-lg px-4 py-2 lg:max-w-md ${
-                            message.senderId === session?.user?.id
-                              ? "bg-green-600 text-white"
-                              : "bg-gray-700 text-white"
-                          }`}
+                          className={`
+                            group relative max-w-xs rounded-lg px-4 py-2
+                            lg:max-w-md
+                            ${
+                              message.senderId === session?.user?.id
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-700 text-white"
+                            }
+                          `}
                         >
                           {/* Reply Preview */}
                           {message.replyTo && (
-                            <div className="mb-2 rounded bg-gray-600 p-2 text-xs">
+                            <div
+                              className={`
+                              mb-2 rounded bg-gray-600 p-2 text-xs
+                            `}
+                            >
                               <p className="text-gray-300">
                                 Replying to {message.replyTo.senderName}:
                               </p>
@@ -776,7 +853,9 @@ export default function AdvancedMessagesClient() {
                                 type="text"
                                 value={editText}
                                 onChange={(e) => setEditText(e.target.value)}
-                                className="w-full rounded bg-gray-800 p-1 text-white"
+                                className={`
+                                  w-full rounded bg-gray-800 p-1 text-white
+                                `}
                                 onKeyPress={(e) => {
                                   if (e.key === "Enter") {
                                     handleEditMessage(message._id, editText)
@@ -789,13 +868,19 @@ export default function AdvancedMessagesClient() {
                                   onClick={() =>
                                     handleEditMessage(message._id, editText)
                                   }
-                                  className="rounded bg-green-500 px-2 py-1 text-xs text-white"
+                                  className={`
+                                    rounded bg-green-500 px-2 py-1 text-xs
+                                    text-white
+                                  `}
                                 >
                                   Save
                                 </button>
                                 <button
                                   onClick={() => setEditingMessage(null)}
-                                  className="rounded bg-gray-500 px-2 py-1 text-xs text-white"
+                                  className={`
+                                    rounded bg-gray-500 px-2 py-1 text-xs
+                                    text-white
+                                  `}
                                 >
                                   Cancel
                                 </button>
@@ -813,13 +898,21 @@ export default function AdvancedMessagesClient() {
                                       <img
                                         src={attachment.url}
                                         alt={attachment.name}
-                                        className="h-auto max-w-full cursor-pointer rounded"
+                                        className={`
+                                          h-auto max-w-full cursor-pointer
+                                          rounded
+                                        `}
                                         onClick={() =>
                                           window.open(attachment.url, "_blank")
                                         }
                                       />
                                     ) : (
-                                      <div className="flex items-center space-x-2 rounded bg-gray-600 p-2">
+                                      <div
+                                        className={`
+                                          flex items-center space-x-2 rounded
+                                          bg-gray-600 p-2
+                                        `}
+                                      >
                                         <span>📎</span>
                                         <div className="flex-1">
                                           <p className="text-sm">
@@ -836,7 +929,10 @@ export default function AdvancedMessagesClient() {
                                               "_blank",
                                             )
                                           }
-                                          className="rounded bg-blue-500 px-2 py-1 text-xs text-white"
+                                          className={`
+                                            rounded bg-blue-500 px-2 py-1
+                                            text-xs text-white
+                                          `}
                                         >
                                           Download
                                         </button>
@@ -848,7 +944,11 @@ export default function AdvancedMessagesClient() {
                           )}
 
                           {/* Message Footer */}
-                          <div className="mt-1 flex items-center justify-between">
+                          <div
+                            className={`
+                            mt-1 flex items-center justify-between
+                          `}
+                          >
                             <p className="text-xs opacity-70">
                               {new Date(message.createdAt).toLocaleTimeString(
                                 [],
@@ -878,7 +978,10 @@ export default function AdvancedMessagesClient() {
                                         reaction.emoji,
                                       )
                                     }
-                                    className="rounded bg-gray-600 px-1 py-0.5 text-xs hover:bg-gray-500"
+                                    className={`
+                                      rounded bg-gray-600 px-1 py-0.5 text-xs
+                                      hover:bg-gray-500
+                                    `}
                                   >
                                     {reaction.emoji}
                                   </button>
@@ -888,19 +991,33 @@ export default function AdvancedMessagesClient() {
 
                           {/* Message Actions (hover) */}
                           {message.senderId === session?.user?.id && (
-                            <div className="absolute -top-8 right-0 hidden space-x-1 rounded bg-gray-800 p-1 group-hover:flex">
+                            <div
+                              className={`
+                                absolute -top-8 right-0 hidden space-x-1 rounded
+                                bg-gray-800 p-1
+                                group-hover:flex
+                              `}
+                            >
                               <button
                                 onClick={() => {
                                   setEditingMessage(message._id)
                                   setEditText(message.content)
                                 }}
-                                className="rounded bg-blue-500 px-2 py-1 text-xs text-white hover:bg-blue-400"
+                                className={`
+                                  rounded bg-blue-500 px-2 py-1 text-xs
+                                  text-white
+                                  hover:bg-blue-400
+                                `}
                               >
                                 ✏️
                               </button>
                               <button
                                 onClick={() => handleDeleteMessage(message._id)}
-                                className="rounded bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-400"
+                                className={`
+                                  rounded bg-red-500 px-2 py-1 text-xs
+                                  text-white
+                                  hover:bg-red-400
+                                `}
                               >
                                 🗑️
                               </button>
@@ -908,16 +1025,28 @@ export default function AdvancedMessagesClient() {
                           )}
 
                           {/* Universal Actions */}
-                          <div className="absolute -top-8 left-0 hidden space-x-1 rounded bg-gray-800 p-1 group-hover:flex">
+                          <div
+                            className={`
+                              absolute -top-8 left-0 hidden space-x-1 rounded
+                              bg-gray-800 p-1
+                              group-hover:flex
+                            `}
+                          >
                             <button
                               onClick={() => setReplyingTo(message)}
-                              className="rounded bg-gray-600 px-2 py-1 text-xs text-white hover:bg-gray-500"
+                              className={`
+                                rounded bg-gray-600 px-2 py-1 text-xs text-white
+                                hover:bg-gray-500
+                              `}
                             >
                               ↩️
                             </button>
                             <button
                               onClick={() => setShowEmojiPicker(message._id)}
-                              className="rounded bg-gray-600 px-2 py-1 text-xs text-white hover:bg-gray-500"
+                              className={`
+                                rounded bg-gray-600 px-2 py-1 text-xs text-white
+                                hover:bg-gray-500
+                              `}
                             >
                               😀
                             </button>
@@ -925,14 +1054,22 @@ export default function AdvancedMessagesClient() {
 
                           {/* Emoji Picker */}
                           {showEmojiPicker === message._id && (
-                            <div className="absolute left-0 top-full z-10 mt-1 flex space-x-1 rounded bg-gray-800 p-2">
+                            <div
+                              className={`
+                                absolute top-full left-0 z-10 mt-1 flex
+                                space-x-1 rounded bg-gray-800 p-2
+                              `}
+                            >
                               {commonEmojis.map((emoji) => (
                                 <button
                                   key={emoji}
                                   onClick={() =>
                                     handleReaction(message._id, emoji)
                                   }
-                                  className="rounded p-1 hover:bg-gray-700"
+                                  className={`
+                                    rounded p-1
+                                    hover:bg-gray-700
+                                  `}
                                 >
                                   {emoji}
                                 </button>
@@ -954,7 +1091,12 @@ export default function AdvancedMessagesClient() {
             <div className="border-t border-gray-700 bg-gray-900 p-4">
               {/* Reply Preview */}
               {replyingTo && (
-                <div className="mb-2 flex items-center justify-between rounded bg-gray-800 p-2">
+                <div
+                  className={`
+                    mb-2 flex items-center justify-between rounded bg-gray-800
+                    p-2
+                  `}
+                >
                   <div className="text-sm">
                     <p className="text-gray-400">
                       Replying to {replyingTo.senderName}:
@@ -965,7 +1107,10 @@ export default function AdvancedMessagesClient() {
                   </div>
                   <button
                     onClick={() => setReplyingTo(null)}
-                    className="text-gray-400 hover:text-white"
+                    className={`
+                      text-gray-400
+                      hover:text-white
+                    `}
                   >
                     ✕
                   </button>
@@ -981,7 +1126,10 @@ export default function AdvancedMessagesClient() {
                     </span>
                     <button
                       onClick={() => setSelectedFiles(null)}
-                      className="text-gray-400 hover:text-white"
+                      className={`
+                        text-gray-400
+                        hover:text-white
+                      `}
                     >
                       ✕
                     </button>
@@ -1001,7 +1149,12 @@ export default function AdvancedMessagesClient() {
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder={`💬 Message ${getDisplayName()}...`}
                   disabled={sendingMessage}
-                  className="flex-1 rounded-lg border-2 border-green-400 bg-gray-800 px-4 py-3 text-white focus:border-green-300 focus:outline-none disabled:opacity-50"
+                  className={`
+                    flex-1 rounded-lg border-2 border-green-400 bg-gray-800 px-4
+                    py-3 text-white
+                    focus:border-green-300 focus:outline-none
+                    disabled:opacity-50
+                  `}
                 />
 
                 <input
@@ -1016,7 +1169,10 @@ export default function AdvancedMessagesClient() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="rounded-lg bg-blue-600 px-4 py-3 text-white transition hover:bg-blue-500"
+                  className={`
+                    rounded-lg bg-blue-600 px-4 py-3 text-white transition
+                    hover:bg-blue-500
+                  `}
                 >
                   📎
                 </button>
@@ -1026,7 +1182,12 @@ export default function AdvancedMessagesClient() {
                   disabled={
                     (!messageInput.trim() && !selectedFiles) || sendingMessage
                   }
-                  className="rounded-lg bg-green-600 px-6 py-3 font-bold text-white transition hover:bg-green-500 disabled:bg-gray-600"
+                  className={`
+                    rounded-lg bg-green-600 px-6 py-3 font-bold text-white
+                    transition
+                    hover:bg-green-500
+                    disabled:bg-gray-600
+                  `}
                 >
                   {sendingMessage ? "Sending..." : "Send"}
                 </button>

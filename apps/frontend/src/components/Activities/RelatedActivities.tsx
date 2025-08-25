@@ -59,7 +59,7 @@ export default function RelatedActivities({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h3 className="text-xl font-bold text-kelly-green">Related Activities</h3>
+      <h3 className="text-xl font-bold text-primary">Related Activities</h3>
 
       {loading && <p>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}

@@ -57,7 +57,11 @@ const AchievementsClient: React.FC = () => {
       {!loading && !error && (
         <section
           aria-labelledby="achievements-title"
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className={`
+            grid grid-cols-1 gap-6
+            md:grid-cols-2
+            lg:grid-cols-3
+          `}
         >
           {achievements.length > 0 ? (
             achievements.map((ach) => <AchievementCard key={ach.id} {...ach} />)

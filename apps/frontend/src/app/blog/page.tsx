@@ -93,7 +93,10 @@ export default async function BlogPage() {
       <div className="mb-6 text-center">
         <Link
           href="/dashboard"
-          className="text-lg text-green-400 hover:underline"
+          className={`
+            text-lg text-green-400
+            hover:underline
+          `}
         >
           ← Back to Dashboard
         </Link>
@@ -101,11 +104,20 @@ export default async function BlogPage() {
 
       {/* Grid of posts if any */}
       {blogs.length > 0 && (
-        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          className={`
+            mb-6 grid grid-cols-1 gap-6
+            md:grid-cols-2
+            lg:grid-cols-3
+          `}
+        >
           {blogs.map((post) => (
             <div
               key={post.id}
-              className="rounded-lg bg-gray-900 p-4 shadow-lg hover:shadow-xl"
+              className={`
+                rounded-lg bg-gray-900 p-4 shadow-lg
+                hover:shadow-xl
+              `}
             >
               {post.imageUrl && (
                 <img
@@ -122,7 +134,10 @@ export default async function BlogPage() {
               <p className="mb-3 text-gray-300">{post.summary}</p>
               <Link
                 href={`/blog/${post.id}`}
-                className="text-green-400 hover:underline"
+                className={`
+                  text-green-400
+                  hover:underline
+                `}
               >
                 Read More →
               </Link>

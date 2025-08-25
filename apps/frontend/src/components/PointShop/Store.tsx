@@ -1,4 +1,3 @@
-// src/components/PointShop/Store.tsx
 "use client"
 
 import React, { useEffect, useState } from "react"
@@ -40,7 +39,7 @@ const Store: React.FC = () => {
   }
 
   return (
-    <section className="store-container" aria-labelledby="store-heading">
+    <section aria-labelledby="store-heading">
       <h2 id="store-heading">Store</h2>
 
       {loading ? (
@@ -52,7 +51,7 @@ const Store: React.FC = () => {
       ) : rewards.length === 0 ? (
         <p>No rewards available at the moment.</p>
       ) : (
-        <div className="rewards-list grid gap-4">
+        <div className="grid gap-4">
           {rewards.map((reward) => (
             <RewardCard
               key={reward.id}

@@ -23,9 +23,19 @@ export const metadata: Metadata = {
 // Dynamically load the client component - REMOVED kept loading
 const CreateGroupClient = dynamic(() => import("./client"), {
   loading: () => (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div
+      className={`
+        flex min-h-screen items-center justify-center bg-gradient-to-br
+        from-gray-900 via-gray-800 to-black
+      `}
+    >
       <div className="text-center">
-        <div className="mx-auto mb-4 size-12 animate-spin rounded-full border-b-2 border-green-400"></div>
+        <div
+          className={`
+            mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
+            border-green-400
+          `}
+        ></div>
         <p className="text-gray-400">Loading...</p>
       </div>
     </div>

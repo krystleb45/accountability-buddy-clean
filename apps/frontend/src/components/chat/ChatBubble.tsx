@@ -43,7 +43,11 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
     >
       {message}
       {timestamp && (
-        <span className="absolute bottom-0 right-2 text-xs text-gray-300 opacity-75">
+        <span
+          className={`
+            absolute right-2 bottom-0 text-xs text-gray-300 opacity-75
+          `}
+        >
           {timestamp}
         </span>
       )}

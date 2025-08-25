@@ -102,7 +102,10 @@ const BadgeShowcase: FC<BadgeShowcaseProps> = () => {
           <motion.div
             key={badge._id}
             whileHover={{ scale: 1.05 }}
-            className={`${styles.badgeItem} ${styles.showcaseBadge}`}
+            className={`
+              ${styles.badgeItem}
+              ${styles.showcaseBadge}
+            `}
             role="group"
             aria-describedby={`badge-desc-${badge._id}`}
           >

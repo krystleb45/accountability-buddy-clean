@@ -62,7 +62,6 @@ export default function ClientChat() {
       ]);
     });
     */
-
     ;(async () => {
       try {
         const res = await fetch("/api/friends")
@@ -92,7 +91,9 @@ export default function ClientChat() {
 
   // 3) fetch chat history when a friend is selected
   useEffect(() => {
-    if (!selectedFriend) return
+    if (!selectedFriend) {
+      return
+    }
     ;(async () => {
       try {
         const res = await fetch(`/api/chats/${selectedFriend.id}`)
@@ -147,11 +148,17 @@ export default function ClientChat() {
               <button
                 key={f.id}
                 onClick={() => setSelectedFriend(f)}
-                className={`mb-2 block w-full rounded-lg p-3 text-left ${
-                  selectedFriend?.id === f.id
-                    ? "bg-green-600"
-                    : "bg-gray-800 hover:bg-gray-700"
-                }`}
+                className={`
+                  mb-2 block w-full rounded-lg p-3 text-left
+                  ${
+                    selectedFriend?.id === f.id
+                      ? "bg-green-600"
+                      : `
+                        bg-gray-800
+                        hover:bg-gray-700
+                      `
+                  }
+                `}
               >
                 {f.name}
               </button>
@@ -162,25 +169,37 @@ export default function ClientChat() {
         </div>
 
         {/* Chat Window */}
-        <div className="ml-6 flex flex-1 flex-col rounded-lg bg-gray-800 p-6 shadow-lg">
+        <div
+          className={`
+            ml-6 flex flex-1 flex-col rounded-lg bg-gray-800 p-6 shadow-lg
+          `}
+        >
           {selectedFriend ? (
             <>
               <h2 className="mb-4 text-2xl font-bold text-green-400">
                 Chat with {selectedFriend.name}
               </h2>
 
-              <div className="mb-4 flex-1 overflow-y-auto rounded-lg border border-gray-600 p-4">
+              <div
+                className={`
+                  mb-4 flex-1 overflow-y-auto rounded-lg border border-gray-600
+                  p-4
+                `}
+              >
                 {messages.length === 0 ? (
                   <p className="text-gray-400">No messages yet.</p>
                 ) : (
                   messages.map((m) => (
                     <div
                       key={m.id}
-                      className={`mb-3 rounded-lg p-2 ${
-                        m.sender === "You"
-                          ? "bg-gray-700 text-right"
-                          : "bg-gray-700 text-left"
-                      }`}
+                      className={`
+                        mb-3 rounded-lg p-2
+                        ${
+                          m.sender === "You"
+                            ? "bg-gray-700 text-right"
+                            : "bg-gray-700 text-left"
+                        }
+                      `}
                     >
                       <span className="font-semibold text-green-400">
                         {m.sender}:
@@ -197,7 +216,10 @@ export default function ClientChat() {
 
               <div className="flex space-x-3">
                 <input
-                  className="flex-1 rounded-lg border border-gray-600 bg-black p-3 text-white"
+                  className={`
+                    flex-1 rounded-lg border border-gray-600 bg-black p-3
+                    text-white
+                  `}
                   placeholder="Type a message…"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
@@ -205,7 +227,11 @@ export default function ClientChat() {
                 />
                 <button
                   onClick={handleSendMessage}
-                  className="rounded-lg bg-green-500 px-6 py-3 font-semibold text-black transition hover:bg-green-400"
+                  className={`
+                    rounded-lg bg-green-500 px-6 py-3 font-semibold text-black
+                    transition
+                    hover:bg-green-400
+                  `}
                 >
                   Send
                 </button>

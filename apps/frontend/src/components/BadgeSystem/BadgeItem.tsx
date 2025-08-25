@@ -2,6 +2,7 @@
 "use client"
 
 import clsx from "clsx"
+import Image from "next/image"
 import React from "react"
 
 import type { Badge } from "@/types/Gamification.types"
@@ -25,8 +26,11 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onClick }) => {
       disabled={!isEarned}
       aria-label={`Badge: ${name}${isEarned && dateEarned ? `, earned on ${new Date(dateEarned).toLocaleDateString()}` : ""}`}
       className={clsx(
-        "flex flex-col items-center justify-center rounded-xl border p-4 shadow-sm transition-transform",
-        "focus:outline-none focus:ring-2 focus:ring-kelly-green focus:ring-offset-2",
+        `
+          flex flex-col items-center justify-center rounded-xl border p-4
+          shadow-sm transition-transform
+        `,
+        `focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-none`,
         "hover:scale-105",
         {
           "cursor-pointer border-green-400 bg-white": isEarned,
@@ -35,13 +39,13 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onClick }) => {
         },
       )}
     >
-      <img
+      <Image
         src={imageUrl || "/placeholder-badge.png"}
         alt={`${name} badge icon`}
         className="mb-2 size-16 object-contain"
         aria-hidden="true"
       />
-      <h3 className="text-md text-center font-semibold">{name}</h3>
+      <h3 className="text-center text-sm font-semibold">{name}</h3>
       {isEarned ? (
         dateEarned && (
           <p className="mt-1 text-sm text-green-700">

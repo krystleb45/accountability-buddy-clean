@@ -52,7 +52,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }
 
   return (
-    <div className="search-bar">
+    <div>
       <input
         type="text"
         value={query}
@@ -60,12 +60,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         aria-label="Search"
-        className="search-input"
       />
       <button
         onClick={triggerSearch}
         aria-label="Search Button"
-        className="search-button"
         disabled={!query.trim()}
       >
         Search

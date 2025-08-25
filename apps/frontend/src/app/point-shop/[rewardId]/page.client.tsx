@@ -1,4 +1,3 @@
-// File: src/app/point-shop/[rewardId]/page.client.tsx
 "use client"
 
 import { useRouter } from "next/navigation"
@@ -53,20 +52,20 @@ export default function RewardDetailPage({ rewardId }: Props) {
   const canRedeem = userPoints >= reward.pointsRequired
 
   return (
-    <div className="reward-detail-page min-h-screen bg-black p-6 text-white">
+    <div className="min-h-screen bg-black p-6 text-white">
       <h1 className="mb-4 text-3xl font-bold">{reward.title}</h1>
       <p className="mb-4">{reward.description}</p>
       <p className="mb-6">
         Points required: <strong>{reward.pointsRequired}</strong>
       </p>
       <button
+        type="button"
         onClick={() => redeem(reward.id, reward.pointsRequired)}
         disabled={!canRedeem}
-        className={`rounded-lg px-6 py-3 text-white ${
-          canRedeem
-            ? "bg-kelly-green hover:bg-opacity-80"
-            : "cursor-not-allowed bg-gray-700"
-        }`}
+        className={`
+          rounded-lg px-6 py-3 text-white
+          ${canRedeem ? `bg-primary/80` : "cursor-not-allowed bg-gray-700"}
+        `}
       >
         {canRedeem ? "Redeem Now" : "Not enough points"}
       </button>

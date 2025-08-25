@@ -19,11 +19,18 @@ const Post: React.FC<PostProps> = ({
   return (
     <div
       id={`post-${id}`}
-      className="mb-4 rounded-lg bg-gray-800 p-6 shadow-lg transition hover:scale-105"
+      className={`
+        mb-4 rounded-lg bg-gray-800 p-6 shadow-lg transition
+        hover:scale-105
+      `}
     >
-      <h2 className="text-xl font-bold text-kelly-green">{title}</h2>
+      <h2 className="text-xl font-bold text-primary">{title}</h2>
       <p className="mt-2 text-gray-300">{content}</p>
-      <div className="mt-4 flex items-center justify-between text-sm text-gray-400">
+      <div
+        className={`
+          mt-4 flex items-center justify-between text-sm text-gray-400
+        `}
+      >
         <span className="font-semibold">By: {author}</span>
         <span>{timestamp}</span>
       </div>

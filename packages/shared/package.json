@@ -2,14 +2,15 @@
   "name": "@ab/shared",
   "version": "1.0.0",
   "description": "shared across frontend and backend",
+  "author": "",
+  "license": "ISC",
   "exports": {
     "./pricing": "./src/pricing.ts"
   },
   "scripts": {
-    "lint": "eslint --fix"
+    "lint": "eslint --fix",
+    "format": "prettier --write"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@ab/eslint-config": "*"
   }

@@ -88,23 +88,21 @@ const Reminders: React.FC = () => {
   }
 
   return (
-    <div className="reminders">
+    <div>
       <h2>Reminders</h2>
       {loading ? (
         <p>Loading reminders...</p>
       ) : error ? (
-        <p className="error">{error}</p>
+        <p>{error}</p>
       ) : (
-        <ul className="reminder-list">
+        <ul>
           {reminders.map((reminder) => (
-            <li key={reminder.id} className="reminder-item">
-              <p className="reminder-message">{reminder.message}</p>
-              <p className="reminder-time">
-                {new Date(reminder.time).toLocaleString()}
-              </p>
+            <li key={reminder.id}>
+              <p>{reminder.message}</p>
+              <p>{new Date(reminder.time).toLocaleString()}</p>
               <button
+                type="button"
                 onClick={() => handleDeleteReminder(reminder.id)}
-                className="delete-button"
               >
                 Delete
               </button>
@@ -113,7 +111,7 @@ const Reminders: React.FC = () => {
         </ul>
       )}
 
-      <div className="new-reminder-form">
+      <div>
         <h3>Add a New Reminder</h3>
         <input
           type="text"
@@ -121,20 +119,14 @@ const Reminders: React.FC = () => {
           placeholder="Reminder message"
           value={newReminder.message}
           onChange={handleInputChange}
-          className="input"
         />
         <input
           type="datetime-local"
           name="time"
           value={newReminder.time}
           onChange={handleInputChange}
-          className="input"
         />
-        <button
-          onClick={handleSaveReminder}
-          disabled={saving}
-          className="save-button"
-        >
+        <button type="button" onClick={handleSaveReminder} disabled={saving}>
           {saving ? "Saving..." : "Save Reminder"}
         </button>
       </div>

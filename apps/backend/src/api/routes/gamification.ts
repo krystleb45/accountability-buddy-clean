@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express"
 
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
-import { check, query } from "express-validator"
+import { check } from "express-validator"
 import z from "zod"
 
 import gamificationController from "../controllers/gamificationController"

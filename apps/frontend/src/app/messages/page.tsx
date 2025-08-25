@@ -31,7 +31,11 @@ export default function MessagesPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        <div
+          className={`
+            flex min-h-screen items-center justify-center bg-black text-white
+          `}
+        >
           <div className="text-center">
             <div className="mb-4 text-4xl">💬</div>
             <div>Loading messages...</div>

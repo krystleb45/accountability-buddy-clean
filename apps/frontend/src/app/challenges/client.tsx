@@ -107,7 +107,12 @@ export default function ClientChallenges() {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 md:px-10">
+    <div
+      className={`
+        min-h-screen px-4 py-8
+        md:px-10
+      `}
+    >
       <h1 className="mb-6 text-center text-3xl font-bold text-green-400">
         🛡️ Explore Public Challenges
       </h1>
@@ -117,11 +122,17 @@ export default function ClientChallenges() {
           <button
             key={type}
             onClick={() => setFilter(type)}
-            className={`rounded-md px-4 py-2 text-sm font-medium ${
-              filter === type
-                ? "bg-green-500 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+            className={`
+              rounded-md px-4 py-2 text-sm font-medium
+              ${
+                filter === type
+                  ? "bg-green-500 text-white"
+                  : `
+                    bg-gray-800 text-gray-300
+                    hover:bg-gray-700
+                  `
+              }
+            `}
           >
             {type === "all"
               ? "All"

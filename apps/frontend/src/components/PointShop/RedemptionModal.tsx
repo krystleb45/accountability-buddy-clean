@@ -1,4 +1,3 @@
-// src/components/PointShop/RedemptionModal.tsx
 "use client"
 
 import React, { useEffect, useRef } from "react"
@@ -41,7 +40,9 @@ const RedemptionModal: React.FC<RedemptionModalProps> = ({
 
   return (
     <div
-      className="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className={`
+        fixed inset-0 z-50 flex items-center justify-center bg-black/50
+      `}
       role="presentation"
       onClick={onClose}
     >
@@ -51,7 +52,7 @@ const RedemptionModal: React.FC<RedemptionModalProps> = ({
         aria-labelledby="redemption-modal-title"
         ref={panelRef}
         tabIndex={-1}
-        className="modal-content w-full max-w-sm rounded-lg bg-white p-6 shadow-xl"
+        className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.stopPropagation()} // satisfies keyboard listener requirement
       >
@@ -66,14 +67,20 @@ const RedemptionModal: React.FC<RedemptionModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded bg-gray-200 px-4 py-2 transition hover:bg-gray-300"
+            className={`
+              rounded bg-gray-200 px-4 py-2 transition
+              hover:bg-gray-300
+            `}
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleRedeem}
-            className="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+            className={`
+              rounded bg-blue-600 px-4 py-2 text-white transition
+              hover:bg-blue-700
+            `}
           >
             Redeem
           </button>

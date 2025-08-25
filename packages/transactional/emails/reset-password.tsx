@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react"
+
 import {
   Body,
   Button,
@@ -10,73 +12,8 @@ import {
   Section,
   Text,
 } from "@react-email/components"
+
 import { colors } from "../colors"
-import { CSSProperties } from "react"
-
-interface ResetPasswordProps {
-  link: string
-  logoUrl?: string
-}
-
-export const ResetPassword = ({ link, logoUrl }: ResetPasswordProps) => (
-  <Html>
-    <Head />
-    <Body style={main}>
-      <Preview>Reset your password</Preview>
-      <Container style={container}>
-        {logoUrl && (
-          <Section style={logoContainer}>
-            <Img
-              src={logoUrl}
-              width="36"
-              height="36"
-              alt="Accountability Buddy Logo"
-              style={{
-                display: "block",
-                margin: "0 auto",
-              }}
-            />
-          </Section>
-        )}
-        <Heading style={h1}>Reset your password</Heading>
-
-        <Text style={heroText}>
-          Please click the button below to reset your password. This link
-          expires in 10 minutes.
-        </Text>
-
-        <Section style={buttonSection}>
-          <Button
-            href={link}
-            style={{
-              color: colors.background,
-              backgroundColor: colors.primary,
-              padding: "16px 24px",
-              fontSize: "20px",
-              fontWeight: "500",
-              borderRadius: "8px",
-            }}
-          >
-            Reset Password
-          </Button>
-        </Section>
-
-        <Section style={warningSection}>
-          <Text style={heroText}>
-            If you did not request a password reset, please ignore this email.
-          </Text>
-        </Section>
-      </Container>
-    </Body>
-  </Html>
-)
-
-ResetPassword.PreviewProps = {
-  link: "https://example.com?token=123456abcdef",
-  logoUrl: "http://localhost:3000/logo.png",
-} as ResetPasswordProps
-
-export default ResetPassword
 
 const main = {
   backgroundColor: colors.background,
@@ -118,3 +55,70 @@ const buttonSection: CSSProperties = {
 const warningSection = {
   margin: "48px 0",
 }
+
+interface ResetPasswordProps {
+  link: string
+  logoUrl?: string
+}
+
+export function ResetPassword({ link, logoUrl }: ResetPasswordProps) {
+  return (
+    <Html>
+      <Head />
+      <Body style={main}>
+        <Preview>Reset your password</Preview>
+        <Container style={container}>
+          {logoUrl && (
+            <Section style={logoContainer}>
+              <Img
+                src={logoUrl}
+                width="36"
+                height="36"
+                alt="Accountability Buddy Logo"
+                style={{
+                  display: "block",
+                  margin: "0 auto",
+                }}
+              />
+            </Section>
+          )}
+          <Heading style={h1}>Reset your password</Heading>
+
+          <Text style={heroText}>
+            Please click the button below to reset your password. This link
+            expires in 10 minutes.
+          </Text>
+
+          <Section style={buttonSection}>
+            <Button
+              href={link}
+              style={{
+                color: colors.background,
+                backgroundColor: colors.primary,
+                padding: "16px 24px",
+                fontSize: "20px",
+                fontWeight: "500",
+                borderRadius: "8px",
+              }}
+            >
+              Reset Password
+            </Button>
+          </Section>
+
+          <Section style={warningSection}>
+            <Text style={heroText}>
+              If you did not request a password reset, please ignore this email.
+            </Text>
+          </Section>
+        </Container>
+      </Body>
+    </Html>
+  )
+}
+
+ResetPassword.PreviewProps = {
+  link: "https://example.com?token=123456abcdef",
+  logoUrl: "http://localhost:3000/logo.png",
+} as ResetPasswordProps
+
+export default ResetPassword

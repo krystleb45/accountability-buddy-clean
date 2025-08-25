@@ -47,13 +47,20 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({ onSelect }) => {
         type="button"
         onClick={togglePicker}
         aria-label={showPicker ? "Close emoji picker" : "Open emoji picker"}
-        className="rounded bg-gray-200 p-2 focus:outline-none focus:ring"
+        className={`
+          rounded bg-gray-200 p-2
+          focus:ring focus:outline-none
+        `}
       >
         😊
       </button>
 
       {showPicker && (
-        <div className="absolute bottom-full left-0 z-50 mb-2 rounded-lg bg-white shadow-lg">
+        <div
+          className={`
+            absolute bottom-full left-0 z-50 mb-2 rounded-lg bg-white shadow-lg
+          `}
+        >
           <Picker data={data} onEmojiSelect={handleSelect} />
         </div>
       )}

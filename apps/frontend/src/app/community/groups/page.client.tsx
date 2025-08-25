@@ -1,4 +1,3 @@
-// src/app/community/groups/page.client.tsx - CLEAN VERSION
 "use client"
 
 import { AnimatePresence, motion } from "motion/react"
@@ -333,9 +332,19 @@ const GroupsClient: React.FC = () => {
 
   if (status === "loading" || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="text-center">
-          <div className="mx-auto mb-4 size-12 animate-spin rounded-full border-b-2 border-green-400"></div>
+          <div
+            className={`
+              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
+              border-green-400
+            `}
+          ></div>
           <p className="text-gray-400">Loading groups...</p>
         </div>
       </div>
@@ -343,13 +352,21 @@ const GroupsClient: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div
+      className={`
+        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
+        text-white
+      `}
+    >
       <div className="mx-auto max-w-7xl p-6">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/friends"
-            className="mb-4 inline-flex items-center text-green-400 hover:text-green-300"
+            className={`
+              mb-4 inline-flex items-center text-green-400
+              hover:text-green-300
+            `}
           >
             <FaArrowLeft className="mr-2" />
             Back to Friends
@@ -357,7 +374,11 @@ const GroupsClient: React.FC = () => {
 
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="mb-2 flex items-center text-4xl font-bold text-white">
+              <h1
+                className={`
+                  mb-2 flex items-center text-4xl font-bold text-white
+                `}
+              >
                 <FaUsers className="mr-3 text-green-400" />
                 Groups
               </h1>
@@ -368,7 +389,11 @@ const GroupsClient: React.FC = () => {
 
             <Link
               href="/community/groups/create"
-              className="flex items-center rounded-lg bg-green-600 px-6 py-3 text-white transition hover:bg-green-500"
+              className={`
+                flex items-center rounded-lg bg-green-600 px-6 py-3 text-white
+                transition
+                hover:bg-green-500
+              `}
             >
               <FaPlus className="mr-2" />
               Create Group
@@ -383,7 +408,10 @@ const GroupsClient: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mb-6 flex items-center justify-between rounded-lg bg-green-600 p-4 text-white"
+              className={`
+                mb-6 flex items-center justify-between rounded-lg bg-green-600
+                p-4 text-white
+              `}
             >
               <div className="flex items-center">
                 <FaCheck className="mr-2" />
@@ -391,7 +419,10 @@ const GroupsClient: React.FC = () => {
               </div>
               <button
                 onClick={() => setSuccessMessage(null)}
-                className="text-green-200 hover:text-white"
+                className={`
+                  text-green-200
+                  hover:text-white
+                `}
               >
                 <FaTimes />
               </button>
@@ -403,12 +434,19 @@ const GroupsClient: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4 text-white"
+              className={`
+                mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4
+                text-white
+              `}
             >
               {error}
               <button
+                type="button"
                 onClick={() => setError(null)}
-                className="text-red-200 hover:text-white"
+                className={`
+                  text-red-200
+                  hover:text-white
+                `}
               >
                 <FaTimes />
               </button>
@@ -422,12 +460,20 @@ const GroupsClient: React.FC = () => {
             <h2 className="mb-4 text-2xl font-semibold text-green-400">
               My Groups ({myGroups.length})
             </h2>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={`
+                grid grid-cols-1 gap-4
+                md:grid-cols-2
+                lg:grid-cols-3
+              `}
+            >
               {myGroups.map((group) => (
                 <motion.div
                   key={group.id}
                   whileHover={{ scale: 1.02 }}
-                  className="rounded-lg border border-green-600 bg-green-900 bg-opacity-30 p-4"
+                  className={`
+                    rounded-lg border border-green-600 bg-green-900/30 p-4
+                  `}
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <h3 className="font-semibold text-white">{group.name}</h3>
@@ -439,14 +485,22 @@ const GroupsClient: React.FC = () => {
                   <div className="flex gap-2">
                     <Link
                       href={`/community/groups/${group.id}`}
-                      className="flex-1 rounded bg-green-600 px-3 py-2 text-center text-sm text-white transition hover:bg-green-500"
+                      className={`
+                        flex-1 rounded bg-green-600 px-3 py-2 text-center
+                        text-sm text-white transition
+                        hover:bg-green-500
+                      `}
                     >
                       <FaComments className="mr-1 inline" />
                       Chat
                     </Link>
                     <button
                       onClick={() => handleLeaveGroup(group.id)}
-                      className="rounded bg-gray-600 px-3 py-2 text-sm text-white transition hover:bg-gray-500"
+                      className={`
+                        rounded bg-gray-600 px-3 py-2 text-sm text-white
+                        transition
+                        hover:bg-gray-500
+                      `}
                     >
                       Leave
                     </button>
@@ -460,30 +514,51 @@ const GroupsClient: React.FC = () => {
         {/* Search */}
         <div className="mb-6">
           <div className="relative">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaSearch
+              className={`
+                absolute top-1/2 left-4 -translate-y-1/2 text-gray-400
+              `}
+            />
             <input
               type="text"
               placeholder="Search groups, interests..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-gray-600 bg-gray-800 py-4 pl-12 pr-4 text-white placeholder:text-gray-400 focus:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+              className={`
+                w-full rounded-lg border border-gray-600 bg-gray-800 py-4 pr-4
+                pl-12 text-white
+                placeholder:text-gray-400
+                focus:border-green-400 focus:ring-2 focus:ring-green-400
+                focus:outline-none
+              `}
             />
           </div>
         </div>
 
         {/* Categories */}
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-7">
+        <div
+          className={`
+            mb-8 grid grid-cols-2 gap-4
+            md:grid-cols-7
+          `}
+        >
           {categories.map((category) => (
             <motion.button
               key={category.id}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedCategory(category.id as CategoryType)}
-              className={`rounded-lg border p-4 transition-all ${
-                selectedCategory === category.id
-                  ? "border-green-400 bg-green-600 text-white"
-                  : "border-gray-700 bg-gray-800 text-gray-300 hover:border-green-400"
-              }`}
+              className={`
+                rounded-lg border p-4 transition-all
+                ${
+                  selectedCategory === category.id
+                    ? "border-green-400 bg-green-600 text-white"
+                    : `
+                      border-gray-700 bg-gray-800 text-gray-300
+                      hover:border-green-400
+                    `
+                }
+              `}
             >
               <div className="mb-2 text-2xl">{category.icon}</div>
               <h3 className="mb-1 text-sm font-semibold">{category.label}</h3>
@@ -516,14 +591,24 @@ const GroupsClient: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={`
+                grid grid-cols-1 gap-6
+                md:grid-cols-2
+                lg:grid-cols-3
+              `}
+            >
               {filteredGroups.map((group, index) => (
                 <motion.div
                   key={group.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="rounded-lg border border-gray-700 bg-gray-800 p-6 transition-all duration-200 hover:border-green-400"
+                  className={`
+                    rounded-lg border border-gray-700 bg-gray-800 p-6
+                    transition-all duration-200
+                    hover:border-green-400
+                  `}
                 >
                   <div className="mb-4 flex items-start justify-between">
                     <div className="flex-1">
@@ -557,7 +642,12 @@ const GroupsClient: React.FC = () => {
                   </div>
 
                   {/* Activity */}
-                  <div className="mb-4 flex items-center justify-between text-xs text-gray-400">
+                  <div
+                    className={`
+                      mb-4 flex items-center justify-between text-xs
+                      text-gray-400
+                    `}
+                  >
                     <span>
                       <FaCalendarAlt className="mr-1 inline" />
                       Last active {group.lastActivity}
@@ -574,14 +664,21 @@ const GroupsClient: React.FC = () => {
                       <>
                         <Link
                           href={`/community/groups/${group.id}`}
-                          className="flex-1 rounded bg-green-600 px-4 py-2 text-center text-white transition hover:bg-green-500"
+                          className={`
+                            flex-1 rounded bg-green-600 px-4 py-2 text-center
+                            text-white transition
+                            hover:bg-green-500
+                          `}
                         >
                           <FaComments className="mr-1 inline" />
                           Open Chat
                         </Link>
                         <button
                           onClick={() => handleLeaveGroup(group.id)}
-                          className="rounded bg-gray-600 px-4 py-2 text-white transition hover:bg-gray-500"
+                          className={`
+                            rounded bg-gray-600 px-4 py-2 text-white transition
+                            hover:bg-gray-500
+                          `}
                         >
                           Leave
                         </button>
@@ -590,11 +687,18 @@ const GroupsClient: React.FC = () => {
                       <button
                         onClick={() => handleJoinGroup(group.id)}
                         disabled={joinRequests.has(group.id)}
-                        className={`w-full rounded px-4 py-2 transition ${
-                          joinRequests.has(group.id)
-                            ? "cursor-not-allowed bg-gray-600"
-                            : "bg-green-600 hover:bg-green-500"
-                        } text-white`}
+                        className={`
+                          w-full rounded px-4 py-2 transition
+                          ${
+                            joinRequests.has(group.id)
+                              ? "cursor-not-allowed bg-gray-600"
+                              : `
+                                bg-green-600
+                                hover:bg-green-500
+                              `
+                          }
+                          text-white
+                        `}
                       >
                         {joinRequests.has(group.id)
                           ? "Joining..."

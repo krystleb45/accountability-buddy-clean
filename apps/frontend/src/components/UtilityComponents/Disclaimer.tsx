@@ -1,4 +1,3 @@
-// src/components/UtilityComponents/Disclaimer.tsx
 import React from "react"
 
 import "./Disclaimer.css"
@@ -9,7 +8,7 @@ import "./Disclaimer.css"
  */
 const Disclaimer: React.FC = () => {
   return (
-    <aside className="disclaimer" aria-labelledby="disclaimer-title">
+    <aside aria-labelledby="disclaimer-title">
       <h2 id="disclaimer-title">Disclaimer</h2>
       <p>
         This platform is intended for informational and peer-to-peer support

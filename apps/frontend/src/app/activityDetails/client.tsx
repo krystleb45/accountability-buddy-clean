@@ -106,7 +106,12 @@ export default function ClientActivityList() {
         </header>
 
         {/* Controls */}
-        <section className="mb-6 flex flex-col gap-4 md:flex-row md:justify-between">
+        <section
+          className={`
+            mb-6 flex flex-col gap-4
+            md:flex-row md:justify-between
+          `}
+        >
           <select
             aria-label="Filter activities"
             className="rounded bg-gray-700 p-2 text-white"
@@ -162,7 +167,10 @@ export default function ClientActivityList() {
           />
           <button
             onClick={handleCreate}
-            className="w-full rounded-lg bg-green-500 px-4 py-2 transition hover:bg-green-400"
+            className={`
+              w-full rounded-lg bg-green-500 px-4 py-2 transition
+              hover:bg-green-400
+            `}
           >
             Add Activity
           </button>
@@ -171,7 +179,11 @@ export default function ClientActivityList() {
         {/* List */}
         <section
           aria-labelledby="activities-list-heading"
-          className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          className={`
+            grid grid-cols-1 gap-6
+            md:grid-cols-2
+            lg:grid-cols-3
+          `}
         >
           <h2 id="activities-list-heading" className="sr-only">
             Activities List
@@ -179,7 +191,10 @@ export default function ClientActivityList() {
           {sorted.map((activity) => (
             <motion.div
               key={activity._id}
-              className="rounded-lg bg-gray-800 p-6 shadow-lg transition-transform hover:scale-105 hover:shadow-xl"
+              className={`
+                rounded-lg bg-gray-800 p-6 shadow-lg transition-transform
+                hover:scale-105 hover:shadow-xl
+              `}
               whileHover={{ scale: 1.05 }}
             >
               <h3 className="text-2xl font-bold text-green-300">
@@ -192,16 +207,20 @@ export default function ClientActivityList() {
                 Created on: {new Date(activity.createdAt).toLocaleDateString()}
               </p>
               <p
-                className={`mt-1 text-sm ${
-                  activity.completed ? "text-green-400" : "text-yellow-400"
-                }`}
+                className={`
+                  mt-1 text-sm
+                  ${activity.completed ? "text-green-400" : "text-yellow-400"}
+                `}
               >
                 {activity.completed ? "Completed" : "In Progress"}
               </p>
               {!activity.completed && (
                 <button
                   onClick={() => handleComplete(activity._id)}
-                  className="mt-4 w-full rounded-lg bg-blue-500 px-4 py-2 transition hover:bg-blue-400"
+                  className={`
+                    mt-4 w-full rounded-lg bg-blue-500 px-4 py-2 transition
+                    hover:bg-blue-400
+                  `}
                 >
                   Mark as Complete
                 </button>

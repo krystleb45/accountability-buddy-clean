@@ -20,7 +20,11 @@ export default function TermsOfServicePage() {
       <header className="mb-8 text-center">
         <h1 className="text-3xl font-bold text-gray-800">Terms of Service</h1>
       </header>
-      <main className="mx-auto max-w-4xl space-y-6 rounded-lg bg-white p-8 shadow-lg">
+      <main
+        className={`
+          mx-auto max-w-4xl space-y-6 rounded-lg bg-white p-8 shadow-lg
+        `}
+      >
         <section>
           <h2 className="mb-2 text-2xl font-semibold">1. Introduction</h2>
           <p className="text-gray-700">
@@ -38,7 +42,10 @@ export default function TermsOfServicePage() {
             contact us at{" "}
             <a
               href="mailto:support@accountabilitybuddy.com"
-              className="text-blue-600 hover:underline"
+              className={`
+                text-blue-600
+                hover:underline
+              `}
             >
               support@accountabilitybuddy.com
             </a>

@@ -16,7 +16,10 @@ const MilitarySupportLayout: React.FC<{ children: React.ReactNode }> = ({
             <div className="flex items-center space-x-4">
               <Link
                 href="/"
-                className="text-xl font-bold transition-colors hover:text-slate-200"
+                className={`
+                  text-xl font-bold transition-colors
+                  hover:text-slate-200
+                `}
               >
                 Accountability Buddy
               </Link>
@@ -28,7 +31,10 @@ const MilitarySupportLayout: React.FC<{ children: React.ReactNode }> = ({
             <div className="flex items-center space-x-4">
               <Link
                 href="/login"
-                className="rounded-lg bg-slate-600 px-4 py-2 text-sm transition-colors hover:bg-slate-500"
+                className={`
+                  rounded-lg bg-slate-600 px-4 py-2 text-sm transition-colors
+                  hover:bg-slate-500
+                `}
               >
                 Member Login
               </Link>

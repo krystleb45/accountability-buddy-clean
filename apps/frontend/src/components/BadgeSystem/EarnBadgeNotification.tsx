@@ -1,9 +1,9 @@
-// src/components/BadgeSystem/EarnBadgeNotification.tsx
 "use client"
 
-import React from "react"
+import Image from "next/image"
 
 import "./EarnBadgeNotification.css"
+import React from "react"
 
 export interface EarnBadgeNotificationProps {
   badgeName: string
@@ -25,24 +25,19 @@ const EarnBadgeNotification: React.FC<EarnBadgeNotificationProps> = ({
   onViewDetails,
 }): React.ReactElement => {
   return (
-    <div className="earn-badge-notification" role="alert" aria-live="assertive">
-      <div className="notification-content">
-        <img
-          src={badgeIcon}
-          alt={`${badgeName} badge icon`}
-          className="badge-icon"
-        />
+    <div role="alert" aria-live="assertive">
+      <div>
+        <Image src={badgeIcon} alt={`${badgeName} badge icon`} />
         <div>
-          <h3 className="notification-title">{message}</h3>
-          <p className="badge-name">Badge: {badgeName}</p>
+          <h3>{message}</h3>
+          <p>Badge: {badgeName}</p>
         </div>
       </div>
 
-      <div className="notification-actions">
+      <div>
         {onViewDetails && (
           <button
             type="button"
-            className="notification-button view-details"
             onClick={onViewDetails}
             aria-label="View badge details"
           >
@@ -50,12 +45,7 @@ const EarnBadgeNotification: React.FC<EarnBadgeNotificationProps> = ({
           </button>
         )}
 
-        <button
-          type="button"
-          className="notification-button close"
-          onClick={onClose}
-          aria-label="Close notification"
-        >
+        <button type="button" onClick={onClose} aria-label="Close notification">
           Close
         </button>
       </div>

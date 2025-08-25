@@ -15,9 +15,13 @@ export function Textarea({
   return (
     <textarea
       ref={ref}
-      className={`w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm transition-shadow placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 ${
-        className
-      }`}
+      className={`
+        w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
+        transition-shadow
+        placeholder:text-gray-500
+        focus:ring-2 focus:ring-blue-600 focus:outline-none
+        ${className}
+      `}
       {...props}
     />
   )

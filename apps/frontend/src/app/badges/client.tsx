@@ -33,7 +33,11 @@ export default function ClientBadgePage() {
   const lockedBadges = badges.filter((b) => !b.isEarned)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white to-slate-100 px-6 py-8">
+    <div
+      className={`
+        min-h-screen bg-gradient-to-br from-white to-slate-100 px-6 py-8
+      `}
+    >
       <h1 className="mb-6 text-center text-3xl font-bold text-gray-800">
         Your Badges
       </h1>

@@ -63,9 +63,11 @@ export default function EditActivityForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-lg rounded-lg bg-gray-900 p-6 text-white shadow-lg"
+      className={`
+        mx-auto max-w-lg rounded-lg bg-gray-900 p-6 text-white shadow-lg
+      `}
     >
-      <h2 className="mb-4 text-2xl font-semibold text-kelly-green">
+      <h2 className="mb-4 text-2xl font-semibold text-primary">
         Edit Activity
       </h2>
 
@@ -85,7 +87,10 @@ export default function EditActivityForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Enter activity title"
-          className="w-full rounded border border-gray-700 bg-gray-800 p-2 text-white focus:border-kelly-green focus:outline-none"
+          className={`
+            w-full rounded border border-gray-700 bg-gray-800 p-2 text-white
+            focus:border-primary focus:outline-none
+          `}
           required
         />
       </div>
@@ -99,7 +104,10 @@ export default function EditActivityForm({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter activity description"
-          className="w-full rounded border border-gray-700 bg-gray-800 p-2 text-white focus:border-kelly-green focus:outline-none"
+          className={`
+            w-full rounded border border-gray-700 bg-gray-800 p-2 text-white
+            focus:border-primary focus:outline-none
+          `}
           rows={3}
           required
         />
@@ -113,7 +121,10 @@ export default function EditActivityForm({
           id="edit-status"
           value={status}
           onChange={(e) => setStatus(e.target.value as ActivityStatus)}
-          className="w-full rounded border border-gray-700 bg-gray-800 p-2 text-white focus:border-kelly-green focus:outline-none"
+          className={`
+            w-full rounded border border-gray-700 bg-gray-800 p-2 text-white
+            focus:border-primary focus:outline-none
+          `}
         >
           <option value="pending">Pending</option>
           <option value="in-progress">In Progress</option>
@@ -124,7 +135,9 @@ export default function EditActivityForm({
       <div className="mt-4 flex justify-between">
         <button
           type="submit"
-          className="rounded-lg bg-kelly-green px-4 py-2 font-bold text-black transition hover:bg-opacity-80"
+          className={`
+            rounded-lg bg-primary px-4 py-2 font-bold text-black transition
+          `}
         >
           Save Changes
         </button>
@@ -132,7 +145,10 @@ export default function EditActivityForm({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-400"
+            className={`
+              rounded-lg bg-red-500 px-4 py-2 text-white transition
+              hover:bg-red-400
+            `}
           >
             Cancel
           </button>

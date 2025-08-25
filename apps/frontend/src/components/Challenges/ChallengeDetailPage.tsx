@@ -84,7 +84,12 @@ function ChallengeDetailPage(): ReactElement | null {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
+    <div
+      className={`
+        mx-auto max-w-3xl px-4 py-10
+        md:px-0
+      `}
+    >
       <h1 className="mb-2 text-3xl font-bold text-green-400">
         {challenge.title}
       </h1>
@@ -120,7 +125,10 @@ function ChallengeDetailPage(): ReactElement | null {
             {challenge.milestones.map((m, idx) => (
               <li
                 key={idx}
-                className="flex items-center justify-between rounded-lg bg-gray-800 px-4 py-2"
+                className={`
+                  flex items-center justify-between rounded-lg bg-gray-800 px-4
+                  py-2
+                `}
               >
                 <div>
                   <p className="text-white">{m.title}</p>
@@ -129,11 +137,14 @@ function ChallengeDetailPage(): ReactElement | null {
                   </p>
                 </div>
                 <span
-                  className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                    m.completed
-                      ? "bg-green-500 text-white"
-                      : "bg-yellow-500 text-black"
-                  }`}
+                  className={`
+                    rounded-full px-2 py-1 text-xs font-semibold
+                    ${
+                      m.completed
+                        ? "bg-green-500 text-white"
+                        : "bg-yellow-500 text-black"
+                    }
+                  `}
                 >
                   {m.completed ? (
                     <>
@@ -154,10 +165,20 @@ function ChallengeDetailPage(): ReactElement | null {
       {/* Join/Leave */}
       {challenge.status === "ongoing" && (
         <div className="mt-8 flex gap-4">
-          <button className="rounded-lg bg-green-500 px-4 py-2 text-white hover:bg-green-400">
+          <button
+            className={`
+              rounded-lg bg-green-500 px-4 py-2 text-white
+              hover:bg-green-400
+            `}
+          >
             Join Challenge
           </button>
-          <button className="rounded-lg bg-red-500 px-4 py-2 text-white hover:bg-red-400">
+          <button
+            className={`
+              rounded-lg bg-red-500 px-4 py-2 text-white
+              hover:bg-red-400
+            `}
+          >
             Leave Challenge
           </button>
         </div>

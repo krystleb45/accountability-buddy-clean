@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "lint": "turbo run lint",
-    "format": "turbo run format"
+    "lint": "turbo run lint --",
+    "format": "turbo run format --",
+    "prepare": "husky",
+    "generate-mongoose-types": "turbo run generate-types & turbo run generate-types-for-frontend"
   },
   "workspaces": [
     "apps/*",
@@ -18,15 +20,10 @@
     "prettier": "3.6.2",
     "turbo": "^2.5.5"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "**/*.{js,ts}": [
-      "eslint --fix",
-      "prettier --write"
+    "!.husky/**": [
+      "npm run lint --",
+      "npm run format --"
     ]
   },
   "packageManager": "npm@10.9.2"

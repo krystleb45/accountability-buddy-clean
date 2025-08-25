@@ -22,14 +22,24 @@ export default function ActivityList({
 }: ActivityListProps): ReactElement {
   if (activities.length === 0) {
     return (
-      <div className="rounded-lg bg-gray-800 p-6 text-center text-gray-400 shadow-lg">
+      <div
+        className={`
+          rounded-lg bg-gray-800 p-6 text-center text-gray-400 shadow-lg
+        `}
+      >
         No activities found. Start by adding one!
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div
+      className={`
+        grid grid-cols-1 gap-6
+        md:grid-cols-2
+        lg:grid-cols-3
+      `}
+    >
       {activities.map((activity) => (
         <ActivityItem
           key={activity.id}

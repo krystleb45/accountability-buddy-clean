@@ -126,18 +126,22 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     >
       {children}
       {/* Render notification banners */}
-      <div className="fixed right-4 top-4 z-50 flex flex-col gap-2">
+      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
         {notifications.map((n) => (
           <div
             key={n.id}
-            className={`rounded px-4 py-2 shadow ${
-              {
-                success: "bg-green-500",
-                error: "bg-red-500",
-                warning: "bg-yellow-500",
-                info: "bg-blue-500",
-              }[n.type]
-            } flex items-center justify-between`}
+            className={`
+              rounded px-4 py-2 shadow
+              ${
+                {
+                  success: "bg-green-500",
+                  error: "bg-red-500",
+                  warning: "bg-yellow-500",
+                  info: "bg-blue-500",
+                }[n.type]
+              }
+              flex items-center justify-between
+            `}
           >
             <span className="mr-2">
               {UI_CONSTANTS.ICONS[n.type.toUpperCase() as "INFO"]}

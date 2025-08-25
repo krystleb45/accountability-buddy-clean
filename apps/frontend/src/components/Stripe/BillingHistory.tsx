@@ -73,7 +73,10 @@ const BillingHistory: React.FC = () => {
                 })}
               </td>
               <td
-                className={`${styles.status} ${styles[status.toLowerCase()] ?? ""}`}
+                className={`
+                  ${styles.status}
+                  ${styles[status.toLowerCase()] ?? ""}
+                `}
               >
                 {status}
               </td>

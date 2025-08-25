@@ -1,4 +1,3 @@
-// src/app/notifications/page.client.tsx
 "use client"
 
 import { motion } from "motion/react"
@@ -74,18 +73,29 @@ export default function NotificationsClient() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-6 flex items-center justify-between rounded-lg bg-gray-900 p-6 shadow-md"
+        className={`
+          mb-6 flex items-center justify-between rounded-lg bg-gray-900 p-6
+          shadow-md
+        `}
       >
-        <h1 className="text-3xl font-bold text-kelly-green">Notifications</h1>
+        <h1 className="text-3xl font-bold text-primary">Notifications</h1>
         <div className="flex items-center gap-4">
           <button
             onClick={handleMarkAllRead}
-            className="text-sm text-gray-400 hover:underline"
+            className={`
+              text-sm text-gray-400
+              hover:underline
+            `}
           >
             Mark all read
           </button>
           <Link href="/dashboard" passHref>
-            <span className="font-semibold text-kelly-green hover:underline">
+            <span
+              className={`
+                font-semibold text-primary
+                hover:underline
+              `}
+            >
               Dashboard
             </span>
           </Link>
@@ -102,11 +112,14 @@ export default function NotificationsClient() {
           <button
             key={type}
             onClick={() => setFilter(type)}
-            className={`mr-2 rounded-lg px-4 py-2 transition ${
-              filter === type
-                ? "bg-kelly-green text-black"
-                : "bg-gray-700 text-white"
-            }`}
+            className={`
+              mr-2 rounded-lg px-4 py-2 transition
+              ${
+                filter === type
+                  ? "bg-primary text-black"
+                  : "bg-gray-700 text-white"
+              }
+            `}
             aria-label={`Show ${type} notifications`}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -127,9 +140,10 @@ export default function NotificationsClient() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
-              className={`mb-4 rounded-lg p-4 shadow-md transition-colors ${
-                n.read ? "bg-gray-700" : "bg-gray-900"
-              }`}
+              className={`
+                mb-4 rounded-lg p-4 shadow-md transition-colors
+                ${n.read ? "bg-gray-700" : "bg-gray-900"}
+              `}
             >
               <div className="flex justify-between">
                 <p className="text-white">{n.message}</p>

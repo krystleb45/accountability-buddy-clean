@@ -376,7 +376,11 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
   // Loading state
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gray-900 text-white
+        `}
+      >
         <div className="text-center">
           <Loader2 className="mx-auto mb-4 size-12 animate-spin text-green-500" />
           <p className="text-gray-300">Connecting to {roomDetails.name}...</p>
@@ -391,7 +395,11 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
   // Error state (only if completely failed to connect)
   if (error && !socket && !isConnecting) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gray-900 text-white
+        `}
+      >
         <div className="max-w-md text-center">
           <h2 className="mb-4 text-xl font-bold text-red-400">
             Connection Failed
@@ -400,13 +408,19 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
           <div className="flex justify-center gap-4">
             <button
               onClick={retryConnection}
-              className="rounded-lg bg-green-600 px-6 py-2 text-white transition-colors hover:bg-green-700"
+              className={`
+                rounded-lg bg-green-600 px-6 py-2 text-white transition-colors
+                hover:bg-green-700
+              `}
             >
               Try Again
             </button>
             <Link
               href="/military-support/chat"
-              className="rounded-lg bg-gray-600 px-6 py-2 text-white transition-colors hover:bg-gray-700"
+              className={`
+                rounded-lg bg-gray-600 px-6 py-2 text-white transition-colors
+                hover:bg-gray-700
+              `}
             >
               Back to Rooms
             </Link>
@@ -429,7 +443,10 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
               <Link
                 href="/military-support/chat"
                 onClick={leaveRoom}
-                className="text-blue-400 transition-colors hover:text-blue-300"
+                className={`
+                  text-blue-400 transition-colors
+                  hover:text-blue-300
+                `}
               >
                 <ArrowLeft className="size-5" />
               </Link>
@@ -440,7 +457,11 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
                   <h1 className="text-xl font-bold text-green-400">
                     {roomDetails.name}
                   </h1>
-                  <div className="flex items-center space-x-4 text-sm text-gray-400">
+                  <div
+                    className={`
+                      flex items-center space-x-4 text-sm text-gray-400
+                    `}
+                  >
                     <div className="flex items-center">
                       <Users className="mr-1 size-4" />
                       {memberCount} online
@@ -469,7 +490,11 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
             {!isConnected && !isConnecting && (
               <button
                 onClick={retryConnection}
-                className="rounded bg-green-600 px-4 py-2 text-sm text-white transition-colors hover:bg-green-700"
+                className={`
+                  rounded bg-green-600 px-4 py-2 text-sm text-white
+                  transition-colors
+                  hover:bg-green-700
+                `}
               >
                 Reconnect
               </button>
@@ -485,7 +510,10 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
             <span>{error}</span>
             <button
               onClick={() => setError(null)}
-              className="ml-4 text-red-200 hover:text-white"
+              className={`
+                ml-4 text-red-200
+                hover:text-white
+              `}
             >
               ×
             </button>
@@ -502,7 +530,11 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
 
       {/* Chat Messages */}
       <div className="mx-auto w-full max-w-6xl flex-1 p-6">
-        <div className="flex h-96 flex-col rounded-lg border-2 border-gray-700 bg-gray-800">
+        <div
+          className={`
+            flex h-96 flex-col rounded-lg border-2 border-gray-700 bg-gray-800
+          `}
+        >
           <div className="flex-1 space-y-4 overflow-y-auto p-4">
             {/* Loading state */}
             {loading && (
@@ -528,20 +560,28 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
                     message.id ||
                     `msg-${message.timestamp?.getTime() || Date.now()}-${Math.random()}`
                   }
-                  className={`flex ${
-                    message.displayName === anonymousUser?.displayName
-                      ? "justify-end"
-                      : "justify-start"
-                  }`}
+                  className={`
+                    flex
+                    ${
+                      message.displayName === anonymousUser?.displayName
+                        ? "justify-end"
+                        : "justify-start"
+                    }
+                  `}
                 >
                   <div
-                    className={`max-w-xs rounded-lg px-4 py-2 lg:max-w-md ${
-                      message.displayName === "System"
-                        ? "mx-auto bg-blue-700 text-center text-blue-100"
-                        : message.displayName === anonymousUser?.displayName
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-700 text-white"
-                    } ${message.isFlagged ? "border-2 border-red-500" : ""}`}
+                    className={`
+                      max-w-xs rounded-lg px-4 py-2
+                      lg:max-w-md
+                      ${
+                        message.displayName === "System"
+                          ? "mx-auto bg-blue-700 text-center text-blue-100"
+                          : message.displayName === anonymousUser?.displayName
+                            ? "bg-green-600 text-white"
+                            : "bg-gray-700 text-white"
+                      }
+                      ${message.isFlagged ? "border-2 border-red-500" : ""}
+                    `}
                   >
                     {message.displayName !== "System" && (
                       <div className="mb-1 text-xs opacity-75">
@@ -575,13 +615,23 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
                   isConnected ? "Type your message..." : "Connecting..."
                 }
                 disabled={!isConnected}
-                className="flex-1 rounded border border-gray-600 bg-gray-700 px-4 py-2 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+                className={`
+                  flex-1 rounded border border-gray-600 bg-gray-700 px-4 py-2
+                  text-white
+                  placeholder:text-gray-400
+                  focus:ring-2 focus:ring-green-500 focus:outline-none
+                  disabled:opacity-50
+                `}
                 maxLength={500}
               />
               <button
                 onClick={sendMessage}
                 disabled={!newMessage.trim() || !isConnected}
-                className="rounded bg-green-600 px-6 py-2 text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-600"
+                className={`
+                  rounded bg-green-600 px-6 py-2 text-white transition-colors
+                  hover:bg-green-700
+                  disabled:cursor-not-allowed disabled:bg-gray-600
+                `}
               >
                 <Send className="size-4" />
               </button>
@@ -591,7 +641,12 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
                 You're chatting as <strong>{anonymousUser?.displayName}</strong>{" "}
                 • Press Enter to send
               </span>
-              <button className="flex items-center transition-colors hover:text-red-400">
+              <button
+                className={`
+                  flex items-center transition-colors
+                  hover:text-red-400
+                `}
+              >
                 <Flag className="mr-1 size-3" />
                 Report
               </button>
@@ -600,9 +655,17 @@ export default function MilitaryChatRoom({ roomId, roomDetails }: Props) {
         </div>
 
         {/* Safety Reminder */}
-        <div className="mt-6 rounded-lg border-2 border-yellow-600 bg-yellow-900 p-4">
+        <div
+          className={`
+            mt-6 rounded-lg border-2 border-yellow-600 bg-yellow-900 p-4
+          `}
+        >
           <div className="flex items-start">
-            <AlertTriangle className="mr-3 mt-0.5 size-5 shrink-0 text-yellow-500" />
+            <AlertTriangle
+              className={`
+              mt-0.5 mr-3 size-5 shrink-0 text-yellow-500
+            `}
+            />
             <div className="text-sm">
               <p className="mb-2 font-semibold text-yellow-300">Remember:</p>
               <p className="leading-relaxed text-yellow-100">

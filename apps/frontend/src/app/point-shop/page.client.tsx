@@ -52,13 +52,19 @@ export default function PointShopClient() {
   if (error) return <p className="p-6 text-center text-red-500">{error}</p>
 
   return (
-    <div className="point-shop min-h-screen bg-black p-6 text-white">
-      <h1 className="mb-4 text-3xl font-bold text-kelly-green">Point Shop</h1>
+    <div className="min-h-screen bg-black p-6 text-white">
+      <h1 className="mb-4 text-3xl font-bold text-primary">Point Shop</h1>
       <p className="mb-6">
         Your points balance: <strong>{userPoints}</strong>
       </p>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={`
+          grid grid-cols-1 gap-6
+          md:grid-cols-2
+          lg:grid-cols-3
+        `}
+      >
         {rewards.map((r) => (
           <RewardCard
             key={r.id}

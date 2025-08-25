@@ -198,13 +198,21 @@ const CreateGroupClient: React.FC = () => {
     form.name.trim().length >= 3 && form.description.trim().length >= 10
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div
+      className={`
+        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
+        text-white
+      `}
+    >
       <div className="mx-auto max-w-4xl p-6">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/community/groups"
-            className="mb-4 inline-flex items-center text-green-400 hover:text-green-300"
+            className={`
+              mb-4 inline-flex items-center text-green-400
+              hover:text-green-300
+            `}
           >
             <FaArrowLeft className="mr-2" />
             Back to Groups
@@ -226,7 +234,9 @@ const CreateGroupClient: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 flex items-center rounded-lg bg-green-600 p-4 text-white"
+            className={`
+              mb-6 flex items-center rounded-lg bg-green-600 p-4 text-white
+            `}
           >
             <FaCheck className="mr-2" />
             {success}
@@ -237,7 +247,10 @@ const CreateGroupClient: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4 text-white"
+            className={`
+              mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4
+              text-white
+            `}
           >
             <div className="flex items-center">
               <FaTimes className="mr-2" />
@@ -245,7 +258,10 @@ const CreateGroupClient: React.FC = () => {
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-red-200 hover:text-white"
+              className={`
+                text-red-200
+                hover:text-white
+              `}
             >
               <FaTimes />
             </button>
@@ -269,7 +285,12 @@ const CreateGroupClient: React.FC = () => {
               value={form.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
               placeholder="Enter group name..."
-              className="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-3 text-white placeholder:text-gray-400 focus:border-green-400 focus:outline-none"
+              className={`
+                w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-3
+                text-white
+                placeholder:text-gray-400
+                focus:border-green-400 focus:outline-none
+              `}
               maxLength={50}
               required
             />
@@ -287,7 +308,12 @@ const CreateGroupClient: React.FC = () => {
               value={form.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
               placeholder="Describe what your group is about..."
-              className="h-24 w-full resize-none rounded-lg border border-gray-600 bg-gray-700 px-4 py-3 text-white placeholder:text-gray-400 focus:border-green-400 focus:outline-none"
+              className={`
+                h-24 w-full resize-none rounded-lg border border-gray-600
+                bg-gray-700 px-4 py-3 text-white
+                placeholder:text-gray-400
+                focus:border-green-400 focus:outline-none
+              `}
               maxLength={200}
               required
             />
@@ -301,7 +327,13 @@ const CreateGroupClient: React.FC = () => {
             <label className="mb-3 block text-sm font-medium text-gray-300">
               Category *
             </label>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={`
+                grid grid-cols-1 gap-3
+                md:grid-cols-2
+                lg:grid-cols-3
+              `}
+            >
               {categories.map((category) => (
                 <motion.button
                   key={category.id}
@@ -309,11 +341,17 @@ const CreateGroupClient: React.FC = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleInputChange("category", category.id)}
-                  className={`rounded-lg border p-4 text-left transition-all ${
-                    form.category === category.id
-                      ? "border-green-400 bg-green-600 text-white"
-                      : "border-gray-600 bg-gray-700 text-gray-300 hover:border-green-400"
-                  }`}
+                  className={`
+                    rounded-lg border p-4 text-left transition-all
+                    ${
+                      form.category === category.id
+                        ? "border-green-400 bg-green-600 text-white"
+                        : `
+                          border-gray-600 bg-gray-700 text-gray-300
+                          hover:border-green-400
+                        `
+                    }
+                  `}
                 >
                   <div className="mb-2 text-2xl">{category.icon}</div>
                   <h3 className="text-sm font-semibold">{category.label}</h3>
@@ -340,7 +378,10 @@ const CreateGroupClient: React.FC = () => {
                       handleInputChange("isPublic", true)
                       handleInputChange("inviteOnly", false)
                     }}
-                    className="text-green-500 focus:ring-green-400"
+                    className={`
+                      text-green-500
+                      focus:ring-green-400
+                    `}
                   />
                   <label htmlFor="public" className="ml-3 cursor-pointer">
                     <div className="flex items-center">
@@ -365,7 +406,10 @@ const CreateGroupClient: React.FC = () => {
                       handleInputChange("isPublic", false)
                       handleInputChange("inviteOnly", true)
                     }}
-                    className="text-green-500 focus:ring-green-400"
+                    className={`
+                      text-green-500
+                      focus:ring-green-400
+                    `}
                   />
                   <label htmlFor="private" className="ml-3 cursor-pointer">
                     <div className="flex items-center">
@@ -395,14 +439,23 @@ const CreateGroupClient: React.FC = () => {
                   e.key === "Enter" && (e.preventDefault(), handleAddTag())
                 }
                 placeholder="Add a tag..."
-                className="flex-1 rounded border border-gray-600 bg-gray-700 px-3 py-2 text-white placeholder:text-gray-400 focus:border-green-400 focus:outline-none"
+                className={`
+                  flex-1 rounded border border-gray-600 bg-gray-700 px-3 py-2
+                  text-white
+                  placeholder:text-gray-400
+                  focus:border-green-400 focus:outline-none
+                `}
                 maxLength={20}
               />
               <button
                 type="button"
                 onClick={handleAddTag}
                 disabled={!newTag.trim() || form.tags.length >= 5}
-                className="rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-500 disabled:bg-gray-600"
+                className={`
+                  rounded bg-green-600 px-4 py-2 text-white transition
+                  hover:bg-green-500
+                  disabled:bg-gray-600
+                `}
               >
                 <FaPlus />
               </button>
@@ -413,14 +466,20 @@ const CreateGroupClient: React.FC = () => {
                 {form.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="flex items-center rounded-full bg-blue-600 px-3 py-1 text-sm text-white"
+                    className={`
+                      flex items-center rounded-full bg-blue-600 px-3 py-1
+                      text-sm text-white
+                    `}
                   >
                     <FaTag className="mr-1" />
                     {tag}
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
-                      className="ml-2 text-blue-200 hover:text-white"
+                      className={`
+                        ml-2 text-blue-200
+                        hover:text-white
+                      `}
                     >
                       <FaTimes />
                     </button>
@@ -446,22 +505,36 @@ const CreateGroupClient: React.FC = () => {
             <div className="flex gap-3">
               <Link
                 href="/community/groups"
-                className="rounded-lg bg-gray-600 px-6 py-3 text-white transition hover:bg-gray-500"
+                className={`
+                  rounded-lg bg-gray-600 px-6 py-3 text-white transition
+                  hover:bg-gray-500
+                `}
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={!isFormValid || loading}
-                className={`flex items-center rounded-lg px-6 py-3 transition ${
-                  isFormValid && !loading
-                    ? "bg-green-600 text-white hover:bg-green-500"
-                    : "cursor-not-allowed bg-gray-600 text-gray-400"
-                }`}
+                className={`
+                  flex items-center rounded-lg px-6 py-3 transition
+                  ${
+                    isFormValid && !loading
+                      ? `
+                        bg-green-600 text-white
+                        hover:bg-green-500
+                      `
+                      : "cursor-not-allowed bg-gray-600 text-gray-400"
+                  }
+                `}
               >
                 {loading ? (
                   <>
-                    <div className="mr-2 size-4 animate-spin rounded-full border-b-2 border-white"></div>
+                    <div
+                      className={`
+                        mr-2 size-4 animate-spin rounded-full border-b-2
+                        border-white
+                      `}
+                    ></div>
                     Creating...
                   </>
                 ) : (

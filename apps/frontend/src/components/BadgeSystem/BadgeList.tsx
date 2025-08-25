@@ -40,11 +40,17 @@ const BadgeList: FC<BadgeListProps> = ({ badges, onBadgeClick }) => {
             key={cat}
             type="button"
             onClick={() => setActiveTab(cat)}
-            className={`rounded-full px-4 py-2 font-semibold transition ${
-              activeTab === cat
-                ? "bg-green-500 text-white shadow-md"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+            className={`
+              rounded-full px-4 py-2 font-semibold transition
+              ${
+                activeTab === cat
+                  ? "bg-green-500 text-white shadow-md"
+                  : `
+                    bg-gray-800 text-gray-300
+                    hover:bg-gray-700
+                  `
+              }
+            `}
           >
             {cat}
           </button>
@@ -52,7 +58,13 @@ const BadgeList: FC<BadgeListProps> = ({ badges, onBadgeClick }) => {
       </div>
 
       {/* Badge grid */}
-      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
+      <div
+        className={`
+          grid grid-cols-2 gap-6
+          sm:grid-cols-3
+          md:grid-cols-4
+        `}
+      >
         {filtered.map((badge) => (
           <BadgeItem key={badge.id} badge={badge} onClick={onBadgeClick} />
         ))}

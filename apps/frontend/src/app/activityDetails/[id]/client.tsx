@@ -38,7 +38,11 @@ export default function ClientActivityDetail({ id }: ClientProps) {
   }, [id])
 
   return (
-    <div className="mx-auto max-w-3xl rounded-lg bg-gray-900 p-6 text-white shadow-lg">
+    <div
+      className={`
+        mx-auto max-w-3xl rounded-lg bg-gray-900 p-6 text-white shadow-lg
+      `}
+    >
       <h1
         id="activity-details-heading"
         className="mb-4 text-center text-3xl font-bold text-green-400"
@@ -99,7 +103,11 @@ export default function ClientActivityDetail({ id }: ClientProps) {
       <div className="mt-6 text-center">
         <button
           onClick={() => router.back()}
-          className="rounded-lg bg-green-500 px-6 py-2 font-semibold text-black transition hover:bg-green-400"
+          className={`
+            rounded-lg bg-green-500 px-6 py-2 font-semibold text-black
+            transition
+            hover:bg-green-400
+          `}
           type="button"
         >
           ⬅ Back to Activity Feed

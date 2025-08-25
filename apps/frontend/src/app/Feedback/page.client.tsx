@@ -42,7 +42,10 @@ export default function FeedbackClient() {
       <div className="mb-4 w-full max-w-md">
         <Link
           href="/dashboard"
-          className="inline-block text-blue-600 hover:text-blue-800 hover:underline"
+          className={`
+            inline-block text-blue-600
+            hover:text-blue-800 hover:underline
+          `}
         >
           ← Back to Dashboard
         </Link>
@@ -78,7 +81,10 @@ export default function FeedbackClient() {
                   value={session?.user?.name ?? ""}
                   disabled
                   placeholder="Your name"
-                  className="rounded-md bg-white text-gray-900 placeholder:text-gray-400"
+                  className={`
+                    rounded-md bg-white text-gray-900
+                    placeholder:text-gray-400
+                  `}
                 />
               </div>
 
@@ -96,13 +102,19 @@ export default function FeedbackClient() {
                   placeholder="Your thoughts..."
                   rows={5}
                   required
-                  className="rounded-md bg-white text-gray-900 placeholder:text-gray-400"
+                  className={`
+                    rounded-md bg-white text-gray-900
+                    placeholder:text-gray-400
+                  `}
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700"
+                className={`
+                  w-full rounded-md bg-blue-600 py-2 text-white
+                  hover:bg-blue-700
+                `}
                 disabled={loading}
               >
                 {loading ? "Submitting…" : "Submit Feedback"}

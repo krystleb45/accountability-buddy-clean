@@ -56,7 +56,10 @@ const Button: React.FC<ButtonProps> = ({
     >
       {loading && (
         <span
-          className="mr-2 size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+          className={`
+            mr-2 size-4 animate-spin rounded-full border-2 border-current
+            border-t-transparent
+          `}
           role="status"
           aria-hidden="true"
         />

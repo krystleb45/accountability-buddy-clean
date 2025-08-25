@@ -60,12 +60,18 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ chatId }) => {
           placeholder="Type a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1 rounded-lg border border-gray-700 bg-gray-800 p-2 text-white"
+          className={`
+            flex-1 rounded-lg border border-gray-700 bg-gray-800 p-2 text-white
+          `}
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
         />
         <button
           onClick={handleSendMessage}
-          className="rounded-lg bg-[#4CBB17] p-2 text-black transition hover:bg-green-400 disabled:opacity-50"
+          className={`
+            rounded-lg bg-[#4CBB17] p-2 text-black transition
+            hover:bg-green-400
+            disabled:opacity-50
+          `}
           disabled={!newMessage.trim()}
         >
           Send

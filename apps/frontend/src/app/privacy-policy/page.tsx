@@ -27,7 +27,11 @@ export default function PrivacyPolicyPage() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-4xl space-y-8 rounded-lg bg-white p-8 shadow-md">
+      <main
+        className={`
+          mx-auto max-w-4xl space-y-8 rounded-lg bg-white p-8 shadow-md
+        `}
+      >
         <section aria-labelledby="intro">
           <h2 id="intro" className="mb-4 text-xl font-semibold text-gray-800">
             Introduction
@@ -94,7 +98,10 @@ export default function PrivacyPolicyPage() {
             us at{" "}
             <a
               href="mailto:support@accountabilitybuddy.com"
-              className="text-blue-600 hover:underline"
+              className={`
+                text-blue-600
+                hover:underline
+              `}
             >
               support@accountabilitybuddy.com
             </a>

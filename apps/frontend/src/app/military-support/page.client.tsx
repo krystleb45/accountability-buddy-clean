@@ -178,7 +178,12 @@ export default function MilitarySupportPageClient() {
   return (
     <div className="space-y-6">
       {/* Compact Hero Section */}
-      <div className="rounded-lg border-t-4 border-emerald-500 bg-white p-6 text-center shadow-sm">
+      <div
+        className={`
+          rounded-lg border-t-4 border-emerald-500 bg-white p-6 text-center
+          shadow-sm
+        `}
+      >
         <h1 className="mb-3 text-3xl font-bold text-slate-800">
           Military Support Center
         </h1>
@@ -205,11 +210,18 @@ export default function MilitarySupportPageClient() {
           </div>
         </div>
 
-        <div className="mb-4 grid gap-4 md:grid-cols-3">
+        <div
+          className={`
+            mb-4 grid gap-4
+            md:grid-cols-3
+          `}
+        >
           {CRISIS_RESOURCES.map((resource, index) => (
             <div
               key={index}
-              className="rounded-lg border border-blue-200 bg-white p-4 text-center"
+              className={`
+                rounded-lg border border-blue-200 bg-white p-4 text-center
+              `}
             >
               <h3 className="mb-2 text-sm font-semibold text-blue-800">
                 {resource.title}
@@ -237,7 +249,11 @@ export default function MilitarySupportPageClient() {
       {disclaimer && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-start">
-            <AlertTriangle className="mr-2 mt-0.5 size-4 shrink-0 text-amber-500" />
+            <AlertTriangle
+              className={`
+              mt-0.5 mr-2 size-4 shrink-0 text-amber-500
+            `}
+            />
             <p className="text-sm text-amber-800">
               <strong>Please note:</strong> {disclaimer.disclaimer}
             </p>
@@ -268,11 +284,20 @@ export default function MilitarySupportPageClient() {
             </div>
           ) : (
             <>
-              <div className="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div
+                className={`
+                  mb-4 grid gap-4
+                  md:grid-cols-2
+                  lg:grid-cols-3
+                `}
+              >
                 {displayedResources.map((resource) => (
                   <div
                     key={resource._id}
-                    className="rounded-lg border border-slate-200 p-4 transition-all hover:border-emerald-300 hover:shadow-md"
+                    className={`
+                      rounded-lg border border-slate-200 p-4 transition-all
+                      hover:border-emerald-300 hover:shadow-md
+                    `}
                   >
                     <a
                       href={resource.url}
@@ -280,13 +305,23 @@ export default function MilitarySupportPageClient() {
                       rel="noopener noreferrer"
                       className="block text-center"
                     >
-                      <h3 className="mb-2 text-base font-semibold text-emerald-700 hover:text-emerald-800">
+                      <h3
+                        className={`
+                          mb-2 text-base font-semibold text-emerald-700
+                          hover:text-emerald-800
+                        `}
+                      >
                         {resource.title}
                       </h3>
                       <p className="mb-3 line-clamp-2 text-sm text-slate-600">
                         {resource.description}
                       </p>
-                      <div className="flex items-center justify-center text-sm font-medium text-emerald-600">
+                      <div
+                        className={`
+                          flex items-center justify-center text-sm font-medium
+                          text-emerald-600
+                        `}
+                      >
                         <span>Learn more</span>
                         <ExternalLink className="ml-1 size-3" />
                       </div>
@@ -300,7 +335,11 @@ export default function MilitarySupportPageClient() {
                 <div className="text-center">
                   <button
                     onClick={() => setShowAllResources(!showAllResources)}
-                    className="inline-flex items-center rounded-lg bg-slate-100 px-4 py-2 text-slate-700 transition-colors hover:bg-slate-200"
+                    className={`
+                      inline-flex items-center rounded-lg bg-slate-100 px-4 py-2
+                      text-slate-700 transition-colors
+                      hover:bg-slate-200
+                    `}
                   >
                     {showAllResources ? (
                       <>
@@ -322,7 +361,11 @@ export default function MilitarySupportPageClient() {
       )}
 
       {/* Compact Anonymous Peer Support Section */}
-      <section className="rounded-lg border-t-4 border-emerald-500 bg-emerald-50 p-6 shadow-sm">
+      <section
+        className={`
+          rounded-lg border-t-4 border-emerald-500 bg-emerald-50 p-6 shadow-sm
+        `}
+      >
         <div className="mb-6 text-center">
           <div className="mb-3 flex items-center justify-center">
             <Users className="mr-2 size-5 text-emerald-600" />
@@ -337,8 +380,17 @@ export default function MilitarySupportPageClient() {
         </div>
 
         {/* Compact Feature highlights */}
-        <div className="mb-6 grid gap-4 md:grid-cols-3">
-          <div className="rounded-lg border border-emerald-200 bg-white p-4 text-center">
+        <div
+          className={`
+            mb-6 grid gap-4
+            md:grid-cols-3
+          `}
+        >
+          <div
+            className={`
+              rounded-lg border border-emerald-200 bg-white p-4 text-center
+            `}
+          >
             <Shield className="mx-auto mb-2 size-6 text-emerald-600" />
             <h3 className="mb-1 text-sm font-semibold text-emerald-800">
               Anonymous
@@ -346,7 +398,11 @@ export default function MilitarySupportPageClient() {
             <p className="text-xs text-emerald-700">No registration required</p>
           </div>
 
-          <div className="rounded-lg border border-emerald-200 bg-white p-4 text-center">
+          <div
+            className={`
+              rounded-lg border border-emerald-200 bg-white p-4 text-center
+            `}
+          >
             <Heart className="mx-auto mb-2 size-6 text-emerald-600" />
             <h3 className="mb-1 text-sm font-semibold text-emerald-800">
               Peer Support
@@ -356,7 +412,11 @@ export default function MilitarySupportPageClient() {
             </p>
           </div>
 
-          <div className="rounded-lg border border-emerald-200 bg-white p-4 text-center">
+          <div
+            className={`
+              rounded-lg border border-emerald-200 bg-white p-4 text-center
+            `}
+          >
             <MessageSquare className="mx-auto mb-2 size-6 text-emerald-600" />
             <h3 className="mb-1 text-sm font-semibold text-emerald-800">
               Safe Space
@@ -369,7 +429,11 @@ export default function MilitarySupportPageClient() {
         <div className="text-center">
           <Link
             href="/military-support/chat"
-            className="inline-flex items-center rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-emerald-700 hover:shadow-md"
+            className={`
+              inline-flex items-center rounded-lg bg-emerald-600 px-6 py-3
+              font-semibold text-white shadow-sm transition-all
+              hover:bg-emerald-700 hover:shadow-md
+            `}
           >
             <MessageSquare className="mr-2 size-4" />
             Join Anonymous Chat Rooms
@@ -386,7 +450,10 @@ export default function MilitarySupportPageClient() {
           <div className="mt-4 border-t border-emerald-200 pt-4 text-center">
             <button
               onClick={() => setShowMoodModal(true)}
-              className="text-sm text-emerald-600 underline hover:text-emerald-700"
+              className={`
+                text-sm text-emerald-600 underline
+                hover:text-emerald-700
+              `}
             >
               Update my daily mood check-in
             </button>

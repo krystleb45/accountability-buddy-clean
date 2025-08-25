@@ -1,5 +1,3 @@
-// src/app/community/client.tsx
-
 "use client"
 
 import { motion } from "motion/react"
@@ -133,11 +131,22 @@ export default function CommunityClient() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <div
+        className={`
+          min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
+          text-white
+        `}
+      >
         <div className="mx-auto max-w-6xl p-6">
           <div className="animate-pulse">
             <div className="mb-6 h-8 w-1/3 rounded bg-gray-700"></div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div
+              className={`
+                grid grid-cols-1 gap-6
+                md:grid-cols-2
+                lg:grid-cols-4
+              `}
+            >
               {[...Array.from({ length: 4 })].map((_, i) => (
                 <div key={i} className="h-48 rounded-lg bg-gray-700"></div>
               ))}
@@ -150,7 +159,12 @@ export default function CommunityClient() {
 
   if (status === "unauthenticated") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black text-white
+        `}
+      >
         <div className="text-center">
           <h2 className="mb-4 text-2xl font-bold">Authentication Required</h2>
           <p className="mb-6 text-gray-400">
@@ -158,7 +172,10 @@ export default function CommunityClient() {
           </p>
           <Link
             href="/login"
-            className="rounded-lg bg-green-600 px-6 py-3 text-white transition hover:bg-green-500"
+            className={`
+              rounded-lg bg-green-600 px-6 py-3 text-white transition
+              hover:bg-green-500
+            `}
           >
             Go to Login
           </Link>
@@ -168,13 +185,21 @@ export default function CommunityClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div
+      className={`
+        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
+        text-white
+      `}
+    >
       <div className="mx-auto max-w-6xl p-6">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/dashboard"
-            className="mb-4 inline-flex items-center text-green-400 hover:text-green-300"
+            className={`
+              mb-4 inline-flex items-center text-green-400
+              hover:text-green-300
+            `}
           >
             ← Back to Dashboard
           </Link>
@@ -188,14 +213,22 @@ export default function CommunityClient() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4 text-white">
+          <div
+            className={`
+              mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4
+              text-white
+            `}
+          >
             <div className="flex items-center">
               <span className="mr-2">⚠️</span>
               {error}
             </div>
             <button
               onClick={() => window.location.reload()}
-              className="text-red-200 underline hover:text-white"
+              className={`
+                text-red-200 underline
+                hover:text-white
+              `}
             >
               Refresh
             </button>
@@ -203,7 +236,12 @@ export default function CommunityClient() {
         )}
 
         {/* Stats Bar */}
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div
+          className={`
+            mb-8 grid grid-cols-2 gap-4
+            md:grid-cols-4
+          `}
+        >
           <div className="rounded-lg bg-gray-800 p-4 text-center">
             <div className="text-2xl font-bold text-blue-400">
               {stats.totalFriends}
@@ -231,7 +269,13 @@ export default function CommunityClient() {
         </div>
 
         {/* Quick Actions Grid */}
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div
+          className={`
+            mb-8 grid grid-cols-1 gap-6
+            md:grid-cols-2
+            lg:grid-cols-4
+          `}
+        >
           {quickActions.map((action, index) => (
             <motion.div
               key={action.title}
@@ -243,7 +287,12 @@ export default function CommunityClient() {
             >
               <Link href={action.href}>
                 <div
-                  className={`${action.color} rounded-lg p-6 text-center shadow-lg transition-all duration-200 hover:shadow-xl`}
+                  className={`
+                    ${action.color}
+                    rounded-lg p-6 text-center shadow-lg transition-all
+                    duration-200
+                    hover:shadow-xl
+                  `}
                 >
                   <div className="mb-3 text-4xl">{action.icon}</div>
                   <h3 className="mb-2 text-xl font-bold">{action.title}</h3>
@@ -251,7 +300,11 @@ export default function CommunityClient() {
                     {action.description}
                   </p>
                   {action.count !== undefined && (
-                    <div className="rounded-full bg-white bg-opacity-20 px-3 py-1 text-sm font-medium">
+                    <div
+                      className={`
+                        rounded-full bg-white/20 px-3 py-1 text-sm font-medium
+                      `}
+                    >
                       {action.count}{" "}
                       {action.count === 1
                         ? action.title.slice(0, -1)
@@ -265,7 +318,12 @@ export default function CommunityClient() {
         </div>
 
         {/* Recent Activity Section */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div
+          className={`
+            grid grid-cols-1 gap-6
+            lg:grid-cols-2
+          `}
+        >
           {/* Recent Messages */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -275,7 +333,11 @@ export default function CommunityClient() {
             <h3 className="mb-4 flex items-center text-xl font-bold">
               💬 Recent Messages
               {stats.unreadMessages > 0 && (
-                <span className="ml-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white">
+                <span
+                  className={`
+                    ml-2 rounded-full bg-red-500 px-2 py-1 text-xs text-white
+                  `}
+                >
                   {stats.unreadMessages}
                 </span>
               )}
@@ -285,9 +347,16 @@ export default function CommunityClient() {
                 recentMessages.map((message) => (
                   <div
                     key={message.id}
-                    className="flex items-center space-x-3 rounded-lg bg-gray-700 p-3"
+                    className={`
+                      flex items-center space-x-3 rounded-lg bg-gray-700 p-3
+                    `}
                   >
-                    <div className="flex size-8 items-center justify-center rounded-full bg-blue-500 text-sm font-bold">
+                    <div
+                      className={`
+                        flex size-8 items-center justify-center rounded-full
+                        bg-blue-500 text-sm font-bold
+                      `}
+                    >
                       {message.senderAvatar ? (
                         <img
                           src={message.senderAvatar}
@@ -326,7 +395,10 @@ export default function CommunityClient() {
             </div>
             <Link
               href="/messages"
-              className="mt-4 block text-center text-sm text-blue-400 hover:text-blue-300"
+              className={`
+                mt-4 block text-center text-sm text-blue-400
+                hover:text-blue-300
+              `}
             >
               View All Messages →
             </Link>
@@ -346,10 +418,17 @@ export default function CommunityClient() {
                 onlineFriends.map((friend) => (
                   <div
                     key={friend.id}
-                    className="flex items-center space-x-3 rounded-lg bg-gray-700 p-3"
+                    className={`
+                      flex items-center space-x-3 rounded-lg bg-gray-700 p-3
+                    `}
                   >
                     <div className="relative">
-                      <div className="flex size-8 items-center justify-center rounded-full bg-purple-500 text-sm font-bold">
+                      <div
+                        className={`
+                          flex size-8 items-center justify-center rounded-full
+                          bg-purple-500 text-sm font-bold
+                        `}
+                      >
                         {friend.avatar ? (
                           <img
                             src={friend.avatar}
@@ -360,7 +439,12 @@ export default function CommunityClient() {
                           (friend.name || "U").charAt(0).toUpperCase()
                         )}
                       </div>
-                      <div className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-gray-700 bg-green-400"></div>
+                      <div
+                        className={`
+                          absolute -right-1 -bottom-1 size-3 rounded-full
+                          border-2 border-gray-700 bg-green-400
+                        `}
+                      ></div>
                     </div>
                     <div className="flex-1">
                       <div className="text-sm font-medium">
@@ -370,7 +454,12 @@ export default function CommunityClient() {
                         {friend.status || "Online"}
                       </div>
                     </div>
-                    <button className="rounded-full bg-blue-600 px-3 py-1 text-xs hover:bg-blue-700">
+                    <button
+                      className={`
+                        rounded-full bg-blue-600 px-3 py-1 text-xs
+                        hover:bg-blue-700
+                      `}
+                    >
                       Chat
                     </button>
                   </div>
@@ -385,7 +474,10 @@ export default function CommunityClient() {
             </div>
             <Link
               href="/friends"
-              className="mt-4 block text-center text-sm text-blue-400 hover:text-blue-300"
+              className={`
+                mt-4 block text-center text-sm text-blue-400
+                hover:text-blue-300
+              `}
             >
               View All Friends →
             </Link>

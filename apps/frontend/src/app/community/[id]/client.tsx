@@ -84,16 +84,24 @@ export default function ClientCommunityDetail({ community }: Props) {
       </h1>
       <p className="mb-6 text-gray-600">{community.description}</p>
 
-      <div className="flex-1 space-y-2 overflow-y-auto bg-white p-4 shadow-inner">
+      <div
+        className={`
+        flex-1 space-y-2 overflow-y-auto bg-white p-4 shadow-inner
+      `}
+      >
         {messages.map((msg) => (
           <div
             key={msg._id}
-            className={`flex items-start ${msg.senderId === userId ? "justify-end" : ""}`}
+            className={`
+              flex items-start
+              ${msg.senderId === userId ? `justify-end` : ""}
+            `}
           >
             <div
-              className={`max-w-xs rounded-lg p-2 ${
-                msg.senderId === userId ? "bg-blue-200" : "bg-gray-200"
-              }`}
+              className={`
+                max-w-xs rounded-lg p-2
+                ${msg.senderId === userId ? "bg-blue-200" : "bg-gray-200"}
+              `}
             >
               <p className="text-sm font-semibold text-gray-800">
                 {msg.senderName}
@@ -120,7 +128,10 @@ export default function ClientCommunityDetail({ community }: Props) {
         />
         <button
           onClick={handleSend}
-          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+          className={`
+            rounded bg-green-500 px-4 py-2 text-white
+            hover:bg-green-600
+          `}
         >
           Send
         </button>

@@ -208,9 +208,19 @@ export default function GroupDetailClient() {
 
   if (status === "loading" || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="text-center">
-          <div className="mx-auto mb-4 size-12 animate-spin rounded-full border-b-2 border-green-400"></div>
+          <div
+            className={`
+              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
+              border-green-400
+            `}
+          ></div>
           <p className="text-gray-400">Loading group details...</p>
         </div>
       </div>
@@ -219,7 +229,12 @@ export default function GroupDetailClient() {
 
   if (status !== "authenticated") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="text-center">
           <p className="text-gray-400">Please log in to view group details.</p>
         </div>
@@ -229,7 +244,12 @@ export default function GroupDetailClient() {
 
   if (error && !group) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="max-w-lg text-center">
           <FaExclamationTriangle className="mx-auto mb-4 text-6xl text-red-500" />
           <h2 className="mb-4 text-2xl font-bold text-red-400">
@@ -239,13 +259,20 @@ export default function GroupDetailClient() {
           <div className="flex justify-center gap-4">
             <button
               onClick={loadGroupData}
-              className="rounded-lg bg-green-600 px-6 py-3 text-white transition hover:bg-green-500"
+              className={`
+                rounded-lg bg-green-600 px-6 py-3 text-white transition
+                hover:bg-green-500
+              `}
             >
               Try Again
             </button>
             <button
               onClick={() => router.push("/community/groups")}
-              className="flex items-center rounded-lg bg-gray-600 px-6 py-3 text-white transition hover:bg-gray-500"
+              className={`
+                flex items-center rounded-lg bg-gray-600 px-6 py-3 text-white
+                transition
+                hover:bg-gray-500
+              `}
             >
               <FaArrowLeft className="mr-2" />
               Back to Groups
@@ -257,13 +284,21 @@ export default function GroupDetailClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div
+      className={`
+        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
+        text-white
+      `}
+    >
       <div className="mx-auto max-w-7xl p-6">
         {/* Header */}
         <div className="mb-8">
           <button
             onClick={() => router.push("/community/groups")}
-            className="mb-4 inline-flex items-center text-green-400 hover:text-green-300"
+            className={`
+              mb-4 inline-flex items-center text-green-400
+              hover:text-green-300
+            `}
           >
             <FaArrowLeft className="mr-2" />
             Back to Groups
@@ -313,7 +348,10 @@ export default function GroupDetailClient() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mb-6 flex items-center justify-between rounded-lg bg-green-600 p-4 text-white"
+              className={`
+                mb-6 flex items-center justify-between rounded-lg bg-green-600
+                p-4 text-white
+              `}
             >
               <div className="flex items-center">
                 <FaCheck className="mr-2" />
@@ -321,7 +359,10 @@ export default function GroupDetailClient() {
               </div>
               <button
                 onClick={() => setSuccessMessage(null)}
-                className="text-green-200 hover:text-white"
+                className={`
+                  text-green-200
+                  hover:text-white
+                `}
               >
                 <FaTimes />
               </button>
@@ -333,12 +374,18 @@ export default function GroupDetailClient() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4 text-white"
+              className={`
+                mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4
+                text-white
+              `}
             >
               {error}
               <button
                 onClick={() => setError(null)}
-                className="text-red-200 hover:text-white"
+                className={`
+                  text-red-200
+                  hover:text-white
+                `}
               >
                 <FaTimes />
               </button>
@@ -346,13 +393,26 @@ export default function GroupDetailClient() {
           )}
         </AnimatePresence>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+        <div
+          className={`
+            grid grid-cols-1 gap-6
+            lg:grid-cols-4
+          `}
+        >
           {/* Messages Section */}
           <div className="lg:col-span-3">
-            <div className="flex h-96 flex-col rounded-lg border border-gray-700 bg-gray-800">
+            <div
+              className={`
+                flex h-96 flex-col rounded-lg border border-gray-700 bg-gray-800
+              `}
+            >
               {/* Messages Header */}
               <div className="border-b border-gray-700 p-4">
-                <h2 className="flex items-center text-xl font-semibold text-green-400">
+                <h2
+                  className={`
+                    flex items-center text-xl font-semibold text-green-400
+                  `}
+                >
                   <FaComments className="mr-2" />
                   Messages ({messages.length})
                 </h2>
@@ -369,7 +429,12 @@ export default function GroupDetailClient() {
                       className="rounded-lg bg-gray-700 p-3"
                     >
                       <div className="mb-2 flex items-center gap-2">
-                        <div className="flex size-6 items-center justify-center rounded-full bg-green-500 text-xs font-bold">
+                        <div
+                          className={`
+                            flex size-6 items-center justify-center rounded-full
+                            bg-green-500 text-xs font-bold
+                          `}
+                        >
                           {message.sender?.username?.charAt(0)?.toUpperCase() ||
                             "?"}
                         </div>
@@ -403,13 +468,21 @@ export default function GroupDetailClient() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Type your message..."
-                    className="flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                    className={`
+                      flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white
+                      focus:ring-2 focus:ring-green-400 focus:outline-none
+                    `}
                     disabled={sendingMessage}
                   />
                   <button
                     type="submit"
                     disabled={!newMessage.trim() || sendingMessage}
-                    className="flex items-center rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-gray-600"
+                    className={`
+                      flex items-center rounded-lg bg-green-600 px-4 py-2
+                      text-white transition
+                      hover:bg-green-500
+                      disabled:cursor-not-allowed disabled:bg-gray-600
+                    `}
                   >
                     <FaPaperPlane
                       className={sendingMessage ? "animate-pulse" : ""}
@@ -423,7 +496,11 @@ export default function GroupDetailClient() {
           {/* Members Section */}
           <div className="lg:col-span-1">
             <div className="rounded-lg border border-gray-700 bg-gray-800 p-4">
-              <h2 className="mb-4 flex items-center text-xl font-semibold text-green-400">
+              <h2
+                className={`
+                  mb-4 flex items-center text-xl font-semibold text-green-400
+                `}
+              >
                 <FaUsers className="mr-2" />
                 Members ({members.length})
               </h2>
@@ -435,9 +512,16 @@ export default function GroupDetailClient() {
                       key={member._id}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="flex items-center gap-3 rounded bg-gray-700 p-2"
+                      className={`
+                        flex items-center gap-3 rounded bg-gray-700 p-2
+                      `}
                     >
-                      <div className="flex size-8 items-center justify-center rounded-full bg-green-500 text-sm font-bold text-white">
+                      <div
+                        className={`
+                          flex size-8 items-center justify-center rounded-full
+                          bg-green-500 text-sm font-bold text-white
+                        `}
+                      >
                         {member.username?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                       <div className="flex-1">

@@ -70,7 +70,7 @@ export default function ActivityDetails(): ReactElement {
         mx-auto max-w-2xl rounded-lg bg-gray-900 p-6 text-white shadow-lg
       `}
     >
-      <h2 className="text-kelly-green text-2xl font-bold">{activity.title}</h2>
+      <h2 className="text-2xl font-bold text-primary">{activity.title}</h2>
       <p className="text-gray-400">
         {activity.description ?? "No description provided."}
       </p>

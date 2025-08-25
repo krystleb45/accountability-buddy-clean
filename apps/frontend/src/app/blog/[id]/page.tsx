@@ -75,12 +75,18 @@ export default async function BlogPostPage({
         />
       )}
 
-      <div className="whitespace-pre-line text-lg leading-relaxed text-gray-300">
+      <div className="text-lg leading-relaxed whitespace-pre-line text-gray-300">
         {blog.content}
       </div>
 
       <div className="mt-8">
-        <Link href="/blog" className="text-green-400 hover:underline">
+        <Link
+          href="/blog"
+          className={`
+            text-green-400
+            hover:underline
+          `}
+        >
           ← Back to Blog
         </Link>
       </div>

@@ -90,7 +90,12 @@ const GroupRecommendationsPage: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="mb-8"
           >
-            <h2 className="mb-3 flex items-center justify-center gap-2 text-2xl font-semibold text-yellow-400">
+            <h2
+              className={`
+                mb-3 flex items-center justify-center gap-2 text-2xl
+                font-semibold text-yellow-400
+              `}
+            >
               <FaFire /> Trending Groups
             </h2>
             {trendingGroups.length > 0 ? (
@@ -101,7 +106,10 @@ const GroupRecommendationsPage: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="flex items-center justify-between rounded-lg bg-gray-900 p-4 shadow-lg"
+                    className={`
+                      flex items-center justify-between rounded-lg bg-gray-900
+                      p-4 shadow-lg
+                    `}
                   >
                     <div className="flex flex-col">
                       <div className="flex items-center gap-3">
@@ -120,7 +128,10 @@ const GroupRecommendationsPage: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white"
+                      className={`
+                        flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2
+                        text-white
+                      `}
                       onClick={() => handleJoinGroup(group.id)}
                     >
                       <FaPlus /> Join
@@ -141,7 +152,11 @@ const GroupRecommendationsPage: React.FC = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="mb-3 text-center text-2xl font-semibold text-green-400">
+            <h2
+              className={`
+                mb-3 text-center text-2xl font-semibold text-green-400
+              `}
+            >
               Suggested Groups
             </h2>
             {recommendedGroups.length > 0 ? (
@@ -152,7 +167,10 @@ const GroupRecommendationsPage: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="flex items-center justify-between rounded-lg bg-gray-900 p-4 shadow-lg"
+                    className={`
+                      flex items-center justify-between rounded-lg bg-gray-900
+                      p-4 shadow-lg
+                    `}
                   >
                     <div className="flex flex-col">
                       <div className="flex items-center gap-3">
@@ -171,7 +189,10 @@ const GroupRecommendationsPage: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white"
+                      className={`
+                        flex items-center gap-2 rounded-lg bg-blue-500 px-3 py-2
+                        text-white
+                      `}
                       onClick={() => handleJoinGroup(group.id)}
                     >
                       <FaPlus /> Join

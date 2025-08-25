@@ -85,8 +85,8 @@ export default function StatisticsClient() {
   return (
     <div
       className={`
-      mx-auto w-full max-w-6xl rounded-lg bg-black p-6 text-white shadow-lg
-    `}
+        mx-auto w-full max-w-6xl rounded-lg bg-black p-6 text-white shadow-lg
+      `}
     >
       <h1 className="mb-6 text-center text-3xl font-bold text-green-400">
         📊 Your Statistics
@@ -95,9 +95,9 @@ export default function StatisticsClient() {
         <Link
           href="/dashboard"
           className={`
-          text-blue-400
-          hover:underline
-        `}
+            text-blue-400
+            hover:underline
+          `}
         >
           ← Back to Dashboard
         </Link>
@@ -105,9 +105,9 @@ export default function StatisticsClient() {
 
       <div
         className={`
-        grid grid-cols-1 gap-6
-        md:grid-cols-2
-      `}
+          grid grid-cols-1 gap-6
+          md:grid-cols-2
+        `}
       >
         {/* Goal Progress Card */}
         <Card className={cardStyles.card ?? ""}>
@@ -141,8 +141,8 @@ export default function StatisticsClient() {
             <p>Longest Streak: {stats.longestStreak} days</p>
             <div
               className={`
-              mt-3 h-4 w-full overflow-hidden rounded-lg bg-gray-800
-            `}
+                mt-3 h-4 w-full overflow-hidden rounded-lg bg-gray-800
+              `}
             >
               <div
                 className="h-4 bg-green-500"
@@ -161,9 +161,9 @@ export default function StatisticsClient() {
       {/* Achievements Section (full width) */}
       <Card
         className={`
-        mt-6
-        ${cardStyles.card ?? ""}
-      `}
+          mt-6
+          ${cardStyles.card ?? ""}
+        `}
       >
         <CardContent>
           <h2 className="text-center text-2xl font-semibold text-yellow-300">
@@ -193,9 +193,9 @@ export default function StatisticsClient() {
       {/* Collaboration Goals Section */}
       <Card
         className={`
-        mt-6
-        ${cardStyles.card ?? ""}
-      `}
+          mt-6
+          ${cardStyles.card ?? ""}
+        `}
       >
         <CardContent>
           <h2 className="text-center text-2xl font-semibold text-pink-300">
@@ -224,9 +224,9 @@ export default function StatisticsClient() {
       {/* Statistics Chart Section (full width) */}
       <Card
         className={`
-        mt-6
-        ${cardStyles.card ?? ""}
-      `}
+          mt-6
+          ${cardStyles.card ?? ""}
+        `}
       >
         <CardContent>
           <UserStatisticsChart

@@ -110,9 +110,19 @@ const FriendsClient: React.FC = () => {
 
   if (status === "loading" || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="text-center">
-          <div className="mx-auto mb-4 size-12 animate-spin rounded-full border-b-2 border-green-400"></div>
+          <div
+            className={`
+              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
+              border-green-400
+            `}
+          ></div>
           <p className="text-gray-400">Loading friends...</p>
         </div>
       </div>
@@ -121,12 +131,20 @@ const FriendsClient: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="text-center">
           <p className="mb-4 text-red-500">{error}</p>
           <Link
             href="/community"
-            className="text-green-400 hover:text-green-300"
+            className={`
+              text-green-400
+              hover:text-green-300
+            `}
           >
             ← Back to Community
           </Link>
@@ -136,13 +154,21 @@ const FriendsClient: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div
+      className={`
+        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
+        text-white
+      `}
+    >
       <div className="mx-auto max-w-4xl p-6">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/community"
-            className="mb-4 inline-flex items-center text-green-400 hover:text-green-300"
+            className={`
+              mb-4 inline-flex items-center text-green-400
+              hover:text-green-300
+            `}
           >
             <FaArrowLeft className="mr-2" />
             Back to Community
@@ -156,7 +182,13 @@ const FriendsClient: React.FC = () => {
             {friendRequests.length > 0 && (
               <div className="relative">
                 <FaBell className="text-3xl text-yellow-400" />
-                <span className="absolute -right-2 -top-2 min-w-[20px] rounded-full bg-red-500 px-2 py-1 text-center text-xs font-bold text-white">
+                <span
+                  className={`
+                    absolute -top-2 -right-2 min-w-[20px] rounded-full
+                    bg-red-500 px-2 py-1 text-center text-xs font-bold
+                    text-white
+                  `}
+                >
                   {friendRequests.length}
                 </span>
               </div>
@@ -169,9 +201,15 @@ const FriendsClient: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-lg"
+            className={`
+              mb-8 rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-lg
+            `}
           >
-            <h2 className="mb-4 flex items-center text-2xl font-semibold text-green-400">
+            <h2
+              className={`
+                mb-4 flex items-center text-2xl font-semibold text-green-400
+              `}
+            >
               <FaBell className="mr-2" />
               Pending Friend Requests
             </h2>
@@ -181,13 +219,18 @@ const FriendsClient: React.FC = () => {
                   key={req.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center justify-between rounded-lg bg-gray-700 p-4"
+                  className={`
+                    flex items-center justify-between rounded-lg bg-gray-700 p-4
+                  `}
                 >
                   <div className="flex items-center gap-4">
                     <img
                       src={req.sender.profilePicture || "/default-avatar.png"}
                       alt="Avatar"
-                      className="size-12 rounded-full border-2 border-gray-600 object-cover"
+                      className={`
+                        size-12 rounded-full border-2 border-gray-600
+                        object-cover
+                      `}
                     />
                     <div>
                       <p className="font-semibold text-white">
@@ -202,7 +245,11 @@ const FriendsClient: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-500"
+                      className={`
+                        flex items-center rounded-lg bg-green-600 px-4 py-2
+                        text-white transition
+                        hover:bg-green-500
+                      `}
                       onClick={() => handleAcceptRequest(req.id)}
                     >
                       <FaCheck className="mr-1" />
@@ -211,7 +258,11 @@ const FriendsClient: React.FC = () => {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center rounded-lg bg-red-600 px-4 py-2 text-white transition hover:bg-red-500"
+                      className={`
+                        flex items-center rounded-lg bg-red-600 px-4 py-2
+                        text-white transition
+                        hover:bg-red-500
+                      `}
                       onClick={() => handleRejectRequest(req.id)}
                     >
                       <FaTimes className="mr-1" />
@@ -225,8 +276,16 @@ const FriendsClient: React.FC = () => {
         )}
 
         {/* Friends List Section */}
-        <div className="rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-lg">
-          <h2 className="mb-6 flex items-center text-2xl font-semibold text-green-400">
+        <div
+          className={`
+            rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-lg
+          `}
+        >
+          <h2
+            className={`
+              mb-6 flex items-center text-2xl font-semibold text-green-400
+            `}
+          >
             <FaUserFriends className="mr-2" />
             Your Accountability Buddies ({safeFriends.length})
           </h2>
@@ -237,7 +296,13 @@ const FriendsClient: React.FC = () => {
             placeholder="Search friends..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="mb-6 w-full rounded-lg border border-gray-600 bg-gray-700 p-4 text-white placeholder:text-gray-400 focus:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className={`
+              mb-6 w-full rounded-lg border border-gray-600 bg-gray-700 p-4
+              text-white
+              placeholder:text-gray-400
+              focus:border-green-400 focus:ring-2 focus:ring-green-400
+              focus:outline-none
+            `}
           />
 
           {/* Friends Grid */}
@@ -257,27 +322,44 @@ const FriendsClient: React.FC = () => {
               {safeFriends.length === 0 && (
                 <Link
                   href="/community/discover"
-                  className="mt-4 inline-block rounded-lg bg-green-600 px-6 py-3 text-white transition hover:bg-green-500"
+                  className={`
+                    mt-4 inline-block rounded-lg bg-green-600 px-6 py-3
+                    text-white transition
+                    hover:bg-green-500
+                  `}
                 >
                   Find Friends
                 </Link>
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={`
+                grid grid-cols-1 gap-4
+                md:grid-cols-2
+                lg:grid-cols-3
+              `}
+            >
               {filteredFriends.map((friend, index) => (
                 <motion.div
                   key={friend.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="rounded-lg border border-gray-600 bg-gray-700 p-4 transition-all duration-200 hover:border-green-400"
+                  className={`
+                    rounded-lg border border-gray-600 bg-gray-700 p-4
+                    transition-all duration-200
+                    hover:border-green-400
+                  `}
                 >
                   <div className="mb-4 flex items-center gap-3">
                     <img
                       src={friend.profilePicture || "/default-avatar.png"}
                       alt="Profile"
-                      className="size-12 rounded-full border-2 border-gray-600 object-cover"
+                      className={`
+                        size-12 rounded-full border-2 border-gray-600
+                        object-cover
+                      `}
                     />
                     <div className="flex-1">
                       <p className="font-semibold text-white">{friend.name}</p>
@@ -290,14 +372,22 @@ const FriendsClient: React.FC = () => {
                   <div className="flex gap-2">
                     <Link
                       href={`/messages?friendId=${friend.id}`}
-                      className="flex flex-1 items-center justify-center rounded-lg bg-blue-600 px-3 py-2 text-white transition hover:bg-blue-500"
+                      className={`
+                        flex flex-1 items-center justify-center rounded-lg
+                        bg-blue-600 px-3 py-2 text-white transition
+                        hover:bg-blue-500
+                      `}
                     >
                       <FaComments className="mr-2" />
                       Chat
                     </Link>
                     <Link
                       href={`/friends/${friend.id}`}
-                      className="flex flex-1 items-center justify-center rounded-lg bg-gray-600 px-3 py-2 text-white transition hover:bg-gray-500"
+                      className={`
+                        flex flex-1 items-center justify-center rounded-lg
+                        bg-gray-600 px-3 py-2 text-white transition
+                        hover:bg-gray-500
+                      `}
                     >
                       View Profile
                     </Link>
@@ -309,10 +399,18 @@ const FriendsClient: React.FC = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div
+          className={`
+            mt-8 grid grid-cols-1 gap-4
+            md:grid-cols-3
+          `}
+        >
           <Link
             href="/community/discover"
-            className="rounded-lg bg-green-600 p-4 text-center transition hover:bg-green-500"
+            className={`
+              rounded-lg bg-green-600 p-4 text-center transition
+              hover:bg-green-500
+            `}
           >
             <div className="mb-2 text-2xl">🔍</div>
             <div className="font-semibold">Find Friends</div>
@@ -323,7 +421,10 @@ const FriendsClient: React.FC = () => {
 
           <Link
             href="/community/groups"
-            className="rounded-lg bg-purple-600 p-4 text-center transition hover:bg-purple-500"
+            className={`
+              rounded-lg bg-purple-600 p-4 text-center transition
+              hover:bg-purple-500
+            `}
           >
             <div className="mb-2 text-2xl">👥</div>
             <div className="font-semibold">Join Groups</div>
@@ -334,7 +435,10 @@ const FriendsClient: React.FC = () => {
 
           <Link
             href="/messages"
-            className="rounded-lg bg-blue-600 p-4 text-center transition hover:bg-blue-500"
+            className={`
+              rounded-lg bg-blue-600 p-4 text-center transition
+              hover:bg-blue-500
+            `}
           >
             <div className="mb-2 text-2xl">💬</div>
             <div className="font-semibold">Messages</div>

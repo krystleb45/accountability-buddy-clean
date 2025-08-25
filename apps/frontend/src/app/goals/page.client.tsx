@@ -1,4 +1,3 @@
-// src/app/goals/page.client.tsx - With limit notifications
 "use client"
 
 import { useSession } from "next-auth/react"
@@ -6,11 +5,10 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 
-import type { Goal } from "@/services/goalService"
+import type { Goal } from "@/types/mongoose.gen"
 
 import { showLimitReachedToast } from "@/components/Toasts"
 import useSubscription from "@/hooks/useSubscription"
-import GoalService from "@/services/goalService"
 
 function formatDueDate(due: unknown): string {
   if (!due) return "No due date"
@@ -98,9 +96,9 @@ export default function GoalsClient() {
         "📡 Making API call with token:",
         `${session.user.accessToken.substring(0, 20)}...`,
       )
-      const list = await GoalService.getUserGoals()
-      console.log("✅ Goals loaded successfully:", list)
-      setGoals(list ?? [])
+      // const list = await GoalServicegetUserGoals()
+      // console.log("✅ Goals loaded successfully:", list)
+      // setGoals(list ?? [])
       setError(null)
     } catch (e) {
       console.error("❌ Failed to load goals:", e)
@@ -136,8 +134,8 @@ export default function GoalsClient() {
 
     setLoading(true)
     try {
-      await GoalService.deleteGoal(selectedId)
-      setGoals((curr) => curr.filter((g) => g.id !== selectedId))
+      // await GoalService.deleteGoal(selectedId)
+      setGoals((curr) => curr.filter((g) => g._id !== selectedId))
       setSelectedId(null)
     } catch {
       setError("Could not delete goal.")
@@ -151,7 +149,7 @@ export default function GoalsClient() {
     console.log("🔄 Updating goal in parent:", updated)
     setGoals((curr) => {
       const newGoals = curr.map((g) => {
-        if (g.id === updated.id) {
+        if (g._id === updated._id) {
           console.log("✅ Found matching goal, replacing:", g, "with:", updated)
           return updated
         }
@@ -164,7 +162,10 @@ export default function GoalsClient() {
 
   // Calculate active goals count from current goals
   const activeGoalsCount = goals.filter(
-    (goal) => goal.status === "active" || !goal.status,
+    (goal) =>
+      goal.status === "in-progress" ||
+      goal.status === "not-started" ||
+      !goal.status,
   ).length
 
   // Determine if user can create more goals
@@ -263,7 +264,10 @@ export default function GoalsClient() {
       <div className="mb-6 flex items-center justify-between">
         <Link
           href="/dashboard"
-          className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+          className={`
+            rounded bg-green-500 px-4 py-2 text-white
+            hover:bg-green-600
+          `}
         >
           ← Back to Dashboard
         </Link>
@@ -276,7 +280,10 @@ export default function GoalsClient() {
           {canUserCreateGoal() ? (
             <Link
               href="/goal-creation"
-              className="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+              className={`
+                rounded bg-green-500 px-4 py-2 text-white
+                hover:bg-green-600
+              `}
             >
               + Add Goal
             </Link>
@@ -284,7 +291,9 @@ export default function GoalsClient() {
             <div className="flex flex-col items-end gap-2">
               <button
                 disabled
-                className="cursor-not-allowed rounded bg-gray-600 px-4 py-2 text-gray-400"
+                className={`
+                  cursor-not-allowed rounded bg-gray-600 px-4 py-2 text-gray-400
+                `}
                 title={
                   hasUnlimitedGoals
                     ? "Loading..."
@@ -296,7 +305,10 @@ export default function GoalsClient() {
               {!hasUnlimitedGoals && (
                 <Link
                   href="/subscription"
-                  className="rounded bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700"
+                  className={`
+                    rounded bg-blue-600 px-3 py-1 text-xs text-white
+                    hover:bg-blue-700
+                  `}
                 >
                   Upgrade Plan
                 </Link>
@@ -306,33 +318,51 @@ export default function GoalsClient() {
         </div>
       </div>
 
-      <h2 className="mb-6 text-3xl font-bold text-kelly-green">
-        🎯 Your Goals
-      </h2>
+      <h2 className="mb-6 text-3xl font-bold text-primary">🎯 Your Goals</h2>
 
       {/* Goals display... */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div
+        className={`
+          grid grid-cols-1 gap-6
+          sm:grid-cols-2
+          lg:grid-cols-3
+          xl:grid-cols-4
+        `}
+      >
         {goals.map((g) => {
           const dateValue = g.dueDate
           return (
             <div
-              key={g.id}
-              className="cursor-pointer rounded-lg bg-gray-900 p-4 shadow-lg transition-transform hover:scale-105"
-              onClick={() => setSelectedId(g.id)}
+              key={g._id}
+              className={`
+                cursor-pointer rounded-lg bg-gray-900 p-4 shadow-lg
+                transition-transform
+                hover:scale-105
+              `}
+              onClick={() => setSelectedId(g._id)}
             >
-              <span className="mb-2 inline-block rounded bg-green-700 px-2 py-1 text-xs text-white">
+              <span
+                className={`
+                  mb-2 inline-block rounded bg-green-700 px-2 py-1 text-xs
+                  text-white
+                `}
+              >
                 {(g as any).category ?? "General"}
               </span>
-              <h3 className="mb-1 text-lg font-semibold text-kelly-green">
+              <h3 className="mb-1 text-lg font-semibold text-primary">
                 {g.title}
               </h3>
-              <div className="mb-3 flex items-center justify-between text-sm text-gray-400">
+              <div
+                className={`
+                  mb-3 flex items-center justify-between text-sm text-gray-400
+                `}
+              >
                 <span>Due: {formatDueDate(dateValue)}</span>
                 <span>{daysLeft(dateValue)}</span>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-700">
+              <div className="h-2 w-full overflow-hidden rounded-full">
                 <div
-                  className="duration-800 h-full bg-green-500 transition-all"
+                  className="h-full bg-green-500 transition-all duration-800"
                   style={{ width: `${g.progress || 0}%` }}
                 />
               </div>
@@ -353,7 +383,10 @@ export default function GoalsClient() {
           {canUserCreateGoal() && (
             <Link
               href="/goal-creation"
-              className="inline-block rounded-lg bg-green-500 px-6 py-3 text-white hover:bg-green-600"
+              className={`
+                inline-block rounded-lg bg-green-500 px-6 py-3 text-white
+                hover:bg-green-600
+              `}
             >
               Create Your First Goal
             </Link>
@@ -364,7 +397,9 @@ export default function GoalsClient() {
       {/* Simple goal details modal */}
       {selectedId && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+          className={`
+            fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4
+          `}
           onClick={() => setSelectedId(null)}
         >
           <div
@@ -372,7 +407,11 @@ export default function GoalsClient() {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="absolute right-2 top-2 text-gray-400 hover:text-white"
+              type="button"
+              className={`
+                absolute top-2 right-2 text-gray-400
+                hover:text-white
+              `}
               onClick={() => setSelectedId(null)}
             >
               ✕

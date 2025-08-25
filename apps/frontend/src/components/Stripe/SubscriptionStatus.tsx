@@ -1,8 +1,6 @@
-// src/components/SubscriptionStatus.tsx
 "use client"
 
 import React, { useCallback, useEffect, useState } from "react"
-import SubscriptionService from "src/services/subscriptionService"
 
 import "./SubscriptionStatus.css" // your existing styles
 
@@ -10,9 +8,9 @@ const SubscriptionStatus: React.FC = () => {
   const [status, setStatus] = useState<"loading" | "error" | "success">(
     "loading",
   )
-  const [subscriptionStatus, setSubscriptionStatus] = useState<string>(
-    "No active subscription",
-  )
+  // const [subscriptionStatus, setSubscriptionStatus] = useState<string>(
+  //   "No active subscription",
+  // )
   const [error, setError] = useState<string>("")
 
   const fetchStatus = useCallback(async () => {
@@ -20,8 +18,8 @@ const SubscriptionStatus: React.FC = () => {
     setStatus("loading")
 
     try {
-      const result = await SubscriptionService.getRealTimeStatus()
-      setSubscriptionStatus(result.status ?? "No active subscription")
+      // const result = await SubscriptionService.getRealTimeStatus()
+      // setSubscriptionStatus(result.status ?? "No active subscription")
       setStatus("success")
     } catch (err) {
       console.error("Error fetching subscription status:", err)
@@ -35,14 +33,14 @@ const SubscriptionStatus: React.FC = () => {
   }, [fetchStatus])
 
   return (
-    <div className="subscription-status">
+    <div>
       <h2>Subscription Status</h2>
-      {status === "loading" && <p className="loading">Loading...</p>}
-      {status === "error" && <p className="error">{error}</p>}
-      {status === "success" && <p className="success">{subscriptionStatus}</p>}
+      {status === "loading" && <p>Loading...</p>}
+      {status === "error" && <p>{error}</p>}
+      {/* {status === "success" && <p>{subscriptionStatus}</p>} */}
       <button
+        type="button"
         onClick={() => void fetchStatus()}
-        className="refresh-button"
         disabled={status === "loading"}
       >
         Refresh Status

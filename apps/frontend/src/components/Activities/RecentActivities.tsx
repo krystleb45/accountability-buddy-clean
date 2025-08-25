@@ -57,7 +57,7 @@ export default function RecentActivities({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h3 className="text-xl font-bold text-kelly-green">Recent Activities</h3>
+      <h3 className="text-xl font-bold text-primary">Recent Activities</h3>
 
       {loading && <p>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}

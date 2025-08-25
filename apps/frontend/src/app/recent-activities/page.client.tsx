@@ -29,9 +29,10 @@ const ActivityItem: React.FC<{ activity: ActivityDisplay }> = ({
       <span className="text-sm text-gray-400">{activity.date}</span>
     </div>
     <span
-      className={`text-sm ${
-        activity.type === "completed" ? "text-green-400" : "text-blue-400"
-      }`}
+      className={`
+        text-sm
+        ${activity.type === "completed" ? "text-green-400" : "text-blue-400"}
+      `}
     >
       {activity.type === "completed" ? "✅ Completed" : "🛠 Created"}
     </span>
@@ -87,17 +88,30 @@ export default function RecentActivitiesClient() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="mb-6 flex items-center justify-between rounded-lg bg-gray-900 p-6 shadow-md"
+        className={`
+          mb-6 flex items-center justify-between rounded-lg bg-gray-900 p-6
+          shadow-md
+        `}
       >
         <h1 className="text-3xl font-bold text-green-400">Recent Activities</h1>
         <nav className="flex gap-4">
           <Link href="/dashboard">
-            <span className="font-semibold text-green-400 hover:underline">
+            <span
+              className={`
+                font-semibold text-green-400
+                hover:underline
+              `}
+            >
               Dashboard
             </span>
           </Link>
           <Link href="/profile">
-            <span className="font-semibold text-green-400 hover:underline">
+            <span
+              className={`
+                font-semibold text-green-400
+                hover:underline
+              `}
+            >
               Profile
             </span>
           </Link>
@@ -118,11 +132,14 @@ export default function RecentActivitiesClient() {
             <button
               key={type}
               onClick={() => setFilter(type)}
-              className={`rounded-lg px-4 py-2 transition ${
-                filter === type
-                  ? "bg-green-500 text-black"
-                  : "bg-gray-700 text-white"
-              }`}
+              className={`
+                rounded-lg px-4 py-2 transition
+                ${
+                  filter === type
+                    ? "bg-green-500 text-black"
+                    : "bg-gray-700 text-white"
+                }
+              `}
               aria-pressed={filter === type}
             >
               {type.charAt(0).toUpperCase() + type.slice(1)}

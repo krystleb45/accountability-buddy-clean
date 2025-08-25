@@ -1,5 +1,3 @@
-// src/components/MilitarySupport/CommunityMoodWidget.tsx
-
 "use client"
 
 import { Heart, RefreshCw, TrendingUp, Users } from "lucide-react"
@@ -78,7 +76,10 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
   if (loading) {
     return (
       <div
-        className={`rounded-lg border-2 border-gray-200 bg-white p-6 ${className}`}
+        className={`
+          rounded-lg border-2 border-gray-200 bg-white p-6
+          ${className}
+        `}
       >
         <div className="animate-pulse">
           <div className="mb-4 flex items-center space-x-3">
@@ -95,7 +96,10 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
   if (error || !moodData) {
     return (
       <div
-        className={`rounded-lg border-2 border-gray-200 bg-gray-50 p-6 ${className}`}
+        className={`
+          rounded-lg border-2 border-gray-200 bg-gray-50 p-6
+          ${className}
+        `}
       >
         <div className="text-center">
           <p className="mb-3 text-gray-500">
@@ -103,7 +107,10 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
           </p>
           <button
             onClick={loadMoodData}
-            className="mx-auto flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
+            className={`
+              mx-auto flex items-center space-x-1 text-sm text-blue-600
+              hover:text-blue-700
+            `}
           >
             <RefreshCw className="size-4" />
             <span>Try Again</span>
@@ -122,7 +129,11 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
 
   return (
     <div
-      className={`rounded-lg border-2 bg-white ${getBackgroundColor(averageMood)} ${className}`}
+      className={`
+        rounded-lg border-2 bg-white
+        ${getBackgroundColor(averageMood)}
+        ${className}
+      `}
     >
       <div className="p-6">
         {/* Header */}
@@ -136,7 +147,10 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
 
           <button
             onClick={loadMoodData}
-            className="text-gray-400 transition-colors hover:text-gray-600"
+            className={`
+              text-gray-400 transition-colors
+              hover:text-gray-600
+            `}
             title="Refresh data"
           >
             <RefreshCw className="size-4" />
@@ -149,7 +163,10 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
             <span className="text-4xl">{getMoodEmoji(averageMood)}</span>
             <div className="text-left">
               <div
-                className={`text-2xl font-bold ${getMoodColor(averageMood)}`}
+                className={`
+                  text-2xl font-bold
+                  ${getMoodColor(averageMood)}
+                `}
               >
                 {averageMood.toFixed(1)}/5
               </div>
@@ -177,7 +194,7 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
 
         {/* Stats */}
         <div className="mb-4 grid grid-cols-2 gap-4">
-          <div className="rounded-lg bg-white bg-opacity-50 p-3 text-center">
+          <div className="rounded-lg bg-white/50 p-3 text-center">
             <div className="mb-1 flex items-center justify-center space-x-1">
               <Users className="size-4 text-gray-600" />
               <span className="text-sm text-gray-600">Check-ins</span>
@@ -188,7 +205,7 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
             <div className="text-xs text-gray-500">today</div>
           </div>
 
-          <div className="rounded-lg bg-white bg-opacity-50 p-3 text-center">
+          <div className="rounded-lg bg-white/50 p-3 text-center">
             <div className="mb-1 text-sm text-gray-600">Most common</div>
             <div className="text-xl font-bold text-gray-800">
               {(() => {
@@ -230,7 +247,10 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
                   return percentage > 0 ? (
                     <div
                       key={moodKey}
-                      className={`${colors[index]} transition-all duration-500`}
+                      className={`
+                        ${colors[index]}
+                        transition-all duration-500
+                      `}
                       style={{ width: `${percentage}%` }}
                       title={`${count} people feeling ${["struggling", "tough day", "getting by", "doing well", "great"][index]}`}
                     />

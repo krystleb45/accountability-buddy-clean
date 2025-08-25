@@ -77,7 +77,10 @@ const AccountSettings: React.FC = () => {
 
           <button
             type="submit"
-            className={`${styles.button} ${styles.saveButton}`}
+            className={`
+              ${styles.button}
+              ${styles.saveButton}
+            `}
           >
             Change Password
           </button>
@@ -89,7 +92,10 @@ const AccountSettings: React.FC = () => {
         <h3>Delete Account</h3>
         <p>Warning: Deleting your account is permanent and cannot be undone.</p>
         <button
-          className={`${styles.button} ${styles.deleteButton}`}
+          className={`
+            ${styles.button}
+            ${styles.deleteButton}
+          `}
           onClick={() => setShowDeleteConfirm(true)}
         >
           Delete Account
@@ -99,13 +105,19 @@ const AccountSettings: React.FC = () => {
           <div className={styles.confirmationBox}>
             <p>Are you sure? This action is irreversible.</p>
             <button
-              className={`${styles.button} ${styles.confirmButton}`}
+              className={`
+                ${styles.button}
+                ${styles.confirmButton}
+              `}
               onClick={handleAccountDeletion}
             >
               Yes, Delete My Account
             </button>
             <button
-              className={`${styles.button} ${styles.cancelButton}`}
+              className={`
+                ${styles.button}
+                ${styles.cancelButton}
+              `}
               onClick={() => setShowDeleteConfirm(false)}
             >
               Cancel

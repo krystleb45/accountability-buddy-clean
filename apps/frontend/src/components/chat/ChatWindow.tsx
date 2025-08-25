@@ -160,12 +160,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
   }
 
   return (
-    <div className="chat-window flex flex-col rounded-2xl bg-gray-900 p-4 shadow-lg">
+    <div className="flex flex-col rounded-2xl bg-gray-900 p-4 shadow-lg">
       <div
         role="log"
         aria-live="polite"
         aria-label="Chat messages"
-        className="messages flex-1 overflow-y-auto rounded-lg border border-gray-700 p-2"
+        className={`
+          flex-1 overflow-y-auto rounded-lg border border-gray-700 p-2
+        `}
         ref={chatWindowRef}
       >
         {chatMessages.length > 0 ? (
@@ -177,7 +179,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
             return (
               <div
                 key={msg.id}
-                className={`mb-3 rounded-lg p-2 ${msg.senderId === currentUserId ? "bg-green-700 text-right" : "bg-gray-800 text-left"}`}
+                className={`
+                  mb-3 rounded-lg p-2
+                  ${
+                    msg.senderId === currentUserId
+                      ? `bg-green-700 text-right`
+                      : `bg-gray-800 text-left`
+                  }
+                `}
                 onMouseEnter={() => handleViewMessage(msg.id)}
               >
                 <strong className="text-green-400">{msg.senderName}:</strong>{" "}
@@ -228,7 +237,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
                 {selectedMessage === msg.id && (
                   <div
                     ref={pickerRef}
-                    className="absolute bottom-full left-0 z-50 rounded-lg bg-white p-2 shadow-lg"
+                    className={`
+                      absolute bottom-full left-0 z-50 rounded-lg bg-white p-2
+                      shadow-lg
+                    `}
                   >
                     <EmojiPicker
                       onSelect={(emoji) => handleAddReaction(msg.id, emoji)}
@@ -264,12 +276,18 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ chatId, currentUserId }) => {
           onKeyUp={handleTyping}
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
-          className="flex-1 rounded-lg border border-gray-700 bg-black p-2 text-white"
+          className={`
+            flex-1 rounded-lg border border-gray-700 bg-black p-2 text-white
+          `}
         />
         <button
           onClick={handleSendMessage}
           disabled={!message.trim()}
-          className="rounded-lg bg-green-500 px-4 py-2 text-black transition hover:bg-green-400 disabled:opacity-50"
+          className={`
+            rounded-lg bg-green-500 px-4 py-2 text-black transition
+            hover:bg-green-400
+            disabled:opacity-50
+          `}
         >
           Send
         </button>

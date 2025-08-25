@@ -13,7 +13,10 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   ...rest
 }) => (
   <div
-    className={`${className} animate-pulse bg-gray-700`}
+    className={`
+      ${className}
+      animate-pulse bg-gray-700
+    `}
     aria-busy="true"
     {...rest}
   />

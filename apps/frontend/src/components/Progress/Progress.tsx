@@ -29,15 +29,28 @@ const Progress: React.FC<ProgressProps> = ({
   const clamped = Math.max(0, Math.min(100, value))
 
   return (
-    <div className={`w-full ${className}`} {...rest}>
+    <div
+      className={`
+        w-full
+        ${className}
+      `}
+      {...rest}
+    >
       {label && (
         <div className="mb-1 text-xs font-medium text-gray-300">{label}</div>
       )}
       <div
-        className={`w-full overflow-hidden rounded-full bg-gray-800 ${height}`}
+        className={`
+          w-full overflow-hidden rounded-full bg-gray-800
+          ${height}
+        `}
       >
         <div
-          className={`rounded-full ${height} ${color}`}
+          className={`
+            rounded-full
+            ${height}
+            ${color}
+          `}
           style={{
             width: `${clamped}%`,
             transition: "width 0.3s ease-in-out",

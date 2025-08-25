@@ -4,12 +4,16 @@
   "version": "1.0.0",
   "private": true,
   "description": "Eslint configs to be shared across the monorepo",
+  "exports": {
+    "./base": "./base.js"
+  },
+  "scripts": {
+    "lint": "eslint --fix",
+    "format": "prettier --write"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^5.1.0",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8"
-  },
-  "exports": {
-    "./base": "./base.js"
   }
 }

@@ -97,7 +97,12 @@ export default function ClientAdminRewards(): React.ReactElement {
         {/* Add Reward Form */}
         <div className="mb-8 rounded-lg bg-gray-800 p-6 shadow">
           <h2 className="mb-4 text-xl font-semibold">➕ Add New Reward</h2>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div
+            className={`
+              grid gap-4
+              md:grid-cols-2
+            `}
+          >
             <input
               className="rounded bg-gray-700 p-2 text-white"
               placeholder="Reward Name"
@@ -129,7 +134,10 @@ export default function ClientAdminRewards(): React.ReactElement {
           </div>
           <button
             onClick={handleAdd}
-            className="mt-4 rounded bg-green-600 px-4 py-2 transition hover:bg-green-500"
+            className={`
+              mt-4 rounded bg-green-600 px-4 py-2 transition
+              hover:bg-green-500
+            `}
           >
             Add Reward
           </button>
@@ -141,11 +149,20 @@ export default function ClientAdminRewards(): React.ReactElement {
         ) : rewards.length === 0 ? (
           <p>No rewards found.</p>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+          <div
+            className={`
+              grid gap-6
+              sm:grid-cols-2
+              md:grid-cols-3
+            `}
+          >
             {rewards.map((reward) => (
               <div
                 key={reward._id}
-                className="relative rounded-lg border border-gray-700 bg-gray-800 p-4 shadow"
+                className={`
+                  relative rounded-lg border border-gray-700 bg-gray-800 p-4
+                  shadow
+                `}
               >
                 {reward.imageUrl && (
                   <Image
@@ -162,12 +179,19 @@ export default function ClientAdminRewards(): React.ReactElement {
                 <p className="text-center text-sm text-gray-300">
                   {reward.description}
                 </p>
-                <p className="mt-2 text-center text-sm font-bold text-yellow-400">
+                <p
+                  className={`
+                    mt-2 text-center text-sm font-bold text-yellow-400
+                  `}
+                >
                   🪙 {reward.points} pts
                 </p>
                 <button
                   onClick={() => handleDelete(reward._id)}
-                  className="mx-auto mt-2 block text-sm text-red-500 hover:underline"
+                  className={`
+                    mx-auto mt-2 block text-sm text-red-500
+                    hover:underline
+                  `}
                 >
                   Delete
                 </button>

@@ -61,9 +61,20 @@ export default function ClientAdminManagement(): React.ReactElement {
       ) : error ? (
         <div className="text-center text-lg text-red-600">Error: {error}</div>
       ) : (
-        <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <main
+          className={`
+            mx-auto grid max-w-6xl grid-cols-1 gap-6
+            md:grid-cols-2
+            lg:grid-cols-3
+          `}
+        >
           {/* User Roles */}
-          <section className="rounded-lg bg-white p-6 shadow-lg transition-transform hover:scale-105 hover:shadow-xl">
+          <section
+            className={`
+              rounded-lg bg-white p-6 shadow-lg transition-transform
+              hover:scale-105 hover:shadow-xl
+            `}
+          >
             <h2 className="mb-4 text-2xl font-semibold text-gray-800">
               User Roles
             </h2>
@@ -75,14 +86,23 @@ export default function ClientAdminManagement(): React.ReactElement {
             </p>
             <button
               onClick={() => router.push("/admin-management/roles")}
-              className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+              className={`
+                w-full rounded-lg bg-blue-600 px-4 py-2 text-white
+                transition-colors
+                hover:bg-blue-700
+              `}
             >
               Manage Roles
             </button>
           </section>
 
           {/* Permissions */}
-          <section className="rounded-lg bg-white p-6 shadow-lg transition-transform hover:scale-105 hover:shadow-xl">
+          <section
+            className={`
+              rounded-lg bg-white p-6 shadow-lg transition-transform
+              hover:scale-105 hover:shadow-xl
+            `}
+          >
             <h2 className="mb-4 text-2xl font-semibold text-gray-800">
               Permissions
             </h2>
@@ -91,14 +111,23 @@ export default function ClientAdminManagement(): React.ReactElement {
             </p>
             <button
               onClick={() => router.push("/admin-management/permissions")}
-              className="w-full rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700"
+              className={`
+                w-full rounded-lg bg-green-600 px-4 py-2 text-white
+                transition-colors
+                hover:bg-green-700
+              `}
             >
               Manage Permissions
             </button>
           </section>
 
           {/* System Settings */}
-          <section className="rounded-lg bg-white p-6 shadow-lg transition-transform hover:scale-105 hover:shadow-xl">
+          <section
+            className={`
+              rounded-lg bg-white p-6 shadow-lg transition-transform
+              hover:scale-105 hover:shadow-xl
+            `}
+          >
             <h2 className="mb-4 text-2xl font-semibold text-gray-800">
               System Settings
             </h2>
@@ -107,14 +136,23 @@ export default function ClientAdminManagement(): React.ReactElement {
             </p>
             <button
               onClick={() => router.push("/admin-management/settings")}
-              className="w-full rounded-lg bg-orange-600 px-4 py-2 text-white transition-colors hover:bg-orange-700"
+              className={`
+                w-full rounded-lg bg-orange-600 px-4 py-2 text-white
+                transition-colors
+                hover:bg-orange-700
+              `}
             >
               Edit Settings
             </button>
           </section>
 
           {/* Rewards */}
-          <section className="rounded-lg bg-white p-6 shadow-lg transition-transform hover:scale-105 hover:shadow-xl">
+          <section
+            className={`
+              rounded-lg bg-white p-6 shadow-lg transition-transform
+              hover:scale-105 hover:shadow-xl
+            `}
+          >
             <h2 className="mb-4 text-2xl font-semibold text-gray-800">
               Manage Rewards
             </h2>
@@ -123,7 +161,11 @@ export default function ClientAdminManagement(): React.ReactElement {
             </p>
             <button
               onClick={() => router.push("/admin-management/rewards")}
-              className="w-full rounded-lg bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
+              className={`
+                w-full rounded-lg bg-purple-600 px-4 py-2 text-white
+                transition-colors
+                hover:bg-purple-700
+              `}
             >
               Manage Rewards
             </button>

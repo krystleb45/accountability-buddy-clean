@@ -59,7 +59,10 @@ const MessageInputBar: React.FC<MessageInputBarProps> = ({
         e.preventDefault()
         handleSend()
       }}
-      className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800 p-2"
+      className={`
+        flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-800
+        p-2
+      `}
     >
       <input
         ref={inputRef}
@@ -69,17 +72,32 @@ const MessageInputBar: React.FC<MessageInputBarProps> = ({
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
         disabled={disabled}
-        className="flex-1 rounded bg-black p-2 text-white focus:outline-none"
+        className={`
+          flex-1 rounded bg-black p-2 text-white
+          focus:outline-none
+        `}
         aria-label="Message input"
       />
       <button
         type="submit"
         disabled={disabled || !message.trim()}
-        className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-black transition hover:bg-green-400 disabled:opacity-50"
+        className={`
+          flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-black
+          transition
+          hover:bg-green-400
+          disabled:opacity-50
+        `}
         aria-label={submitLabel}
       >
         <FaPaperPlane aria-hidden="true" />
-        <span className="hidden sm:inline">{submitLabel}</span>
+        <span
+          className={`
+            hidden
+            sm:inline
+          `}
+        >
+          {submitLabel}
+        </span>
       </button>
     </form>
   )

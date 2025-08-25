@@ -1,4 +1,3 @@
-// src/components/Activities/ActivityItem.tsx
 import type { ReactElement } from "react"
 
 import React from "react"
@@ -31,11 +30,19 @@ export default function ActivityItem({
   onDelete,
 }: ActivityItemProps): ReactElement {
   return (
-    <div className="mb-4 rounded-lg bg-gray-800 p-6 shadow-lg transition hover:scale-105">
+    <div
+      className={`
+        mb-4 rounded-lg bg-gray-800 p-6 shadow-lg transition
+        hover:scale-105
+      `}
+    >
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold text-kelly-green">{activity.title}</h3>
+        <h3 className="text-xl font-bold text-primary">{activity.title}</h3>
         <span
-          className={`rounded-lg px-3 py-1 text-sm font-medium ${statusClasses[activity.status]}`}
+          className={`
+            rounded-lg px-3 py-1 text-sm font-medium
+            ${statusClasses[activity.status]}
+          `}
         >
           {activity.status.replace("-", " ")}
         </span>
@@ -57,21 +64,27 @@ export default function ActivityItem({
       <div className="mt-4 flex gap-3">
         <button
           type="button"
-          className="rounded-lg bg-kelly-green px-4 py-2 text-black transition hover:bg-opacity-80"
+          className="rounded-lg bg-primary px-4 py-2 text-black transition"
           onClick={() => onViewDetails(activity.id)}
         >
           View
         </button>
         <button
           type="button"
-          className="rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-400"
+          className={`
+            rounded-lg bg-blue-500 px-4 py-2 text-white transition
+            hover:bg-blue-400
+          `}
           onClick={() => onEdit(activity.id)}
         >
           Edit
         </button>
         <button
           type="button"
-          className="rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-400"
+          className={`
+            rounded-lg bg-red-500 px-4 py-2 text-white transition
+            hover:bg-red-400
+          `}
           onClick={() => onDelete(activity.id)}
         >
           Delete

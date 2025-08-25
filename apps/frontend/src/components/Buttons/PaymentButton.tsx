@@ -63,7 +63,10 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
     <div className={styles.paymentButtonContainer}>
       <button
         type="button"
-        className={`${styles.paymentButton} ${loading ? styles.loading : ""}`}
+        className={`
+          ${styles.paymentButton}
+          ${loading ? styles.loading : ""}
+        `}
         onClick={handlePayment}
         disabled={loading}
         aria-busy={loading}

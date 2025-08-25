@@ -91,13 +91,22 @@ export default function ClientDashboard() {
         </select>
       </section>
 
-      <section className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <section
+        className={`
+          grid grid-cols-1 gap-6
+          md:grid-cols-2
+          lg:grid-cols-3
+        `}
+      >
         {sorted.map((act) => (
           <motion.div
             key={act._id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-lg bg-gray-800 p-6 shadow-lg transition hover:shadow-xl"
+            className={`
+              rounded-lg bg-gray-800 p-6 shadow-lg transition
+              hover:shadow-xl
+            `}
           >
             <h3 className="text-2xl font-bold text-green-300">{act.title}</h3>
             <p className="text-gray-400">

@@ -6,7 +6,11 @@ import React from "react"
 
 export default function AboutUsClient() {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-black p-6 text-white">
+    <div
+      className={`
+        flex min-h-screen flex-col items-center bg-black p-6 text-white
+      `}
+    >
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -16,7 +20,7 @@ export default function AboutUsClient() {
         <header className="mb-8 text-center" aria-labelledby="page-title">
           <h1
             id="page-title"
-            className="mb-4 text-4xl font-extrabold text-kelly-green"
+            className="mb-4 text-4xl font-extrabold text-primary"
           >
             About Accountability Buddy
           </h1>
@@ -30,7 +34,7 @@ export default function AboutUsClient() {
           <section aria-labelledby="our-mission" className="mb-8">
             <h2
               id="our-mission"
-              className="mb-4 text-2xl font-bold text-kelly-green"
+              className="mb-4 text-2xl font-bold text-primary"
             >
               Our Mission
             </h2>
@@ -45,7 +49,7 @@ export default function AboutUsClient() {
           <section aria-labelledby="what-we-offer" className="mb-8">
             <h2
               id="what-we-offer"
-              className="mb-4 text-2xl font-bold text-kelly-green"
+              className="mb-4 text-2xl font-bold text-primary"
             >
               What We Offer
             </h2>
@@ -58,10 +62,7 @@ export default function AboutUsClient() {
           </section>
 
           <section aria-labelledby="join-us">
-            <h2
-              id="join-us"
-              className="mb-4 text-2xl font-bold text-kelly-green"
-            >
+            <h2 id="join-us" className="mb-4 text-2xl font-bold text-primary">
               Join Us
             </h2>
             <p className="text-gray-300">

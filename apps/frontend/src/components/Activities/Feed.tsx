@@ -1,4 +1,3 @@
-// src/components/Activities/Feed.tsx
 "use client"
 
 import React, { useEffect, useState } from "react"
@@ -100,8 +99,8 @@ const Feed: React.FC<FeedProps> = ({ posts }) => {
   }
 
   return (
-    <div className="feed-container rounded-lg bg-gray-900 p-6 shadow-lg">
-      <h2 className="mb-4 text-2xl font-bold text-kelly-green">
+    <div className="rounded-lg bg-gray-900 p-6 shadow-lg">
+      <h2 className="mb-4 text-2xl font-bold text-primary">
         Recent Activities
       </h2>
       {feedPosts.map((post) => (

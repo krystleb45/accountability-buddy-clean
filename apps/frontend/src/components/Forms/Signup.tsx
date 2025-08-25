@@ -93,7 +93,11 @@ const Signup: React.FC = () => {
             value={formData.email}
             onChange={handleInputChange}
             required
-            className="w-full rounded-md bg-gray-700 p-3 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className={`
+              w-full rounded-md bg-gray-700 p-3 text-white
+              placeholder:text-gray-400
+              focus:ring-2 focus:ring-green-400 focus:outline-none
+            `}
           />
         </div>
         <div className="mb-6">
@@ -111,13 +115,21 @@ const Signup: React.FC = () => {
             value={formData.password}
             onChange={handleInputChange}
             required
-            className="w-full rounded-md bg-gray-700 p-3 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className={`
+              w-full rounded-md bg-gray-700 p-3 text-white
+              placeholder:text-gray-400
+              focus:ring-2 focus:ring-green-400 focus:outline-none
+            `}
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-green-500 py-3 text-black transition hover:bg-green-400 disabled:opacity-50"
+          className={`
+            w-full rounded-lg bg-green-500 py-3 text-black transition
+            hover:bg-green-400
+            disabled:opacity-50
+          `}
         >
           {loading ? "Signing Up..." : "Sign Up"}
         </button>

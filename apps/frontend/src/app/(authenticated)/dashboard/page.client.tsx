@@ -8,12 +8,11 @@ import { toast } from "sonner"
 import { fetchActivities } from "@/api/activity/activity-api"
 import { fetchUserBadges } from "@/api/badge/badge-api"
 import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
+import { fetchUserStreak } from "@/api/goal/goal-api"
 import { fetchDashboardProgress } from "@/api/progress/progress-api"
 import Dashboard from "@/components/Dashboard/Dashboard"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { useAuth } from "@/context/auth/auth-context"
-
-import { fetchUserStreak } from "../../../api/goal/goal-api"
 
 export default function DashboardClient() {
   const { status } = useSession()

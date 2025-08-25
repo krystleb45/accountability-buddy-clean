@@ -20,7 +20,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onComplete, onDelete }) => {
 
   return (
     <li
-      className={` ${styles.item} ${isCompleted ? styles.completed : ""} `}
+      className={`
+        ${styles.item}
+        ${isCompleted ? styles.completed : ""}
+      `}
       aria-label={`${title}${isCompleted ? " (completed)" : ""}`}
     >
       <div className={styles.details}>
@@ -38,7 +41,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onComplete, onDelete }) => {
         />
         <label
           htmlFor={`checkbox-${id}`}
-          className={`${styles.title} ${isCompleted ? styles.strikethrough : ""}`}
+          className={`
+            ${styles.title}
+            ${isCompleted ? styles.strikethrough : ""}
+          `}
         >
           {title}
         </label>
@@ -48,7 +54,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onComplete, onDelete }) => {
         <button
           type="button"
           onClick={() => onComplete(id)}
-          className={` ${styles.completeButton} ${isCompleted ? styles.undoButton : ""} `}
+          className={`
+            ${styles.completeButton}
+            ${isCompleted ? styles.undoButton : ""}
+          `}
           aria-label={
             isCompleted ? `Undo completion of ${title}` : `Complete ${title}`
           }

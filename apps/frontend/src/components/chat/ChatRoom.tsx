@@ -111,9 +111,15 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
                   isAudio ? (
                     <button
                       onClick={() => toggleAudio(content)}
-                      className={`rounded-full p-2 ${
-                        playingAudio === content ? "bg-red-500" : "bg-blue-500"
-                      } text-white`}
+                      className={`
+                        rounded-full p-2
+                        ${
+                          playingAudio === content
+                            ? "bg-red-500"
+                            : "bg-blue-500"
+                        }
+                        text-white
+                      `}
                     >
                       {playingAudio === content ? <FaPause /> : <FaPlay />}
                     </button>

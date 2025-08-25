@@ -45,7 +45,11 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   return (
     <div className={clsx("w-full", className)} {...rest}>
       {label && <p className="mb-1 text-sm font-medium text-white">{label}</p>}
-      <div className="h-5 w-full overflow-hidden rounded-full bg-gray-700 shadow-inner">
+      <div
+        className={`
+          h-5 w-full overflow-hidden rounded-full bg-gray-700 shadow-inner
+        `}
+      >
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}

@@ -120,12 +120,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           onChange={(e) => setMessage(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
-          className="flex-1 rounded-lg border border-gray-700 bg-gray-800 p-2 text-white"
+          className={`
+            flex-1 rounded-lg border border-gray-700 bg-gray-800 p-2 text-white
+          `}
         />
         <button
           onClick={handleSendMessage}
           disabled={disabled || !message.trim()}
-          className="rounded-lg bg-[#4CBB17] p-2 text-black transition hover:bg-green-400 disabled:opacity-50"
+          className={`
+            rounded-lg bg-[#4CBB17] p-2 text-black transition
+            hover:bg-green-400
+            disabled:opacity-50
+          `}
         >
           <FaPlay />
         </button>

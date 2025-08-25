@@ -169,7 +169,11 @@ const Register: React.FC = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded bg-green-500 py-3 font-semibold text-black hover:bg-green-400 disabled:opacity-50"
+          className={`
+            w-full rounded bg-green-500 py-3 font-semibold text-black
+            hover:bg-green-400
+            disabled:opacity-50
+          `}
         >
           {loading ? "Registering…" : "Register"}
         </button>

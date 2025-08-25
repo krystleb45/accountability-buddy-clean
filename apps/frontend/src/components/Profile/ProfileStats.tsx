@@ -40,7 +40,10 @@ const StatCard: React.FC<{
   onClick?: () => void
 }> = ({ label, value, onClick }) => (
   <motion.div
-    className={`rounded-lg bg-gray-800 p-4 shadow-md ${onClick ? "cursor-pointer" : ""}`}
+    className={`
+      rounded-lg bg-gray-800 p-4 shadow-md
+      ${onClick ? `cursor-pointer` : ""}
+    `}
     whileHover={{ scale: onClick ? 1.05 : 1 }}
     onClick={onClick}
     role={onClick ? "button" : undefined}
@@ -56,8 +59,22 @@ const StatCard: React.FC<{
         : undefined
     }
   >
-    <strong className="text-xl text-green-400 sm:text-2xl">{value}</strong>
-    <p className="text-sm sm:text-base">{label}</p>
+    <strong
+      className={`
+        text-xl text-green-400
+        sm:text-2xl
+      `}
+    >
+      {value}
+    </strong>
+    <p
+      className={`
+        text-sm
+        sm:text-base
+      `}
+    >
+      {label}
+    </p>
   </motion.div>
 )
 
@@ -154,11 +171,22 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="mb-4 text-2xl font-bold text-green-400 sm:text-3xl">
+      <h2
+        className={`
+          mb-4 text-2xl font-bold text-green-400
+          sm:text-3xl
+        `}
+      >
         Profile Stats
       </h2>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        className={`
+          grid grid-cols-1 gap-4
+          sm:grid-cols-2
+          lg:grid-cols-3
+        `}
+      >
         <StatCard label="Goals Completed" value={stats.completedGoals} />
         <StatCard label="🔥 Streak" value={stats.streak} />
         <StatCard label="Groups Joined" value={stats.groupsJoined} />
@@ -177,12 +205,22 @@ const ProfileStats: React.FC<ProfileStatsProps> = ({ userId }) => {
       </div>
 
       <div className="mt-6">
-        <h3 className="text-xl font-semibold text-green-400 sm:text-2xl">
+        <h3
+          className={`
+            text-xl font-semibold text-green-400
+            sm:text-2xl
+          `}
+        >
           Recent Activities
         </h3>
         <RecentActivities userId={userId} />
 
-        <h3 className="mt-4 text-xl font-semibold text-green-400 sm:text-2xl">
+        <h3
+          className={`
+            mt-4 text-xl font-semibold text-green-400
+            sm:text-2xl
+          `}
+        >
           Related Activities
         </h3>
         <RelatedActivities userId={userId} />

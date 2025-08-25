@@ -206,9 +206,19 @@ const DiscoverClient: React.FC = () => {
 
   if (status === "loading" || loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="text-center">
-          <div className="mx-auto mb-4 size-12 animate-spin rounded-full border-b-2 border-green-400"></div>
+          <div
+            className={`
+              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
+              border-green-400
+            `}
+          ></div>
           <p className="text-gray-400">Finding awesome people for you...</p>
         </div>
       </div>
@@ -217,7 +227,12 @@ const DiscoverClient: React.FC = () => {
 
   if (status === "unauthenticated") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div
+        className={`
+          flex min-h-screen items-center justify-center bg-gradient-to-br
+          from-gray-900 via-gray-800 to-black
+        `}
+      >
         <div className="text-center">
           <h2 className="mb-4 text-2xl font-bold text-white">
             Authentication Required
@@ -227,7 +242,10 @@ const DiscoverClient: React.FC = () => {
           </p>
           <Link
             href="/login"
-            className="rounded-lg bg-green-600 px-6 py-3 text-white transition hover:bg-green-500"
+            className={`
+              rounded-lg bg-green-600 px-6 py-3 text-white transition
+              hover:bg-green-500
+            `}
           >
             Go to Login
           </Link>
@@ -237,13 +255,21 @@ const DiscoverClient: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div
+      className={`
+        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
+        text-white
+      `}
+    >
       <div className="mx-auto max-w-6xl p-6">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/friends"
-            className="mb-4 inline-flex items-center text-green-400 hover:text-green-300"
+            className={`
+              mb-4 inline-flex items-center text-green-400
+              hover:text-green-300
+            `}
           >
             <FaArrowLeft className="mr-2" />
             Back to Friends
@@ -265,7 +291,10 @@ const DiscoverClient: React.FC = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="mb-6 flex items-center justify-between rounded-lg bg-green-600 p-4 text-white"
+              className={`
+                mb-6 flex items-center justify-between rounded-lg bg-green-600
+                p-4 text-white
+              `}
             >
               <div className="flex items-center">
                 <FaCheck className="mr-2" />
@@ -273,7 +302,10 @@ const DiscoverClient: React.FC = () => {
               </div>
               <button
                 onClick={() => setSuccessMessage(null)}
-                className="text-green-200 hover:text-white"
+                className={`
+                  text-green-200
+                  hover:text-white
+                `}
               >
                 <FaTimes />
               </button>
@@ -284,30 +316,51 @@ const DiscoverClient: React.FC = () => {
         {/* Search */}
         <div className="mb-8">
           <div className="relative">
-            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <FaSearch
+              className={`
+                absolute top-1/2 left-4 -translate-y-1/2 text-gray-400
+              `}
+            />
             <input
               type="text"
               placeholder="Search for people, interests..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-gray-600 bg-gray-800 py-4 pl-12 pr-4 text-white placeholder:text-gray-400 focus:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400"
+              className={`
+                w-full rounded-lg border border-gray-600 bg-gray-800 py-4 pr-4
+                pl-12 text-white
+                placeholder:text-gray-400
+                focus:border-green-400 focus:ring-2 focus:ring-green-400
+                focus:outline-none
+              `}
             />
           </div>
         </div>
 
         {/* Categories */}
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div
+          className={`
+            mb-8 grid grid-cols-2 gap-4
+            md:grid-cols-4
+          `}
+        >
           {categories.map((category) => (
             <motion.button
               key={category.id}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setSelectedCategory(category.id as CategoryType)}
-              className={`rounded-lg border p-4 transition-all ${
-                selectedCategory === category.id
-                  ? "border-green-400 bg-green-600 text-white"
-                  : "border-gray-700 bg-gray-800 text-gray-300 hover:border-green-400"
-              }`}
+              className={`
+                rounded-lg border p-4 transition-all
+                ${
+                  selectedCategory === category.id
+                    ? "border-green-400 bg-green-600 text-white"
+                    : `
+                      border-gray-700 bg-gray-800 text-gray-300
+                      hover:border-green-400
+                    `
+                }
+              `}
             >
               <div className="mb-2 text-2xl">{category.icon}</div>
               <h3 className="mb-1 font-semibold">{category.label}</h3>
@@ -318,14 +371,22 @@ const DiscoverClient: React.FC = () => {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4 text-white">
+          <div
+            className={`
+              mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4
+              text-white
+            `}
+          >
             <div className="flex items-center">
               <span className="mr-2">⚠️</span>
               {error}
             </div>
             <button
               onClick={() => setError(null)}
-              className="text-red-200 hover:text-white"
+              className={`
+                text-red-200
+                hover:text-white
+              `}
             >
               <FaTimes />
             </button>
@@ -361,14 +422,23 @@ const DiscoverClient: React.FC = () => {
               {error && (
                 <button
                   onClick={() => window.location.reload()}
-                  className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-white transition hover:bg-green-500"
+                  className={`
+                    mt-4 rounded-lg bg-green-600 px-4 py-2 text-white transition
+                    hover:bg-green-500
+                  `}
                 >
                   Refresh Page
                 </button>
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={`
+                grid grid-cols-1 gap-6
+                md:grid-cols-2
+                lg:grid-cols-3
+              `}
+            >
               {filteredSuggestions.map((person, index) => (
                 <motion.div
                   key={person.id}
@@ -377,13 +447,20 @@ const DiscoverClient: React.FC = () => {
                   transition={{ delay: index * 0.1 }}
                   onHoverStart={() => setHoveredUser(person.id)}
                   onHoverEnd={() => setHoveredUser(null)}
-                  className="relative rounded-lg border border-gray-700 bg-gray-800 p-6 transition-all duration-200 hover:border-green-400"
+                  className={`
+                    relative rounded-lg border border-gray-700 bg-gray-800 p-6
+                    transition-all duration-200
+                    hover:border-green-400
+                  `}
                 >
                   <div className="text-center">
                     <img
                       src={person.profilePicture || "/default-avatar.png"}
                       alt={person.name}
-                      className="mx-auto mb-4 size-16 rounded-full border-2 border-gray-600 object-cover"
+                      className={`
+                        mx-auto mb-4 size-16 rounded-full border-2
+                        border-gray-600 object-cover
+                      `}
                     />
                     <h3 className="mb-1 font-semibold text-white">
                       {person.name}
@@ -407,13 +484,19 @@ const DiscoverClient: React.FC = () => {
                         {person.interests.slice(0, 2).map((interest, idx) => (
                           <span
                             key={idx}
-                            className="rounded-full bg-blue-600 px-2 py-1 text-xs"
+                            className={`
+                              rounded-full bg-blue-600 px-2 py-1 text-xs
+                            `}
                           >
                             {interest}
                           </span>
                         ))}
                         {person.interests.length > 2 && (
-                          <span className="rounded-full bg-gray-600 px-2 py-1 text-xs">
+                          <span
+                            className={`
+                              rounded-full bg-gray-600 px-2 py-1 text-xs
+                            `}
+                          >
                             +{person.interests.length - 2}
                           </span>
                         )}
@@ -423,11 +506,18 @@ const DiscoverClient: React.FC = () => {
                     <button
                       onClick={() => handleSendRequest(person.id)}
                       disabled={sendingRequests.has(person.id)}
-                      className={`flex w-full items-center justify-center rounded-lg px-4 py-2 transition ${
-                        sendingRequests.has(person.id)
-                          ? "cursor-not-allowed bg-gray-600"
-                          : "bg-green-600 hover:bg-green-500"
-                      }`}
+                      className={`
+                        flex w-full items-center justify-center rounded-lg px-4
+                        py-2 transition
+                        ${
+                          sendingRequests.has(person.id)
+                            ? "cursor-not-allowed bg-gray-600"
+                            : `
+                              bg-green-600
+                              hover:bg-green-500
+                            `
+                        }
+                      `}
                     >
                       <FaUserPlus className="mr-2" />
                       {sendingRequests.has(person.id)
@@ -443,13 +533,27 @@ const DiscoverClient: React.FC = () => {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.8 }}
-                        className="absolute -top-4 left-1/2 z-10 max-w-xs -translate-x-1/2 -translate-y-full rounded-lg border border-gray-600 bg-gray-900 p-3 shadow-xl"
+                        className={`
+                          absolute -top-4 left-1/2 z-10 max-w-xs
+                          -translate-x-1/2 -translate-y-full rounded-lg border
+                          border-gray-600 bg-gray-900 p-3 shadow-xl
+                        `}
                       >
                         <div className="text-sm text-gray-300">
                           {person.bio}
                         </div>
-                        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-full">
-                          <div className="size-0 border-x-4 border-t-4 border-transparent border-t-gray-900"></div>
+                        <div
+                          className={`
+                            absolute bottom-0 left-1/2 -translate-x-1/2
+                            translate-y-full
+                          `}
+                        >
+                          <div
+                            className={`
+                              size-0 border-x-4 border-t-4 border-transparent
+                              border-t-gray-900
+                            `}
+                          ></div>
                         </div>
                       </motion.div>
                     )}
@@ -465,7 +569,12 @@ const DiscoverClient: React.FC = () => {
           <h3 className="mb-4 text-xl font-semibold text-green-400">
             Tips for Building Your Network
           </h3>
-          <div className="grid grid-cols-1 gap-4 text-sm text-gray-300 md:grid-cols-2">
+          <div
+            className={`
+              grid grid-cols-1 gap-4 text-sm text-gray-300
+              md:grid-cols-2
+            `}
+          >
             <div>
               <h4 className="mb-2 font-medium text-white">✨ Be Active</h4>
               <p>

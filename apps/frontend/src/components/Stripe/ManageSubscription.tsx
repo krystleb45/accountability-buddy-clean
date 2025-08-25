@@ -134,7 +134,10 @@ const ManageSubscription: React.FC = () => {
               type="button"
               onClick={handleCancel}
               disabled={updating}
-              className={`${styles.button} ${styles.cancelButton}`}
+              className={`
+                ${styles.button}
+                ${styles.cancelButton}
+              `}
               aria-label="Cancel subscription"
             >
               {updating ? "Cancelling…" : "Cancel Subscription"}

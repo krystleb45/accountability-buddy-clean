@@ -77,7 +77,10 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={dialogRef}
-        className={`${styles.dialog} ${className}`}
+        className={`
+          ${styles.dialog}
+          ${className}
+        `}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"

@@ -42,6 +42,7 @@ export class NetworkError extends Error {
     | "DELETE"
     | "PATCH"
     | undefined
+
   public readonly statusCode: number | undefined
 
   constructor(

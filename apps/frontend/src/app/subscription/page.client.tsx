@@ -1,4 +1,3 @@
-// src/app/subscription/page.client.tsx - FIXED: Null safety for plans array
 "use client"
 
 import { motion } from "motion/react"
@@ -154,7 +153,12 @@ export default function SubscriptionClient() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
         <div className="text-center">
-          <div className="mx-auto mb-4 size-12 animate-spin rounded-full border-b-2 border-kelly-green"></div>
+          <div
+            className={`
+              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
+              border-primary
+            `}
+          ></div>
           <p className="text-white">Loading subscription plans...</p>
         </div>
       </div>
@@ -168,8 +172,9 @@ export default function SubscriptionClient() {
         <div className="text-center">
           <p className="mb-4 text-red-500">{error}</p>
           <button
+            type="button"
             onClick={() => window.location.reload()}
-            className="rounded-lg bg-kelly-green px-4 py-2 text-black hover:bg-opacity-80"
+            className="rounded-lg bg-primary px-4 py-2 text-black"
           >
             Try Again
           </button>
@@ -183,7 +188,12 @@ export default function SubscriptionClient() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
         <div className="text-center">
-          <div className="mx-auto mb-4 size-12 animate-spin rounded-full border-b-2 border-kelly-green"></div>
+          <div
+            className={`
+              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
+              border-primary
+            `}
+          ></div>
           <p className="text-white">Loading plans...</p>
         </div>
       </div>
@@ -197,7 +207,10 @@ export default function SubscriptionClient() {
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-kelly-green to-green-600 p-4 text-center text-black"
+          className={`
+            bg-gradient-to-r from-primary to-green-600 p-4 text-center
+            text-black
+          `}
         >
           <span className="font-semibold">
             {daysUntilTrialEnd > 0
@@ -215,14 +228,18 @@ export default function SubscriptionClient() {
         transition={{ duration: 0.8 }}
         className="px-6 py-12 text-center"
       >
-        <h1 className="mb-4 text-4xl font-bold text-kelly-green md:text-5xl">
+        <h1
+          className={`
+            mb-4 text-4xl font-bold text-primary
+            md:text-5xl
+          `}
+        >
           {status?.isActive ? "Manage Your Subscription" : "Choose Your Plan"}
         </h1>
         {status?.isActive ? (
           <p className="mx-auto max-w-2xl text-lg text-gray-400">
             You're currently on the{" "}
-            <strong className="text-kelly-green">{status.currentPlan}</strong>{" "}
-            plan.
+            <strong className="text-primary">{status.currentPlan}</strong> plan.
             {status.renewalDate && (
               <>
                 <br />
@@ -250,11 +267,16 @@ export default function SubscriptionClient() {
             className="mx-auto max-w-4xl space-y-8"
           >
             {/* Current Plan Card */}
-            <div className="rounded-xl border border-kelly-green bg-gray-900 p-8">
+            <div className="rounded-xl border border-primary bg-gray-900 p-8">
               <h2 className="mb-4 text-2xl font-bold">
                 Current Plan: {status.currentPlan}
               </h2>
-              <div className="grid gap-6 md:grid-cols-2">
+              <div
+                className={`
+                  grid gap-6
+                  md:grid-cols-2
+                `}
+              >
                 <div>
                   <h3 className="mb-3 text-lg font-semibold">Plan Details:</h3>
                   <ul className="space-y-2 text-gray-300">
@@ -271,7 +293,7 @@ export default function SubscriptionClient() {
                     </li>
                     <li>
                       📊 Status:{" "}
-                      <span className="capitalize text-kelly-green">
+                      <span className="text-primary capitalize">
                         {status.subscription_status}
                       </span>
                     </li>{" "}
@@ -282,7 +304,7 @@ export default function SubscriptionClient() {
                   {limits && (
                     <ul className="space-y-2 text-gray-300">
                       <li className="flex items-center">
-                        <span className="mr-2 text-kelly-green">✓</span>
+                        <span className="mr-2 text-primary">✓</span>
                         {limits.hasUnlimitedGoals
                           ? "Unlimited goals"
                           : `Up to ${limits.maxGoals} goals`}
@@ -291,25 +313,25 @@ export default function SubscriptionClient() {
                       </li>
                       {limits.hasStreakTracker && (
                         <li className="flex items-center">
-                          <span className="mr-2 text-kelly-green">✓</span>
+                          <span className="mr-2 text-primary">✓</span>
                           Streak tracker
                         </li>
                       )}
                       {limits.hasDMMessaging && (
                         <li className="flex items-center">
-                          <span className="mr-2 text-kelly-green">✓</span>
+                          <span className="mr-2 text-primary">✓</span>
                           Direct messaging
                         </li>
                       )}
                       {limits.hasPrivateRooms && (
                         <li className="flex items-center">
-                          <span className="mr-2 text-kelly-green">✓</span>
+                          <span className="mr-2 text-primary">✓</span>
                           Private chatrooms
                         </li>
                       )}
                       {limits.hasWeeklyMeetings && (
                         <li className="flex items-center">
-                          <span className="mr-2 text-kelly-green">✓</span>
+                          <span className="mr-2 text-primary">✓</span>
                           Weekly accountability meetings
                         </li>
                       )}
@@ -318,12 +340,19 @@ export default function SubscriptionClient() {
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-4 border-t border-gray-700 pt-6">
+              <div
+                className={`
+                  mt-6 flex flex-wrap gap-4 border-t border-gray-700 pt-6
+                `}
+              >
                 <Link href="/dashboard" className="inline-block">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="rounded-lg bg-kelly-green px-6 py-3 font-semibold text-black transition-all hover:bg-opacity-80"
+                    className={`
+                      rounded-lg bg-primary px-6 py-3 font-semibold text-black
+                      transition-all
+                    `}
                   >
                     Go to Dashboard
                   </motion.button>
@@ -332,7 +361,10 @@ export default function SubscriptionClient() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowCancelModal(true)}
-                  className="rounded-lg bg-red-600 px-6 py-3 text-white transition-all hover:bg-red-700"
+                  className={`
+                    rounded-lg bg-red-600 px-6 py-3 text-white transition-all
+                    hover:bg-red-700
+                  `}
                 >
                   Cancel Subscription
                 </motion.button>
@@ -344,7 +376,13 @@ export default function SubscriptionClient() {
               <h2 className="mb-6 text-center text-2xl font-bold">
                 Available Plan Changes
               </h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div
+                className={`
+                  grid grid-cols-1 gap-6
+                  md:grid-cols-2
+                  lg:grid-cols-3
+                `}
+              >
                 {plansArray
                   .filter(
                     (plan) =>
@@ -363,29 +401,43 @@ export default function SubscriptionClient() {
                         key={plan.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className={`rounded-xl border-2 bg-gray-900 p-6 transition-all hover:scale-105 ${
-                          isUpgradeOption
-                            ? "border-green-500"
-                            : isDowngradeOption
-                              ? "border-yellow-500"
-                              : "border-gray-600"
-                        }`}
+                        className={`
+                          rounded-xl border-2 bg-gray-900 p-6 transition-all
+                          hover:scale-105
+                          ${
+                            isUpgradeOption
+                              ? "border-green-500"
+                              : isDowngradeOption
+                                ? "border-yellow-500"
+                                : "border-gray-600"
+                          }
+                        `}
                       >
                         <div className="mb-4 text-center">
-                          <div className="mb-2 flex items-center justify-between">
+                          <div className="flex items-center justify-between">
                             <h3 className="text-xl font-bold">{plan.name}</h3>
                             {isUpgradeOption && (
-                              <span className="rounded bg-green-500 px-2 py-1 text-xs text-white">
+                              <span
+                                className={`
+                                  rounded bg-green-500 px-2 py-1 text-xs
+                                  text-white
+                                `}
+                              >
                                 UPGRADE
                               </span>
                             )}
                             {isDowngradeOption && (
-                              <span className="rounded bg-yellow-500 px-2 py-1 text-xs text-black">
+                              <span
+                                className={`
+                                  rounded bg-yellow-500 px-2 py-1 text-xs
+                                  text-black
+                                `}
+                              >
                                 DOWNGRADE
                               </span>
                             )}
                           </div>
-                          <div className="mb-3">
+                          <div className="mt-2 mb-3">
                             <span className="text-2xl font-bold">
                               ${newPrice}
                             </span>
@@ -414,7 +466,7 @@ export default function SubscriptionClient() {
                         <ul className="mb-6 space-y-2 text-sm">
                           {plan.features?.slice(0, 4).map((feature, idx) => (
                             <li key={idx} className="flex items-start">
-                              <span className="mr-2 mt-0.5 text-kelly-green">
+                              <span className="mt-0.5 mr-2 text-primary">
                                 ✓
                               </span>
                               <span className="text-gray-300">{feature}</span>
@@ -430,13 +482,27 @@ export default function SubscriptionClient() {
                         <button
                           onClick={() => setShowChangeModal(plan.id)}
                           disabled={actionLoading}
-                          className={`w-full rounded-lg px-4 py-3 font-semibold transition-all disabled:opacity-50 ${
-                            isUpgradeOption
-                              ? "bg-green-600 text-white hover:bg-green-700"
-                              : isDowngradeOption
-                                ? "bg-yellow-600 text-black hover:bg-yellow-700"
-                                : "bg-gray-700 text-white hover:bg-gray-600"
-                          }`}
+                          className={`
+                            w-full rounded-lg px-4 py-3 font-semibold
+                            transition-all
+                            disabled:opacity-50
+                            ${
+                              isUpgradeOption
+                                ? `
+                                  bg-green-600 text-white
+                                  hover:bg-green-700
+                                `
+                                : isDowngradeOption
+                                  ? `
+                                    bg-yellow-600 text-black
+                                    hover:bg-yellow-700
+                                  `
+                                  : `
+                                    bg-gray-700 text-white
+                                    hover:bg-gray-600
+                                  `
+                            }
+                          `}
                         >
                           {isUpgradeOption
                             ? "Upgrade"
@@ -464,24 +530,40 @@ export default function SubscriptionClient() {
               <div className="rounded-lg border border-gray-700 bg-gray-900 p-1">
                 <button
                   onClick={() => setBillingCycle("monthly")}
-                  className={`rounded-md px-6 py-2 transition-all ${
-                    billingCycle === "monthly"
-                      ? "bg-kelly-green text-black"
-                      : "text-gray-400 hover:text-white"
-                  }`}
+                  className={`
+                    rounded-md px-6 py-2 transition-all
+                    ${
+                      billingCycle === "monthly"
+                        ? "bg-primary text-black"
+                        : `
+                          text-gray-400
+                          hover:text-white
+                        `
+                    }
+                  `}
                 >
                   Monthly
                 </button>
                 <button
                   onClick={() => setBillingCycle("yearly")}
-                  className={`rounded-md px-6 py-2 transition-all ${
-                    billingCycle === "yearly"
-                      ? "bg-kelly-green text-black"
-                      : "text-gray-400 hover:text-white"
-                  }`}
+                  className={`
+                    rounded-md px-6 py-2 transition-all
+                    ${
+                      billingCycle === "yearly"
+                        ? "bg-primary text-black"
+                        : `
+                          text-gray-400
+                          hover:text-white
+                        `
+                    }
+                  `}
                 >
                   Yearly
-                  <span className="ml-2 rounded bg-green-500 px-2 py-1 text-xs text-white">
+                  <span
+                    className={`
+                      ml-2 rounded bg-green-500 px-2 py-1 text-xs text-white
+                    `}
+                  >
                     Save 17%
                   </span>
                 </button>
@@ -489,22 +571,38 @@ export default function SubscriptionClient() {
             </motion.div>
 
             {/* Subscription Plans Grid */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div
+              className={`
+                grid grid-cols-1 gap-6
+                md:grid-cols-2
+                lg:grid-cols-4
+              `}
+            >
               {plansArray.map((plan, index) => (
                 <motion.div
                   key={plan.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * index }}
-                  className={`relative rounded-xl border-2 bg-gray-900 p-6 transition-all duration-300 hover:scale-105 ${
-                    plan.isPopular
-                      ? "border-kelly-green shadow-lg shadow-kelly-green/20"
-                      : "border-gray-600"
-                  }`}
+                  className={`
+                    relative rounded-xl border-2 bg-gray-900 p-6 transition-all
+                    duration-300
+                    hover:scale-105
+                    ${
+                      plan.isPopular
+                        ? "border-primary shadow-lg shadow-primary/20"
+                        : "border-gray-600"
+                    }
+                  `}
                 >
                   {plan.isPopular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="rounded-full bg-kelly-green px-4 py-1 text-sm font-bold text-black">
+                      <span
+                        className={`
+                          rounded-full bg-primary px-4 py-1 text-sm font-bold
+                          text-black
+                        `}
+                      >
                         Most Popular
                       </span>
                     </div>
@@ -515,7 +613,7 @@ export default function SubscriptionClient() {
                     <div className="mb-3">
                       {plan.trialDays && plan.price === 0 ? (
                         <div>
-                          <span className="text-3xl font-bold text-kelly-green">
+                          <span className="text-3xl font-bold text-primary">
                             Free
                           </span>
                           <p className="text-sm text-gray-400">
@@ -548,7 +646,7 @@ export default function SubscriptionClient() {
                     {plan.features?.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
                         <svg
-                          className="mr-3 mt-0.5 size-5 shrink-0 text-kelly-green"
+                          className="mt-0.5 mr-3 size-5 shrink-0 text-primary"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -568,11 +666,18 @@ export default function SubscriptionClient() {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleSubscribe(plan.id)}
                     disabled={actionLoading}
-                    className={`w-full rounded-lg px-4 py-3 font-semibold transition-all disabled:opacity-50 ${
-                      plan.isPopular || (plan.trialDays && plan.price === 0)
-                        ? "bg-kelly-green text-black hover:bg-opacity-80"
-                        : "border border-gray-600 bg-gray-700 text-white hover:bg-gray-600"
-                    }`}
+                    className={`
+                      w-full rounded-lg px-4 py-3 font-semibold transition-all
+                      disabled:opacity-50
+                      ${
+                        plan.isPopular || (plan.trialDays && plan.price === 0)
+                          ? `bg-primary text-black`
+                          : `
+                            border border-gray-600 bg-gray-700 text-white
+                            hover:bg-gray-600
+                          `
+                      }
+                    `}
                   >
                     {actionLoading
                       ? "Processing..."
@@ -605,11 +710,17 @@ export default function SubscriptionClient() {
 
         {/* Cancel Confirmation Modal */}
         {showCancelModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div
+            className={`
+              fixed inset-0 z-50 flex items-center justify-center bg-black p-4
+            `}
+          >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="w-full max-w-md rounded-xl border border-red-500 bg-gray-900 p-6"
+              className={`
+                w-full max-w-md rounded-xl border border-red-500 bg-gray-900 p-6
+              `}
             >
               <h3 className="mb-4 text-xl font-bold text-red-400">
                 Cancel Subscription
@@ -621,15 +732,24 @@ export default function SubscriptionClient() {
               </p>
               <div className="flex gap-4">
                 <button
+                  type="button"
                   onClick={() => setShowCancelModal(false)}
-                  className="flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
+                  className={`
+                    flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white
+                    hover:bg-gray-600
+                  `}
                 >
                   Keep Subscription
                 </button>
                 <button
+                  type="button"
                   onClick={handleCancel}
                   disabled={actionLoading}
-                  className="flex-1 rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                  className={`
+                    flex-1 rounded-lg bg-red-600 px-4 py-2 text-white
+                    hover:bg-red-700
+                    disabled:opacity-50
+                  `}
                 >
                   {actionLoading ? "Processing..." : "Yes, Cancel"}
                 </button>
@@ -640,11 +760,17 @@ export default function SubscriptionClient() {
 
         {/* Plan Change Confirmation Modal */}
         {showChangeModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div
+            className={`
+              fixed inset-0 z-50 flex items-center justify-center bg-black p-4
+            `}
+          >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="w-full max-w-md rounded-xl border border-kelly-green bg-gray-900 p-6"
+              className={`
+                w-full max-w-md rounded-xl border border-primary bg-gray-900 p-6
+              `}
             >
               {(() => {
                 const newPlan = plansArray.find((p) => p.id === showChangeModal)
@@ -655,7 +781,7 @@ export default function SubscriptionClient() {
 
                 return (
                   <>
-                    <h3 className="mb-4 text-xl font-bold text-kelly-green">
+                    <h3 className="mb-4 text-xl font-bold text-primary">
                       {isUpgradeOption ? "Upgrade" : "Change"} Plan
                     </h3>
                     <div className="mb-6 space-y-2 text-gray-300">
@@ -687,15 +813,23 @@ export default function SubscriptionClient() {
                     </div>
                     <div className="flex gap-4">
                       <button
+                        type="button"
                         onClick={() => setShowChangeModal(null)}
-                        className="flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
+                        className={`
+                          flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white
+                          hover:bg-gray-600
+                        `}
                       >
                         Cancel
                       </button>
                       <button
+                        type="button"
                         onClick={() => handlePlanChange(showChangeModal)}
                         disabled={actionLoading}
-                        className="flex-1 rounded-lg bg-kelly-green px-4 py-2 text-black hover:bg-opacity-80 disabled:opacity-50"
+                        className={`
+                          flex-1 rounded-lg bg-primary px-4 py-2 text-black
+                          disabled:opacity-50
+                        `}
                       >
                         {actionLoading ? "Processing..." : "Confirm Change"}
                       </button>

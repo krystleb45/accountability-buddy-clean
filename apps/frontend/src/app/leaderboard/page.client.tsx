@@ -29,7 +29,10 @@ export default function LeaderboardPage() {
       <div className="mb-6">
         <Link
           href="/dashboard"
-          className="text-sm text-green-400 hover:underline"
+          className={`
+            text-sm text-green-400
+            hover:underline
+          `}
         >
           ← Back to Dashboard
         </Link>

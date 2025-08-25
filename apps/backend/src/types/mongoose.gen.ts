@@ -61,7 +61,7 @@ export type AccountabilityPartnershipStatics = {
   findBetweenUsers: (
     this: AccountabilityPartnershipModel,
     u1: string,
-    u2: string
+    u2: string,
   ) => any
 }
 
@@ -290,7 +290,7 @@ export type ActivityQueries = {}
 export type ActivityMethods = {
   addParticipant: (
     this: ActivityDocument,
-    userId: mongoose.Types.ObjectId
+    userId: mongoose.Types.ObjectId,
   ) => Promise<void>
   markDeleted: (this: ActivityDocument) => Promise<void>
 }
@@ -299,12 +299,12 @@ export type ActivityStatics = {
   getRecentForUser: (
     this: ActivityModel,
     userId: mongoose.Types.ObjectId,
-    limit: number
+    limit: number,
   ) => any
   getByType: (this: ActivityModel, type: any) => any
   softDeleteByUser: (
     this: ActivityModel,
-    userId: mongoose.Types.ObjectId
+    userId: mongoose.Types.ObjectId,
   ) => any
 }
 
@@ -1406,16 +1406,16 @@ export type BookMethods = {
   addLike: (this: BookDocument, userId: mongoose.Types.ObjectId) => Promise<any>
   removeLike: (
     this: BookDocument,
-    userId: mongoose.Types.ObjectId
+    userId: mongoose.Types.ObjectId,
   ) => Promise<any>
   addComment: (
     this: BookDocument,
     userId: mongoose.Types.ObjectId,
-    text: string
+    text: string,
   ) => Promise<any>
   removeComment: (
     this: BookDocument,
-    commentId: mongoose.Types.ObjectId
+    commentId: mongoose.Types.ObjectId,
   ) => Promise<boolean>
 }
 
@@ -2241,15 +2241,15 @@ export type CollaborationGoalQueries = {}
 export type CollaborationGoalMethods = {
   updateProgress: (
     this: CollaborationGoalDocument,
-    newProgress: number
+    newProgress: number,
   ) => Promise<any>
   addParticipant: (
     this: CollaborationGoalDocument,
-    userId: mongoose.Types.ObjectId
+    userId: mongoose.Types.ObjectId,
   ) => Promise<any>
   completeMilestone: (
     this: CollaborationGoalDocument,
-    index: number
+    index: number,
   ) => Promise<any>
 }
 
@@ -3533,7 +3533,7 @@ export type GoalMethods = {
   addReminder: (
     this: GoalDocument,
     message: string,
-    remindAt: Date
+    remindAt: Date,
   ) => Promise<any>
   markMilestoneComplete: (this: GoalDocument, index: number) => Promise<any>
 }
@@ -3542,7 +3542,7 @@ export type GoalStatics = {
   findByUser: (
     this: GoalModel,
     userId: mongoose.Types.ObjectId,
-    filter?: {}
+    filter?: {},
   ) => any
   archiveCompleted: (this: GoalModel) => Promise<{ nDeleted: any }>
 }
@@ -7158,17 +7158,17 @@ export type ReminderMethods = {
 export type ReminderStatics = {
   getUpcomingRemindersForUser: (
     this: ReminderModel,
-    userId: mongoose.Types.ObjectId
+    userId: mongoose.Types.ObjectId,
   ) => any
   getUpcomingRemindersInRange: (
     this: ReminderModel,
     start: Date,
-    end: Date
+    end: Date,
   ) => any
   getUserReminders: (
     this: ReminderModel,
     userId: mongoose.Types.ObjectId,
-    filters?: {}
+    filters?: {},
   ) => any
 }
 
@@ -8729,11 +8729,11 @@ export type UserMethods = {
   getDaysUntilTrialEnd: (this: UserDocument) => number
   comparePassword: (
     this: UserDocument,
-    candidatePassword: string
+    candidatePassword: string,
   ) => Promise<any>
   awardBadge: (
     this: UserDocument,
-    badgeId: mongoose.Types.ObjectId
+    badgeId: mongoose.Types.ObjectId,
   ) => Promise<void>
   getGoalLimit: (this: UserDocument) => number
 }
@@ -9246,20 +9246,20 @@ type PopulatedProperty<Root, T extends keyof Root> = Omit<Root, T> & {
 export type PopulatedDocument<DocType, T> = T extends keyof DocType
   ? PopulatedProperty<DocType, T>
   : ParentProperty<T> extends keyof DocType
-  ? Omit<DocType, ParentProperty<T>> & {
-      [ref in ParentProperty<T>]: DocType[ParentProperty<T>] extends mongoose.Types.Array<
-        infer U
-      >
-        ? mongoose.Types.Array<
-            ChildProperty<T> extends keyof U
-              ? PopulatedProperty<U, ChildProperty<T>>
-              : PopulatedDocument<U, ChildProperty<T>>
-          >
-        : ChildProperty<T> extends keyof DocType[ParentProperty<T>]
-        ? PopulatedProperty<DocType[ParentProperty<T>], ChildProperty<T>>
-        : PopulatedDocument<DocType[ParentProperty<T>], ChildProperty<T>>
-    }
-  : DocType
+    ? Omit<DocType, ParentProperty<T>> & {
+        [ref in ParentProperty<T>]: DocType[ParentProperty<T>] extends mongoose.Types.Array<
+          infer U
+        >
+          ? mongoose.Types.Array<
+              ChildProperty<T> extends keyof U
+                ? PopulatedProperty<U, ChildProperty<T>>
+                : PopulatedDocument<U, ChildProperty<T>>
+            >
+          : ChildProperty<T> extends keyof DocType[ParentProperty<T>]
+            ? PopulatedProperty<DocType[ParentProperty<T>], ChildProperty<T>>
+            : PopulatedDocument<DocType[ParentProperty<T>], ChildProperty<T>>
+      }
+    : DocType
 
 /**
  * Helper types used by the populate overloads
@@ -9276,26 +9276,26 @@ declare module "mongoose" {
       path: T,
       select?: string | any,
       model?: string | Model<any, THelpers>,
-      match?: any
+      match?: any,
     ): Query<
       ResultType extends Array<DocType>
         ? Array<PopulatedDocument<Unarray<ResultType>, T>>
         : ResultType extends DocType
-        ? PopulatedDocument<Unarray<ResultType>, T>
-        : ResultType,
+          ? PopulatedDocument<Unarray<ResultType>, T>
+          : ResultType,
       DocType,
       THelpers
     > &
       THelpers
 
     populate<T extends string>(
-      options: Modify<PopulateOptions, { path: T }> | Array<PopulateOptions>
+      options: Modify<PopulateOptions, { path: T }> | Array<PopulateOptions>,
     ): Query<
       ResultType extends Array<DocType>
         ? Array<PopulatedDocument<Unarray<ResultType>, T>>
         : ResultType extends DocType
-        ? PopulatedDocument<Unarray<ResultType>, T>
-        : ResultType,
+          ? PopulatedDocument<Unarray<ResultType>, T>
+          : ResultType,
       DocType,
       THelpers
     > &

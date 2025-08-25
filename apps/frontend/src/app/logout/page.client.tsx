@@ -20,7 +20,12 @@ export default function LogoutClient() {
   }, [router])
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-blue-100 p-6">
+    <div
+      className={`
+        flex min-h-screen items-center justify-center bg-gradient-to-br
+        from-gray-50 to-blue-100 p-6
+      `}
+    >
       <div className="text-center">
         <h1 className="mb-4 text-3xl font-bold text-gray-800">Logging Out…</h1>
         <p className="text-lg text-gray-600">

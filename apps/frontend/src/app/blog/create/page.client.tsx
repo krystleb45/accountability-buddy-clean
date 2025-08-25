@@ -67,7 +67,9 @@ export default function CreateBlogPage() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-lg border border-gray-600 bg-black p-3 text-white"
+            className={`
+              w-full rounded-lg border border-gray-600 bg-black p-3 text-white
+            `}
             required
             disabled={loading}
           />
@@ -82,7 +84,9 @@ export default function CreateBlogPage() {
             id="category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full rounded-lg border border-gray-600 bg-black p-3 text-white"
+            className={`
+              w-full rounded-lg border border-gray-600 bg-black p-3 text-white
+            `}
             disabled={loading}
           >
             {categories.map((cat) => (
@@ -103,7 +107,9 @@ export default function CreateBlogPage() {
             type="text"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            className="w-full rounded-lg border border-gray-600 bg-black p-3 text-white"
+            className={`
+              w-full rounded-lg border border-gray-600 bg-black p-3 text-white
+            `}
             disabled={loading}
           />
         </div>
@@ -117,7 +123,10 @@ export default function CreateBlogPage() {
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="h-40 w-full rounded-lg border border-gray-600 bg-black p-3 text-white"
+            className={`
+              h-40 w-full rounded-lg border border-gray-600 bg-black p-3
+              text-white
+            `}
             required
             disabled={loading}
           />
@@ -126,7 +135,12 @@ export default function CreateBlogPage() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full rounded-lg bg-green-500 px-6 py-3 font-semibold text-black transition hover:bg-green-400 disabled:opacity-50"
+          className={`
+            w-full rounded-lg bg-green-500 px-6 py-3 font-semibold text-black
+            transition
+            hover:bg-green-400
+            disabled:opacity-50
+          `}
           disabled={loading}
         >
           {loading ? "Creating..." : "Create Blog Post"}
@@ -135,7 +149,13 @@ export default function CreateBlogPage() {
 
       {/* Back to Blog List */}
       <div className="mt-6 text-center">
-        <Link href="/blog" className="text-green-400 hover:underline">
+        <Link
+          href="/blog"
+          className={`
+            text-green-400
+            hover:underline
+          `}
+        >
           ← Back to Blog
         </Link>
       </div>

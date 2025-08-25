@@ -1,0 +1,3 @@
+npm run generate-mongoose-types
+git add .
+npx lint-staged

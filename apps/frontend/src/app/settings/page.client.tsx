@@ -1,4 +1,3 @@
-// src/app/settings/page.client.tsx
 "use client"
 
 import Link from "next/link"
@@ -83,7 +82,13 @@ export default function SettingsClient() {
     <div className={styles.settingsContainer}>
       {/* Back link */}
       <nav className="mb-6">
-        <Link href="/dashboard" className="text-kelly-green hover:underline">
+        <Link
+          href="/dashboard"
+          className={`
+            text-primary
+            hover:underline
+          `}
+        >
           ← Back to Dashboard
         </Link>
       </nav>

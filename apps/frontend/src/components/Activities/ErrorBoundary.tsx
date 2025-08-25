@@ -45,7 +45,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        <div
+          className={`
+            flex min-h-screen items-center justify-center bg-black text-white
+          `}
+        >
           <div className="w-96 rounded-lg bg-gray-900 p-6 text-center shadow-lg">
             <h1 className="mb-4 text-2xl font-bold text-red-500">
               Oops! Something went wrong.
@@ -56,7 +60,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             </p>
             <button
               onClick={this.handleRetry}
-              className="rounded-lg bg-kelly-green px-4 py-2 font-semibold text-black transition hover:bg-green-400"
+              className={`
+                rounded-lg bg-primary px-4 py-2 font-semibold text-black
+                transition
+                hover:bg-green-400
+              `}
             >
               Retry
             </button>

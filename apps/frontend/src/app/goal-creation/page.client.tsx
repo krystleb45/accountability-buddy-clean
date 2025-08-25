@@ -87,7 +87,10 @@ export default function GoalCreationClient() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded bg-green-500 py-2 text-white hover:bg-green-600"
+          className={`
+            w-full rounded bg-green-500 py-2 text-white
+            hover:bg-green-600
+          `}
         >
           {submitting ? "Creating…" : "Create Goal"}
         </button>

@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import React, { useState } from "react"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 
 interface Props {
   isOpen: boolean
@@ -71,8 +71,17 @@ const CreateChallengeModal: React.FC<Props> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-xl rounded-lg border border-gray-700 bg-gray-900 p-6 text-white shadow-lg">
+    <div
+      className={`
+        fixed inset-0 z-50 flex items-center justify-center bg-black/50
+      `}
+    >
+      <div
+        className={`
+          w-full max-w-xl rounded-lg border border-gray-700 bg-gray-900 p-6
+          text-white shadow-lg
+        `}
+      >
         <h2 className="mb-4 text-xl font-semibold">
           ✍️ Create a New Challenge
         </h2>
@@ -82,7 +91,11 @@ const CreateChallengeModal: React.FC<Props> = ({
             value={form.title}
             onChange={handleChange}
             placeholder="Title"
-            className="w-full rounded border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className={`
+              w-full rounded border border-gray-700 bg-gray-800 px-4 py-2
+              text-white
+              focus:ring-2 focus:ring-green-500 focus:outline-none
+            `}
             required
           />
           <textarea
@@ -90,7 +103,11 @@ const CreateChallengeModal: React.FC<Props> = ({
             value={form.description}
             onChange={handleChange}
             placeholder="Description"
-            className="w-full rounded border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className={`
+              w-full rounded border border-gray-700 bg-gray-800 px-4 py-2
+              text-white
+              focus:ring-2 focus:ring-green-500 focus:outline-none
+            `}
             rows={3}
             required
           />
@@ -99,7 +116,11 @@ const CreateChallengeModal: React.FC<Props> = ({
             value={form.goal}
             onChange={handleChange}
             placeholder="Goal (e.g., Walk 10k steps daily)"
-            className="w-full rounded border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+            className={`
+              w-full rounded border border-gray-700 bg-gray-800 px-4 py-2
+              text-white
+              focus:ring-2 focus:ring-green-500 focus:outline-none
+            `}
             required
           />
           <label className="block">
@@ -109,7 +130,11 @@ const CreateChallengeModal: React.FC<Props> = ({
               name="endDate"
               value={form.endDate}
               onChange={handleChange}
-              className="mt-1 w-full rounded border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className={`
+                mt-1 w-full rounded border border-gray-700 bg-gray-800 px-4 py-2
+                text-white
+                focus:ring-2 focus:ring-green-500 focus:outline-none
+              `}
               required
             />
           </label>
@@ -129,7 +154,11 @@ const CreateChallengeModal: React.FC<Props> = ({
               name="visibility"
               value={form.visibility}
               onChange={handleChange}
-              className="mt-1 w-full rounded border border-gray-700 bg-gray-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className={`
+                mt-1 w-full rounded border border-gray-700 bg-gray-800 px-4 py-2
+                text-white
+                focus:ring-2 focus:ring-green-500 focus:outline-none
+              `}
             >
               <option value="public">🌍 Public</option>
               <option value="private">🔒 Private</option>
@@ -142,14 +171,20 @@ const CreateChallengeModal: React.FC<Props> = ({
                 onClose()
                 setForm(defaultForm)
               }}
-              className="rounded bg-gray-600 px-4 py-2 hover:bg-gray-500"
+              className={`
+                rounded bg-gray-600 px-4 py-2
+                hover:bg-gray-500
+              `}
               disabled={loading}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded bg-green-600 px-4 py-2 hover:bg-green-500"
+              className={`
+                rounded bg-green-600 px-4 py-2
+                hover:bg-green-500
+              `}
               disabled={loading}
             >
               {loading ? "Creating..." : "Create"}

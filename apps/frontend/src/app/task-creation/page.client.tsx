@@ -89,7 +89,11 @@ export default function TaskCreationClient() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-black p-6 text-white">
+    <div
+      className={`
+        flex min-h-screen flex-col items-center bg-black p-6 text-white
+      `}
+    >
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -112,7 +116,10 @@ export default function TaskCreationClient() {
             value={formData.title}
             onChange={handleChange}
             placeholder="Enter task title"
-            className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
+            className={`
+              w-full rounded-lg border bg-gray-800 p-3 text-white
+              focus:ring focus:outline-none
+            `}
             required
           />
 
@@ -130,7 +137,10 @@ export default function TaskCreationClient() {
             onChange={handleChange}
             placeholder="Enter task description"
             rows={4}
-            className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
+            className={`
+              w-full rounded-lg border bg-gray-800 p-3 text-white
+              focus:ring focus:outline-none
+            `}
             required
           />
 
@@ -143,7 +153,10 @@ export default function TaskCreationClient() {
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
+            className={`
+              w-full rounded-lg border bg-gray-800 p-3 text-white
+              focus:ring focus:outline-none
+            `}
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -160,7 +173,10 @@ export default function TaskCreationClient() {
             type="date"
             value={formData.dueDate}
             onChange={handleChange}
-            className="w-full rounded-lg border bg-gray-800 p-3 text-white focus:outline-none focus:ring"
+            className={`
+              w-full rounded-lg border bg-gray-800 p-3 text-white
+              focus:ring focus:outline-none
+            `}
             required
           />
 
@@ -174,7 +190,10 @@ export default function TaskCreationClient() {
             whileTap={{ scale: 0.95 }}
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-green-500 py-3 text-black disabled:opacity-50"
+            className={`
+              w-full rounded-lg bg-green-500 py-3 text-black
+              disabled:opacity-50
+            `}
           >
             {loading ? "Creating…" : "Create Task"}
           </motion.button>

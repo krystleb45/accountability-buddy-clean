@@ -20,7 +20,10 @@ const ThemeToggle: React.FC = () => {
         onClick={toggleTheme}
         aria-label="Toggle theme"
         aria-pressed={isDarkMode}
-        className={`${styles.button} ${isDarkMode ? styles.dark : styles.light}`}
+        className={`
+          ${styles.button}
+          ${isDarkMode ? styles.dark : styles.light}
+        `}
         data-testid="theme-toggle-button"
       >
         <span className={styles.icon} aria-hidden="true">

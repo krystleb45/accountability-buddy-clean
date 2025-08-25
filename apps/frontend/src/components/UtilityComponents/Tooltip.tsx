@@ -8,17 +8,11 @@ interface TooltipProps {
   children: React.ReactNode // The target element that triggers the tooltip
 }
 
-const Tooltip: React.FC<TooltipProps> = ({
-  content,
-  position = "top",
-  children,
-}) => {
+const Tooltip: React.FC<TooltipProps> = ({ content, children }) => {
   return (
-    <div className="tooltip-container">
+    <div>
       {children}
-      <div className={`tooltip tooltip-${position}`} role="tooltip">
-        {content}
-      </div>
+      <div role="tooltip">{content}</div>
     </div>
   )
 }

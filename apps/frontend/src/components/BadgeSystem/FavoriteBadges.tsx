@@ -99,7 +99,11 @@ const FavoriteBadges: React.FC = () => {
           role="button"
           aria-pressed="true"
           tabIndex={0}
-          className={`${styles.badgeCard} transition hover:bg-gray-800 hover:shadow-md`}
+          className={`
+            ${styles.badgeCard}
+            transition
+            hover:bg-gray-800 hover:shadow-md
+          `}
           onClick={() => handleToggle(badge.id)}
           onKeyDown={onKeyDown(badge.id)}
         >

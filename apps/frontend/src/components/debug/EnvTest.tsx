@@ -46,7 +46,10 @@ export default function EnvTest() {
 
       <button
         onClick={testApiConnection}
-        className="rounded bg-kelly-green px-4 py-2 text-black hover:bg-kelly-green/80"
+        className={`
+          rounded bg-primary px-4 py-2 text-black
+          hover:bg-primary/80
+        `}
         type="button"
       >
         Test API Connection

@@ -1,4 +1,3 @@
-// src/app/faq/page.client.tsx
 "use client"
 
 import type { ChangeEvent } from "react"
@@ -84,7 +83,7 @@ export default function FaqClient() {
                   }}
                 >
                   <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-kelly-green">
+                    <h2 className="text-xl font-semibold text-primary">
                       {faq.question}
                     </h2>
                     <motion.span
