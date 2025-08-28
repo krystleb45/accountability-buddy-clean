@@ -164,11 +164,13 @@
   --animate-spin: spin var(--tw-duration, 1s) var(--tw-ease, linear) infinite;
 }
 
-* {
-  @apply border-border;
-}
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-body {
-  @apply bg-background text-foreground font-sans antialiased;
-  letter-spacing: var(--tracking-normal);
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    letter-spacing: var(--tracking-normal);
+  }
 }

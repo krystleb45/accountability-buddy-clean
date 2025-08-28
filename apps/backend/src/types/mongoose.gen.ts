@@ -8725,7 +8725,7 @@ export type UserQuery = mongoose.Query<any, UserDocument, UserQueries> &
 export type UserQueries = {}
 
 export type UserMethods = {
-  hasFeatureAccess: (this: UserDocument, feature: string) => any
+  hasFeatureAccess: (this: UserDocument, feature: string) => boolean
   isSubscriptionActive: (this: UserDocument) => boolean
   isInTrial: (this: UserDocument) => boolean
   getDaysUntilTrialEnd: (this: UserDocument) => number
