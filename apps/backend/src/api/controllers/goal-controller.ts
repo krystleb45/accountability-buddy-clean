@@ -1,6 +1,6 @@
-// src/api/controllers/goalController.ts - FIXED: TypeScript errors
 import type { NextFunction, Request, Response } from "express"
 import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
+import type { Goal } from "src/types/mongoose.gen"
 
 import mongoose from "mongoose"
 
@@ -11,48 +11,27 @@ import { GoalService } from "../services/goal-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
-// Helper function for goal limits
-function getGoalLimitForTier(tier: string): number {
-  const goalLimits: Record<string, number> = {
-    "free-trial": -1, // unlimited
-    basic: 3,
-    pro: -1, // unlimited
-    elite: -1, // unlimited
-  }
-  return goalLimits[tier] ?? 3
-}
-
 export const createGoal = catchAsync(
   async (
-    req: Request<
+    req: AuthenticatedRequest<
       unknown,
       unknown,
-      {
-        title: string
-        description?: string
-        deadline: string
-        category: string
-      }
+      Pick<
+        Goal,
+        | "title"
+        | "description"
+        | "dueDate"
+        | "category"
+        | "tags"
+        | "priority"
+        | "visibility"
+      >
     >,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
-
-    const { title, description, deadline, category } = req.body
-    if (!title || !deadline || !category) {
-      return next(createError("Title, deadline and category are required", 400))
-    }
-
-    // Parse + validate date
-    const due = new Date(deadline)
-    if (Number.isNaN(due.getTime())) {
-      return next(createError("Invalid date format", 400))
-    }
+    const userId = req.user.id
+    const data = req.body
 
     // Get user to check subscription limits
     const user = await User.findById(userId)
@@ -61,7 +40,6 @@ export const createGoal = catchAsync(
     }
 
     const canCreateGoal = await GoalService.canUserCreateGoal(userId)
-    const goalLimit = canCreateGoal.maxAllowed
 
     if (!canCreateGoal.canCreate) {
       return next(
@@ -71,44 +49,27 @@ export const createGoal = catchAsync(
         ),
       )
     }
-
-    // console.log("✅ Goal creation allowed");
-
-    // Create the goal - FIXED: Pass description properly
     const createdGoal = await GoalService.createGoal(userId, {
-      title,
-      description: description || "", // Handle undefined description
-      category,
-      dueDate: due,
+      title: data.title,
+      description: data.description || "", // Handle undefined description
+      category: data.category,
+      dueDate: data.dueDate,
+      tags: data.tags || [],
+      priority: data.priority || "medium",
+      visibility: data.visibility || "private",
     })
 
-    // Get updated count after creation - FIXED: Use correct variable name
-    const updatedActiveGoalCount = await GoalService.getActiveGoalCount(userId)
-
-    // Include subscription info in response for frontend
-    const responseData = {
-      goal: createdGoal, // FIXED: Use the returned goal
-      subscription: {
-        tier: user.subscriptionTier,
-        goalLimit,
-        currentGoalCount: updatedActiveGoalCount,
-        hasUnlimitedGoals: goalLimit === -1,
-        canCreateMore: goalLimit === -1 || updatedActiveGoalCount < goalLimit,
-      },
-    }
-
     // console.log(`✅ Goal created successfully. New count: ${updatedActiveGoalCount}`);
-    sendResponse(res, 201, true, "Goal created successfully", responseData)
+    sendResponse(res, 201, true, "Goal created successfully", {
+      goal: createdGoal,
+    })
   },
 )
 
 export const getUserGoals = catchAsync(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
+    const userId = authReq.user.id
 
     // Get user subscription info
     const user = await User.findById(userId)
@@ -117,44 +78,10 @@ export const getUserGoals = catchAsync(
     }
 
     const goals = await GoalService.getUserGoals(userId)
-    const activeGoalCount = await GoalService.getActiveGoalCount(userId)
-
-    // FIXED: Use helper functions instead of user methods
-    const goalLimit = getGoalLimitForTier(user.subscriptionTier)
-    const hasUnlimitedGoals = goalLimit === -1
-    const canCreateMore = goalLimit === -1 || activeGoalCount < goalLimit
-
-    // Helper functions for trial info
-    const isInTrial = (): boolean => {
-      if (user.subscription_status === "trial" && user.trial_end_date) {
-        return new Date() < new Date(user.trial_end_date)
-      }
-      return false
-    }
-
-    const getDaysUntilTrialEnd = (): number => {
-      if (!user.trial_end_date) {
-        return 0
-      }
-      const now = new Date()
-      const trialEnd = new Date(user.trial_end_date)
-      const diffTime = trialEnd.getTime() - now.getTime()
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      return Math.max(0, diffDays)
-    }
 
     // Include subscription limits in response
     const responseData = {
       goals,
-      subscription: {
-        tier: user.subscriptionTier,
-        goalLimit,
-        currentGoalCount: activeGoalCount,
-        hasUnlimitedGoals,
-        canCreateMore,
-        isInTrial: isInTrial(),
-        daysUntilTrialEnd: getDaysUntilTrialEnd(),
-      },
     }
 
     sendResponse(
@@ -163,6 +90,27 @@ export const getUserGoals = catchAsync(
       true,
       "User goals retrieved successfully",
       responseData,
+    )
+  },
+)
+
+export const getUserGoalCategories = catchAsync(
+  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const userId = req.user.id
+
+    const user = await User.findById(userId)
+    if (!user) {
+      return next(createError("User not found", 404))
+    }
+
+    const categories = await GoalService.getUserGoalCategories(userId)
+
+    sendResponse(
+      res,
+      200,
+      true,
+      "User goal categories retrieved successfully",
+      { categories },
     )
   },
 )
@@ -380,15 +328,3 @@ export const deleteGoal = catchAsync(
     sendResponse(res, 200, true, "Goal deleted successfully", {})
   },
 )
-
-export default {
-  createGoal,
-  getPublicGoals,
-  getUserGoals,
-  getStreakDates,
-  updateGoalProgress,
-  completeGoal,
-  updateGoal,
-  deleteGoal,
-  getGoalById,
-}

@@ -71,6 +71,10 @@ GoalSchema.index({ dueDate: 1 })
 GoalSchema.index({ completedAt: 1 })
 GoalSchema.index({ tags: 1 })
 
+GoalSchema.virtual("isActive").get(function () {
+  return this.status === "in-progress" || this.status === "not-started"
+})
+
 // --- Middleware ---
 GoalSchema.pre("save", function (next) {
   this.title = sanitize(this.title)

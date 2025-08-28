@@ -1,5 +1,5 @@
-// src/api/routes/goalRoutes.ts - Updated with subscription restrictions
 import { Router } from "express"
+import z from "zod"
 
 import * as goalController from "../controllers/goal-controller"
 import { protect } from "../middleware/auth-middleware"
@@ -7,6 +7,7 @@ import {
   trialPrompt,
   validateSubscription,
 } from "../middleware/subscription-validation"
+import validate from "../middleware/validation-middleware"
 
 const router = Router()
 
@@ -21,11 +22,37 @@ router.use(protect)
 router.get("/", validateSubscription, goalController.getUserGoals)
 
 /**
+ * GET /api/goals/categories
+ * Get all categories for goals defined by user
+ * Basic subscription required
+ */
+router.get(
+  "/categories",
+  validateSubscription,
+  goalController.getUserGoalCategories,
+)
+
+/**
  * POST /api/goals
  * Create a new goal
  * Requires subscription + goal limit validation
  */
-router.post("/", validateSubscription, goalController.createGoal)
+const goalCreateSchema = z.object({
+  title: z.string().min(1, "Please enter a title for your goal"),
+  description: z.string().optional(),
+  category: z.string().min(1, "Please select or add a category for your goal"),
+  dueDate: z.iso.datetime().min(1, "Please enter a dueDate for your goal"),
+  tags: z.array(z.string()).optional(),
+  priority: z.enum(["low", "medium", "high"]).default("medium"),
+  visibility: z.enum(["public", "private"]).default("private"),
+})
+
+router.post(
+  "/",
+  validateSubscription,
+  validate({ bodySchema: goalCreateSchema }),
+  goalController.createGoal,
+)
 
 /**
  * GET /api/goals/public

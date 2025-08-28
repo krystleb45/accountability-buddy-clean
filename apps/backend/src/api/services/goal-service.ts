@@ -31,6 +31,19 @@ export class GoalService {
   }
 
   /**
+   * Get all unique goal categories for a user.
+   */
+  static async getUserGoalCategories(userId: string) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new CustomError("Invalid user ID", 400)
+    }
+
+    return (await Goal.distinct("category", {
+      user: userId,
+    }).exec()) as string[]
+  }
+
+  /**
    * Get count of active goals for subscription limit checking
    */
   static async getActiveGoalCount(userId: string): Promise<number> {
@@ -40,7 +53,7 @@ export class GoalService {
 
     return await Goal.countDocuments({
       user: userId,
-      status: { $in: ["not-started", "in-progress"] },
+      isActive: true,
     })
   }
 
@@ -184,7 +197,19 @@ export class GoalService {
    * Create a new goal.
    * Note: Subscription validation should be done in middleware/controller before calling this
    */
-  static async createGoal(userId: string, data: Partial<IGoal>) {
+  static async createGoal(
+    userId: string,
+    data: Pick<
+      IGoal,
+      | "title"
+      | "description"
+      | "dueDate"
+      | "category"
+      | "tags"
+      | "priority"
+      | "visibility"
+    >,
+  ) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new CustomError("Invalid user ID", 400)
     }
