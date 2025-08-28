@@ -191,7 +191,7 @@ UserSchema.pre(
 )
 
 UserSchema.methods = {
-  hasFeatureAccess(feature: string) {
+  hasFeatureAccess(feature: string): boolean {
     const featureAccess = {
       "free-trial": ["all"],
       basic: ["streak", "dailyPrompts", "groupChat"],

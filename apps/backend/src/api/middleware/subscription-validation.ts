@@ -21,11 +21,7 @@ export async function validateSubscription(
 ): Promise<void> {
   try {
     const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-
-    if (!userId) {
-      return next(createError("User not authenticated", status.UNAUTHORIZED))
-    }
+    const userId = authReq.user.id
 
     // Fetch the user from the database
     const user = await User.findById(userId)

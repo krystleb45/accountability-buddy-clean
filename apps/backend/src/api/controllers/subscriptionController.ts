@@ -1,75 +1,15 @@
-// src/api/controllers/subscriptionController.ts - FIXED: Remove User model method dependencies
-
 import type { RequestHandler } from "express"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { CreateCheckoutSessionBody } from "../routes/subscription"
 
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import { GoalService } from "../services/goal-service"
+import { stripe } from "../services/StripeService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
-
-// Helper functions to replace User model methods
-function getGoalLimitForTier(tier: string): number {
-  const goalLimits: Record<string, number> = {
-    "free-trial": -1, // unlimited
-    basic: 3,
-    pro: -1, // unlimited
-    elite: -1, // unlimited
-  }
-  return goalLimits[tier] ?? 3 // default to 3
-}
-
-function hasFeatureAccessForTier(tier: string, feature: string): boolean {
-  const featureAccess: Record<string, string[]> = {
-    "free-trial": ["all"],
-    basic: ["streak", "dailyPrompts", "groupChat"],
-    pro: [
-      "streak",
-      "dailyPrompts",
-      "groupChat",
-      "dmMessaging",
-      "badges",
-      "analytics",
-    ],
-    elite: ["all"],
-  }
-
-  const userFeatures = featureAccess[tier] ?? [
-    "streak",
-    "dailyPrompts",
-    "groupChat",
-  ]
-  return userFeatures.includes("all") || userFeatures.includes(feature)
-}
-
-function isInTrialStatus(user: any): boolean {
-  if (
-    user.subscription_status === "trial" ||
-    user.subscription_status === "trialing"
-  ) {
-    if (user.trial_end_date) {
-      return new Date() < new Date(user.trial_end_date)
-    }
-  }
-  return false
-}
-
-function getDaysUntilTrialEnd(user: any): number {
-  if (!user.trial_end_date) return 0
-  const now = new Date()
-  const trialEnd = new Date(user.trial_end_date)
-  const diffTime = trialEnd.getTime() - now.getTime()
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  return Math.max(0, diffDays)
-}
-
-function canCreateMoreGoals(tier: string, activeGoals: number): boolean {
-  const goalLimit = getGoalLimitForTier(tier)
-  return goalLimit === -1 || activeGoals < goalLimit
-}
 
 /**
  * GET /api/subscription/plans
@@ -151,14 +91,14 @@ export const getPlans: RequestHandler = catchAsync(async (_req, res) => {
  * Create a Stripe checkout session for subscription
  */
 export const createCheckoutSession: RequestHandler = catchAsync(
-  async (req, res, next) => {
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-    const { planId, billingCycle = "monthly", successUrl } = req.body
-
-    if (!userId) {
-      return next(createError("User not authenticated", 401))
-    }
+  async (
+    req: AuthenticatedRequest<unknown, unknown, CreateCheckoutSessionBody>,
+    res,
+    next,
+  ) => {
+    const userId = req.user.id
+    const user = await User.findById(userId)
+    const { planId, billingCycle = "monthly", successUrl, cancelUrl } = req.body
 
     if (!planId) {
       return next(createError("Plan ID is required", 400))
@@ -168,16 +108,29 @@ export const createCheckoutSession: RequestHandler = catchAsync(
       return next(createError("Free trial doesn't require payment", 400))
     }
 
-    // For now, return a mock session URL until you set up Stripe
-    const mockSessionUrl = `${successUrl}?session_id=mock_session_${planId}_${billingCycle}`
+    const prices = await stripe.prices.list({
+      lookup_keys: [`${planId}_${billingCycle}`],
+      expand: ["data.product"],
+      limit: 1,
+    })
 
-    logger.info(
-      `Creating checkout session for user ${userId}, plan: ${planId}, cycle: ${billingCycle}`,
-    )
+    const session = await stripe.checkout.sessions.create({
+      billing_address_collection: "auto",
+      line_items: [
+        {
+          price: prices.data[0].id,
+          quantity: 1,
+        },
+      ],
+      customer_email: user.email,
+      mode: "subscription",
+      success_url: `${successUrl}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${cancelUrl}?canceled=true`,
+    })
 
     sendResponse(res, 200, true, "Checkout session created", {
-      sessionUrl: mockSessionUrl,
-      sessionId: `cs_mock_${Date.now()}`,
+      sessionUrl: session.url,
+      sessionId: session.id,
       planId,
       billingCycle,
     })
@@ -202,9 +155,8 @@ export const getSubscriptionStatus: RequestHandler = catchAsync(
       return next(createError("User not found", 404))
     }
 
-    // FIXED: Use helper functions instead of user methods
-    const isInTrial = isInTrialStatus(user)
-    const daysUntilTrialEnd = getDaysUntilTrialEnd(user)
+    const isInTrial = user.isInTrial()
+    const daysUntilTrialEnd = user.getDaysUntilTrialEnd()
 
     sendResponse(res, 200, true, "Subscription status fetched successfully", {
       status: {
@@ -230,46 +182,27 @@ export const getSubscriptionStatus: RequestHandler = catchAsync(
 export const getUserLimits: RequestHandler = catchAsync(
   async (req, res, next) => {
     const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-
-    if (!userId) {
-      return next(createError("User not authenticated", 401))
-    }
+    const userId = authReq.user.id
 
     const user = await User.findById(userId)
     if (!user) {
       return next(createError("User not found", 404))
     }
 
-    // FIXED: Use helper functions and GoalService instead of user methods
-    const goalLimit = getGoalLimitForTier(user.subscriptionTier)
-    const currentGoalCount = await GoalService.getActiveGoalCount(userId)
-    const canCreateMore = canCreateMoreGoals(
-      user.subscriptionTier,
-      currentGoalCount,
-    )
+    const { canCreate, currentCount, maxAllowed } =
+      await GoalService.canUserCreateGoal(userId)
 
     const limits = {
-      hasUnlimitedGoals: goalLimit === -1,
-      maxGoals: goalLimit,
-      hasStreakTracker: hasFeatureAccessForTier(
-        user.subscriptionTier,
-        "streak",
-      ),
-      hasDMMessaging: hasFeatureAccessForTier(
-        user.subscriptionTier,
-        "dmMessaging",
-      ),
-      hasPrivateRooms: hasFeatureAccessForTier(
-        user.subscriptionTier,
-        "privateRooms",
-      ),
-      hasWeeklyMeetings: hasFeatureAccessForTier(
-        user.subscriptionTier,
-        "weeklyMeetings",
-      ),
-      currentGoalCount,
-      canCreateMore,
+      hasUnlimitedGoals: canCreate && maxAllowed === -1,
+      maxGoals: maxAllowed,
+      hasStreakTracker: user.hasFeatureAccess("streak"),
+      hasDMMessaging: user.hasFeatureAccess("dmMessaging"),
+      hasPrivateRooms: user.hasFeatureAccess("privateRooms"),
+      hasWeeklyMeetings: user.hasFeatureAccess("weeklyMeetings"),
+      currentGoalCount: currentCount,
+      canCreateMore: canCreate,
+      isInTrial: user.isInTrial(),
+      daysUntilTrialEnd: user.getDaysUntilTrialEnd(),
     }
 
     sendResponse(res, 200, true, "User limits fetched successfully", {

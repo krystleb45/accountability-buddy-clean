@@ -4,10 +4,12 @@ import type { Router } from "express"
 import express from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
+import z from "zod"
 
 import * as subscriptionController from "../controllers/subscriptionController"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import { validate } from "../middleware/validation-middleware"
 
 const router: Router = express.Router()
 
@@ -40,25 +42,22 @@ router.get("/plans", subscriptionController.getPlans)
  * POST /api/subscription/create-session
  * Create a checkout session for subscription
  */
+
+const bodySchema = z.object({
+  planId: z.enum(["free-trial", "basic", "pro", "elite"]),
+  billingCycle: z.enum(["monthly", "yearly"]).optional(),
+  successUrl: z.url().optional(),
+  cancelUrl: z.url().optional(),
+})
+export type CreateCheckoutSessionBody = z.infer<typeof bodySchema>
+
 router.post(
   "/create-session",
   protect,
   createLimiter,
-  [
-    check("planId", "planId is required").notEmpty(),
-    check("planId", "Invalid plan ID").isIn([
-      "free-trial",
-      "basic",
-      "pro",
-      "elite",
-    ]),
-    check("billingCycle", "billingCycle must be monthly or yearly")
-      .optional()
-      .isIn(["monthly", "yearly"]),
-    check("successUrl", "successUrl must be a valid URL").optional().isURL(),
-    check("cancelUrl", "cancelUrl must be a valid URL").optional().isURL(),
-  ],
-  handleValidationErrors,
+  validate({
+    bodySchema,
+  }),
   subscriptionController.createCheckoutSession,
 )
 
@@ -112,58 +111,6 @@ router.post(
   "/webhook",
   express.raw({ type: "application/json" }),
   subscriptionController.handleStripeWebhook,
-)
-
-// LEGACY ROUTES - Keep for backward compatibility
-/**
- * POST /api/subscription/create
- * Legacy route - redirect to create-session
- */
-router.post(
-  "/create",
-  protect,
-  createLimiter,
-  [
-    check("priceId", "priceId is required").notEmpty(),
-    check("successUrl", "successUrl must be a valid URL").isURL(),
-    check("cancelUrl", "cancelUrl must be a valid URL").isURL(),
-  ],
-  handleValidationErrors,
-  subscriptionController.createCheckoutSession, // This will handle the legacy format
-)
-
-/**
- * GET /api/subscription/current
- * Legacy route - redirect to status
- */
-router.get(
-  "/current",
-  protect,
-  subscriptionController.getCurrentSubscription, // Keep existing controller or alias to getSubscriptionStatus
-)
-
-/**
- * POST /api/subscription/upgrade
- * Legacy route - redirect to change-plan
- */
-router.post(
-  "/upgrade",
-  protect,
-  generalLimiter,
-  [check("newPriceId", "newPriceId is required").notEmpty()],
-  handleValidationErrors,
-  subscriptionController.upgradePlan, // Keep existing controller or alias to changeSubscriptionPlan
-)
-
-/**
- * DELETE /api/subscription/cancel
- * Legacy route - redirect to POST cancel
- */
-router.delete(
-  "/cancel",
-  protect,
-  generalLimiter,
-  subscriptionController.cancelSubscription, // Keep existing controller or alias to cancelUserSubscription
 )
 
 export default router

@@ -3499,6 +3499,7 @@ export type Goal = {
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
+  isActive: boolean
 }
 
 /**
@@ -3605,6 +3606,7 @@ export type GoalDocument = mongoose.Document<
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
+    isActive: boolean
   }
 
 /**

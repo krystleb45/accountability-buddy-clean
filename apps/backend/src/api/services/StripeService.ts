@@ -1,14 +1,13 @@
-// src/api/services/StripeService.ts - FIXED: Updates User model directly
-import Stripe from "stripe"
+import type { User as IUser } from "src/types/mongoose.gen"
 
-import type { SubscriptionTier } from "../models/User"
+import Stripe from "stripe"
 
 import { logger } from "../../utils/winstonLogger"
 import { User } from "../models/User"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-02-24.acacia",
-})
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
+type SubscriptionTier = IUser["subscriptionTier"]
 
 /**
  * Map Stripe price IDs to your subscription tiers

@@ -761,6 +761,7 @@ export type Goal = {
   _id: string
   createdAt?: string
   updatedAt?: string
+  isActive: boolean
 }
 
 /**
