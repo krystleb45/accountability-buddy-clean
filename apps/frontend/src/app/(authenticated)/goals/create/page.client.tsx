@@ -76,6 +76,7 @@ export default function GoalCreationClient() {
 
   const [tags, setTags] = useState<Tag[]>([])
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null)
+  const [categorySelectValue, setCategorySelectValue] = useState("")
 
   const { setValue } = form
 
@@ -180,10 +181,15 @@ export default function GoalCreationClient() {
                 <FormControl>
                   {categories &&
                   categories.length > 0 &&
-                  field.value !== "new" ? (
+                  categorySelectValue !== "new" ? (
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(value) => {
+                        setCategorySelectValue(value)
+                        if (value !== "new") {
+                          field.onChange(value)
+                        }
+                      }}
+                      defaultValue={categorySelectValue}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a category" />
@@ -204,7 +210,16 @@ export default function GoalCreationClient() {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <Input placeholder="Enter a new category" {...field} />
+                    <Input
+                      placeholder="Enter a new category"
+                      {...field}
+                      onChange={(e) => {
+                        if (e.target.value === "") {
+                          setCategorySelectValue("")
+                        }
+                        field.onChange(e.target.value)
+                      }}
+                    />
                   )}
                 </FormControl>
                 <FormMessage />
