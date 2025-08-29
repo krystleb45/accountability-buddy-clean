@@ -38,6 +38,10 @@ const badgeVariants = cva(
           text-foreground
           [a&]:hover:bg-accent [a&]:hover:text-accent-foreground
         `,
+        warning: `
+          border-transparent bg-chart-3 text-background
+          [a&]:hover:bg-chart-3/90
+        `,
       },
     },
     defaultVariants: {

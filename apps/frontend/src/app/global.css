@@ -162,6 +162,8 @@
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
 
   --animate-spin: spin var(--tw-duration, 1s) var(--tw-ease, linear) infinite;
+
+  --text-2xs: 0.625rem;
 }
 
 @layer base {

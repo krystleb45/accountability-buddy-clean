@@ -1,14 +1,44 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { ArrowLeft, Goal, Plus } from "lucide-react"
+import {
+  format,
+  formatDistanceToNow,
+  intervalToDuration,
+  isAfter,
+} from "date-fns"
+import {
+  Archive,
+  ArrowLeft,
+  CircleCheck,
+  CircleDashed,
+  CircleDot,
+  Clock,
+  Goal,
+  Plus,
+  SignalHigh,
+  SignalLow,
+  SignalMedium,
+  Tag,
+} from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo } from "react"
 import { toast } from "sonner"
 
 import { fetchUserGoals } from "@/api/goal/goal-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
 import {
   Tooltip,
   TooltipContent,
@@ -17,6 +47,8 @@ import {
 } from "@/components/ui/tooltip"
 import { useAuth } from "@/context/auth/auth-context"
 import useSubscription from "@/hooks/useSubscription"
+import { cn } from "@/lib/utils"
+import { capitalizeFirstLetter } from "@/utils"
 
 export default function GoalsClient() {
   const { loading: userLoading } = useAuth()
@@ -141,45 +173,180 @@ export default function GoalsClient() {
             grid grid-cols-1 gap-6
             sm:grid-cols-2
             lg:grid-cols-3
-            xl:grid-cols-4
           `}
         >
           {goals?.map((g) => {
-            // const dateValue = g.dueDate
+            const isOverdue =
+              isAfter(new Date(), g.dueDate) &&
+              (!g.progress || g.progress < 100)
+            const dueSoon =
+              !isOverdue &&
+              (intervalToDuration({ start: new Date(), end: g.dueDate })
+                ?.days ?? 0) <= 3
+
             return (
-              <div
+              <Card
                 key={g._id}
-                className={`
-                  rounded-lg bg-gray-900 p-4 shadow-lg transition-transform
-                  hover:scale-105
-                `}
+                className={cn("relative pb-0", {
+                  "border-destructive": isOverdue,
+                  "border-chart-3": dueSoon,
+                })}
               >
-                <span
+                {(isOverdue || dueSoon) && (
+                  <Badge
+                    variant={isOverdue ? "destructive" : "warning"}
+                    className="absolute top-0 right-4 -translate-y-1/2"
+                  >
+                    {isOverdue ? "Overdue" : "Due Soon"}
+                  </Badge>
+                )}
+                <CardHeader>
+                  <div className="mb-2 flex items-center gap-3">
+                    {g.status === "archived" ? (
+                      <Archive className="text-muted-foreground" />
+                    ) : g.status === "not-started" ? (
+                      <CircleDashed />
+                    ) : g.status === "in-progress" ? (
+                      <CircleDot className="text-chart-3" />
+                    ) : (
+                      <CircleCheck className="text-primary" />
+                    )}
+                    <div className="space-y-1">
+                      <CardTitle>{g.title}</CardTitle>
+                      <CardDescription>{g.description}</CardDescription>
+                    </div>
+                  </div>
+                  {g.visibility === "public" && (
+                    <CardAction>
+                      <Badge>Public</Badge>
+                    </CardAction>
+                  )}
+                </CardHeader>
+                <CardContent className="mt-auto">
+                  <div className="flex flex-wrap justify-between gap-6">
+                    <div>
+                      <p
+                        className={`
+                          flex items-center gap-2 text-2xs font-semibold
+                          tracking-widest text-muted-foreground uppercase
+                          [&_svg]:size-4
+                        `}
+                      >
+                        <Clock /> Due Date
+                      </p>
+                      <p className="mt-1 font-semibold">
+                        {format(g.dueDate, "PP")}
+                      </p>
+                      <p
+                        className={cn("mt-1 text-sm", {
+                          "text-destructive": isOverdue,
+                          "text-chart-3": dueSoon,
+                        })}
+                      >
+                        {formatDistanceToNow(g.dueDate, { addSuffix: true })}
+                      </p>
+                    </div>
+                    {g.priority && (
+                      <div>
+                        <p
+                          className={`
+                            text-2xs font-semibold tracking-widest
+                            text-muted-foreground uppercase
+                          `}
+                        >
+                          Priority
+                        </p>
+                        <p
+                          className={cn(
+                            `
+                              mt-1 flex items-center justify-end gap-1 text-sm
+                              font-semibold
+                            `,
+                            {
+                              "text-destructive": g.priority === "high",
+                              "text-chart-3": g.priority === "medium",
+                              "text-muted-foreground": g.priority === "low",
+                            },
+                          )}
+                        >
+                          <SignalHigh
+                            size={16}
+                            className={cn({
+                              hidden: g.priority !== "high",
+                            })}
+                          />
+                          <SignalMedium
+                            size={16}
+                            className={cn({
+                              hidden: g.priority !== "medium",
+                            })}
+                          />
+                          <SignalLow
+                            size={16}
+                            className={cn({
+                              hidden: g.priority !== "low",
+                            })}
+                          />
+                          {capitalizeFirstLetter(g.priority)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-6">
+                    <p
+                      className={`
+                        mb-2 text-2xs font-semibold tracking-widest
+                        text-muted-foreground uppercase
+                      `}
+                    >
+                      Progress
+                    </p>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Progress value={g.progress || 0} max={100} />
+                        </TooltipTrigger>
+                        <TooltipContent>{g.progress}%</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </CardContent>
+                <CardFooter
                   className={`
-                    mb-2 inline-block rounded bg-green-700 px-2 py-1 text-xs
-                    text-white
+                    items-end justify-between gap-6 rounded-b-xl border-t
+                    bg-muted !py-4
                   `}
                 >
-                  {(g as any).category ?? "General"}
-                </span>
-                <h3 className="mb-1 text-lg font-semibold text-primary">
-                  {g.title}
-                </h3>
-                <div
-                  className={`
-                    mb-3 flex items-center justify-between text-sm text-gray-400
-                  `}
-                >
-                  {/* <span>Due: {formatDueDate(dateValue)}</span>
-                <span>{daysLeft(dateValue)}</span> */}
-                </div>
-                <div className="h-2 w-full overflow-hidden rounded-full">
-                  <div
-                    className="h-full bg-green-500 transition-all duration-800"
-                    style={{ width: `${g.progress || 0}%` }}
-                  />
-                </div>
-              </div>
+                  <div>
+                    <p
+                      className={`
+                        text-2xs font-semibold tracking-widest
+                        text-muted-foreground uppercase
+                      `}
+                    >
+                      Category
+                    </p>
+                    <p className="mt-1 text-sm font-semibold">{g.category}</p>
+                  </div>
+                  {g.tags.length > 0 ? (
+                    <div
+                      className={`
+                        flex flex-wrap-reverse items-center justify-end gap-2
+                      `}
+                    >
+                      <Tag
+                        size={16}
+                        className="rotate-y-180 text-muted-foreground"
+                      />
+                      {g.tags.map((tag) => (
+                        <Badge key={tag} variant="outline">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : null}
+                </CardFooter>
+              </Card>
             )
           })}
         </div>
