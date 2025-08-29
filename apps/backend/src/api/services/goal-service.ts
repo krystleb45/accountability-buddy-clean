@@ -53,7 +53,7 @@ export class GoalService {
 
     return await Goal.countDocuments({
       user: userId,
-      isActive: true,
+      status: { $in: ["not-started", "in-progress"] },
     })
   }
 
