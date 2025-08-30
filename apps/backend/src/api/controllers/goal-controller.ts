@@ -5,7 +5,6 @@ import type { Goal } from "src/types/mongoose.gen"
 import mongoose from "mongoose"
 
 import { createError } from "../middleware/errorHandler"
-import { Reminder } from "../models/Reminder"
 import { User } from "../models/User"
 import { GoalService } from "../services/goal-service"
 import catchAsync from "../utils/catchAsync"
@@ -170,30 +169,26 @@ export const getPublicGoals = catchAsync(
 
 export const updateGoalProgress = catchAsync(
   async (
-    req: AuthenticatedRequest<{ goalId: string }, { progress: number }>,
+    req: AuthenticatedRequest<
+      { goalId: string },
+      unknown,
+      { progress: number }
+    >,
     res: Response,
-    next: NextFunction,
   ): Promise<void> => {
     const { goalId } = req.params
-    if (!mongoose.isValidObjectId(goalId)) {
-      return next(createError("Invalid goal ID", 400))
-    }
+    const { progress } = req.body
+    const userId = req.user.id
 
-    const userId = req.user!.id!
+    await GoalService.trackProgress(goalId, userId, progress)
 
-    const goal = await GoalService.trackProgress(
-      goalId,
-      userId,
-      req.body.progress,
-    )
-
-    sendResponse(res, 200, true, "Goal progress updated", { goal })
+    sendResponse(res, 200, true, "Goal progress updated")
   },
 )
 
 export const getGoalById = catchAsync(
   async (
-    req: Request<{ goalId: string }>,
+    req: AuthenticatedRequest<{ goalId: string }>,
     res: Response,
     next: NextFunction,
   ) => {
@@ -201,36 +196,20 @@ export const getGoalById = catchAsync(
     if (!mongoose.isValidObjectId(goalId)) {
       return next(createError("Invalid goal ID", 400))
     }
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
 
-    const goal = await GoalService.getUserGoalById(userId, goalId)
+    const userId = req.user.id
+
+    const goal = await GoalService.getUserGoalById(userId, goalId, true)
+
     if (!goal) {
       return next(createError("Goal not found", 404))
     }
 
-    const reminders = await Promise.all(
-      goal.reminders.map(async (r) => {
-        const userReminder = await Reminder.findById(r._id)
-        return {
-          id: userReminder._id.toString(),
-          date: userReminder.remindAt.toISOString().slice(0, 10),
-          time: userReminder.remindAt.toISOString().slice(11, 16),
-        }
-      }),
-    )
-
     const goalObj = goal.toObject()
 
-    const safe = {
-      ...goalObj,
-      reminders,
-    }
-
-    res.status(200).json({ success: true, message: "Goal fetched", data: safe })
+    sendResponse(res, 200, true, "Goal retrieved successfully", {
+      goal: goalObj,
+    })
   },
 )
 
@@ -256,49 +235,26 @@ export const updateGoal = catchAsync(
   async (
     req: AuthenticatedRequest<
       { goalId: string },
-      {
-        title?: string
-        description?: string
-        deadline?: string
-        category?: string
-      }
+      unknown,
+      Pick<
+        Goal,
+        | "title"
+        | "description"
+        | "dueDate"
+        | "category"
+        | "tags"
+        | "priority"
+        | "visibility"
+      >
     >,
     res: Response,
     next: NextFunction,
   ) => {
     const { goalId } = req.params
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
+    const data = req.body
+    const userId = req.user.id
 
-    // Build partial update object explicitly
-    const updates: {
-      title?: string
-      description?: string
-      dueDate?: Date
-      category?: string
-    } = {}
-
-    if (req.body.title !== undefined) {
-      updates.title = req.body.title
-    }
-    if (req.body.description !== undefined) {
-      updates.description = req.body.description
-    }
-    if (req.body.category !== undefined) {
-      updates.category = req.body.category
-    }
-    if (req.body.deadline) {
-      const d = new Date(req.body.deadline)
-      if (Number.isNaN(d.getTime())) {
-        return next(createError("Invalid date format", 400))
-      }
-      updates.dueDate = d
-    }
-
-    const goal = await GoalService.updateGoal(goalId, userId, updates)
+    const goal = await GoalService.updateGoal(goalId, userId, data)
     if (!goal) {
       return next(createError("Goal not found", 404))
     }
@@ -309,22 +265,18 @@ export const updateGoal = catchAsync(
 
 export const deleteGoal = catchAsync(
   async (
-    req: Request<{ goalId: string }>,
+    req: AuthenticatedRequest<{ goalId: string }>,
     res: Response,
     next: NextFunction,
   ) => {
     const { goalId } = req.params
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
+    const userId = req.user.id
 
     const success = await GoalService.deleteGoal(goalId, userId)
     if (!success) {
       return next(createError("Goal not found", 404))
     }
 
-    sendResponse(res, 200, true, "Goal deleted successfully", {})
+    sendResponse(res, 200, true, "Goal deleted successfully")
   },
 )

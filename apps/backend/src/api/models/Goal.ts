@@ -8,6 +8,7 @@ import sanitize from "mongo-sanitize"
 import mongoose, { Schema } from "mongoose"
 
 import { Milestone } from "./Milestone"
+import { Reminder } from "./Reminder"
 
 export const commonSchemaWithCollaborationGoal = new Schema({
   title: { type: String, required: true, trim: true, maxlength: 255 },
@@ -22,7 +23,7 @@ export const commonSchemaWithCollaborationGoal = new Schema({
   milestones: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Milestone",
+      ref: Milestone.modelName,
     },
   ],
   visibility: {
@@ -50,7 +51,7 @@ const GoalSchema: IGoalSchema = new Schema(
     reminders: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Reminder",
+        ref: Reminder.modelName,
       },
     ],
     isPinned: { type: Boolean, default: false },

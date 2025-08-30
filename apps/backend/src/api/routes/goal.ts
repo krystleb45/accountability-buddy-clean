@@ -62,13 +62,6 @@ router.post(
 router.get("/public", goalController.getPublicGoals)
 
 /**
- * GET /api/goals/my-goals
- * Alias for GET /api/goals (current user's)
- * Basic subscription required
- */
-router.get("/my-goals", validateSubscription, goalController.getUserGoals)
-
-/**
  * GET /api/goals/streak-dates
  * Get the user's streak dates for goals
  * Basic subscription required + trial prompt for analytics
@@ -81,13 +74,18 @@ router.get(
 )
 
 /**
+ * /api/goals/:goalId
  * Routes for a specific goal by ID
  * All require subscription
  */
 router
   .route("/:goalId")
   .get(validateSubscription, goalController.getGoalById)
-  .put(validateSubscription, goalController.updateGoal) // Edit/update title, description, etc.
+  .put(
+    validateSubscription,
+    validate({ bodySchema: goalCreateSchema }),
+    goalController.updateGoal,
+  ) // Edit/update title, description, etc.
   .delete(validateSubscription, goalController.deleteGoal) // Delete the goal
 
 /**
@@ -95,7 +93,7 @@ router
  * Update progress on one of the user's goals
  * Basic subscription required
  */
-router.put(
+router.patch(
   "/:goalId/progress",
   validateSubscription,
   goalController.updateGoalProgress,

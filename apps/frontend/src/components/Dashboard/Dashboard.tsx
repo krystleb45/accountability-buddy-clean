@@ -293,7 +293,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   ]
 
   return (
-    <div className="rounded-lg p-6 shadow-lg">
+    <div>
       {/* Header */}
       <header className="mb-10">
         <h1 className="text-3xl font-bold">

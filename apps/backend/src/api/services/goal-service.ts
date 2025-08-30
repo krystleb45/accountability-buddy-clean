@@ -7,6 +7,7 @@ import { logger } from "../../utils/winstonLogger"
 import { CustomError } from "../middleware/errorHandler"
 import { Goal } from "../models/Goal"
 import { User } from "../models/User"
+import GamificationService from "./gamification-service"
 import { UserService } from "./user-service"
 
 export class GoalService {
@@ -134,10 +135,12 @@ export class GoalService {
     ) {
       throw new CustomError("Invalid goal or user ID", 400)
     }
+
     const goal = await Goal.findById(goalId)
     if (!goal) {
       throw new CustomError("Goal not found", 404)
     }
+
     if (goal.user.toString() !== userId) {
       throw new CustomError("Not authorized to update this goal", 403)
     }
@@ -146,12 +149,11 @@ export class GoalService {
     if (goal.progress >= 100) {
       goal.status = "completed"
       goal.completedAt = new Date()
+      await GamificationService.addPoints(userId, goal.points)
+    } else if (goal.progress > 0) {
+      goal.status = "in-progress"
     }
     await goal.save()
-    logger.info(
-      `User ${userId} updated progress of goal ${goalId} to ${goal.progress}%`,
-    )
-    return goal
   }
 
   /**
@@ -183,13 +185,25 @@ export class GoalService {
   /**
    * Fetch a specific user's goal by ID.
    */
-  static async getUserGoalById(userId: string, goalId: string) {
+  static async getUserGoalById(
+    userId: string,
+    goalId: string,
+    populate = false,
+  ) {
     if (
       !mongoose.Types.ObjectId.isValid(userId) ||
       !mongoose.Types.ObjectId.isValid(goalId)
     ) {
       throw new CustomError("Invalid ID", 400)
     }
+
+    if (populate) {
+      return Goal.findOne({ _id: goalId, user: userId })
+        .populate("reminders")
+        .populate("milestones")
+        .exec()
+    }
+
     return Goal.findOne({ _id: goalId, user: userId }).exec()
   }
 
@@ -227,7 +241,7 @@ export class GoalService {
       tags: [],
       priority: "medium",
       isPinned: false,
-      points: 0,
+      points: 25,
       completedAt: undefined,
       ...data,
     })
@@ -251,15 +265,17 @@ export class GoalService {
     ) {
       throw new CustomError("Invalid goal or user ID", 400)
     }
+
     const goal = await Goal.findOneAndUpdate(
       { _id: goalId, user: userId },
       { $set: updates },
       { new: true },
     ).exec()
+
     if (!goal) {
       return null
     }
-    logger.info(`Goal ${goalId} updated for user ${userId}`)
+
     return goal
   }
 
@@ -273,14 +289,10 @@ export class GoalService {
     ) {
       throw new CustomError("Invalid goal or user ID", 400)
     }
+
     const result = await Goal.deleteOne({ _id: goalId, user: userId }).exec()
-    const success = result.deletedCount === 1
-    if (success) {
-      logger.info(`Goal ${goalId} deleted for user ${userId}`)
-    } else {
-      logger.warn(`Failed to delete goal ${goalId} for user ${userId}`)
-    }
-    return success
+
+    return result.deletedCount === 1
   }
 
   /**

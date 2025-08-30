@@ -1,6 +1,6 @@
-import type { GoalCreateInput } from "@/app/(authenticated)/goals/create/page.client"
+import type { GoalCreateInput } from "@/components/goals/goal-form"
 import type { Envelope } from "@/types"
-import type { Goal, User } from "@/types/mongoose.gen"
+import type { Goal, Milestone, Reminder, User } from "@/types/mongoose.gen"
 
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
@@ -202,27 +202,16 @@ export async function fetchUserStreak() {
 //   }
 // }
 
-// export async function updateGoal(
-//   goalId: string,
-//   payload: Partial<{
-//     title: string
-//     description?: string
-//     deadline: string
-//     category: string
-//     progress: number
-//   }>,
-// ): Promise<boolean> {
-//   try {
-//     const resp = await http.put<Envelope<{ success: boolean }>>(
-//       `/goals/${encodeURIComponent(goalId)}`,
-//       payload,
-//     )
-//     return resp.data.data.success
-//   } catch (err) {
-//     logErr("updateGoal", err)
-//     return false
-//   }
-// }
+export async function updateGoal(goalId: string, payload: GoalCreateInput) {
+  try {
+    await http.put<Envelope<{ success: boolean }>>(
+      `/goals/${encodeURIComponent(goalId)}`,
+      payload,
+    )
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
 
 export async function fetchUserGoals() {
   try {
@@ -245,21 +234,42 @@ export async function fetchUserGoalCategories() {
 
 export async function createGoal(payload: GoalCreateInput) {
   try {
-    const resp = await http.post<Envelope<{ goal: Goal }>>("/goals", payload)
+    await http.post<Envelope<{ goal: Goal }>>("/goals", payload)
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
+export async function fetchGoalDetails(goalId: string) {
+  try {
+    const resp = await http.get<
+      Envelope<{
+        goal: Goal & {
+          reminders: Reminder[]
+          milestones: Milestone[]
+        }
+      }>
+    >(`/goals/${encodeURIComponent(goalId)}`)
     return resp.data.data.goal
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))
   }
 }
 
-// export async function deleteGoal(goalId: string): Promise<boolean> {
-//   try {
-//     const resp = await http.delete<Envelope<{ success: boolean }>>(
-//       `/goals/${encodeURIComponent(goalId)}`,
-//     )
-//     return resp.data.data.success
-//   } catch (err) {
-//     logErr("deleteGoal", err)
-//     return false
-//   }
-// }
+export async function deleteGoal(goalId: string) {
+  try {
+    await http.delete(`/goals/${encodeURIComponent(goalId)}`)
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
+export async function updateGoalProgress(goalId: string, progress: number) {
+  try {
+    await http.patch(`/goals/${encodeURIComponent(goalId)}/progress`, {
+      progress,
+    })
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
