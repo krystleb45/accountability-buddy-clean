@@ -1,34 +1,13 @@
-// src/api/models/Reward.ts
-
-import type { Document, Model, Types } from "mongoose"
+import type {
+  RewardSchema as IRewardSchema,
+  RewardDocument,
+  RewardModel,
+} from "src/types/mongoose.gen"
 
 import mongoose, { Schema } from "mongoose"
 
-// --- Reward Document Interface ---
-export interface IReward {
-  _id: Types.ObjectId
-  name: string
-  description: string
-  pointsRequired: number
-  rewardType: "badge" | "discount" | "giftCard" | "recognition"
-  imageUrl?: string
-  createdAt: Date
-  updatedAt: Date
-
-  // Instance methods
-  updateDetails: (
-    data: Partial<Pick<IReward, "description" | "pointsRequired" | "imageUrl">>,
-  ) => Promise<IReward & Document>
-}
-
-// --- Reward Model Static Interface ---
-export interface IRewardModel extends Model<IReward & Document> {
-  findByType: (type: IReward["rewardType"]) => Promise<(IReward & Document)[]>
-  getAvailableRewards: (maxPoints: number) => Promise<(IReward & Document)[]>
-}
-
 // --- Schema Definition ---
-const RewardSchema = new Schema<IReward & Document, IRewardModel>(
+const RewardSchema: IRewardSchema = new Schema(
   {
     name: {
       type: String,
@@ -71,40 +50,16 @@ RewardSchema.index({ name: 1 }, { unique: true })
 RewardSchema.index({ pointsRequired: 1 })
 RewardSchema.index({ rewardType: 1 })
 
-// --- Instance Methods ---
-RewardSchema.methods.updateDetails = async function (
-  this: IReward & Document,
-  data: Partial<Pick<IReward, "description" | "pointsRequired" | "imageUrl">>,
-): Promise<IReward & Document> {
-  if (data.description !== undefined) this.description = data.description
-  if (data.pointsRequired !== undefined)
-    this.pointsRequired = data.pointsRequired
-  if (data.imageUrl !== undefined) this.imageUrl = data.imageUrl
-  await this.save()
-  return this
-}
-
-// --- Static Methods ---
-RewardSchema.statics.findByType = function (
-  this: IRewardModel,
-  type: IReward["rewardType"],
-): Promise<(IReward & Document)[]> {
-  return this.find({ rewardType: type }).sort({ pointsRequired: 1 }).exec()
-}
-
-RewardSchema.statics.getAvailableRewards = function (
-  this: IRewardModel,
-  maxPoints: number,
-): Promise<(IReward & Document)[]> {
-  return this.find({ pointsRequired: { $lte: maxPoints } })
-    .sort({ pointsRequired: 1 })
-    .exec()
+RewardSchema.statics = {
+  getAvailableRewards(this, maxPoints: number) {
+    return this.find({ pointsRequired: { $lte: maxPoints } })
+      .sort({ pointsRequired: 1 })
+      .exec()
+  },
 }
 
 // --- Model Export ---
-export const Reward = mongoose.model<IReward & Document, IRewardModel>(
+export const Reward: RewardModel = mongoose.model<RewardDocument, RewardModel>(
   "Reward",
   RewardSchema,
 )
-
-export default Reward

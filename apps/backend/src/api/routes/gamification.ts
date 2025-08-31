@@ -1,4 +1,3 @@
-// src/api/routes/gamification.ts
 import type { NextFunction, Request, Response } from "express"
 
 import { Router } from "express"
@@ -6,7 +5,7 @@ import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 import z from "zod"
 
-import gamificationController from "../controllers/gamificationController"
+import gamificationController from "../controllers/gamification-controller"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import validate from "../middleware/validation-middleware"

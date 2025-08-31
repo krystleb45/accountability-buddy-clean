@@ -1,4 +1,3 @@
-// src/api/controllers/gamificationController.ts
 import type { NextFunction, Request, Response } from "express"
 import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 

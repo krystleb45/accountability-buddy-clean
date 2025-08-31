@@ -1,5 +1,5 @@
 import type { Envelope } from "@/types"
-import type { Gamification, User } from "@/types/mongoose.gen"
+import type { Level, User } from "@/types/mongoose.gen"
 
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
@@ -13,8 +13,8 @@ export async function fetchLeaderboard({
     const res = await http.get<
       Envelope<{
         entries: Array<
-          Gamification & {
-            userId: Pick<User, "_id" | "username" | "profilePicture">
+          Level & {
+            user: Pick<User, "_id" | "username" | "profilePicture">
           }
         >
         pagination: {

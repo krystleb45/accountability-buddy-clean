@@ -61,7 +61,7 @@ export type AccountabilityPartnershipStatics = {
   findBetweenUsers: (
     this: AccountabilityPartnershipModel,
     u1: string,
-    u2: string,
+    u2: string
   ) => any
 }
 
@@ -290,7 +290,7 @@ export type ActivityQueries = {}
 export type ActivityMethods = {
   addParticipant: (
     this: ActivityDocument,
-    userId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId
   ) => Promise<void>
   markDeleted: (this: ActivityDocument) => Promise<void>
 }
@@ -299,12 +299,12 @@ export type ActivityStatics = {
   getRecentForUser: (
     this: ActivityModel,
     userId: mongoose.Types.ObjectId,
-    limit: number,
+    limit: number
   ) => any
   getByType: (this: ActivityModel, type: any) => any
   softDeleteByUser: (
     this: ActivityModel,
-    userId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId
   ) => any
 }
 
@@ -1406,16 +1406,16 @@ export type BookMethods = {
   addLike: (this: BookDocument, userId: mongoose.Types.ObjectId) => Promise<any>
   removeLike: (
     this: BookDocument,
-    userId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId
   ) => Promise<any>
   addComment: (
     this: BookDocument,
     userId: mongoose.Types.ObjectId,
-    text: string,
+    text: string
   ) => Promise<any>
   removeComment: (
     this: BookDocument,
-    commentId: mongoose.Types.ObjectId,
+    commentId: mongoose.Types.ObjectId
   ) => Promise<boolean>
 }
 
@@ -1506,35 +1506,6 @@ export type ChallengeParticipant = {
 }
 
 /**
- * Lean version of ChallengeRewardDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`.
- * ```
- * const challengeObject = challenge.toObject();
- * ```
- */
-export type ChallengeReward = {
-  rewardType: "badge" | "discount" | "prize" | "recognition"
-  rewardValue: string
-}
-
-/**
- * Lean version of ChallengeMilestoneDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`.
- * ```
- * const challengeObject = challenge.toObject();
- * ```
- */
-export type ChallengeMilestone = {
-  title: string
-  dueDate: Date
-  completed?: boolean
-  achievedBy: (User["_id"] | User)[]
-  _id: mongoose.Types.ObjectId
-}
-
-/**
  * Lean version of ChallengeDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`. To avoid conflicts with model names, use the type alias `ChallengeObject`.
@@ -1550,15 +1521,15 @@ export type Challenge = {
   endDate: Date
   creator: User["_id"] | User
   participants: ChallengeParticipant[]
-  rewards: ChallengeReward[]
+  rewards: (Reward["_id"] | Reward)[]
   status?: "ongoing" | "completed" | "canceled"
   visibility?: "public" | "private"
   progressTracking?: "individual" | "team" | "both"
-  milestones: ChallengeMilestone[]
+  milestones: (Milestone["_id"] | Milestone)[]
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  participantCount: number
+  participantCount: any
   isActive: boolean
 }
 
@@ -1595,15 +1566,41 @@ export type ChallengeQuery = mongoose.Query<
 export type ChallengeQueries = {}
 
 export type ChallengeMethods = {
-  addReward: (this: ChallengeDocument, ...args: any[]) => any
-  addMilestone: (this: ChallengeDocument, ...args: any[]) => any
+  addReward: (
+    this: ChallengeDocument,
+    rewardType: RewardObject,
+    rewardValue: string
+  ) => Promise<any>
+  addMilestone: (
+    this: ChallengeDocument,
+    milestoneTitle: string,
+    dueDate: Date
+  ) => Promise<any>
 }
 
 export type ChallengeStatics = {
-  addParticipant: (this: ChallengeModel, ...args: any[]) => any
-  updateProgress: (this: ChallengeModel, ...args: any[]) => any
-  updateMilestoneStatus: (this: ChallengeModel, ...args: any[]) => any
-  fetchChallengesWithPagination: (this: ChallengeModel, ...args: any[]) => any
+  addParticipant: (
+    this: ChallengeModel,
+    challengeId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<any>
+  updateProgress: (
+    this: ChallengeModel,
+    challengeId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId,
+    progressUpdate: number
+  ) => Promise<any>
+  updateMilestoneStatus: (
+    this: ChallengeModel,
+    challengeId: mongoose.Types.ObjectId,
+    milestoneId: mongoose.Types.ObjectId
+  ) => Promise<void>
+  fetchChallengesWithPagination: (
+    this: ChallengeModel,
+    page: number,
+    pageSize: number,
+    filters?: Record<string, any>
+  ) => Promise<any>
 }
 
 /**
@@ -1649,30 +1646,6 @@ export type ChallengeParticipantDocument =
   }
 
 /**
- * Mongoose Subdocument type
- *
- * Type of `ChallengeDocument["rewards"]` element.
- */
-export type ChallengeRewardDocument = mongoose.Types.Subdocument<any> & {
-  rewardType: "badge" | "discount" | "prize" | "recognition"
-  rewardValue: string
-}
-
-/**
- * Mongoose Subdocument type
- *
- * Type of `ChallengeDocument["milestones"]` element.
- */
-export type ChallengeMilestoneDocument =
-  mongoose.Types.Subdocument<mongoose.Types.ObjectId> & {
-    title: string
-    dueDate: Date
-    completed?: boolean
-    achievedBy: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
-    _id: mongoose.Types.ObjectId
-  }
-
-/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -1692,15 +1665,17 @@ export type ChallengeDocument = mongoose.Document<
     endDate: Date
     creator: UserDocument["_id"] | UserDocument
     participants: mongoose.Types.DocumentArray<ChallengeParticipantDocument>
-    rewards: mongoose.Types.DocumentArray<ChallengeRewardDocument>
+    rewards: mongoose.Types.Array<RewardDocument["_id"] | RewardDocument>
     status?: "ongoing" | "completed" | "canceled"
     visibility?: "public" | "private"
     progressTracking?: "individual" | "team" | "both"
-    milestones: mongoose.Types.DocumentArray<ChallengeMilestoneDocument>
+    milestones: mongoose.Types.Array<
+      MilestoneDocument["_id"] | MilestoneDocument
+    >
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    participantCount: number
+    participantCount: any
     isActive: boolean
   }
 
@@ -1721,7 +1696,7 @@ export type ChallengeMilestone = {
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  isOverdue: any
+  isOverdue: boolean
 }
 
 /**
@@ -1816,7 +1791,7 @@ export type ChallengeMilestoneDocument = mongoose.Document<
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    isOverdue: any
+    isOverdue: boolean
   }
 
 /**
@@ -2241,15 +2216,15 @@ export type CollaborationGoalQueries = {}
 export type CollaborationGoalMethods = {
   updateProgress: (
     this: CollaborationGoalDocument,
-    newProgress: number,
+    newProgress: number
   ) => Promise<any>
   addParticipant: (
     this: CollaborationGoalDocument,
-    userId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId
   ) => Promise<any>
   completeMilestone: (
     this: CollaborationGoalDocument,
-    index: number,
+    index: number
   ) => Promise<any>
 }
 
@@ -3367,112 +3342,6 @@ export type FriendshipDocument = mongoose.Document<
   }
 
 /**
- * Lean version of GamificationDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GamificationDocument.toObject()`. To avoid conflicts with model names, use the type alias `GamificationObject`.
- * ```
- * const gamificationObject = gamification.toObject();
- * ```
- */
-export type Gamification = {
-  userId: User["_id"] | User
-  level?: number
-  points?: number
-  _id: mongoose.Types.ObjectId
-  createdAt?: Date
-  updatedAt?: Date
-}
-
-/**
- * Lean version of GamificationDocument (type alias of `Gamification`)
- *
- * Use this type alias to avoid conflicts with model names:
- * ```
- * import { Gamification } from "../models"
- * import { GamificationObject } from "../interfaces/mongoose.gen.ts"
- *
- * const gamificationObject: GamificationObject = gamification.toObject();
- * ```
- */
-export type GamificationObject = Gamification
-
-/**
- * Mongoose Query type
- *
- * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
- */
-export type GamificationQuery = mongoose.Query<
-  any,
-  GamificationDocument,
-  GamificationQueries
-> &
-  GamificationQueries
-
-/**
- * Mongoose Query helper types
- *
- * This type represents `GamificationSchema.query`. For most use cases, you should not need to use this type explicitly.
- */
-export type GamificationQueries = {}
-
-export type GamificationMethods = {
-  addPoints: (this: GamificationDocument, ...args: any[]) => any
-  getPointsToNextLevel: (this: GamificationDocument, ...args: any[]) => any
-}
-
-export type GamificationStatics = {}
-
-/**
- * Mongoose Model type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const Gamification = mongoose.model<GamificationDocument, GamificationModel>("Gamification", GamificationSchema);
- * ```
- */
-export type GamificationModel = mongoose.Model<
-  GamificationDocument,
-  GamificationQueries
-> &
-  GamificationStatics
-
-/**
- * Mongoose Schema type
- *
- * Assign this type to new Gamification schema instances:
- * ```
- * const GamificationSchema: GamificationSchema = new mongoose.Schema({ ... })
- * ```
- */
-export type GamificationSchema = mongoose.Schema<
-  GamificationDocument,
-  GamificationModel,
-  GamificationMethods,
-  GamificationQueries
->
-
-/**
- * Mongoose Document type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const Gamification = mongoose.model<GamificationDocument, GamificationModel>("Gamification", GamificationSchema);
- * ```
- */
-export type GamificationDocument = mongoose.Document<
-  mongoose.Types.ObjectId,
-  GamificationQueries
-> &
-  GamificationMethods & {
-    userId: UserDocument["_id"] | UserDocument
-    level?: number
-    points?: number
-    _id: mongoose.Types.ObjectId
-    createdAt?: Date
-    updatedAt?: Date
-  }
-
-/**
  * Lean version of GoalDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`. To avoid conflicts with model names, use the type alias `GoalObject`.
@@ -3534,7 +3403,7 @@ export type GoalMethods = {
   addReminder: (
     this: GoalDocument,
     message: string,
-    remindAt: Date,
+    remindAt: Date
   ) => Promise<any>
   markMilestoneComplete: (this: GoalDocument, index: number) => Promise<any>
 }
@@ -3543,7 +3412,7 @@ export type GoalStatics = {
   findByUser: (
     this: GoalModel,
     userId: mongoose.Types.ObjectId,
-    filter?: {},
+    filter?: {}
   ) => any
   archiveCompleted: (this: GoalModel) => Promise<{ nDeleted: any }>
 }
@@ -4554,20 +4423,6 @@ export type InvitationDocument = mongoose.Document<
   }
 
 /**
- * Lean version of LevelRewardDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `LevelDocument.toObject()`.
- * ```
- * const levelObject = level.toObject();
- * ```
- */
-export type LevelReward = {
-  rewardType: "badge" | "discount" | "customization"
-  rewardValue: string
-  achievedAt?: Date
-}
-
-/**
  * Lean version of LevelDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `LevelDocument.toObject()`. To avoid conflicts with model names, use the type alias `LevelObject`.
@@ -4580,12 +4435,12 @@ export type Level = {
   points?: number
   level?: number
   nextLevelAt?: number
-  rewards: LevelReward[]
+  rewards: (Reward["_id"] | Reward)[]
   lastActivity?: Date
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  totalRewards: number
+  totalRewards: any
 }
 
 /**
@@ -4617,12 +4472,16 @@ export type LevelQuery = mongoose.Query<any, LevelDocument, LevelQueries> &
 export type LevelQueries = {}
 
 export type LevelMethods = {
-  addReward: (this: LevelDocument, ...args: any[]) => any
+  addPoints: (this: LevelDocument, amount: number) => Promise<any>
+  addReward: (
+    this: LevelDocument,
+    rewardType: any,
+    rewardValue: string
+  ) => Promise<any>
 }
 
 export type LevelStatics = {
-  addPoints: (this: LevelModel, ...args: any[]) => any
-  getTopLevels: (this: LevelModel, ...args: any[]) => any
+  getTopLevels: (this: LevelModel, limit: number) => any
 }
 
 /**
@@ -4652,17 +4511,6 @@ export type LevelSchema = mongoose.Schema<
 >
 
 /**
- * Mongoose Subdocument type
- *
- * Type of `LevelDocument["rewards"]` element.
- */
-export type LevelRewardDocument = mongoose.Types.Subdocument<any> & {
-  rewardType: "badge" | "discount" | "customization"
-  rewardValue: string
-  achievedAt?: Date
-}
-
-/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -4679,12 +4527,12 @@ export type LevelDocument = mongoose.Document<
     points?: number
     level?: number
     nextLevelAt?: number
-    rewards: mongoose.Types.DocumentArray<LevelRewardDocument>
+    rewards: mongoose.Types.Array<RewardDocument["_id"] | RewardDocument>
     lastActivity?: Date
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    totalRewards: number
+    totalRewards: any
   }
 
 /**
@@ -7160,17 +7008,17 @@ export type ReminderMethods = {
 export type ReminderStatics = {
   getUpcomingRemindersForUser: (
     this: ReminderModel,
-    userId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId
   ) => any
   getUpcomingRemindersInRange: (
     this: ReminderModel,
     start: Date,
-    end: Date,
+    end: Date
   ) => any
   getUserReminders: (
     this: ReminderModel,
     userId: mongoose.Types.ObjectId,
-    filters?: {},
+    filters?: {}
   ) => any
 }
 
@@ -7496,13 +7344,10 @@ export type RewardQuery = mongoose.Query<any, RewardDocument, RewardQueries> &
  */
 export type RewardQueries = {}
 
-export type RewardMethods = {
-  updateDetails: (this: RewardDocument, ...args: any[]) => any
-}
+export type RewardMethods = {}
 
 export type RewardStatics = {
-  findByType: (this: RewardModel, ...args: any[]) => any
-  getAvailableRewards: (this: RewardModel, ...args: any[]) => any
+  getAvailableRewards: (this: RewardModel, maxPoints: number) => any
 }
 
 /**
@@ -8731,11 +8576,11 @@ export type UserMethods = {
   getDaysUntilTrialEnd: (this: UserDocument) => number
   comparePassword: (
     this: UserDocument,
-    candidatePassword: string,
+    candidatePassword: string
   ) => Promise<any>
   awardBadge: (
     this: UserDocument,
-    badgeId: mongoose.Types.ObjectId,
+    badgeId: mongoose.Types.ObjectId
   ) => Promise<void>
   getGoalLimit: (this: UserDocument) => number
 }
@@ -9248,20 +9093,20 @@ type PopulatedProperty<Root, T extends keyof Root> = Omit<Root, T> & {
 export type PopulatedDocument<DocType, T> = T extends keyof DocType
   ? PopulatedProperty<DocType, T>
   : ParentProperty<T> extends keyof DocType
-    ? Omit<DocType, ParentProperty<T>> & {
-        [ref in ParentProperty<T>]: DocType[ParentProperty<T>] extends mongoose.Types.Array<
-          infer U
-        >
-          ? mongoose.Types.Array<
-              ChildProperty<T> extends keyof U
-                ? PopulatedProperty<U, ChildProperty<T>>
-                : PopulatedDocument<U, ChildProperty<T>>
-            >
-          : ChildProperty<T> extends keyof DocType[ParentProperty<T>]
-            ? PopulatedProperty<DocType[ParentProperty<T>], ChildProperty<T>>
-            : PopulatedDocument<DocType[ParentProperty<T>], ChildProperty<T>>
-      }
-    : DocType
+  ? Omit<DocType, ParentProperty<T>> & {
+      [ref in ParentProperty<T>]: DocType[ParentProperty<T>] extends mongoose.Types.Array<
+        infer U
+      >
+        ? mongoose.Types.Array<
+            ChildProperty<T> extends keyof U
+              ? PopulatedProperty<U, ChildProperty<T>>
+              : PopulatedDocument<U, ChildProperty<T>>
+          >
+        : ChildProperty<T> extends keyof DocType[ParentProperty<T>]
+        ? PopulatedProperty<DocType[ParentProperty<T>], ChildProperty<T>>
+        : PopulatedDocument<DocType[ParentProperty<T>], ChildProperty<T>>
+    }
+  : DocType
 
 /**
  * Helper types used by the populate overloads
@@ -9278,26 +9123,26 @@ declare module "mongoose" {
       path: T,
       select?: string | any,
       model?: string | Model<any, THelpers>,
-      match?: any,
+      match?: any
     ): Query<
       ResultType extends Array<DocType>
         ? Array<PopulatedDocument<Unarray<ResultType>, T>>
         : ResultType extends DocType
-          ? PopulatedDocument<Unarray<ResultType>, T>
-          : ResultType,
+        ? PopulatedDocument<Unarray<ResultType>, T>
+        : ResultType,
       DocType,
       THelpers
     > &
       THelpers
 
     populate<T extends string>(
-      options: Modify<PopulateOptions, { path: T }> | Array<PopulateOptions>,
+      options: Modify<PopulateOptions, { path: T }> | Array<PopulateOptions>
     ): Query<
       ResultType extends Array<DocType>
         ? Array<PopulatedDocument<Unarray<ResultType>, T>>
         : ResultType extends DocType
-          ? PopulatedDocument<Unarray<ResultType>, T>
-          : ResultType,
+        ? PopulatedDocument<Unarray<ResultType>, T>
+        : ResultType,
       DocType,
       THelpers
     > &

@@ -1,11 +1,8 @@
-import type {
-  GamificationDocument,
-  PopulatedDocument,
-} from "src/types/mongoose.gen"
+import type { LevelDocument, PopulatedDocument } from "src/types/mongoose.gen"
 
 import mongoose from "mongoose"
 
-import { Gamification } from "../models/Gamification"
+import { Level } from "../models/Level"
 
 /**
  * Business‐logic for gamification: leaderboard, per‐user progress, points, etc.
@@ -18,28 +15,28 @@ const GamificationService = {
     const skip = (page - 1) * limit
 
     const [rawDocs, totalUsers] = await Promise.all([
-      Gamification.find()
+      Level.find()
         .sort({ level: -1, points: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("userId", "username profilePicture"),
-      Gamification.countDocuments(),
+        .populate("user", "username profilePicture"),
+      Level.countDocuments(),
     ])
 
-    const entries = (
-      rawDocs as PopulatedDocument<GamificationDocument, "userId">[]
-    ).map((doc) => {
-      return {
-        _id: doc._id.toString(),
-        level: doc.level,
-        points: doc.points,
-        userId: {
-          _id: doc.userId._id.toString(),
-          username: doc.userId.username,
-          profilePicture: doc.userId.profilePicture,
-        },
-      }
-    })
+    const entries = (rawDocs as PopulatedDocument<LevelDocument, "user">[]).map(
+      (doc) => {
+        return {
+          _id: doc._id.toString(),
+          level: doc.level,
+          points: doc.points,
+          user: {
+            _id: doc.user._id.toString(),
+            username: doc.user.username,
+            profilePicture: doc.user.profilePicture,
+          },
+        }
+      },
+    )
 
     return {
       entries,
@@ -59,17 +56,17 @@ const GamificationService = {
       throw new Error("Invalid user ID")
     }
 
-    let profile = await Gamification.findOne({ userId })
+    let profile = await Level.findOne({ user: userId })
 
     // If missing, create it
     if (!profile) {
-      profile = await Gamification.create({ userId, level: 1, points: 0 })
+      profile = await Level.create({ user: userId, level: 1, points: 0 })
     }
 
     return {
       level: profile.level,
       points: profile.points,
-      pointsToNextLevel: profile.getPointsToNextLevel(),
+      pointsToNextLevel: profile.nextLevelAt - profile.points,
     }
   },
 
@@ -81,9 +78,9 @@ const GamificationService = {
       throw new Error("Invalid user ID")
     }
 
-    let profile = await Gamification.findOne({ userId })
+    let profile = await Level.findOne({ user: userId })
     if (!profile) {
-      profile = await Gamification.create({ userId, level: 1, points: 0 })
+      profile = await Level.create({ user: userId, level: 1, points: 0 })
     }
 
     await profile.addPoints(amount)

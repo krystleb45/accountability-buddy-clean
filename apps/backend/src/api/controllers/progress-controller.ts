@@ -1,10 +1,9 @@
 import type { Request, Response } from "express"
 
+import GamificationService from "../services/gamification-service"
 import ProgressService from "../services/ProgressService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
-// 👇 import your server-side gamification service
-import GamificationService from "../services/gamification-service"
 
 export const getProgressDashboard = catchAsync(
   async (req: Request, res: Response) => {

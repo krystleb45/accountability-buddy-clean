@@ -325,35 +325,6 @@ export type ChallengeParticipant = {
 }
 
 /**
- * Lean version of ChallengeRewardDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`.
- * ```
- * const challengeObject = challenge.toObject();
- * ```
- */
-export type ChallengeReward = {
-  rewardType: "badge" | "discount" | "prize" | "recognition"
-  rewardValue: string
-}
-
-/**
- * Lean version of ChallengeMilestoneDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`.
- * ```
- * const challengeObject = challenge.toObject();
- * ```
- */
-export type ChallengeMilestone = {
-  title: string
-  dueDate: string
-  completed?: boolean
-  achievedBy: (User["_id"] | User)[]
-  _id: string
-}
-
-/**
  * Lean version of ChallengeDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`. To avoid conflicts with model names, use the type alias `ChallengeObject`.
@@ -369,15 +340,15 @@ export type Challenge = {
   endDate: string
   creator: User["_id"] | User
   participants: ChallengeParticipant[]
-  rewards: ChallengeReward[]
+  rewards: (Reward["_id"] | Reward)[]
   status?: "ongoing" | "completed" | "canceled"
   visibility?: "public" | "private"
   progressTracking?: "individual" | "team" | "both"
-  milestones: ChallengeMilestone[]
+  milestones: (Milestone["_id"] | Milestone)[]
   _id: string
   createdAt?: string
   updatedAt?: string
-  participantCount: number
+  participantCount: any
   isActive: boolean
 }
 
@@ -398,7 +369,7 @@ export type ChallengeMilestone = {
   _id: string
   createdAt?: string
   updatedAt?: string
-  isOverdue: any
+  isOverdue: boolean
 }
 
 /**
@@ -718,23 +689,6 @@ export type Friendship = {
 }
 
 /**
- * Lean version of GamificationDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GamificationDocument.toObject()`. To avoid conflicts with model names, use the type alias `GamificationObject`.
- * ```
- * const gamificationObject = gamification.toObject();
- * ```
- */
-export type Gamification = {
-  userId: User["_id"] | User
-  level?: number
-  points?: number
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of GoalDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GoalDocument.toObject()`. To avoid conflicts with model names, use the type alias `GoalObject`.
@@ -949,20 +903,6 @@ export type Invitation = {
 }
 
 /**
- * Lean version of LevelRewardDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `LevelDocument.toObject()`.
- * ```
- * const levelObject = level.toObject();
- * ```
- */
-export type LevelReward = {
-  rewardType: "badge" | "discount" | "customization"
-  rewardValue: string
-  achievedAt?: string
-}
-
-/**
  * Lean version of LevelDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `LevelDocument.toObject()`. To avoid conflicts with model names, use the type alias `LevelObject`.
@@ -975,12 +915,12 @@ export type Level = {
   points?: number
   level?: number
   nextLevelAt?: number
-  rewards: LevelReward[]
+  rewards: (Reward["_id"] | Reward)[]
   lastActivity?: string
   _id: string
   createdAt?: string
   updatedAt?: string
-  totalRewards: number
+  totalRewards: any
 }
 
 /**
