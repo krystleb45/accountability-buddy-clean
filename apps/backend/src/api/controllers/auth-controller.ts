@@ -1,23 +1,17 @@
 import type { PRICING } from "@ab/shared/pricing"
 import type { RequestHandler } from "express"
 import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
-import type {
-  UserObject,
-  VerificationTokenDocument,
-} from "src/types/mongoose.gen"
+import type { UserObject } from "src/types/mongoose.gen"
 
-import { getResetPasswordTemplate } from "@ab/transactional"
-
-import appConfig from "../../config/appConfig"
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import { VerificationToken } from "../models/VerificationToken"
 import AuthService from "../services/AuthService"
 import {
+  addSendResetPasswordEmailJob,
   addSendVerificationEmailJob,
-  sendHtmlEmail,
-} from "../services/email-service"
+} from "../services/verification-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
@@ -195,26 +189,8 @@ const forgetPassword: RequestHandler = catchAsync(async (req, res) => {
     return
   }
 
-  // 2) Generate password reset token
-  // Invalidate any and all existing reset tokens FIRST
-  await VerificationToken.deleteMany({ user: user._id })
-  const resetTokenDoc: VerificationTokenDocument =
-    await VerificationToken.generate(user._id, 15 * 60)
-
-  // 3) Send email with reset link
-  const resetUrl = `${appConfig.frontendUrl}/reset-password/${resetTokenDoc.token}`
-  logger.debug(`Password reset URL: ${resetUrl}`)
-  const { html, text } = await getResetPasswordTemplate(
-    resetUrl,
-    `${appConfig.frontendUrl}/logo.png`,
-  )
-
-  await sendHtmlEmail(
-    user.email,
-    "Accountability Buddy — Reset your password",
-    html,
-    text,
-  )
+  // 2) Send reset password email
+  await addSendResetPasswordEmailJob(user._id, user.email)
 
   sendResponse(
     res,

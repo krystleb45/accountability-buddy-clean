@@ -12,15 +12,10 @@ export const emailWorker = (() => {
     async (job) => {
       const jobType = job.name
 
-      if (jobType === "send-verification-email") {
-        const { to, html, text } = job.data
-        await sendHtmlEmail(
-          to,
-          "Accountability Buddy — Verify your email",
-          html,
-          text,
-        )
-        logger.debug(`✅ Sent verification email to ${to}`)
+      if (jobType === "send-html-email") {
+        const { to, subject, html, text } = job.data
+        await sendHtmlEmail(to, subject, html, text)
+        logger.debug(`✅ Sent email to ${to}`)
         return
       }
 

@@ -21,17 +21,19 @@ class JobQueueService {
     process.on("SIGTERM", () => void this.shutdown())
   }
 
-  public async addSendVerificationEmailJob({
+  public async addSendEmailJob({
     to,
+    subject,
     html,
     text,
   }: {
     to: string
+    subject: string
     html: string
     text: string
   }) {
     try {
-      await this.emailQueue.add("send-verification-email", { to, html, text })
+      await this.emailQueue.add("send-html-email", { to, subject, html, text })
       logger.debug(`🚥 Added email job to queue for ${to}`)
     } catch (error) {
       logger.error(`Failed to add email job: ${(error as Error).message}`)
@@ -39,12 +41,7 @@ class JobQueueService {
       // Fallback: send email immediately if queue fails
       try {
         logger.warn(`⚠️ Queue failed, sending email immediately to ${to}`)
-        await sendHtmlEmail(
-          to,
-          "Accountability Buddy — Verify your email",
-          html,
-          text,
-        )
+        await sendHtmlEmail(to, subject, html, text)
         logger.info(`✅ Email sent directly (bypass queue) to ${to}`)
       } catch (emailError) {
         logger.error(
