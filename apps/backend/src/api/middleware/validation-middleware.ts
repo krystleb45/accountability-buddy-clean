@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express"
 import type { ZodObject } from "zod"
 
-import status from "http-status"
 import { ZodError } from "zod"
 
 import { logger } from "../../utils/winstonLogger"
+import { createError } from "./errorHandler"
 
 interface Schema {
   querySchema?: ZodObject
@@ -39,21 +39,14 @@ export function validate({
     } catch (error) {
       if (error instanceof ZodError) {
         logger.warn("Zod validation failed", { errors: error.issues })
-        res.status(status.BAD_REQUEST).json({
-          success: false,
-          message: "Validation error",
-          errors: error.issues,
-        })
+        next(createError("Validation error", 400, error.issues))
         return
       }
 
       // Log and handle unexpected errors
       logger.error("Unexpected error during validation", { error })
 
-      res.status(status.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: "Internal server error during validation.",
-      })
+      next(createError("Internal server error during validation", 500))
     }
   }
 }

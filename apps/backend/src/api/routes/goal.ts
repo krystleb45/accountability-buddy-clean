@@ -3,6 +3,7 @@ import z from "zod"
 
 import * as goalController from "../controllers/goal-controller"
 import { protect } from "../middleware/auth-middleware"
+import { isVerified } from "../middleware/is-verified-middleware"
 import {
   trialPrompt,
   validateSubscription,
@@ -49,6 +50,7 @@ const goalCreateSchema = z.object({
 
 router.post(
   "/",
+  isVerified,
   validateSubscription,
   validate({ bodySchema: goalCreateSchema }),
   goalController.createGoal,

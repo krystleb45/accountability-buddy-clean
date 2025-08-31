@@ -97,7 +97,10 @@ http.interceptors.response.use(
         throw new Error("Authentication failed. Please login again.")
       case 403:
         console.error("Access denied")
-        throw new Error("Access denied. Please check your permissions.")
+        throw new Error(
+          err.response?.data?.message ||
+            "Access denied. Please check your permissions.",
+        )
       case 404:
         console.error("Resource not found")
         throw new Error("Requested resource not found.")
