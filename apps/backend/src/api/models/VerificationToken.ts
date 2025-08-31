@@ -1,4 +1,3 @@
-import type { Types } from "mongoose"
 import type {
   VerificationTokenSchema as IVerificationTokenSchema,
   VerificationTokenDocument,
@@ -48,29 +47,30 @@ VerificationTokenSchema.methods.isExpired = function (this): boolean {
 }
 
 // --- Static method: generate a new token ---
-VerificationTokenSchema.statics.generate = async function (
-  this,
-  userId: Types.ObjectId,
-  expiresInSeconds = 24 * 60 * 60,
-): Promise<VerificationTokenDocument> {
-  const tokenString = crypto.randomBytes(32).toString("hex")
-  const expiresAt = new Date(Date.now() + expiresInSeconds * 1000)
+VerificationTokenSchema.statics = {
+  async generate(
+    this,
+    userId: mongoose.Types.ObjectId,
+    expiresInSeconds = 24 * 60 * 60,
+  ): Promise<VerificationTokenDocument> {
+    const tokenString = crypto.randomBytes(32).toString("hex")
+    const expiresAt = new Date(Date.now() + expiresInSeconds * 1000)
 
-  const doc = new this({ user: userId, token: tokenString, expiresAt })
-  await doc.save()
-  return doc
-}
-
-// --- Static method: find only non‐expired token docs ---
-VerificationTokenSchema.statics.findValid = async function (
-  this,
-  token: string,
-) {
-  const doc = await this.findOne({ token })
-  if (!doc || doc.isExpired()) {
-    return null
-  }
-  return doc
+    const doc = new this({ user: userId, token: tokenString, expiresAt })
+    await doc.save()
+    return doc
+  },
+  // --- Static method: find only non‐expired token docs ---
+  async findValid(
+    this,
+    token: string,
+  ): Promise<VerificationTokenDocument | null> {
+    const doc = await this.findOne({ token })
+    if (!doc || doc.isExpired()) {
+      return null
+    }
+    return doc
+  },
 }
 
 // --- Export the model ---

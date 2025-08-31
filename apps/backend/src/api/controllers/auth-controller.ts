@@ -6,10 +6,7 @@ import type {
   VerificationTokenDocument,
 } from "src/types/mongoose.gen"
 
-import {
-  getResetPasswordTemplate,
-  getVerifyEmailTemplate,
-} from "@ab/transactional"
+import { getResetPasswordTemplate } from "@ab/transactional"
 
 import appConfig from "../../config/appConfig"
 import { logger } from "../../utils/winstonLogger"
@@ -17,7 +14,10 @@ import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import { VerificationToken } from "../models/VerificationToken"
 import AuthService from "../services/AuthService"
-import { sendHtmlEmail } from "../services/emailService"
+import {
+  addSendVerificationEmailJob,
+  sendHtmlEmail,
+} from "../services/email-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
@@ -67,6 +67,8 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
   logger.info(
     `✅ User registered successfully: ${normalizedEmail} with plan: ${selectedPlan}`,
   )
+
+  await addSendVerificationEmailJob(user._id, user.email)
 
   // Return success response with token and user data
   sendResponse(res, 201, true, "User registered successfully")
@@ -146,41 +148,7 @@ const sendVerificationEmail: RequestHandler = catchAsync(
       return
     }
 
-    const reuseWindowMs = 15 * 60 * 1000 // 15 minutes
-    const now = Date.now()
-
-    // Try reusing most recent, unexpired token within reuse window
-    const existingTokenDoc = await VerificationToken.findOne({
-      user: user._id,
-    })
-      .sort({ createdAt: -1 })
-      .exec()
-
-    const canReuse =
-      existingTokenDoc &&
-      !existingTokenDoc.isExpired() &&
-      now - existingTokenDoc.createdAt.getTime() < reuseWindowMs
-
-    const tokenDoc = canReuse
-      ? existingTokenDoc
-      : await VerificationToken.generate(user._id)
-
-    const frontendUrl = appConfig.frontendUrl.replace(/\/$/, "")
-    const verifyUrl = `${frontendUrl}/verify-email?token=${encodeURIComponent(tokenDoc.token)}`
-
-    const { html, text } = await getVerifyEmailTemplate(
-      verifyUrl,
-      `${appConfig.frontendUrl}/logo.png`,
-    )
-
-    logger.debug(`Verification URL: ${verifyUrl}`)
-
-    await sendHtmlEmail(
-      user.email,
-      "Accountability Buddy — Verify your email",
-      html,
-      text,
-    )
+    await addSendVerificationEmailJob(user._id, user.email)
 
     sendResponse(res, 200, true, "Verification email sent", {})
   },

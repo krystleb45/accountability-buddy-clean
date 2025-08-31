@@ -1,7 +1,5 @@
 // src/server.ts - Backend Server Entry Point
-
-// ─── Crash Guards ───────────────────────────────────────────────
-// ─── Imports ─────────────────────────────────────────────────────
+// ─── Imports ────────────────────────────────────────────────────
 import type { Server } from "socket.io"
 
 import dotenvFlow from "dotenv-flow"
@@ -9,9 +7,10 @@ import mongoose from "mongoose"
 import { createServer } from "node:http"
 
 import { loadSecretsFromAWS } from "./utils/loadSecrets"
-import { validateEnv } from "./utils/validateEnv"
+import { validateEnv } from "./utils/validate-env"
 import { logger } from "./utils/winstonLogger"
 
+// ─── Crash Guards ───────────────────────────────────────────────
 process.on("uncaughtException", (err) => {
   console.error("❌ Uncaught exception:", err)
   process.exit(1)
@@ -21,40 +20,20 @@ process.on("unhandledRejection", (reason) => {
   process.exit(1)
 })
 
-// ✅ FIXED: Only load .env files in development
-try {
-  if (process.env.NODE_ENV !== "production") {
-    dotenvFlow.config()
-    logger.info("✅ Environment configuration loaded from .env files")
-  } else {
-    // console.log("ℹ️ Production mode: Using Railway environment variables directly");
-  }
-} catch {
-  // console.log("ℹ️ No .env files found, using environment variables directly");
+// --- Environment Configuration ----------------------------------
+// Only load .env files in development
+if (process.env.NODE_ENV !== "production") {
+  dotenvFlow.config()
+  logger.info("✅ Environment configuration loaded from .env files")
+} else {
+  logger.info(
+    "ℹ️ Production mode: Using Railway environment variables directly",
+  )
 }
 
-// 🚫 REDIS DISABLE: Force disable Redis at startup BEFORE any other imports
-if (
-  process.env.DISABLE_REDIS === "true" ||
-  process.env.SKIP_REDIS_INIT === "true"
-) {
-  // Clear all Redis-related environment variables
-  delete process.env.REDIS_URL
-  delete process.env.REDIS_PRIVATE_URL
-  delete process.env.REDIS_PUBLIC_URL
-  delete process.env.REDIS_HOST
-  delete process.env.REDIS_PORT
-  delete process.env.REDIS_PASSWORD
-  delete process.env.REDIS_USERNAME
+validateEnv()
 
-  // Set disabled flag for other modules to check
-  process.env.DISABLE_REDIS = "true"
-  // console.log("✅ Redis forcibly disabled at application startup");
-  // console.log("📝 All Redis environment variables cleared");
-}
-validateEnv() // This now returns { io, socketService }
-
-// ─── Extend NodeJS global for Socket.io ────────────────────────
+// ─── Extend NodeJS global for Socket.io ────────────────────────-
 declare global {
   // eslint-disable-next-line vars-on-top
   var io: Server
@@ -63,8 +42,6 @@ declare global {
 // ─── Server Startup ─────────────────────────────────────────────
 async function startServer(): Promise<void> {
   try {
-    // console.log("🚀 Starting server with Redis disabled...");
-
     // 1) Only load AWS secrets in production, skip for staging
     if (process.env.NODE_ENV === "production" && process.env.AWS_REGION) {
       await loadSecretsFromAWS()
@@ -78,13 +55,25 @@ async function startServer(): Promise<void> {
     logger.info("✅ MongoDB connected")
 
     // 2a) Check up on email service
-    const emailService = await import("./api/services/emailService")
+    const emailService = await import("./api/services/email-service")
     const emailServiceHealthy = await emailService.emailServiceHealthCheck()
-    if (!emailServiceHealthy) {
-      logger.error("❌ Email service is unhealthy")
-    } else {
+    if (emailServiceHealthy) {
       logger.info("📧 Email service is healthy")
+    } else {
+      logger.error("❌ Email service is unhealthy")
     }
+
+    // 2b) Check on job queue (Redis)
+    const jobQueue = (await import("./api/services/job-queue-service")).default
+    const jobQueueHealthy = jobQueue.getStatus().status === "running"
+    if (jobQueueHealthy) {
+      logger.info("✅ Job queue is healthy")
+    } else {
+      logger.error("❌ Job queue is unhealthy")
+    }
+
+    // 2c) Start email worker
+    await import("./queues/email-worker")
 
     const app = await import("./app").then((mod) => mod.default)
     const socketServer = await import("./sockets").then((mod) => mod.default)
@@ -92,7 +81,6 @@ async function startServer(): Promise<void> {
     // 3) Create HTTP server and setup Socket.IO with all features
     const httpServer = createServer(app)
 
-    // 🆕 FIXED: Get both io and socketService from socketServer
     const { io, socketService } = socketServer(httpServer)
     globalThis.io = io
 
@@ -103,18 +91,14 @@ async function startServer(): Promise<void> {
     // 4) Start listening
     const PORT = Number.parseInt(process.env.PORT || "5000", 10)
     httpServer.listen(PORT, "0.0.0.0", () => {
-      // console.log(`🚀 Server listening on port ${PORT}`);
-      // console.log(`🌐 Server URL: http://0.0.0.0:${PORT}`);
-      // console.log("🚫 Redis status: DISABLED");
       logger.info(`🚀 Server listening on port ${PORT}`)
     })
   } catch (err) {
     logger.error("❌ Fatal startup error:", err)
-    console.error("❌ Fatal startup error:", err)
+    await (await import("./queues/email-worker")).emailWorker.close()
     process.exit(1)
   }
 }
 
 // ─── Launch ─────────────────────────────────────────────────────
-// console.log("🎯 Launching server...");
 void startServer()

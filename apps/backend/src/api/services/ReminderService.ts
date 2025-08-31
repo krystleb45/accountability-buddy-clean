@@ -5,7 +5,7 @@ import cron from "node-cron"
 import type { IReminder } from "../models/Reminder"
 
 import { Reminder } from "../models/Reminder"
-import { sendEmail } from "./emailService"
+import { sendEmail } from "./email-service"
 import LoggingService from "./LoggingService"
 import NotificationService from "./NotificationService"
 

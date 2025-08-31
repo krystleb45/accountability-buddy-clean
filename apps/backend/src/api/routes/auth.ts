@@ -62,6 +62,8 @@ router.get(
   }),
 )
 
+// ─── POST /api/auth/send-verification-email ───────────────────────────────
+
 // --- Multi-window rate limits for verification and password reset emails ---
 //   - Cooldown: 1 per 60s per user
 //   - Burst: 3 per 15min per user

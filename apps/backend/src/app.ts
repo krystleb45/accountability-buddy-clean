@@ -1,4 +1,3 @@
-// src/app.ts - FIXED: Proper route ordering and Redis disable
 import bodyParser from "body-parser"
 import compression from "compression"
 import cors from "cors"
@@ -38,7 +37,6 @@ import challengeRoutes from "./api/routes/challenge"
 import chatRoutes from "./api/routes/chat"
 import collaborationRoutes from "./api/routes/collaborationGoals"
 import dashboardRoutes from "./api/routes/dashboard"
-import emailRoutes from "./api/routes/email"
 import eventRoutes from "./api/routes/event"
 import feedRoutes from "./api/routes/feed"
 import feedbackRoutes from "./api/routes/feedback"
@@ -184,7 +182,6 @@ app.use("/api/reminders", reminderRoutes)
 app.use("/api/messages", messageRoutes)
 app.use("/api/matches", matchRoutes)
 app.use("/api/audit", auditRoutes)
-app.use("/api/email", emailRoutes)
 app.use("/api/groups", groupRoutes)
 app.use("/api/chat", chatRoutes)
 app.use("/api/payment", paymentRoutes)

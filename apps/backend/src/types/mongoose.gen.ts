@@ -8881,8 +8881,15 @@ export type VerificationTokenMethods = {
 }
 
 export type VerificationTokenStatics = {
-  generate: (this: VerificationTokenModel, ...args: any[]) => any
-  findValid: (this: VerificationTokenModel, ...args: any[]) => any
+  generate: (
+    this: VerificationTokenModel,
+    userId: mongoose.Types.ObjectId,
+    expiresInSeconds?: number
+  ) => Promise<VerificationTokenDocument>
+  findValid: (
+    this: VerificationTokenModel,
+    token: string
+  ) => Promise<VerificationTokenDocument | null>
 }
 
 /**

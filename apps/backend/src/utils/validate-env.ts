@@ -11,6 +11,7 @@ const requiredEnvVars: string[] = [
   "SESSION_SECRET",
   "MAILCHIMP_TRANSACTIONAL_API_KEY",
   "EMAIL_USER",
+  "REDIS_HOST",
 ]
 
 const optionalButRecommended: string[] = []
