@@ -47,12 +47,7 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
   // Verify JWT token
   let decoded: JwtPayload
   try {
-    logger.info(`🔍 Verifying token: ${token.substring(0, 20)}...`)
     decoded = jwt.verify(token, secret) as JwtPayload
-
-    // Handle both userId and _id formats
-    const userIdFromToken = decoded.userId || decoded._id
-    logger.info(`✅ Token verified for user: ${userIdFromToken}`)
   } catch (err: any) {
     logger.warn(`❌ Invalid token: ${err.message}`)
     return next(createError("Unauthorized: Invalid token", 401))
@@ -100,7 +95,6 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
     id: user._id.toString(),
   }
 
-  logger.info(`✅ Authenticated user: ${userDoc.email}`)
   next()
 })
 

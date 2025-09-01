@@ -9,6 +9,13 @@ import bcrypt from "bcryptjs"
 import { addDays, differenceInDays, isBefore } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
+import { Activity } from "./Activity"
+import { CollaborationGoal } from "./CollaborationGoal"
+import { Goal } from "./Goal"
+import { Level } from "./Level"
+import { Milestone } from "./Milestone"
+import { Reminder } from "./Reminder"
+
 const UserSchema: IUserSchema = new Schema(
   {
     username: { type: String, required: true, unique: true },
@@ -189,6 +196,27 @@ UserSchema.pre(
     }
   },
 )
+
+async function cleanUp(userId: mongoose.Types.ObjectId) {
+  await Level.deleteOne({ user: userId })
+  await Goal.deleteMany({ user: userId })
+  await Milestone.deleteMany({ user: userId })
+  await Reminder.deleteMany({ user: userId })
+  await Activity.deleteMany({ user: userId })
+  await CollaborationGoal.find({ participants: userId }).then(
+    (collaborationGoals) => {
+      collaborationGoals.forEach((goal) => {
+        goal.participants.remove(userId)
+        goal.save()
+      })
+    },
+  )
+}
+
+UserSchema.pre("findOneAndDelete", async function (this, next) {
+  await cleanUp(this.getQuery()._id)
+  next()
+})
 
 UserSchema.methods = {
   hasFeatureAccess(feature: string): boolean {
