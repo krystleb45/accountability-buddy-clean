@@ -4,25 +4,25 @@ import { useMutation } from "@tanstack/react-query"
 import { AlertCircle, Loader, Send } from "lucide-react"
 import { toast } from "sonner"
 
+import { sendVerificationEmail } from "@/api/auth/auth-api"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/auth/auth-context"
-import { http } from "@/utils"
 
 export function VerifyEmailBanner() {
   const { user, loading } = useAuth()
 
-  const { mutate: sendVerificationEmail, isPending: sendingVerificationEmail } =
-    useMutation({
-      mutationFn: async () => {
-        return http.post("/auth/send-verification-email")
-      },
-      onSuccess: () => {
-        toast.success("Verification email sent successfully!")
-      },
-      onError: () => {
-        toast.error("Failed to send verification email.")
-      },
-    })
+  const {
+    mutate: sendVerificationEmailFn,
+    isPending: sendingVerificationEmail,
+  } = useMutation({
+    mutationFn: sendVerificationEmail,
+    onSuccess: () => {
+      toast.success("Verification email sent successfully!")
+    },
+    onError: () => {
+      toast.error("Failed to send verification email.")
+    },
+  })
 
   if (user?.isVerified || loading) {
     return null
@@ -46,7 +46,7 @@ export function VerifyEmailBanner() {
             group mt-4 !border-chart-3
             hover:!border-primary
           `}
-          onClick={() => sendVerificationEmail()}
+          onClick={() => sendVerificationEmailFn()}
           disabled={sendingVerificationEmail}
         >
           Resend Verification Email{" "}

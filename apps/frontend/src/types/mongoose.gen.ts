@@ -1751,11 +1751,6 @@ export type User = {
   subscriptionEndDate?: string
   next_billing_date?: string
   billing_cycle?: "monthly" | "yearly"
-  plan_change_at_period_end: {
-    newPlan?: "free-trial" | "basic" | "pro" | "elite"
-    newBillingCycle?: "monthly" | "yearly"
-    changeDate?: string
-  }
   interests: string[]
   chatPreferences: {
     preferredGroups: (Chat["_id"] | Chat)[]

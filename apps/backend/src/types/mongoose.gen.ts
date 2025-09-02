@@ -8511,11 +8511,6 @@ export type User = {
   subscriptionEndDate?: Date
   next_billing_date?: Date
   billing_cycle?: "monthly" | "yearly"
-  plan_change_at_period_end: {
-    newPlan?: "free-trial" | "basic" | "pro" | "elite"
-    newBillingCycle?: "monthly" | "yearly"
-    changeDate?: Date
-  }
   interests: string[]
   chatPreferences: {
     preferredGroups: (Chat["_id"] | Chat)[]
@@ -8684,11 +8679,6 @@ export type UserDocument = mongoose.Document<
     subscriptionEndDate?: Date
     next_billing_date?: Date
     billing_cycle?: "monthly" | "yearly"
-    plan_change_at_period_end: {
-      newPlan?: "free-trial" | "basic" | "pro" | "elite"
-      newBillingCycle?: "monthly" | "yearly"
-      changeDate?: Date
-    }
     interests: mongoose.Types.Array<string>
     chatPreferences: {
       preferredGroups: mongoose.Types.Array<ChatDocument["_id"] | ChatDocument>
