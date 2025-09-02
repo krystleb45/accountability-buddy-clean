@@ -103,7 +103,9 @@ http.interceptors.response.use(
         )
       case 404:
         console.error("Resource not found")
-        throw new Error("Requested resource not found.")
+        throw new Error(
+          err.response?.data?.message || "Requested resource not found.",
+        )
       case 500:
         console.error("Server error")
         throw new Error("Server error. Please try again later.")
