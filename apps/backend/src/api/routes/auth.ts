@@ -20,22 +20,24 @@ const authLimiter = rateLimit({
 })
 
 // ─── POST /api/auth/register ─────────────────────────────────────────────-
+const registerBodySchema = z.object({
+  email: z.email("Email must be valid"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  username: z.string().nonempty("Username is required"),
+  name: z.string().min(2),
+  selectedPlan: z.enum(PRICING.map((plan) => plan.id)),
+  billingCycle: z.enum(["monthly", "yearly"]).default("yearly"),
+})
+
+export type RegisterBody = z.infer<typeof registerBodySchema>
+
 router.post(
   "/register",
   authLimiter,
   validate({
-    bodySchema: z.object({
-      email: z.email("Email must be valid"),
-      password: z.string().min(8, "Password must be at least 8 characters"),
-      username: z.string().nonempty("Username is required"),
-      name: z.string().min(2),
-      selectedPlan: z.enum(PRICING.map((plan) => plan.id)),
-      billingCycle: z.enum(["monthly", "yearly"]).default("yearly"),
-    }),
+    bodySchema: registerBodySchema,
   }),
-  catchAsync(async (req, res, next) => {
-    await authController.register(req, res, next)
-  }),
+  authController.register,
 )
 
 // ─── POST /api/auth/login ────────────────────────────────────────────────-

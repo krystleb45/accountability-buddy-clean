@@ -1,6 +1,6 @@
 "use client"
 
-import type { PRICING } from "@ab/shared/pricing"
+import type { BillingCycle, PlanId, PRICING } from "@ab/shared/pricing"
 
 import { createContext, use, useMemo, useState } from "react"
 
@@ -9,10 +9,10 @@ import type { CreateAccountSchema } from "./register-form"
 interface RegisterContextType {
   createAccountState: CreateAccountSchema | null
   setCreateAccountState: (state: CreateAccountSchema | null) => void
-  selectedPlan: (typeof PRICING)[number]["id"] | null
-  setSelectedPlan: (planId: (typeof PRICING)[number]["id"] | null) => void
-  billingCycle: "monthly" | "yearly"
-  setBillingCycle: (cycle: "monthly" | "yearly") => void
+  selectedPlan: PlanId | null
+  setSelectedPlan: (planId: PlanId | null) => void
+  billingCycle: BillingCycle
+  setBillingCycle: (cycle: BillingCycle) => void
 }
 
 const RegisterContext = createContext<RegisterContextType | null>(null)

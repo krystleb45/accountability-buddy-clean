@@ -30,6 +30,7 @@ import { useRegisterContext } from "./register-context"
 const createAccountSchema = z
   .object({
     name: z.string().min(2).max(100).nonempty("Please enter your name"),
+    username: z.string().min(2).max(100).nonempty("Please enter your username"),
     email: z
       .email("Please enter a valid email")
       .nonempty("Please enter your email"),
@@ -53,6 +54,7 @@ export function RegisterForm() {
     resolver: zodResolver(createAccountSchema),
     defaultValues: createAccountState ?? {
       name: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -92,6 +94,23 @@ export function RegisterForm() {
                     <Input
                       type="text"
                       placeholder="Enter your name"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Choose a username"
                       {...field}
                     />
                   </FormControl>

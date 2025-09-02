@@ -1,7 +1,10 @@
-import type { PRICING } from "@ab/shared/pricing"
 import type { RequestHandler } from "express"
 import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 import type { UserObject } from "src/types/mongoose.gen"
+
+import { addDays } from "date-fns"
+
+import type { RegisterBody } from "../routes/auth"
 
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
@@ -15,21 +18,12 @@ import {
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
-interface RegisterRequestBody {
-  email: string
-  password: string
-  username: string
-  name: string
-  selectedPlan: (typeof PRICING)[number]["id"]
-  billingCycle: "monthly" | "yearly"
-}
-
 //
 // ─── POST /api/auth/register ─────────────────────────────────────────────────
 //
 const register: RequestHandler = catchAsync(async (req, res, next) => {
   const { email, password, username, name, selectedPlan, billingCycle } =
-    req.body as RegisterRequestBody
+    req.body as RegisterBody
 
   const normalizedEmail = email.toLowerCase().trim()
 
@@ -49,11 +43,15 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
     email: normalizedEmail,
     username,
     password, // Will be hashed by pre-save middleware
-    subscriptionTier: selectedPlan as any,
-    subscription_status: selectedPlan === "free-trial" ? "trial" : "active",
+    subscriptionTier: selectedPlan,
+    subscription_status: selectedPlan === "free-trial" ? "trial" : "past_due",
     billing_cycle: billingCycle,
-    trial_start_date: new Date(),
-    // trial_end_date is set by default in the schema (14 days from now)
+    ...(selectedPlan === "free-trial"
+      ? {
+          trial_start_date: new Date(),
+          trial_end_date: addDays(new Date(), 14),
+        }
+      : {}),
   })
 
   await user.save()

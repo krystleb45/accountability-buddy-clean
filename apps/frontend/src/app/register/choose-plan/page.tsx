@@ -1,16 +1,19 @@
 "use client"
 
+import type { BillingCycle, PlanId } from "@ab/shared/pricing"
+
+import { useMutation } from "@tanstack/react-query"
+import { Loader } from "lucide-react"
 import { motion } from "motion/react"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
+import { register } from "@/api/auth/auth-api"
 import { createSubscriptionSession } from "@/api/subscription/subscriptionApi"
 import { Pricing } from "@/components/pricing"
 import { Button } from "@/components/ui/button"
-import { http } from "@/utils"
 
 import { useRegisterContext } from "../register-context"
 
@@ -24,38 +27,35 @@ function ChoosePlanPage() {
   } = useRegisterContext()
   const router = useRouter()
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error, {
+  const {
+    mutate: createCheckoutSession,
+    isPending: isCreatingCheckoutSession,
+  } = useMutation({
+    mutationFn: ({
+      selectedPlan,
+      billingCycle,
+    }: {
+      selectedPlan: Exclude<PlanId, "free-trial">
+      billingCycle: BillingCycle
+    }) => createSubscriptionSession(selectedPlan, billingCycle),
+    onSuccess: (data) => {
+      window.location.assign(data.sessionUrl)
+    },
+    onError: (error) => {
+      toast.error(error.message, {
         duration: 5000,
       })
-    }
-  }, [error])
+    },
+  })
 
-  const handleSubmit = async () => {
-    setLoading(true)
-    setError("")
-
-    try {
-      const response = await http.post("/auth/register", {
-        name: createAccountState?.name,
-        username: createAccountState?.name.toLowerCase().replace(/\s+/g, ""), // Generate username from name
-        email: createAccountState?.email,
-        password: createAccountState?.password,
-        confirmPassword: createAccountState?.confirmPassword,
-        selectedPlan,
+  const { mutate: registerFn, isPending: isRegistering } = useMutation({
+    mutationFn: () =>
+      register({
+        ...createAccountState!,
+        selectedPlan: selectedPlan!,
         billingCycle,
-      })
-
-      const data = response.data
-
-      if (!data.success) {
-        throw new Error(data.message || "Registration failed")
-      }
-
+      }),
+    onSuccess: async () => {
       await signIn("credentials", {
         email: createAccountState?.email,
         password: createAccountState?.password,
@@ -69,17 +69,20 @@ function ChoosePlanPage() {
       }
 
       // For paid plans, create checkout session
-      const sess = await createSubscriptionSession(selectedPlan!, billingCycle)
-      if (sess?.sessionUrl) {
-        window.location.href = sess.sessionUrl
-      } else {
-        throw new Error("Failed to create payment session")
-      }
-    } catch (err: any) {
-      console.error("Registration error:", err)
-      setError(err.message || "Registration failed. Please try again.")
-      setLoading(false)
-    }
+      createCheckoutSession({
+        selectedPlan: selectedPlan!,
+        billingCycle,
+      })
+    },
+    onError: (error) => {
+      toast.error(error.message, {
+        duration: 5000,
+      })
+    },
+  })
+
+  const handleSubmit = async () => {
+    registerFn()
   }
 
   if (!createAccountState) {
@@ -104,11 +107,28 @@ function ChoosePlanPage() {
       />
       <div className="mt-8">
         <div className="flex justify-center gap-4">
-          <Button size="lg" asChild variant="outline" disabled={loading}>
+          <Button
+            size="lg"
+            asChild
+            variant="outline"
+            disabled={isRegistering || isCreatingCheckoutSession}
+          >
             <Link href="/register">Back</Link>
           </Button>
-          <Button size="lg" onClick={handleSubmit} disabled={loading}>
-            {loading ? "Creating Account..." : "Complete Registration"}
+          <Button
+            size="lg"
+            onClick={handleSubmit}
+            disabled={isRegistering || isCreatingCheckoutSession}
+          >
+            {isRegistering ? (
+              <>
+                <Loader className="animate-spin" /> Creating Account...
+              </>
+            ) : isCreatingCheckoutSession ? (
+              "Redirecting you to Checkout..."
+            ) : (
+              "Complete Registration"
+            )}
           </Button>
         </div>
       </div>

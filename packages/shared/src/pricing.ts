@@ -64,3 +64,6 @@ export const PRICING = [
     buttonText: "Choose Elite",
   },
 ] as const
+
+export type PlanId = (typeof PRICING)[number]["id"]
+export type BillingCycle = "monthly" | "yearly"
