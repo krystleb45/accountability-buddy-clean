@@ -31,7 +31,7 @@ export function VerifyEmailBanner() {
   return (
     <div
       className={`
-        m-6 flex justify-center rounded-lg border !border-chart-3 bg-chart-3/10
+        my-6 flex justify-center rounded-lg border !border-chart-3 bg-chart-3/10
         px-6 py-4
       `}
     >

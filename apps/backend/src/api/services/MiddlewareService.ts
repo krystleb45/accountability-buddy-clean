@@ -1,10 +1,9 @@
 import type { NextFunction, Request, Response } from "express"
 import type Joi from "joi"
 import type { JwtPayload } from "jsonwebtoken"
+import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
 import jwt from "jsonwebtoken"
-
-import type { IUser } from "../models/User"
 
 import { logger } from "../../utils/winstonLogger"
 import {
@@ -12,12 +11,6 @@ import {
   errorHandler as defaultErrorHandler,
 } from "../middleware/errorHandler"
 import { User } from "../models/User"
-
-declare module "express" {
-  interface Request {
-    user?: IUser
-  }
-}
 
 export default class MiddlewareService {
   /**
@@ -57,7 +50,7 @@ export default class MiddlewareService {
    */
   static authorizeRoles = (...roles: string[]) => {
     return async (
-      req: Request,
+      req: AuthenticatedRequest,
       _res: Response,
       next: NextFunction,
     ): Promise<void> => {

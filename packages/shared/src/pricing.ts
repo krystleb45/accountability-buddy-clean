@@ -37,6 +37,7 @@ export const PRICING = [
     price: { monthly: 15, yearly: 150 },
     description: "Most popular choice",
     features: [
+      "Everything in Basic",
       "Unlimited goals",
       "Full community access",
       "Badge system & XP",

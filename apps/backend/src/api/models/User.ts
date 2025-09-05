@@ -6,7 +6,7 @@ import type {
 } from "src/types/mongoose.gen"
 
 import bcrypt from "bcryptjs"
-import { addDays, differenceInDays, isBefore } from "date-fns"
+import { differenceInDays, isBefore } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
 import { Activity } from "./Activity"
@@ -88,11 +88,8 @@ const UserSchema: IUserSchema = new Schema(
       enum: ["free-trial", "basic", "pro", "elite"],
       default: "free-trial",
     },
-    trial_start_date: { type: Date, default: Date.now },
-    trial_end_date: {
-      type: Date,
-      default: () => addDays(new Date(), 14), // 14 days from now
-    },
+    trial_start_date: { type: Date },
+    trial_end_date: { type: Date },
     subscriptionStartDate: { type: Date },
     subscriptionEndDate: { type: Date },
     next_billing_date: { type: Date },
@@ -100,17 +97,6 @@ const UserSchema: IUserSchema = new Schema(
       type: String,
       enum: ["monthly", "yearly"],
       default: "monthly",
-    },
-    plan_change_at_period_end: {
-      newPlan: {
-        type: String,
-        enum: ["free-trial", "basic", "pro", "elite"],
-      },
-      newBillingCycle: {
-        type: String,
-        enum: ["monthly", "yearly"],
-      },
-      changeDate: { type: Date },
     },
 
     // Communication & Interests
@@ -235,17 +221,15 @@ UserSchema.methods = {
     }
 
     const tier = this.subscriptionTier
-    const userFeatures = featureAccess[tier] ?? [
-      "streak",
-      "dailyPrompts",
-      "groupChat",
-    ] // default to basic features
+    const userFeatures = featureAccess[tier] ?? featureAccess.basic // default to basic features
     return userFeatures.includes("all") || userFeatures.includes(feature)
   },
   isSubscriptionActive() {
     return (
       this.subscription_status === "active" ||
-      this.subscription_status === "trial"
+      this.subscription_status === "trial" ||
+      (this.subscription_status === "canceled" &&
+        isBefore(new Date(), this.subscriptionEndDate))
     )
   },
   isInTrial() {

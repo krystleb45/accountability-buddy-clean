@@ -1,6 +1,6 @@
 "use client"
 
-import type { BillingCycle, PlanId } from "@ab/shared/pricing"
+import type { PlanId } from "@ab/shared/pricing"
 
 import { useMutation } from "@tanstack/react-query"
 import { Loader } from "lucide-react"
@@ -11,9 +11,9 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 import { register } from "@/api/auth/auth-api"
-import { createSubscriptionSession } from "@/api/subscription/subscriptionApi"
 import { Pricing } from "@/components/pricing"
 import { Button } from "@/components/ui/button"
+import useSubscription from "@/hooks/useSubscription"
 
 import { useRegisterContext } from "../register-context"
 
@@ -26,27 +26,7 @@ function ChoosePlanPage() {
     setBillingCycle,
   } = useRegisterContext()
   const router = useRouter()
-
-  const {
-    mutate: createCheckoutSession,
-    isPending: isCreatingCheckoutSession,
-  } = useMutation({
-    mutationFn: ({
-      selectedPlan,
-      billingCycle,
-    }: {
-      selectedPlan: Exclude<PlanId, "free-trial">
-      billingCycle: BillingCycle
-    }) => createSubscriptionSession(selectedPlan, billingCycle),
-    onSuccess: (data) => {
-      window.location.assign(data.sessionUrl)
-    },
-    onError: (error) => {
-      toast.error(error.message, {
-        duration: 5000,
-      })
-    },
-  })
+  const { createCheckoutSession, isCreatingCheckoutSession } = useSubscription()
 
   const { mutate: registerFn, isPending: isRegistering } = useMutation({
     mutationFn: () =>
@@ -70,7 +50,7 @@ function ChoosePlanPage() {
 
       // For paid plans, create checkout session
       createCheckoutSession({
-        selectedPlan: selectedPlan!,
+        planId: selectedPlan as Exclude<PlanId, "free-trial">,
         billingCycle,
       })
     },

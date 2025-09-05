@@ -17,7 +17,6 @@ import anonymousMilitaryChatRoutes from "./api/routes/anonymousMilitaryChatRoute
 import authRoutes from "./api/routes/auth"
 import faqRoutes from "./api/routes/faq"
 import healthRoutes from "./api/routes/healthRoutes"
-import webhooksRoutes from "./api/routes/webhooks"
 
 // ─── Protected route imports ──────────────────────────────────
 import status from "http-status"
@@ -57,7 +56,6 @@ import newsletterRoutes from "./api/routes/newsletter"
 import notificationsRoutes from "./api/routes/notifications"
 import notificationTriggersRoutes from "./api/routes/notificationTriggers"
 import partnerRoutes from "./api/routes/partner"
-import paymentRoutes from "./api/routes/payment"
 import pollRoutes from "./api/routes/pollRoutes"
 import profileRoutes from "./api/routes/profile"
 import progressRoutes from "./api/routes/progress"
@@ -82,23 +80,18 @@ import xpHistoryRoutes from "./api/routes/xpHistory"
 import setupSwagger from "./config/swaggerConfig"
 
 const app = express()
-app.set("trust proxy", true)
-
-// 🔍 Log Redis status after all imports
-if (process.env.DISABLE_REDIS === "true") {
-  logger.info("🚫 Redis Status: DISABLED")
-  logger.info("📋 REDIS_URL:", process.env.REDIS_URL || "undefined")
-  logger.info(
-    "📋 REDIS_PRIVATE_URL:",
-    process.env.REDIS_PRIVATE_URL || "undefined",
-  )
-}
 
 // ─── Serve uploads folder ─────────────────────────────────────
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")))
 
 // ─── Core middleware ──────────────────────────────────────────
-app.use(bodyParser.json())
+app.use(
+  bodyParser.json({
+    verify: (req, _, buf) => {
+      req.rawBody = buf.toString()
+    },
+  }),
+)
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(compression())
 app.use(helmet())
@@ -168,9 +161,6 @@ app.use("/api/health", healthRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/faqs", faqRoutes)
 
-// ⚠️ CRITICAL: Webhooks MUST be before protect middleware
-app.use("/api/webhooks", webhooksRoutes)
-
 // 🆕 NEW: Anonymous military chat (PUBLIC - no auth required for crisis support)
 app.use("/api/anonymous-military-chat", anonymousMilitaryChatRoutes)
 
@@ -184,7 +174,6 @@ app.use("/api/matches", matchRoutes)
 app.use("/api/audit", auditRoutes)
 app.use("/api/groups", groupRoutes)
 app.use("/api/chat", chatRoutes)
-app.use("/api/payment", paymentRoutes)
 app.use("/api/subscription", subscriptionRoutes)
 app.use("/api/goals", goalRoutes)
 app.use("/api/goal-messages", goalMessageRoutes)

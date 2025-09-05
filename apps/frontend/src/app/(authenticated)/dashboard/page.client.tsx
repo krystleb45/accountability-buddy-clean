@@ -1,9 +1,9 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
+import { XCircle } from "lucide-react"
 import { useSession } from "next-auth/react"
-import { useEffect, useMemo } from "react"
-import { toast } from "sonner"
+import { useMemo } from "react"
 
 import { fetchActivities } from "@/api/activity/activity-api"
 import { fetchUserBadges } from "@/api/badge/badge-api"
@@ -13,10 +13,13 @@ import { fetchDashboardProgress } from "@/api/progress/progress-api"
 import Dashboard from "@/components/Dashboard/Dashboard"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { useAuth } from "@/context/auth/auth-context"
+import useSubscription from "@/hooks/useSubscription"
 
 export default function DashboardClient() {
   const { status } = useSession()
   const { user } = useAuth()
+
+  const { isSubscriptionActive } = useSubscription()
 
   const {
     data: rawStreak,
@@ -25,6 +28,7 @@ export default function DashboardClient() {
   } = useQuery({
     queryKey: ["raw-streak"],
     queryFn: fetchUserStreak,
+    enabled: isSubscriptionActive,
   })
 
   const {
@@ -34,6 +38,7 @@ export default function DashboardClient() {
   } = useQuery({
     queryKey: ["dashboard-progress"],
     queryFn: fetchDashboardProgress,
+    enabled: isSubscriptionActive,
   })
 
   const {
@@ -43,6 +48,7 @@ export default function DashboardClient() {
   } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: fetchDashboardStats,
+    enabled: isSubscriptionActive,
   })
 
   const {
@@ -56,6 +62,7 @@ export default function DashboardClient() {
         page: 1,
         limit: 5,
       }),
+    enabled: isSubscriptionActive,
   })
 
   const {
@@ -65,6 +72,7 @@ export default function DashboardClient() {
   } = useQuery({
     queryKey: ["badges"],
     queryFn: fetchUserBadges,
+    enabled: isSubscriptionActive,
   })
 
   const loading = useMemo(
@@ -101,22 +109,24 @@ export default function DashboardClient() {
     ],
   )
 
-  useEffect(() => {
-    if (!error) {
-      return
-    }
-
-    toast.error(error.message, {
-      duration: 5000,
-    })
-  }, [error])
-
   // loading / redirect state
-  if (loading) {
+  if (loading && isSubscriptionActive) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <LoadingSpinner />
       </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <main className="grid min-h-screen place-items-center">
+        <div className="text-center">
+          <XCircle size={60} className="mx-auto mb-6 text-destructive" />
+          <p className="mb-2">There was an error loading your details.</p>
+          <p className="text-sm text-muted-foreground">{error.message}</p>
+        </div>
+      </main>
     )
   }
 
@@ -126,7 +136,7 @@ export default function DashboardClient() {
     !!rawStreak &&
     !!recentActivities &&
     !!userBadges ? (
-    <div className="mx-auto max-w-7xl p-6">
+    <div>
       <Dashboard
         userName={user?.name || user?.username || ""}
         userStats={{

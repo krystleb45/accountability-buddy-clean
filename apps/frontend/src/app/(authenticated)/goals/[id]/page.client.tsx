@@ -31,6 +31,7 @@ import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
+import useSubscription from "@/hooks/useSubscription"
 import { cn } from "@/lib/utils"
 
 interface GoalClientProps {
@@ -38,6 +39,8 @@ interface GoalClientProps {
 }
 
 function GoalClient({ id }: GoalClientProps) {
+  const { isSubscriptionActive, isLoading } = useSubscription()
+
   const { data, isPending, error } = useQuery({
     queryKey: ["goals", id],
     queryFn: () => fetchGoalDetails(id),
@@ -76,7 +79,7 @@ function GoalClient({ id }: GoalClientProps) {
     },
   })
 
-  if (isPending) {
+  if ((isPending && isSubscriptionActive) || isLoading) {
     return (
       <main className="grid min-h-screen place-items-center">
         <LoadingSpinner />
@@ -84,20 +87,22 @@ function GoalClient({ id }: GoalClientProps) {
     )
   }
 
-  if (error) {
+  if (error || !data) {
     return (
       <main className="grid min-h-screen place-items-center">
         <div className="text-center">
           <XCircle size={60} className="mx-auto mb-6 text-destructive" />
           <p className="mb-2">There was an error loading goal details.</p>
-          <p className="text-sm text-muted-foreground">{error.message}</p>
+          {error && (
+            <p className="text-sm text-muted-foreground">{error.message}</p>
+          )}
         </div>
       </main>
     )
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-7xl flex-col gap-10 p-6">
+    <main className="flex flex-col gap-10">
       <Button variant="link" size="sm" asChild className="self-start !px-0">
         <Link href="/goals">
           <ArrowLeft /> Back to Goals

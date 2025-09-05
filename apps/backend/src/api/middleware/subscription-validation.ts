@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express"
+import type { NextFunction, Response } from "express"
 
 import { isAfter } from "date-fns"
 import status from "http-status"
@@ -15,19 +15,15 @@ import { createError } from "./errorHandler"
  * Works with your User model that stores subscription data directly on the user
  */
 export async function validateSubscription(
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
   try {
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user.id
+    const userId = req.user.id
 
     // Fetch the user from the database
     const user = await User.findById(userId)
-    if (!user) {
-      return next(createError("User not found", status.NOT_FOUND))
-    }
 
     // Check if trial has expired and update status
     if (
@@ -43,15 +39,16 @@ export async function validateSubscription(
     const hasValidSubscription = user.isSubscriptionActive()
 
     if (!hasValidSubscription) {
-      const daysLeft = user.getDaysUntilTrialEnd()
-      sendResponse(
-        res,
-        status.FORBIDDEN,
-        false,
-        daysLeft > 0
-          ? `Your trial expires in ${daysLeft} days. Please upgrade to continue.`
-          : "Your subscription has expired or the free trial has ended. Please renew your subscription.",
-      )
+      const subscriptionStatus = user.subscription_status
+
+      const message =
+        subscriptionStatus === "expired"
+          ? "Your subscription has expired. Please renew your subscription."
+          : subscriptionStatus === "past_due"
+            ? "Your subscription payment is past due. Please pay your invoice to continue."
+            : "Your subscription is inactive. Please contact support."
+
+      sendResponse(res, status.FORBIDDEN, false, message)
       return
     }
 
@@ -77,41 +74,14 @@ export async function validateSubscription(
  */
 export function validateFeatureAccess(requiredFeature: string) {
   return async (
-    req: Request,
+    req: AuthenticatedRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const authReq = req as AuthenticatedRequest
-      const userId = authReq.user?.id
-
-      if (!userId) {
-        res.status(401).json({
-          success: false,
-          message: "User not authenticated",
-        })
-        return
-      }
+      const userId = req.user.id
 
       const user = await User.findById(userId)
-      if (!user) {
-        res.status(404).json({
-          success: false,
-          message: "User not found",
-        })
-        return
-      }
-
-      // Check if subscription is active first
-      const validStatuses = ["active", "trial", "trialing"]
-      if (!validStatuses.includes(user.subscription_status)) {
-        res.status(403).json({
-          success: false,
-          message: "Active subscription required to access this feature",
-          upgradeRequired: true,
-        })
-        return
-      }
 
       // Check specific feature access
       const hasAccess = user.hasFeatureAccess(requiredFeature)
@@ -151,21 +121,15 @@ export function validateFeatureAccess(requiredFeature: string) {
  */
 export function trialPrompt(featureName: string) {
   return async (
-    req: Request,
+    req: AuthenticatedRequest,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const authReq = req as AuthenticatedRequest
-      const userId = authReq.user?.id
-
-      if (!userId) {
-        next()
-        return
-      }
+      const userId = req.user.id
 
       const user = await User.findById(userId)
-      if (!user || !user.isInTrial()) {
+      if (!user.isInTrial()) {
         next()
         return
       }

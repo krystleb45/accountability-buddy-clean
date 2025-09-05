@@ -7,10 +7,9 @@ import {
   formatDistanceToNow,
   isAfter,
 } from "date-fns"
-import { ArrowLeft, Clock, Goal, Plus, Tag } from "lucide-react"
+import { ArrowLeft, Clock, Goal, Plus, Tag, XCircle } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useMemo } from "react"
-import { toast } from "sonner"
+import { useMemo } from "react"
 
 import { fetchUserGoals } from "@/api/goal/goal-api"
 import { GoalPriority } from "@/components/goals/goal-priority"
@@ -34,19 +33,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useAuth } from "@/context/auth/auth-context"
 import useSubscription from "@/hooks/useSubscription"
 import { cn } from "@/lib/utils"
 
 export default function GoalsClient() {
-  const { loading: userLoading } = useAuth()
-
   const {
     isLoading: isSubscriptionLoading,
     hasUnlimitedGoals,
     canCreateGoal,
     maxGoals,
     currentGoalCount,
+    isSubscriptionActive,
   } = useSubscription()
 
   const {
@@ -56,15 +53,8 @@ export default function GoalsClient() {
   } = useQuery({
     queryKey: ["goals"],
     queryFn: fetchUserGoals,
+    enabled: isSubscriptionActive,
   })
-
-  useEffect(() => {
-    if (error) {
-      toast.error("There was an error loading your goals.", {
-        description: error.message,
-      })
-    }
-  }, [error])
 
   // Calculate active goals count from current goals
   const activeGoalsCount = useMemo(
@@ -86,12 +76,24 @@ export default function GoalsClient() {
     return `${remaining} of ${maxGoals} goals remaining`
   }, [hasUnlimitedGoals, canCreateGoal, maxGoals, currentGoalCount])
 
-  if (isLoading || userLoading || isSubscriptionLoading) {
+  if ((isLoading && isSubscriptionActive) || isSubscriptionLoading) {
     return <LoadingSpinner overlay />
   }
 
+  if (error) {
+    return (
+      <main className="grid min-h-screen place-items-center">
+        <div className="text-center">
+          <XCircle size={60} className="mx-auto mb-6 text-destructive" />
+          <p className="mb-2">There was an error loading your goals.</p>
+          <p className="text-sm text-muted-foreground">{error.message}</p>
+        </div>
+      </main>
+    )
+  }
+
   return (
-    <main className="mx-auto flex min-h-screen max-w-7xl flex-col gap-6 p-6">
+    <main className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <Button variant="link" size="sm" asChild className="!px-0">
           <Link href="/dashboard">

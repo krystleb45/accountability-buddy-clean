@@ -1,14 +1,11 @@
-// src/api/routes/subscriptionRoutes.ts
 import type { Router } from "express"
 
 import express from "express"
 import rateLimit from "express-rate-limit"
-import { check } from "express-validator"
 import z from "zod"
 
-import * as subscriptionController from "../controllers/subscriptionController"
+import * as subscriptionController from "../controllers/subscription-controller"
 import { protect } from "../middleware/auth-middleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
 import { validate } from "../middleware/validation-middleware"
 
 const router: Router = express.Router()
@@ -31,12 +28,6 @@ const generalLimiter = rateLimit({
     message: "Too many requests, please try again later.",
   },
 })
-
-/**
- * GET /api/subscription/plans
- * Get available subscription plans (public route)
- */
-router.get("/plans", subscriptionController.getPlans)
 
 /**
  * POST /api/subscription/create-session
@@ -62,10 +53,20 @@ router.post(
 )
 
 /**
- * GET /api/subscription/status
- * Get the current user's subscription status
+ * POST /api/subscription/portal-session
+ * Create a billing portal session
  */
-router.get("/status", protect, subscriptionController.getSubscriptionStatus)
+router.post(
+  "/portal-session",
+  protect,
+  generalLimiter,
+  validate({
+    bodySchema: z.object({
+      returnUrl: z.url(),
+    }),
+  }),
+  subscriptionController.createBillingPortalSession,
+)
 
 /**
  * GET /api/subscription/limits
@@ -77,18 +78,19 @@ router.get("/limits", protect, subscriptionController.getUserLimits)
  * POST /api/subscription/change-plan
  * Change subscription plan
  */
+const changePlanBodySchema = z.object({
+  newPlanId: z.enum(["basic", "pro", "elite"]),
+  billingCycle: z.enum(["monthly", "yearly"]),
+})
+export type ChangePlanBody = z.infer<typeof changePlanBodySchema>
+
 router.post(
   "/change-plan",
   protect,
   generalLimiter,
-  [
-    check("newPlanId", "newPlanId is required").notEmpty(),
-    check("newPlanId", "Invalid plan ID").isIn(["basic", "pro", "elite"]),
-    check("billingCycle", "billingCycle must be monthly or yearly")
-      .optional()
-      .isIn(["monthly", "yearly"]),
-  ],
-  handleValidationErrors,
+  validate({
+    bodySchema: changePlanBodySchema,
+  }),
   subscriptionController.changeSubscriptionPlan,
 )
 
@@ -107,10 +109,6 @@ router.post(
  * POST /api/subscription/webhook
  * Stripe webhook to sync subscription events
  */
-router.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  subscriptionController.handleStripeWebhook,
-)
+router.post("/webhook", subscriptionController.handleStripeWebhook)
 
 export default router

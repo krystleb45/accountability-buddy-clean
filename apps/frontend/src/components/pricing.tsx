@@ -13,9 +13,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 const MotionCard = motion.create(Card)
 
 type PricingProps = {
-  title: string
-  subtitle: string
+  title?: string
+  subtitle?: string
   onBillingCycleChange?: (cycle: "monthly" | "yearly") => void
+  showFreeTrial?: boolean
 } & (
   | {
       ctaAsLink: true
@@ -36,34 +37,43 @@ export function Pricing({
   onCtaClick,
   selectedPlan,
   onBillingCycleChange,
+  showFreeTrial = true,
 }: PricingProps) {
+  const pricingPlans = showFreeTrial
+    ? PRICING
+    : PRICING.filter((plan) => plan.id !== "free-trial")
+
   return (
     <>
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="mb-8 text-center"
-      >
-        <h2
-          className={`
-            mb-6 text-4xl font-bold text-primary
-            md:text-5xl
-          `}
+      {!!title && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-8 text-center"
         >
-          {title}
-        </h2>
-        <p
-          className={`
-            mx-auto mb-10 max-w-prose text-lg text-pretty
-            md:text-xl
-          `}
-        >
-          {subtitle}
-        </p>
-      </motion.div>
+          <h2
+            className={`
+              mb-6 text-4xl font-bold text-primary
+              md:text-5xl
+            `}
+          >
+            {title}
+          </h2>
+          {!!subtitle && (
+            <p
+              className={`
+                mx-auto mb-10 max-w-prose text-lg text-pretty
+                md:text-xl
+              `}
+            >
+              {subtitle}
+            </p>
+          )}
+        </motion.div>
+      )}
       {/* Billing Toggle */}
       <Tabs
         defaultValue="yearly"
@@ -90,13 +100,12 @@ export function Pricing({
         </TabsList>
 
         <div
-          className={`
-            mt-12 grid grid-cols-1 gap-6
-            md:grid-cols-2
-            lg:grid-cols-4
-          `}
+          className={cn(`mt-12 grid grid-cols-1 gap-6`, {
+            "md:grid-cols-2 lg:grid-cols-4": showFreeTrial,
+            "md:grid-cols-3": !showFreeTrial,
+          })}
         >
-          {PRICING.map((plan, index) => (
+          {pricingPlans.map((plan, index) => (
             <MotionCard
               key={plan.id}
               initial={{ opacity: 0, y: 20 }}

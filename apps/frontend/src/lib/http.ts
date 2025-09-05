@@ -114,8 +114,6 @@ http.interceptors.response.use(
           err.response.data?.message || "An unexpected error occurred.",
         )
     }
-
-    return Promise.reject(err)
   },
 )
 

@@ -1,8 +1,7 @@
-/* eslint-disable style/spaced-comment */
-
 "use client"
 
 import { useMutation, useQuery } from "@tanstack/react-query"
+import { isBefore } from "date-fns"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
@@ -11,9 +10,20 @@ import type { User } from "@/types/mongoose.gen"
 import {
   createSubscriptionSession,
   getUserLimits,
-} from "@/api/subscription/subscriptionApi"
+} from "@/api/subscription/subscription-api"
+import { useAuth } from "@/context/auth/auth-context"
 
 export default function useSubscription() {
+  const { user, loading: isUserLoading } = useAuth()
+
+  const subscriptionStatus = user?.subscription_status
+  const isSubscriptionActive =
+    subscriptionStatus === "active" ||
+    subscriptionStatus === "trial" ||
+    (subscriptionStatus === "canceled" &&
+      !!user?.subscriptionEndDate &&
+      isBefore(new Date(), user.subscriptionEndDate))
+
   const {
     data: limits,
     isPending: isLoading,
@@ -21,6 +31,7 @@ export default function useSubscription() {
   } = useQuery({
     queryKey: ["limits"],
     queryFn: getUserLimits,
+    enabled: isSubscriptionActive,
   })
 
   useEffect(() => {
@@ -31,7 +42,10 @@ export default function useSubscription() {
     }
   }, [error])
 
-  const { mutate: createCheckoutSession } = useMutation({
+  const {
+    mutate: createCheckoutSession,
+    isPending: isCreatingCheckoutSession,
+  } = useMutation({
     mutationFn: async ({
       planId,
       billingCycle = "monthly",
@@ -54,33 +68,47 @@ export default function useSubscription() {
   const hasUnlimitedGoals = limits?.hasUnlimitedGoals ?? false
   const maxGoals = limits?.maxGoals ?? 3
   const currentGoalCount = limits?.currentGoalCount ?? 0
+
   const hasDMMessaging = limits?.hasDMMessaging ?? false
   const hasPrivateRooms = limits?.hasPrivateRooms ?? false
   const hasWeeklyMeetings = limits?.hasWeeklyMeetings ?? false
+  const hasStreakTracker = limits?.hasStreakTracker ?? false
+
   const isInTrial = limits?.isInTrial ?? false
   const daysUntilTrialEnd = limits?.daysUntilTrialEnd ?? 0
+  const trialEndDate = user?.trial_end_date
+
+  const billingCycle = user?.billing_cycle ?? "monthly"
+  const subscriptionTier = user?.subscriptionTier
+  const nextBillingDate = user?.next_billing_date
+  const subscriptionEndDate = user?.subscriptionEndDate
 
   return {
-    isLoading,
+    isLoading: (isLoading && isSubscriptionActive) || isUserLoading,
 
-    //// plans,
-    //// status,
-    //// limits,
-    //// fetchPlans,
-    //// fetchStatus,
-    //// fetchLimits,
+    subscriptionTier,
+    subscriptionStatus,
+    isSubscriptionActive,
+    subscriptionEndDate,
+    nextBillingDate,
+    billingCycle,
+
     createCheckoutSession,
-    //// changePlan,
+    isCreatingCheckoutSession,
 
     // Convenience values
     canCreateGoal,
     hasUnlimitedGoals,
     maxGoals,
     currentGoalCount,
+
     hasDMMessaging,
     hasPrivateRooms,
     hasWeeklyMeetings,
+    hasStreakTracker,
+
     isInTrial,
     daysUntilTrialEnd,
+    trialEndDate,
   }
 }
