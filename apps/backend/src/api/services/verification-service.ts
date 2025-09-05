@@ -58,7 +58,7 @@ export async function addSendResetPasswordEmailJob(
   const resetTokenDoc = await VerificationToken.generate(userId, 15 * 60)
 
   const frontendUrl = appConfig.frontendUrl.replace(/\/$/, "")
-  const resetUrl = `${frontendUrl}/reset-password?token=${encodeURIComponent(resetTokenDoc.token)}`
+  const resetUrl = `${frontendUrl}/reset-password/${encodeURIComponent(resetTokenDoc.token)}`
 
   const { html, text } = await getVerifyEmailTemplate(
     resetUrl,
