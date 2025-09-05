@@ -48,7 +48,6 @@ export interface EnvConfig {
   securityHeaders: SecurityHeaders
 
   integrations: {
-    stripeApiKey: string
     firebaseConfig: FirebaseConfig
   }
 }
@@ -104,7 +103,6 @@ const envConfig: EnvConfig = {
   },
 
   integrations: {
-    stripeApiKey: strEnv("NEXT_PUBLIC_STRIPE_API_KEY", ""),
     firebaseConfig: {
       apiKey: strEnv("NEXT_PUBLIC_FIREBASE_API_KEY", ""),
       authDomain: strEnv("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", ""),

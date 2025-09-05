@@ -102,13 +102,12 @@ requiredVariables.forEach((variable) => {
   }
 })
 
-// Make STRIPE_SECRET_KEY optional for now since you don't have real keys yet
 if (
   !config.STRIPE_SECRET_KEY ||
   config.STRIPE_SECRET_KEY === "sk_test_placeholder"
 ) {
-  console.warn(
-    "⚠️ WARNING: Using placeholder Stripe key. Add real Stripe keys when ready for payments.",
+  throw new Error(
+    "STRIPE_SECRET_KEY is not defined or is using a placeholder value",
   )
 }
 

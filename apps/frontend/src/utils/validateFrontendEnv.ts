@@ -5,7 +5,6 @@ import { getPublicEnvVar } from "./env" // ← was "@/utils/env"
 const REQUIRED_KEYS = [
   "NEXT_PUBLIC_API_URL",
   "NEXT_PUBLIC_BASE_URL",
-  "NEXT_PUBLIC_STRIPE_PUBLIC_KEY",
   "NEXT_PUBLIC_APP_NAME",
   "NEXT_PUBLIC_APP_VERSION",
 ] as const

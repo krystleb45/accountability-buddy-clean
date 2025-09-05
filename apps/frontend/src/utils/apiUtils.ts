@@ -1,12 +1,4 @@
-// src/utils/apiUtils.ts
-
 import axios, { isAxiosError } from "axios"
-
-import type {
-  BillingHistoryItem,
-  SubscriptionDetails,
-  UpdateSubscriptionPayload,
-} from "@/types/Stripe.types"
 
 import { API_ENDPOINTS, getApiUrl } from "@/config/api/apiConfig"
 
@@ -80,34 +72,6 @@ export async function deleteData(endpoint: string): Promise<void> {
   } catch (err) {
     handleApiError(err)
   }
-}
-
-/**
- * Fetch the current user’s subscription details.
- */
-export async function fetchSubscriptionDetails(): Promise<SubscriptionDetails> {
-  return await fetchData<SubscriptionDetails>(
-    API_ENDPOINTS.SUBSCRIPTION.GET_DETAILS,
-  )
-}
-
-/**
- * Fetch the current user’s billing history.
- */
-export async function fetchBillingHistory(): Promise<BillingHistoryItem[]> {
-  const resp = await fetchData<{ billingHistory: BillingHistoryItem[] }>(
-    API_ENDPOINTS.SUBSCRIPTION.GET_BILLING_HISTORY,
-  )
-  return resp.billingHistory
-}
-
-/**
- * Update (change) the user’s subscription plan.
- */
-export async function updateSubscription(
-  payload: UpdateSubscriptionPayload,
-): Promise<void> {
-  await postData<void>(API_ENDPOINTS.SUBSCRIPTION.UPDATE, payload)
 }
 
 /**

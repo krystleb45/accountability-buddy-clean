@@ -9,8 +9,6 @@ export default function EnvTest() {
   const envVars = {
     "Base URL": process.env.NEXT_PUBLIC_BASE_URL,
     "API URL": process.env.NEXT_PUBLIC_API_URL,
-    "Stripe Key (first 20 chars)": `${process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY?.substring(0, 20)}...`,
-    "Alternative Stripe Key": `${process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY?.substring(0, 20)}...`,
     "NextAuth URL": process.env.NEXTAUTH_URL,
     "App Name": process.env.NEXT_PUBLIC_APP_NAME,
   }

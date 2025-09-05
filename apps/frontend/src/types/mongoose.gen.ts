@@ -1584,43 +1584,6 @@ export type Streak = {
 }
 
 /**
- * Lean version of SubscriptionDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `SubscriptionDocument.toObject()`. To avoid conflicts with model names, use the type alias `SubscriptionObject`.
- * ```
- * const subscriptionObject = subscription.toObject();
- * ```
- */
-export type Subscription = {
-  user: User["_id"] | User
-  status?:
-    | "trial"
-    | "active"
-    | "inactive"
-    | "expired"
-    | "past_due"
-    | "canceled"
-    | "incomplete"
-    | "incomplete_expired"
-    | "unpaid"
-  plan?: "free-trial" | "basic" | "standard" | "premium"
-  provider: "stripe" | "paypal"
-  trialEnd?: string | null
-  subscriptionStart?: string | null
-  subscriptionEnd?: string | null
-  currentPeriodEnd?: string | null
-  priceId?: string | null
-  stripeSubscriptionId?: string | null
-  webhookEventId?: string | null
-  origin?: "user" | "webhook" | "admin"
-  isActive?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  durationDays: number | null
-}
-
-/**
  * Lean version of SupportTicketMessageDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `SupportTicketDocument.toObject()`.
