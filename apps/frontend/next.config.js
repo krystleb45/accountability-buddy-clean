@@ -48,7 +48,16 @@ const nextConfig = {
     }
   },
   images: {
-    domains: ["accountability-buddy.s3.amazonaws.com", "localhost"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "accountability-buddy.s3.amazonaws.com",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+    ],
   },
 }
 

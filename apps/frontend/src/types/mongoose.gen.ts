@@ -1357,7 +1357,7 @@ export type Profile = {
   name: string
   email: string
   bio?: string
-  profilePicture?: string
+  profileImage?: string
   _id: string
   createdAt?: string
   updatedAt?: string
@@ -1673,7 +1673,6 @@ export type User = {
   name?: string
   role?: "user" | "admin" | "moderator" | "military"
   isVerified?: boolean
-  isAdmin?: boolean
   permissions: string[]
   isLocked?: boolean
   active?: boolean
@@ -1735,8 +1734,6 @@ export type User = {
   _id: string
   createdAt?: string
   updatedAt?: string
-  profilePicture: any
-  isActive: any
 }
 
 /**

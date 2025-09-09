@@ -6620,7 +6620,7 @@ export type Profile = {
   name: string
   email: string
   bio?: string
-  profilePicture?: string
+  profileImage?: string
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
@@ -6710,7 +6710,7 @@ export type ProfileDocument = mongoose.Document<
     name: string
     email: string
     bio?: string
-    profilePicture?: string
+    profileImage?: string
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
@@ -8320,7 +8320,6 @@ export type User = {
   name?: string
   role?: "user" | "admin" | "moderator" | "military"
   isVerified?: boolean
-  isAdmin?: boolean
   permissions: string[]
   isLocked?: boolean
   active?: boolean
@@ -8382,8 +8381,6 @@ export type User = {
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  profilePicture: any
-  isActive: any
 }
 
 /**
@@ -8479,7 +8476,6 @@ export type UserDocument = mongoose.Document<
     name?: string
     role?: "user" | "admin" | "moderator" | "military"
     isVerified?: boolean
-    isAdmin?: boolean
     permissions: mongoose.Types.Array<string>
     isLocked?: boolean
     active?: boolean
@@ -8550,8 +8546,6 @@ export type UserDocument = mongoose.Document<
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    profilePicture: any
-    isActive: any
   }
 
 /**
