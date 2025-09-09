@@ -13,7 +13,7 @@ import {
 } from "@/api/subscription/subscription-api"
 import { useAuth } from "@/context/auth/auth-context"
 
-export default function useSubscription() {
+export function useSubscription() {
   const { user, loading: isUserLoading } = useAuth()
 
   const subscriptionStatus = user?.subscription_status

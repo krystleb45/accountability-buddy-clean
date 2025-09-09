@@ -78,14 +78,14 @@ export interface DashboardProps {
 
 const MotionCard = motion.create(Card)
 
-const Dashboard: React.FC<DashboardProps> = ({
+export function Dashboard({
   userName,
   userStats,
   recentActivities,
   userProgress,
   userBadges,
   streakData,
-}) => {
+}: DashboardProps) {
   const pct = userStats.completionRate
   const pointsToNextLevel = userProgress.pointsToNextLevel
 
@@ -220,20 +220,27 @@ const Dashboard: React.FC<DashboardProps> = ({
       icon: Scroll,
       content:
         recentActivities.length > 0 ? (
-          <ul className="list-disc pl-6">
+          <ul className="flex list-disc flex-col gap-4 pl-6">
             {recentActivities.map((a) => (
               <li key={a._id}>
-                <Badge className="text-sm font-bold tracking-wider uppercase">
-                  {a.type}
-                </Badge>{" "}
-                {a.createdAt && (
-                  <span className="text-sm text-muted-foreground">
-                    {formatDistanceToNow(new Date(a.createdAt), {
-                      addSuffix: true,
-                    })}
-                  </span>
-                )}{" "}
-                <span>{a.description}</span>
+                <div className="flex items-baseline gap-2">
+                  <Badge
+                    variant="secondary"
+                    className="text-xs font-medium tracking-widest uppercase"
+                  >
+                    {a.type}
+                  </Badge>
+                  <span>{a.description}</span>
+                </div>
+                <div className="mt-1">
+                  {a.createdAt && (
+                    <p className="text-sm text-muted-foreground">
+                      {formatDistanceToNow(a.createdAt, {
+                        addSuffix: true,
+                      })}
+                    </p>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
@@ -377,5 +384,3 @@ const Dashboard: React.FC<DashboardProps> = ({
     </div>
   )
 }
-
-export default Dashboard

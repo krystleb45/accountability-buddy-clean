@@ -1,7 +1,7 @@
 // index.ts - Centralized exports for the Dashboard module
 
 // Export components
-export { default as Dashboard } from "./Dashboard"
+export { default as Dashboard } from "./dashboard"
 // Export styles
 export { default as dashboardStyles } from "./Dashboard.module.css"
 export { default as DashboardStatCard } from "./DashboardStatCard"
