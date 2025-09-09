@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs"
 import { differenceInDays, isBefore } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
+import { hashPassword } from "../../utils/hashHelper"
 import { Activity } from "./Activity"
 import { CollaborationGoal } from "./CollaborationGoal"
 import { Goal } from "./Goal"
@@ -31,7 +32,6 @@ const UserSchema: IUserSchema = new Schema(
       default: "user",
     },
     isVerified: { type: Boolean, default: false },
-    isAdmin: { type: Boolean, default: false },
     permissions: { type: [String], default: [] },
     isLocked: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
@@ -157,8 +157,7 @@ UserSchema.pre(
       return next()
     }
     try {
-      const rounds = Number.parseInt(process.env.SALT_ROUNDS ?? "10", 10)
-      this.password = await bcrypt.hash(this.password, rounds)
+      this.password = await hashPassword(this.password)
       next()
     } catch (err) {
       next(err as CallbackError)
