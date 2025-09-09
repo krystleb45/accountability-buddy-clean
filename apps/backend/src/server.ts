@@ -75,6 +75,17 @@ async function startServer(): Promise<void> {
     // 2c) Start email worker
     await import("./queues/email-worker")
 
+    // 2d) Check the health of S3 connection
+    const fileUploadService = await import(
+      "./api/services/file-upload-service"
+    ).then((mod) => mod.FileUploadService)
+    const s3Healthy = await fileUploadService.healthCheck()
+    if (s3Healthy) {
+      logger.info("✅ S3 connection is healthy")
+    } else {
+      logger.error("❌ S3 connection is unhealthy")
+    }
+
     const app = await import("./app").then((mod) => mod.default)
     const socketServer = await import("./sockets").then((mod) => mod.default)
 

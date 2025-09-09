@@ -1,6 +1,7 @@
 import {
   DeleteObjectCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
   ObjectCannedACL,
   PutObjectCommand,
   S3Client,
@@ -144,6 +145,18 @@ export const FileUploadService = {
         error instanceof Error ? error.message : "Unknown error"
       logger.error(`❌ Error generating signed URL for file: ${errorMessage}`)
       throw new Error("Failed to generate signed URL")
+    }
+  },
+
+  healthCheck: async () => {
+    try {
+      await s3.send(
+        new ListObjectsV2Command({ Bucket: process.env.S3_BUCKET! }),
+      )
+      return true
+    } catch (error) {
+      logger.error(`❌ S3 Health Check Failed: ${error}`)
+      return false
     }
   },
 }
