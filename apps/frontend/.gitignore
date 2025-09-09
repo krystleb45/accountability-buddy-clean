@@ -48,12 +48,6 @@ jest/
 *.lcov
 
 # ========================
-# 🖼️ Static Files (Public Uploads)
-# ========================
-public/uploads/
-public/temp/
-
-# ========================
 # 🖥️ macOS
 # ========================
 .DS_Store

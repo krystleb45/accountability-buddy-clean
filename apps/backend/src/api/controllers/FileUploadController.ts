@@ -5,8 +5,8 @@ import multer from "multer"
 import fs from "node:fs"
 import path from "node:path"
 
+import { FileUploadService } from "../services/file-upload-service"
 import * as FileCleanupService from "../services/FileCleanupService"
-import FileUploadService from "../services/FileUploadService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 

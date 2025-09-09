@@ -9,7 +9,7 @@ import { toast } from "sonner"
 
 import type { User } from "@/types/mongoose.gen"
 
-import { http } from "@/lib/http"
+import { fetchMe } from "@/api/auth/auth-api"
 
 export interface AuthContextType {
   user: User | null
@@ -37,10 +37,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     error,
   } = useQuery({
     queryKey: ["me"],
-    queryFn: async () => {
-      const res = await http.get<{ data: { user: User } }>("/auth/me")
-      return res.data.data.user
-    },
+    queryFn: fetchMe,
     enabled: status === "authenticated",
   })
 

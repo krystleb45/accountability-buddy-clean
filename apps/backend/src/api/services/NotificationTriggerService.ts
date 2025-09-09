@@ -5,7 +5,7 @@ import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
 import Notification from "../models/Notification"
 import { User } from "../models/User"
-import sendEmail from "../utils/sendEmail"
+import { sendEmail } from "./email-service"
 
 class NotificationTriggerService {
   /**
@@ -31,11 +31,7 @@ class NotificationTriggerService {
       read: false,
     })
 
-    await sendEmail({
-      to: user.email,
-      subject: "Streak Reminder",
-      text: msg,
-    })
+    await sendEmail(user.email, "Streak Reminder", msg)
 
     logger.info(`Sent daily streak reminder to user ${userId}`)
   }
@@ -108,7 +104,7 @@ class NotificationTriggerService {
       throw createError("Email, subject and text are all required", 400)
     }
 
-    await sendEmail({ to: email, subject, text })
+    await sendEmail(email, subject, text)
     logger.info(`Sent custom email to ${email}: "${subject}"`)
   }
 }

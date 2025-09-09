@@ -6,63 +6,64 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
-import { v4 as uuidv4 } from "uuid"
+import multer from "multer"
 
+import appConfig from "../../config/appConfig"
 import { logger } from "../../utils/winstonLogger"
 
-// ✅ Initialize S3 Client with Environment Credentials
 const s3 = new S3Client({
   region: process.env.AWS_REGION || "us-east-1",
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
+  ...(appConfig.environment === "development" && {
+    endpoint: "http://localhost:9000",
+    forcePathStyle: true,
+  }),
 })
 
 interface File {
   buffer: Buffer
-  originalname: string
+  name: string
   mimetype: string
 }
 
-const FileUploadService = {
+const storage = multer.memoryStorage()
+
+export const FileUploadService = {
+  multerUpload: multer({ storage }),
   /**
    * ✅ Upload a file to S3
-   * @param file - File object (e.g., from Multer)
-   * @returns Upload result containing URL and key
    */
-  uploadToS3: async (
-    file: File,
-  ): Promise<{ success: boolean; url: string; key: string }> => {
+  uploadToS3: async (file: File) => {
     try {
-      if (!file || !file.buffer || !file.originalname) {
+      if (!file || !file.buffer || !file.name) {
         throw new Error("Invalid file input")
       }
 
-      const uniqueFileName = `${uuidv4()}-${file.originalname}`
       const bucketName = process.env.S3_BUCKET
 
       if (!bucketName) {
         throw new Error("S3_BUCKET environment variable is not defined")
       }
 
-      const uploadParams = {
-        Bucket: bucketName,
-        Key: uniqueFileName,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-        ACL: ObjectCannedACL.private, // ✅ FIX: Use the enum instead of a string
-        ContentDisposition: "inline",
-      }
+      await s3.send(
+        new PutObjectCommand({
+          Bucket: bucketName,
+          Key: file.name,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+          ACL: ObjectCannedACL.private,
+          ContentDisposition: "inline",
+        }),
+      )
 
-      await s3.send(new PutObjectCommand(uploadParams))
-
-      logger.info(`✅ File uploaded to S3: ${uniqueFileName}`)
+      logger.info(`✅ File uploaded to S3: ${file.name}`)
 
       return {
         success: true,
-        url: `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${uniqueFileName}`,
-        key: uniqueFileName,
+        key: file.name,
       }
     } catch (error: unknown) {
       const errorMessage =
@@ -77,9 +78,7 @@ const FileUploadService = {
    * @param fileKey - S3 key of the file to delete
    * @returns Result of file deletion
    */
-  deleteFromS3: async (
-    fileKey: string,
-  ): Promise<{ success: boolean; message: string }> => {
+  deleteFromS3: async (fileKey: string) => {
     try {
       if (!fileKey) {
         throw new Error("File key is required for deletion")
@@ -117,8 +116,8 @@ const FileUploadService = {
    */
   generateSignedUrl: async (
     fileKey: string,
-    expires: number = 60 * 5,
-  ): Promise<string> => {
+    expires: number = 60 * 60, // 1 hour
+  ) => {
     try {
       if (!fileKey) {
         throw new Error("File key is required to generate a signed URL")
@@ -148,5 +147,3 @@ const FileUploadService = {
     }
   },
 }
-
-export default FileUploadService

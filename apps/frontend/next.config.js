@@ -47,6 +47,9 @@ const nextConfig = {
       ],
     }
   },
+  images: {
+    domains: ["accountability-buddy.s3.amazonaws.com", "localhost"],
+  },
 }
 
 module.exports = nextConfig

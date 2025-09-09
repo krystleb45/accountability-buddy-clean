@@ -2,7 +2,7 @@
 
 export { default as ThemeToggle } from "@/components/General/ThemeToggle"
 // Components
-export { default as ProfileSettings } from "@/components/Profile/ProfileSettings"
+export { default as ProfileSettings } from "@/components/profile/ProfileSettings"
 export { default as ResourceLinks } from "@/components/Settings/ResourceLinks"
 
 // Types

@@ -12,6 +12,9 @@ const requiredEnvVars: string[] = [
   "MAILCHIMP_TRANSACTIONAL_API_KEY",
   "EMAIL_USER",
   "REDIS_HOST",
+  "AWS_ACCESS_KEY_ID",
+  "AWS_SECRET_ACCESS_KEY",
+  "S3_BUCKET",
 ]
 
 const optionalButRecommended: string[] = []

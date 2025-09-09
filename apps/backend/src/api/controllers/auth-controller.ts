@@ -11,6 +11,7 @@ import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import { VerificationToken } from "../models/VerificationToken"
 import AuthService from "../services/AuthService"
+import { FileUploadService } from "../services/file-upload-service"
 import {
   addSendResetPasswordEmailJob,
   addSendVerificationEmailJob,
@@ -122,6 +123,18 @@ const getCurrentUser: RequestHandler = catchAsync(async (req, res, next) => {
   }
 
   const userData: UserObject = user.toObject()
+
+  if (userData.coverImage) {
+    userData.coverImage = await FileUploadService.generateSignedUrl(
+      userData.coverImage,
+    )
+  }
+
+  if (userData.profileImage) {
+    userData.profileImage = await FileUploadService.generateSignedUrl(
+      userData.profileImage,
+    )
+  }
 
   sendResponse(res, 200, true, "User fetched successfully", {
     user: userData,

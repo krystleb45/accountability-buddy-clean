@@ -1,55 +1,54 @@
-// src/api/routes/profile.ts
 import { Router } from "express"
-import { check } from "express-validator"
-import multer from "multer"
+import z from "zod"
 
 import {
-  getProfile,
   updateProfile,
   uploadCoverImage,
   uploadProfileImage,
-} from "../controllers/ProfileController"
+} from "../controllers/profile-controller"
 import { protect } from "../middleware/auth-middleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
+import validate from "../middleware/validation-middleware"
+import { FileUploadService } from "../services/file-upload-service"
 
 const router = Router()
 
-// multer configs:
-//  - avatars into uploads/avatars
-//  - covers  into uploads/covers
-const avatarUpload = multer({ dest: "uploads/avatars" })
-const coverUpload = multer({ dest: "uploads/covers" })
+const updateProfileSchema = z.object({
+  username: z.string().trim().optional(),
+  bio: z.string().trim().optional(),
+  interests: z.array(z.string().trim()).optional(),
+})
+export type UpdateProfileData = z.infer<typeof updateProfileSchema>
 
-router.get("/", protect, getProfile)
-router.put(
+router.patch(
   "/",
   protect,
-  [
-    check("username").optional().isString(),
-    check("email").optional().isEmail(),
-    check("bio").optional().isString(),
-    check("interests").optional().isArray(),
-    handleValidationErrors,
-  ],
+  validate({
+    bodySchema: updateProfileSchema,
+  }),
   updateProfile,
 )
 
 // alias
 router.put("/update", protect, updateProfile)
 
-// AVATAR → writes into uploads/avatars/<randomFilename>
+/**
+ * PUT /api/profile/avatar
+ */
 router.put(
-  "/image",
+  "/avatar",
   protect,
-  avatarUpload.single("profileImage"),
+  FileUploadService.multerUpload.single("image"),
   uploadProfileImage,
 )
 
-// COVER → writes into uploads/covers/<randomFilename>
+/**
+ * PUT /api/profile/cover
+ * multipart/form-data with field name "image"
+ */
 router.put(
   "/cover",
   protect,
-  coverUpload.single("coverImage"),
+  FileUploadService.multerUpload.single("image"),
   uploadCoverImage,
 )
 

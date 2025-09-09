@@ -21,7 +21,7 @@
     "turbo": "^2.5.5"
   },
   "lint-staged": {
-    "!{.husky/**,**/.env*,**/*.gen.ts}": [
+    "!{.husky/**,**/.env*,**/*.gen.ts,**/.gitignore}": [
       "npm run lint --",
       "npm run format --"
     ]
