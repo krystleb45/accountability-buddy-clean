@@ -6,6 +6,21 @@ import type {
 
 import mongoose, { Schema } from "mongoose"
 
+export const ACTIVITY_TYPES = [
+  "goal",
+  "reminder",
+  "post",
+  "message",
+  "login",
+  "logout",
+  "signup",
+  "friend_request",
+  "friend_accept",
+  "comment",
+  "reaction",
+  "achievement",
+] as const
+
 // --- Schema Definition ---
 const ActivitySchema: IActivitySchema = new Schema(
   {
@@ -16,23 +31,10 @@ const ActivitySchema: IActivitySchema = new Schema(
     },
     type: {
       type: String,
-      enum: [
-        "goal",
-        "reminder",
-        "post",
-        "message",
-        "login",
-        "logout",
-        "signup",
-        "friend_request",
-        "friend_accept",
-        "comment",
-        "reaction",
-        "achievement",
-      ],
+      enum: ACTIVITY_TYPES,
       required: true,
     },
-    description: { type: String, trim: true, maxlength: 500 },
+    description: { type: String, trim: true, maxlength: 500, required: true },
     metadata: { type: Schema.Types.Mixed, default: {} },
     participants: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
     isDeleted: { type: Boolean, default: false },

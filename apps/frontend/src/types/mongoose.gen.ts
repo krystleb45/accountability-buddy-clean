@@ -62,7 +62,7 @@ export type Activity = {
     | "comment"
     | "reaction"
     | "achievement"
-  description?: string
+  description: string
   metadata?: any
   participants: (User["_id"] | User)[]
   isDeleted?: boolean

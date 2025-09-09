@@ -45,11 +45,13 @@ export async function fetchActivityById(id: string) {
 }
 
 /** POST /activities */
-export async function createActivity(title: string, description?: string) {
+export async function createActivity(
+  data: Pick<Activity, "type" | "description" | "metadata">,
+) {
   try {
     const res = await http.post<Envelope<{ activity: Activity }>>(
       "/activities",
-      { title, description },
+      data,
     )
     return res.data.data.activity
   } catch (err) {

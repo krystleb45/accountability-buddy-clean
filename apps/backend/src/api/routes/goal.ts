@@ -2,6 +2,7 @@ import { Router } from "express"
 import z from "zod"
 
 import * as goalController from "../controllers/goal-controller"
+import { logActivity } from "../middleware/activity-middleware"
 import { protect } from "../middleware/auth-middleware"
 import { isVerified } from "../middleware/is-verified-middleware"
 import {
@@ -54,6 +55,10 @@ router.post(
   validateSubscription,
   validate({ bodySchema: goalCreateSchema }),
   goalController.createGoal,
+  logActivity({
+    type: "goal",
+    description: "Created a new goal",
+  }),
 )
 
 /**

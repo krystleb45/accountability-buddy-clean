@@ -62,6 +62,8 @@ export const createGoal = catchAsync(
     sendResponse(res, 201, true, "Goal created successfully", {
       goal: createdGoal,
     })
+
+    next()
   },
 )
 

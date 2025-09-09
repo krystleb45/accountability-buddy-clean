@@ -1,11 +1,15 @@
 import type { BillingCycle, PlanId } from "@ab/shared/pricing"
 
+import { signOut } from "next-auth/react"
+
 import type { CreateAccountSchema } from "@/app/register/register-form"
 import type { Envelope } from "@/types"
 import type { User } from "@/types/mongoose.gen"
 
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
+
+import { createActivity } from "../activity/activity-api"
 
 /**
  * Register a new user account with subscription plan.
@@ -35,6 +39,21 @@ export async function fetchMe() {
   try {
     const resp = await http.get<Envelope<{ user: User }>>("/auth/me")
     return resp.data.data.user
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
+/**
+ * Logout the current user
+ */
+export async function logout() {
+  try {
+    await createActivity({
+      type: "logout",
+      description: "Logged out",
+    })
+    await signOut()
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))
   }

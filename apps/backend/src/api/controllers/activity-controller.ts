@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from "express"
 import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
-import { createError } from "../middleware/errorHandler"
+import type { CreateActivityData } from "../routes/activity"
+
 import ActivityService from "../services/activity-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
@@ -10,12 +11,6 @@ interface QueryParams {
   type?: string
   limit?: string
   page?: string
-}
-
-interface CreateBody {
-  title: string
-  description?: string
-  metadata?: Record<string, unknown>
 }
 
 interface UpdateBody {
@@ -31,23 +26,16 @@ interface UpdateBody {
  */
 export const logActivity = catchAsync(
   async (
-    req: Request<unknown, any, CreateBody>,
+    req: AuthenticatedRequest<unknown, any, CreateActivityData>,
     res: Response,
-    next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
+    const userId = req.user.id
 
-    const { title, description, metadata } = req.body
-    if (!title) {
-      return next(createError("Title is required", 400))
-    }
+    const { type, description, metadata } = req.body
 
     const activity = await ActivityService.logActivity(
       userId,
-      title,
+      type,
       description,
       metadata,
     )
@@ -62,23 +50,16 @@ export const logActivity = catchAsync(
  */
 export const createActivity = catchAsync(
   async (
-    req: Request<unknown, any, CreateBody>,
+    req: AuthenticatedRequest<unknown, unknown, CreateActivityData>,
     res: Response,
-    next: NextFunction,
   ): Promise<void> => {
-    const userId = req.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
+    const userId = req.user.id
 
-    const { title, description, metadata } = req.body
-    if (!title) {
-      return next(createError("Title is required", 400))
-    }
+    const { type, description, metadata } = req.body
 
     const activity = await ActivityService.createActivity(
       userId,
-      title,
+      type,
       description,
       metadata,
     )

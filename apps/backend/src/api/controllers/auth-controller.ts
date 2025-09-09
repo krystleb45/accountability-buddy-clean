@@ -63,17 +63,19 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
 
   await addSendVerificationEmailJob(user._id, user.email)
 
+  req.user = user
+
   // Return success response with token and user data
   sendResponse(res, 201, true, "User registered successfully")
+
+  next()
 })
 
 //
 // ─── POST /api/auth/login ────────────────────────────────────────────────────
 //
-export async function login(req, res, next) {
+export const login: RequestHandler = catchAsync(async (req, res, next) => {
   const { email, password } = req.body as { email: string; password: string }
-
-  logger.debug("→ [login] received payload:", { email })
 
   // 1) Lookup user
   const user = await User.findOne({ email }).select("+password")
@@ -95,11 +97,15 @@ export async function login(req, res, next) {
 
   const userData: UserObject = user.toObject()
 
+  req.user = user
+
   // 4) Send response with subscription data
   sendResponse(res, 200, true, "Login successful", {
     user: { ...userData, accessToken },
   })
-}
+
+  next()
+})
 
 //
 // ─── GET /api/auth/me ────────────────────────────────────────────────────────

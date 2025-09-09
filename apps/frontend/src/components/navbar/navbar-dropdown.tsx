@@ -12,8 +12,9 @@ import {
   ShieldUser,
   User,
 } from "lucide-react"
-import { signOut } from "next-auth/react"
 import Link from "next/link"
+
+import { logout } from "@/api/auth/auth-api"
 
 import { Button } from "../ui/button"
 import {
@@ -118,7 +119,7 @@ const accountItems: NavbarDropdownItem[] = [
     id: "logout",
     label: "Logout",
     onClick: (): void => {
-      signOut()
+      logout()
     },
     icon: LogOut,
   },

@@ -15,6 +15,7 @@ import {
 } from "../controllers/activity-controller"
 import { protect } from "../middleware/auth-middleware"
 import validate from "../middleware/validation-middleware"
+import { ACTIVITY_TYPES } from "../models/Activity"
 
 const router = Router()
 
@@ -46,6 +47,27 @@ router.get(
 )
 
 /**
+ * POST /api/activities
+ * Create a new activity
+ */
+const createActivitySchema = z.object({
+  type: z.enum(ACTIVITY_TYPES),
+  description: z.string().max(500),
+  metadata: z.record(z.string(), z.any()).optional(),
+})
+export type CreateActivityData = z.infer<typeof createActivitySchema>
+
+router.post(
+  "/",
+  protect,
+  limiter,
+  validate({
+    bodySchema: createActivitySchema,
+  }),
+  createActivity,
+)
+
+/**
  * GET /api/activities/:activityId
  * Fetch a single activity
  */
@@ -58,23 +80,6 @@ router.get(
     }),
   }),
   getActivityById,
-)
-
-/**
- * POST /api/activities
- * Create a new activity
- */
-router.post(
-  "/",
-  protect,
-  limiter,
-  validate({
-    bodySchema: z.object({
-      title: z.string().nonempty("Activity title is required"),
-      description: z.string().optional(),
-    }),
-  }),
-  createActivity,
 )
 
 /**

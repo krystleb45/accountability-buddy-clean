@@ -4,6 +4,7 @@ import rateLimit, { ipKeyGenerator } from "express-rate-limit"
 import z from "zod"
 
 import authController from "../controllers/auth-controller"
+import { logActivity } from "../middleware/activity-middleware"
 import { protect } from "../middleware/auth-middleware"
 import validate from "../middleware/validation-middleware"
 import catchAsync from "../utils/catchAsync"
@@ -38,6 +39,10 @@ router.post(
     bodySchema: registerBodySchema,
   }),
   authController.register,
+  logActivity({
+    type: "signup",
+    description: "Account created",
+  }),
 )
 
 // ─── POST /api/auth/login ────────────────────────────────────────────────-
@@ -50,8 +55,10 @@ router.post(
       password: z.string().min(8, "Password must be at least 8 characters"),
     }),
   }),
-  catchAsync(async (req, res, next) => {
-    await authController.login(req, res, next)
+  authController.login,
+  logActivity({
+    type: "login",
+    description: "Logged in",
   }),
 )
 
