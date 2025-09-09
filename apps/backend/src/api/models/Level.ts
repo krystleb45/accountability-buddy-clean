@@ -59,7 +59,7 @@ LevelSchema.statics = {
     return this.find()
       .sort({ level: -1, points: -1 })
       .limit(limit)
-      .populate("user", "username profilePicture")
+      .populate("user", "username profileImage")
   },
 }
 

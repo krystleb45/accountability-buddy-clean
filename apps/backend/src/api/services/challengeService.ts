@@ -42,7 +42,7 @@ export async function getPublicChallengesService(
   const challenges = await Challenge.find(filter)
     .skip(skip)
     .limit(pageSize)
-    .populate("creator", "username profilePicture")
+    .populate("creator", "username profileImage")
     .sort({ createdAt: -1 })
 
   return challenges
@@ -58,8 +58,8 @@ export async function getChallengeByIdService(
     throw new Error("Invalid challenge ID")
   }
   const challenge = await Challenge.findById(challengeId)
-    .populate("creator", "username profilePicture")
-    .populate("participants.user", "username profilePicture")
+    .populate("creator", "username profileImage")
+    .populate("participants.user", "username profileImage")
     .exec()
   if (!challenge) {
     throw new Error("Challenge not found")
@@ -125,7 +125,7 @@ export async function fetchChallengesWithPaginationService(
   const challenges = await Challenge.find()
     .skip(skip)
     .limit(pageSize)
-    .populate("creator", "username profilePicture")
+    .populate("creator", "username profileImage")
     .sort({ createdAt: -1 })
   return challenges
 }

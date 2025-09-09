@@ -165,8 +165,8 @@ ChallengeSchema.statics = {
     return this.find(filters)
       .skip(skip)
       .limit(pageSize)
-      .populate("creator", "username profilePicture")
-      .populate("participants.user", "username profilePicture")
+      .populate("creator", "username profileImage")
+      .populate("participants.user", "username profileImage")
       .sort({ createdAt: -1 })
   },
 }

@@ -12,7 +12,7 @@ export interface PopulatedMsg {
   user: {
     _id: string
     username: string
-    profilePicture?: string
+    profileImage?: string
   }
   goal: string
   message: string
@@ -56,7 +56,7 @@ class GoalMessageService {
     }
     const raw = await GoalMessage.find({ goal: goalId })
       .sort({ createdAt: -1 })
-      .populate("user", "username profilePicture")
+      .populate("user", "username profileImage")
       .lean()
 
     return (raw as any[]).map((m) => ({
@@ -64,7 +64,7 @@ class GoalMessageService {
       user: {
         _id: String(m.user._id),
         username: m.user.username,
-        profilePicture: m.user.profilePicture,
+        profileImage: m.user.profileImage,
       },
       goal: String(m.goal),
       message: m.message,

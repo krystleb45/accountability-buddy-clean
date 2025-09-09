@@ -18,7 +18,7 @@ interface SeedUser {
   password: string
   role: string
   name?: string
-  profilePicture?: string
+  profileImage?: string
   bio?: string
   activeStatus?: string
   isActive?: boolean
@@ -94,7 +94,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Alice Johnson",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150",
     bio: "Fitness enthusiast and productivity nerd. Looking for accountability partners to stay consistent with workouts and daily habits.",
     activeStatus: "online",
@@ -113,7 +113,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Bob Smith",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
     bio: "Software developer building healthy habits. Trying to balance coding with self-care and personal growth.",
     activeStatus: "online",
@@ -132,7 +132,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Carol Davis",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
     bio: "Entrepreneur and mindfulness practitioner. Building a startup while maintaining work-life balance.",
     activeStatus: "online",
@@ -152,7 +152,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "David Wilson",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150",
     bio: "Writer working on consistency. Daily writing practice and creative projects are my main focus.",
     activeStatus: "online",
@@ -168,7 +168,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Emma Brown",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150",
     bio: "Graduate student focusing on study habits and research. Working on time management and academic goals.",
     activeStatus: "offline",
@@ -187,7 +187,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Frank Miller",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
     bio: "Marathon runner and nutrition coach. Helping others achieve their fitness and wellness goals.",
     activeStatus: "online",
@@ -206,7 +206,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Grace Lee",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150",
     bio: "Designer and creative professional. Balancing client work with personal artistic projects.",
     activeStatus: "online",
@@ -226,7 +226,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Henry Garcia",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=150",
     bio: "Music teacher and performer. Practicing daily and working on music composition goals.",
     activeStatus: "online",
@@ -242,7 +242,7 @@ const users: SeedUser[] = [
     password: "password123",
     role: "user",
     name: "Isabel Rodriguez",
-    profilePicture:
+    profileImage:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
     bio: "Chef and food blogger. Developing healthy recipes and building a sustainable food business.",
     activeStatus: "offline",

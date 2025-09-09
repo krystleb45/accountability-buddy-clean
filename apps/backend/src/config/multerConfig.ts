@@ -13,7 +13,7 @@ function ensureUploadsFolder(folderPath: string): void {
 const storage = multer.diskStorage({
   destination: (_req, file, cb) => {
     let folderPath = ""
-    if (file.fieldname === "profilePicture") {
+    if (file.fieldname === "profileImage") {
       folderPath = "uploads/profile"
     } else if (file.fieldname === "coverImage") {
       folderPath = "uploads/covers"

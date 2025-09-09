@@ -91,7 +91,7 @@ export class UserService {
     return User.find(filter)
       .sort(sort)
       .limit(10)
-      .select("username points completedGoals streakCount profilePicture")
+      .select("username points completedGoals streakCount profileImage")
   }
 
   static async featureAchievement(
@@ -166,7 +166,7 @@ export class UserService {
 
   static async getStatistics(userId: string): Promise<Record<string, unknown>> {
     const user = await User.findById(userId).select(
-      "username profilePicture points completedGoals streakCount createdAt subscriptionTier subscription_status",
+      "username profileImage points completedGoals streakCount createdAt subscriptionTier subscription_status",
     )
     if (!user) throw new CustomError("User not found", 404)
 
@@ -191,7 +191,7 @@ export class UserService {
 
     return {
       username: user.username,
-      profilePicture: user.profilePicture,
+      profileImage: user.profileImage,
       memberSince: user.createdAt,
       points: user.points,
       completedGoals: user.completedGoals,

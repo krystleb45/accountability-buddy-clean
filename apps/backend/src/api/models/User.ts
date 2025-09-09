@@ -149,23 +149,6 @@ UserSchema.index({ subscriptionTier: 1 })
 UserSchema.index({ subscription_status: 1 })
 UserSchema.index({ trial_end_date: 1 })
 
-// Virtual fields
-UserSchema.virtual("profilePicture").get(function () {
-  return this.profileImage || "/default-avatar.png"
-})
-
-UserSchema.virtual("profilePicture").set(function (value: string) {
-  this.profileImage = value
-})
-
-UserSchema.virtual("isActive").get(function () {
-  return this.active
-})
-
-UserSchema.virtual("isActive").set(function (value: boolean) {
-  this.active = value
-})
-
 // Password hashing
 UserSchema.pre(
   "save",

@@ -112,7 +112,7 @@ export default class MessageService {
     })
 
     // Populate sender info before returning
-    await message.populate("senderId", "username email profilePicture")
+    await message.populate("senderId", "username email profileImage")
     return message
   }
 
@@ -148,8 +148,8 @@ export default class MessageService {
       .sort({ timestamp: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
-      .populate("senderId", "username email profilePicture")
-      .populate("receiverId", "username email profilePicture")
+      .populate("senderId", "username email profileImage")
+      .populate("receiverId", "username email profileImage")
       .exec()
 
     return {
@@ -310,14 +310,14 @@ export default class MessageService {
           participants.push({
             _id: sender._id.toString(),
             name: sender.username || sender.email,
-            avatar: sender.profilePicture,
+            avatar: sender.profileImage,
           })
         }
         if (receiver && receiver._id.toString() !== userId) {
           participants.push({
             _id: receiver._id.toString(),
             name: receiver.username || receiver.email,
-            avatar: receiver.profilePicture,
+            avatar: receiver.profileImage,
           })
         }
 
@@ -370,8 +370,8 @@ export default class MessageService {
       .sort({ timestamp: -1 })
       .skip((page - 1) * limit)
       .limit(limit + 1) // Get one extra to check if there are more
-      .populate("senderId", "username email profilePicture")
-      .populate("receiverId", "username email profilePicture")
+      .populate("senderId", "username email profileImage")
+      .populate("receiverId", "username email profileImage")
       .exec()
 
     const hasMore = messages.length > limit
@@ -422,8 +422,8 @@ export default class MessageService {
     })
       .sort({ timestamp: -1 })
       .limit(limit)
-      .populate("senderId", "username email profilePicture")
-      .populate("receiverId", "username email profilePicture")
+      .populate("senderId", "username email profileImage")
+      .populate("receiverId", "username email profileImage")
       .exec()
   }
 
@@ -505,8 +505,8 @@ export default class MessageService {
       $or: [{ senderId: userId }, { receiverId: userId }],
       status: { $ne: "deleted" },
     })
-      .populate("senderId", "username email profilePicture")
-      .populate("receiverId", "username email profilePicture")
+      .populate("senderId", "username email profileImage")
+      .populate("receiverId", "username email profileImage")
 
     if (!message) {
       throw createError("Message not found", 404)
@@ -667,8 +667,8 @@ export default class MessageService {
     return await Message.find(query)
       .sort({ timestamp: -1 })
       .limit(limit)
-      .populate("senderId", "username email profilePicture")
-      .populate("receiverId", "username email profilePicture")
+      .populate("senderId", "username email profileImage")
+      .populate("receiverId", "username email profileImage")
       .exec()
   }
 }

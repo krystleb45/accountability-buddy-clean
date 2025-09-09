@@ -9,13 +9,13 @@ export interface IProfile extends Document {
   name: string
   email: string
   bio?: string // Optional bio
-  profilePicture?: string // Optional profile picture URL
+  profileImage?: string // Optional profile picture URL
   createdAt: Date
   updatedAt: Date
 
   // Instance methods
   updateProfile: (
-    data: Partial<Pick<IProfile, "name" | "bio" | "profilePicture">>,
+    data: Partial<Pick<IProfile, "name" | "bio" | "profileImage">>,
   ) => Promise<IProfile>
 }
 
@@ -28,7 +28,7 @@ export interface IProfileModel extends Model<IProfile> {
       name: string
       email: string
       bio?: string
-      profilePicture?: string
+      profileImage?: string
     },
   ) => Promise<IProfile>
 }
@@ -60,7 +60,7 @@ const ProfileSchema = new Schema<IProfile, IProfileModel>(
       type: String,
       maxlength: [500, "Bio cannot exceed 500 characters"],
     },
-    profilePicture: {
+    profileImage: {
       type: String,
       trim: true,
       default: "",
@@ -87,12 +87,11 @@ ProfileSchema.pre<IProfile>("save", function (next) {
 // --- Instance Methods ---
 ProfileSchema.methods.updateProfile = async function (
   this: IProfile,
-  data: Partial<Pick<IProfile, "name" | "bio" | "profilePicture">>,
+  data: Partial<Pick<IProfile, "name" | "bio" | "profileImage">>,
 ): Promise<IProfile> {
   if (data.name !== undefined) this.name = data.name
   if (data.bio !== undefined) this.bio = data.bio
-  if (data.profilePicture !== undefined)
-    this.profilePicture = data.profilePicture
+  if (data.profileImage !== undefined) this.profileImage = data.profileImage
   await this.save()
   return this
 }
@@ -108,7 +107,7 @@ ProfileSchema.statics.findByUserId = function (
 ProfileSchema.statics.createOrUpdate = async function (
   this: IProfileModel,
   userId: Types.ObjectId,
-  data: { name: string; email: string; bio?: string; profilePicture?: string },
+  data: { name: string; email: string; bio?: string; profileImage?: string },
 ): Promise<IProfile> {
   const opts = { upsert: true, new: true, setDefaultsOnInsert: true }
   const updateDoc = { user: userId, ...data }

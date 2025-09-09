@@ -89,7 +89,7 @@ GoalMessageSchema.statics.getMessagesByGoal = function (
   return this.find({ goal: goalId, isDeleted: false })
     .sort({ createdAt: -1 })
     .limit(limit)
-    .populate("sender", "username profilePicture") as Promise<IGoalMessage[]>
+    .populate("sender", "username profileImage") as Promise<IGoalMessage[]>
 }
 
 // --- Instance Methods ---

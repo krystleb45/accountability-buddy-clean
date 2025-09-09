@@ -49,12 +49,12 @@ const FriendService = {
 
     const docs = await Follow.find({ targetUser: userId }).populate<{
       user: IUser & mongoose.Document
-    }>("user", "username profilePicture")
+    }>("user", "username profileImage")
 
     return docs.map((d) => ({
       id: d.user._id.toString(),
       name: d.user.username,
-      avatarUrl: d.user.profilePicture,
+      avatarUrl: d.user.profileImage,
     }))
   },
 
@@ -64,12 +64,12 @@ const FriendService = {
 
     const docs = await Follow.find({ user: userId }).populate<{
       targetUser: IUser & mongoose.Document
-    }>("targetUser", "username profilePicture")
+    }>("targetUser", "username profileImage")
 
     return docs.map((d) => ({
       id: d.targetUser._id.toString(),
       name: d.targetUser.username,
-      avatarUrl: d.targetUser.profilePicture,
+      avatarUrl: d.targetUser.profileImage,
     }))
   },
 
@@ -206,7 +206,7 @@ const FriendService = {
 
     const user = await User.findById(userId).populate(
       "friends",
-      "username email profilePicture",
+      "username email profileImage",
     )
 
     if (!user) throw createError("User not found", 404)
@@ -225,7 +225,7 @@ const FriendService = {
       status: "pending",
     }).populate<IFriendRequest & { sender: IUser }>(
       "sender",
-      "username email profilePicture",
+      "username email profileImage",
     )
   },
 
@@ -237,7 +237,7 @@ const FriendService = {
       // Step 1: Get current user data
       const currentUser = (await User.findById(userId)
         .select(
-          "username email profilePicture friends goals interests location preferences",
+          "username email profileImage friends goals interests location preferences",
         )
         .lean()) as any
 
@@ -581,9 +581,9 @@ const FriendService = {
             name: { $ifNull: ["$username", "$email"] },
             email: 1,
             username: 1,
-            profilePicture: {
+            profileImage: {
               $ifNull: [
-                { $ifNull: ["$profilePicture", "$profileImage"] },
+                { $ifNull: ["$profileImage", "$profileImage"] },
                 "/default-avatar.png",
               ],
             },
@@ -703,7 +703,7 @@ const FriendService = {
           },
           $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
         })
-          .select("username email profilePicture profileImage interests bio")
+          .select("username email profileImage profileImage interests bio")
           .limit(5 - recommendations.length)
           .lean()) as any[]
 
@@ -714,8 +714,8 @@ const FriendService = {
           name: user.username || user.email,
           email: user.email,
           username: user.username,
-          profilePicture:
-            user.profilePicture || user.profileImage || "/default-avatar.png",
+          profileImage:
+            user.profileImage || user.profileImage || "/default-avatar.png",
           interests: user.interests || [],
           mutualFriends: 0,
           similarityScore: 1,
@@ -740,7 +740,7 @@ const FriendService = {
           _id: { $ne: userId },
           $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
         })
-          .select("username email profilePicture profileImage interests bio")
+          .select("username email profileImage profileImage interests bio")
           .limit(6)
           .lean()) as any[]
 
@@ -750,8 +750,8 @@ const FriendService = {
           name: user.username || user.email,
           email: user.email,
           username: user.username,
-          profilePicture:
-            user.profilePicture || user.profileImage || "/default-avatar.png",
+          profileImage:
+            user.profileImage || user.profileImage || "/default-avatar.png",
           interests: user.interests || [],
           mutualFriends: 0,
           similarityScore: 1,

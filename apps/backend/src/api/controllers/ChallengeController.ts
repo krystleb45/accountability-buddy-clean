@@ -23,7 +23,7 @@ export const getPublicChallenges = catchAsync(
     const challenges = await Challenge.find(filters)
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .populate("creator", "username profilePicture")
+      .populate("creator", "username profileImage")
       .sort({ createdAt: -1 })
 
     if (!challenges.length) {
@@ -51,8 +51,8 @@ export const getChallengeById = catchAsync(
     }
 
     const challenge = await Challenge.findById(id)
-      .populate("creator", "username profilePicture")
-      .populate("participants.user", "username profilePicture")
+      .populate("creator", "username profileImage")
+      .populate("participants.user", "username profileImage")
       .exec()
 
     if (!challenge) {
@@ -161,7 +161,7 @@ export const fetchChallengesWithPagination = catchAsync(
     const challenges = await Challenge.find()
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .populate("creator", "username profilePicture")
+      .populate("creator", "username profileImage")
       .sort({ createdAt: -1 })
 
     if (!challenges.length) {

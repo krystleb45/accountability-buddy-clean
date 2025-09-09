@@ -62,7 +62,7 @@ class MatchService {
 
     const [items, total] = await Promise.all([
       Match.find(filter)
-        .populate("user1 user2", "username profilePicture")
+        .populate("user1 user2", "username profileImage")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit),
@@ -87,7 +87,7 @@ class MatchService {
     }
     const match = await Match.findById(matchId).populate(
       "user1 user2",
-      "username profilePicture",
+      "username profileImage",
     )
     if (!match) {
       throw new CustomError("Match not found", 404)

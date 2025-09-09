@@ -108,7 +108,7 @@ MilitaryUserSchema.statics.findByUser = function (
 ): Promise<IMilitaryUser | null> {
   return this.findOne({ userId }).populate(
     "messages.sender",
-    "username profilePicture",
+    "username profileImage",
   )
 }
 

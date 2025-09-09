@@ -15,8 +15,8 @@ export interface ProgressDashboard {
     "title" | "description" | "dueDate" | "status" | "milestones" | "progress"
   >[]
   partnerships: (IAccountabilityPartnership & {
-    user1: { _id: string; username: string; profilePicture?: string }
-    user2: { _id: string; username: string; profilePicture?: string }
+    user1: { _id: string; username: string; profileImage?: string }
+    user2: { _id: string; username: string; profileImage?: string }
   })[]
 }
 
@@ -38,8 +38,8 @@ class ProgressService {
       AccountabilityPartnership.find({
         $or: [{ user1: userId }, { user2: userId }],
       })
-        .populate("user1", "username profilePicture")
-        .populate("user2", "username profilePicture")
+        .populate("user1", "username profileImage")
+        .populate("user2", "username profileImage")
         .select("-__v")
         .sort({ createdAt: -1 }),
     ])

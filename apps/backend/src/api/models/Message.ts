@@ -163,7 +163,7 @@ MessageSchema.statics.getByChat = function (
   return this.find({ chatId })
     .sort({ timestamp: -1 })
     .limit(limit)
-    .populate("senderId", "username profilePicture")
+    .populate("senderId", "username profileImage")
     .populate("reactions.userId", "username")
     .exec()
 }

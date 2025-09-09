@@ -58,11 +58,14 @@ export function LeaderboardPreview() {
                       : null}
               </span>
               <Image
-                src={l.user.profilePicture}
+                src={l.user.profileImage || "/default-avatar.png"}
                 alt={l.user.username}
                 width={32}
                 height={32}
-                className="size-8 overflow-hidden rounded-full border"
+                className={`
+                  size-8 overflow-hidden rounded-full border border-background
+                  object-cover
+                `}
               />
               <span className="font-medium">{l.user.username}</span>
             </div>

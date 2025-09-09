@@ -87,7 +87,7 @@ export async function getStreakLeaderboard(
       .sort({ streakCount: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("user", "username profilePicture")
+      .populate("user", "username profileImage")
       .lean()
       .exec(),
     Streak.countDocuments(),

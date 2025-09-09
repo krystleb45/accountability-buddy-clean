@@ -43,7 +43,7 @@ FollowSchema.statics.getFollowers = function (
 ): Promise<IFollow[]> {
   return this.find({ following: userId }).populate(
     "follower",
-    "username profilePicture",
+    "username profileImage",
   )
 }
 
@@ -52,7 +52,7 @@ FollowSchema.statics.getFollowings = function (
 ): Promise<IFollow[]> {
   return this.find({ follower: userId }).populate(
     "following",
-    "username profilePicture",
+    "username profileImage",
   )
 }
 

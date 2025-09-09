@@ -29,7 +29,7 @@ interface FormattedMember {
   id: string
   name: string
   email: string
-  profilePicture: string | null
+  profileImage: string | null
   role: "admin" | "member"
   joinedAt: string
   isOnline: boolean
@@ -399,7 +399,7 @@ class GroupService {
     userId: string,
   ): Promise<FormattedMember[]> {
     const group = await Group.findById(groupId)
-      .populate("members", "name email profilePicture lastActive")
+      .populate("members", "name email profileImage lastActive")
       .populate("createdBy", "_id")
 
     if (!group) throw new Error("Group not found")
@@ -414,7 +414,7 @@ class GroupService {
       id: member._id.toString(),
       name: member.name,
       email: member.email,
-      profilePicture: member.profilePicture || null,
+      profileImage: member.profileImage || null,
       role: member._id.equals(group.createdBy._id) ? "admin" : "member",
       joinedAt: member.createdAt?.toISOString() || new Date().toISOString(),
       isOnline: member.lastActive
@@ -442,7 +442,7 @@ class GroupService {
     const messages = await GroupMessage.find({
       groupId: new mongoose.Types.ObjectId(groupId),
     })
-      .populate("senderId", "name profilePicture")
+      .populate("senderId", "name profileImage")
       .sort({ createdAt: -1 })
       .limit(50) // Default limit
       .lean()
@@ -475,7 +475,7 @@ class GroupService {
       timestamp: new Date(),
     })
 
-    await message.populate("senderId", "name profilePicture")
+    await message.populate("senderId", "name profileImage")
 
     // Update group's last activity
     group.lastActivity = new Date()

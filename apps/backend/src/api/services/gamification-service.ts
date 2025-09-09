@@ -3,6 +3,7 @@ import type { LevelDocument, PopulatedDocument } from "src/types/mongoose.gen"
 import mongoose from "mongoose"
 
 import { Level } from "../models/Level"
+import { FileUploadService } from "./file-upload-service"
 
 /**
  * Business‐logic for gamification: leaderboard, per‐user progress, points, etc.
@@ -19,24 +20,29 @@ const GamificationService = {
         .sort({ level: -1, points: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("user", "username profilePicture"),
+        .populate("user", "username profileImage"),
       Level.countDocuments(),
     ])
 
-    const entries = (rawDocs as PopulatedDocument<LevelDocument, "user">[]).map(
-      (doc) => {
-        return {
-          _id: doc._id.toString(),
-          level: doc.level,
-          points: doc.points,
-          user: {
-            _id: doc.user._id.toString(),
-            username: doc.user.username,
-            profilePicture: doc.user.profilePicture,
-          },
-        }
-      },
-    )
+    const entries = []
+
+    for await (const doc of rawDocs as PopulatedDocument<
+      LevelDocument,
+      "user"
+    >[]) {
+      entries.push({
+        _id: doc._id.toString(),
+        level: doc.level,
+        points: doc.points,
+        user: {
+          _id: doc.user._id.toString(),
+          username: doc.user.username,
+          profileImage: await FileUploadService.generateSignedUrl(
+            doc.user.profileImage,
+          ),
+        },
+      })
+    }
 
     return {
       entries,

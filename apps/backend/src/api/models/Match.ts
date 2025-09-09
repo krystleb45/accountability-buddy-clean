@@ -58,8 +58,8 @@ MatchSchema.statics.findMatchesForUser = function (
   userId: Types.ObjectId,
 ): Promise<IMatch[]> {
   return this.find({ $or: [{ user1: userId }, { user2: userId }] })
-    .populate("user1", "username profilePicture")
-    .populate("user2", "username profilePicture")
+    .populate("user1", "username profileImage")
+    .populate("user2", "username profileImage")
     .sort({ createdAt: -1 })
     .exec()
 }

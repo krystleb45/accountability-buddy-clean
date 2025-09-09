@@ -77,7 +77,7 @@ class ReviewService {
     }
 
     const reviews = await Review.find({ reviewee: revieweeId })
-      .populate("reviewer", "username profilePicture")
+      .populate("reviewer", "username profileImage")
       .sort({ createdAt: -1 })
       .exec()
 

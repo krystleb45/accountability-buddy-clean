@@ -97,7 +97,7 @@ FriendRequestSchema.statics.getRequestsForUser = function (
   if (status) filter.status = status
   return this.find(filter)
     .sort({ createdAt: -1 })
-    .populate("sender", "username profilePicture")
+    .populate("sender", "username profileImage")
 }
 
 // --- Model Export ---

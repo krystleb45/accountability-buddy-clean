@@ -95,7 +95,7 @@ MessageReactionSchema.statics.getReactionsForMessage = function (
 ): Promise<IMessageReaction[]> {
   return this.find({ messageId })
     .sort({ createdAt: -1 })
-    .populate("userId", "username profilePicture")
+    .populate("userId", "username profileImage")
     .exec()
 }
 

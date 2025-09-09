@@ -54,7 +54,7 @@ export function populateChatroomMembers(
       id: user._id.toString(), // Convert ObjectId to string
       username: user.username,
       email: user.email,
-      avatar: user.profilePicture || "", // Provide default empty string if undefined
+      avatar: user.profileImage || "", // Provide default empty string if undefined
     }))
 
   return {
