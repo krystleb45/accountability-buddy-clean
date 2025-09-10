@@ -4,7 +4,7 @@ import mongoose from "mongoose"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import * as StreakService from "../services/StreakService"
+import * as StreakService from "../services/streak-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 

@@ -68,30 +68,12 @@ export const createGoal = catchAsync(
 )
 
 export const getUserGoals = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user.id
-
-    // Get user subscription info
-    const user = await User.findById(userId)
-    if (!user) {
-      return next(createError("User not found", 404))
-    }
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const userId = req.user.id
 
     const goals = await GoalService.getUserGoals(userId)
 
-    // Include subscription limits in response
-    const responseData = {
-      goals,
-    }
-
-    sendResponse(
-      res,
-      200,
-      true,
-      "User goals retrieved successfully",
-      responseData,
-    )
+    sendResponse(res, 200, true, "User goals retrieved successfully", { goals })
   },
 )
 
@@ -116,19 +98,11 @@ export const getUserGoalCategories = catchAsync(
   },
 )
 
-// Keep your other methods the same, just fix the ones with user method calls
 export const getStreakDates = catchAsync(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user?.id
-    if (!userId) {
-      return next(createError("Unauthorized", 401))
-    }
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const userId = req.user.id
 
     const user = await User.findById(userId)
-    if (!user) {
-      return next(createError("User not found", 404))
-    }
 
     const dates = await GoalService.getStreakDates(userId)
 
