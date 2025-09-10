@@ -193,6 +193,35 @@ export const deleteActivity = catchAsync(
   },
 )
 
+/**
+ * @desc    Fetch all activities (admin only)
+ * @route   GET /api/activities/all
+ * @access  Private/Admin
+ */
+export const getAllActivities = catchAsync(
+  async (
+    req: AuthenticatedRequest<unknown, any, any, QueryParams>,
+    res: Response,
+  ): Promise<void> => {
+    // validation handled by validate middleware
+    const page = req.query.page as unknown as number
+    const limit = req.query.limit as unknown as number
+    const type = req.query.type
+
+    const { activities, total } = await ActivityService.getAllActivities({
+      type,
+      page,
+      limit,
+    })
+
+    sendResponse(res, 200, true, "All activities fetched successfully", {
+      activities,
+      total,
+      pagination: { page, limit },
+    })
+  },
+)
+
 export default {
   logActivity,
   createActivity,

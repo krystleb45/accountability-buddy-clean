@@ -111,3 +111,24 @@ export async function likeActivity(id: string) {
     throw new Error(getApiErrorMessage(err as Error))
   }
 }
+
+export async function fetchAllActivities({
+  page = 1,
+  limit = 10,
+  type,
+}: {
+  page?: number
+  limit?: number
+  type?: Activity["type"]
+} = {}) {
+  try {
+    const res = await http.get<
+      Envelope<{ activities: Activity[]; total: number }>
+    >("/activities/all", {
+      params: { page, limit, type },
+    })
+    return res.data.data
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}

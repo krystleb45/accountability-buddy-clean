@@ -13,7 +13,7 @@ import { toast } from "sonner"
 import { register } from "@/api/auth/auth-api"
 import { Pricing } from "@/components/pricing"
 import { Button } from "@/components/ui/button"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 
 import { useRegisterContext } from "../register-context"
 

@@ -3,9 +3,10 @@ import type { ReactNode } from "react"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 
+import { RenewSubscriptionBanner } from "@/components/banners/renew-subscription-banner"
+import { VerifyEmailBanner } from "@/components/banners/verify-email-banner"
+
 import { authOptions } from "../api/auth/[...nextauth]/route"
-import { RenewSubscriptionBanner } from "./renew-subscription-banner"
-import { VerifyEmailBanner } from "./verify-email-banner"
 
 export const dynamic = "force-dynamic"
 
@@ -15,10 +16,16 @@ async function Layout({ children }: { children: ReactNode }) {
     redirect("/login")
   }
 
+  const isAdmin = session.user.role === "admin"
+
   return (
     <div className="mx-auto min-h-screen max-w-7xl p-6">
-      <RenewSubscriptionBanner />
-      <VerifyEmailBanner />
+      {!isAdmin && (
+        <>
+          <RenewSubscriptionBanner />
+          <VerifyEmailBanner />
+        </>
+      )}
       {children}
     </div>
   )

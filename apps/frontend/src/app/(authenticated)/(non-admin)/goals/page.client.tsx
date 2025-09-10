@@ -33,7 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 import { cn } from "@/lib/utils"
 
 export default function GoalsClient() {
@@ -77,7 +77,11 @@ export default function GoalsClient() {
   }, [hasUnlimitedGoals, canCreateGoal, maxGoals, currentGoalCount])
 
   if ((isLoading && isSubscriptionActive) || isSubscriptionLoading) {
-    return <LoadingSpinner overlay />
+    return (
+      <main className="grid min-h-screen place-items-center">
+        <LoadingSpinner />
+      </main>
+    )
   }
 
   if (error) {

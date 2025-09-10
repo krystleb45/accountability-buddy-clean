@@ -107,11 +107,6 @@ export function restrictTo(
   return (req, _res, next) => {
     const authReq = req as AuthenticatedRequest
 
-    if (!authReq.user) {
-      logger.warn("❌ No user attached to request in restrictTo")
-      return next(createError("Unauthorized: No user attached", 401))
-    }
-
     if (!roles.includes(authReq.user.role)) {
       logger.warn(
         `❌ Access denied for ${authReq.user.email}. Has role: ${authReq.user.role}, requires one of: ${roles.join(", ")}`,

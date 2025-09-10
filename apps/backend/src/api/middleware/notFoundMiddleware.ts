@@ -14,8 +14,7 @@ export default function notFoundMiddleware(
   _next: NextFunction,
 ): void {
   // Log the details of the unmatched request
-  logger.warn({
-    message: "Route not found",
+  logger.warn("Route not found", {
     method: req.method,
     url: req.originalUrl,
     ip: req.ip,

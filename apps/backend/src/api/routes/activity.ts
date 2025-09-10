@@ -7,13 +7,14 @@ import {
   createActivity,
   deleteActivity,
   getActivityById,
+  getAllActivities,
   getUserActivities,
   joinActivity,
   leaveActivity,
   logActivity,
   updateActivity,
 } from "../controllers/activity-controller"
-import { protect } from "../middleware/auth-middleware"
+import { protect, restrictTo } from "../middleware/auth-middleware"
 import validate from "../middleware/validation-middleware"
 import { ACTIVITY_TYPES } from "../models/Activity"
 
@@ -66,6 +67,12 @@ router.post(
   }),
   createActivity,
 )
+
+/**
+ * GET /api/activities/all
+ * Fetch all activities (admin only)
+ */
+router.get("/all", protect, restrictTo("admin"), getAllActivities)
 
 /**
  * GET /api/activities/:activityId

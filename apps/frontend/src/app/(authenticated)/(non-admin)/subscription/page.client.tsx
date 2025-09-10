@@ -46,7 +46,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 import { cn } from "@/lib/utils"
 
 export default function SubscriptionClient() {

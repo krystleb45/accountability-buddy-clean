@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 
 export function RenewSubscriptionBanner() {
   const { subscriptionStatus, isSubscriptionActive, isLoading } =

@@ -31,7 +31,7 @@ import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 import { cn } from "@/lib/utils"
 
 interface GoalClientProps {

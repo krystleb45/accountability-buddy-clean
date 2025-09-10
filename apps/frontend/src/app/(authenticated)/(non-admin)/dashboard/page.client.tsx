@@ -10,10 +10,10 @@ import { fetchUserBadges } from "@/api/badge/badge-api"
 import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
 import { fetchUserStreak } from "@/api/goal/goal-api"
 import { fetchDashboardProgress } from "@/api/progress/progress-api"
-import Dashboard from "@/components/Dashboard/Dashboard"
+import { Dashboard } from "@/components/dashboard/dashboard"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { useAuth } from "@/context/auth/auth-context"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 
 export default function DashboardClient() {
   const { status } = useSession()

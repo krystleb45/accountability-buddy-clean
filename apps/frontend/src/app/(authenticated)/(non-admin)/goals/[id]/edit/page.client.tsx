@@ -6,7 +6,7 @@ import { Goal, XCircle } from "lucide-react"
 import { fetchGoalDetails } from "@/api/goal/goal-api"
 import { GoalForm } from "@/components/goals/goal-form"
 import { LoadingSpinner } from "@/components/loading-spinner"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 
 interface GoalEditClientProps {
   id: string

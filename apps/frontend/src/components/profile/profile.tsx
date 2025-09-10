@@ -9,7 +9,7 @@ import { toast } from "sonner"
 
 import { updateProfile } from "@/api/profile/profile-api"
 import { useProfile } from "@/hooks/use-profile"
-import useSubscription from "@/hooks/useSubscription"
+import { useSubscription } from "@/hooks/useSubscription"
 
 import { LoadingSpinner } from "../loading-spinner"
 import { Badge } from "../ui/badge"
