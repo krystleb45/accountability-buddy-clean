@@ -10,6 +10,7 @@ import { NavbarDropdown } from "./navbar-dropdown"
 
 export function Navbar() {
   const { data: session, status: authStatus } = useSession()
+  const isAdmin = session?.user?.role === "admin"
 
   return (
     <nav
@@ -64,7 +65,7 @@ export function Navbar() {
             data-testid="navbar-skeleton"
           />
         ) : session?.user ? (
-          <NavbarDropdown />
+          <NavbarDropdown isAdmin={isAdmin} />
         ) : (
           <Button asChild>
             <Link href="/login">Login</Link>

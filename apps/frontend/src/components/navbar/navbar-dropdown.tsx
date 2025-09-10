@@ -30,6 +30,7 @@ type NavbarDropdownItem = {
   label: string
   icon?: LucideIcon // Added for icons
   className?: string // Added for custom styling
+  showForAdmin?: boolean // If true, only show for admin users
 } & (
   | {
       path: string
@@ -61,8 +62,6 @@ const accountItems: NavbarDropdownItem[] = [
     path: "/settings",
     icon: Settings,
   },
-
-  // Subscription Management - ADD THIS
   {
     id: "subscription",
     label: "Subscription",
@@ -82,12 +81,14 @@ const accountItems: NavbarDropdownItem[] = [
     label: "FAQ",
     path: "/faq",
     icon: CircleQuestionMark,
+    showForAdmin: true,
   },
   {
     id: "about-us",
     label: "About Us",
     path: "/about-us",
     icon: Info,
+    showForAdmin: true,
   },
   {
     id: "contact-support",
@@ -106,12 +107,14 @@ const accountItems: NavbarDropdownItem[] = [
     label: "Privacy Policy",
     path: "/privacy-policy",
     icon: ShieldUser,
+    showForAdmin: true,
   },
 
   // Another divider
   {
     id: "divider-2",
     label: "divider" as const,
+    showForAdmin: true,
   },
 
   // Logout
@@ -122,10 +125,15 @@ const accountItems: NavbarDropdownItem[] = [
       logout()
     },
     icon: LogOut,
+    showForAdmin: true,
   },
 ]
 
-export function NavbarDropdown() {
+interface NavbarDropdownProps {
+  isAdmin: boolean
+}
+
+export function NavbarDropdown({ isAdmin }: NavbarDropdownProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -135,37 +143,39 @@ export function NavbarDropdown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {accountItems.map((item) =>
-          item.label === "divider" ? (
-            <DropdownMenuSeparator key={item.id} />
-          ) : (
-            <DropdownMenuItem
-              key={item.id}
-              className={item.className}
-              variant={item.id === "logout" ? "destructive" : "default"}
-              asChild={!!item.path}
-              onClick={item.onClick}
-            >
-              {item.path ? (
-                <Link href={item.path}>
-                  {item.icon && (
-                    <span>
-                      <item.icon className="text-current" />
-                    </span>
-                  )}
-                  {item.label}
-                </Link>
-              ) : (
-                <>
-                  {item.icon && (
-                    <span>
-                      <item.icon className="text-current" />
-                    </span>
-                  )}
-                  {item.label}
-                </>
-              )}
-            </DropdownMenuItem>
-          ),
+          (isAdmin && item.showForAdmin) || !isAdmin ? (
+            item.label === "divider" ? (
+              <DropdownMenuSeparator key={item.id} />
+            ) : (
+              <DropdownMenuItem
+                key={item.id}
+                className={item.className}
+                variant={item.id === "logout" ? "destructive" : "default"}
+                asChild={!!item.path}
+                onClick={item.onClick}
+              >
+                {item.path ? (
+                  <Link href={item.path}>
+                    {item.icon && (
+                      <span>
+                        <item.icon className="text-current" />
+                      </span>
+                    )}
+                    {item.label}
+                  </Link>
+                ) : (
+                  <>
+                    {item.icon && (
+                      <span>
+                        <item.icon className="text-current" />
+                      </span>
+                    )}
+                    {item.label}
+                  </>
+                )}
+              </DropdownMenuItem>
+            )
+          ) : null,
         )}
       </DropdownMenuContent>
     </DropdownMenu>
