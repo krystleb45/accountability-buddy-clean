@@ -56,11 +56,11 @@ export default function DashboardClient() {
     isPending: isLoadingActivities,
     error: activitiesError,
   } = useQuery({
-    queryKey: ["activities", { page: 1, limit: 5 }],
+    queryKey: ["activities", { page: 1, limit: 3 }],
     queryFn: () =>
       fetchActivities({
         page: 1,
-        limit: 5,
+        limit: 3,
       }),
     enabled: isSubscriptionActive,
   })
