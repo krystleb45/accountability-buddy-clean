@@ -103,18 +103,19 @@ router
 router.patch(
   "/:goalId/progress",
   validateSubscription,
+  validate({
+    bodySchema: z.object({
+      progress: z
+        .number()
+        .min(0, "Progress must be at least 0%")
+        .max(100, "Progress cannot exceed 100%"),
+    }),
+  }),
   goalController.updateGoalProgress,
-)
-
-/**
- * PUT /api/goals/:goalId/complete
- * Mark a goal as complete
- * Basic subscription required
- */
-router.put(
-  "/:goalId/complete",
-  validateSubscription,
-  goalController.completeGoal,
+  logActivity({
+    type: "goal",
+    description: "Updated goal progress",
+  }),
 )
 
 export default router

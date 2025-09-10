@@ -177,6 +177,7 @@ export const updateGoalProgress = catchAsync(
       { progress: number }
     >,
     res: Response,
+    next: NextFunction,
   ): Promise<void> => {
     const { goalId } = req.params
     const { progress } = req.body
@@ -185,6 +186,8 @@ export const updateGoalProgress = catchAsync(
     await GoalService.trackProgress(goalId, userId, progress)
 
     sendResponse(res, 200, true, "Goal progress updated")
+
+    next()
   },
 )
 
