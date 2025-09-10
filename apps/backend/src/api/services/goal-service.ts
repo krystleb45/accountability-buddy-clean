@@ -1,7 +1,9 @@
 import type { Goal as IGoal, UserDocument } from "src/types/mongoose.gen"
 
+import { startOfDay } from "date-fns"
 import status from "http-status"
 import mongoose from "mongoose"
+import { uniqueWith } from "remeda"
 
 import { logger } from "../../utils/winstonLogger"
 import { CustomError } from "../middleware/errorHandler"
@@ -103,9 +105,9 @@ export class GoalService {
   }
 
   /**
-   * Get streak dates for a user's completed goals (YYYY-MM-DD).
+   * Get streak dates for a user's completed goals
    */
-  static async getStreakDates(userId: string): Promise<string[]> {
+  static async getStreakDates(userId: string) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new CustomError("Invalid user ID", 400)
     }
@@ -118,11 +120,10 @@ export class GoalService {
       .select("completedAt")
       .exec()
 
-    const dates = completed
-      .map((g) => g.completedAt!.toISOString().slice(0, 10))
-      .sort()
-    logger.info(`Streak dates for user ${userId}: [${dates.join(", ")}]`)
-    return dates
+    return uniqueWith(
+      completed.map((g) => startOfDay(g.completedAt!)).sort(),
+      (a, b) => a.getTime() === b.getTime(),
+    )
   }
 
   /**
