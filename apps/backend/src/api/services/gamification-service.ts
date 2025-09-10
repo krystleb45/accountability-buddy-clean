@@ -37,9 +37,9 @@ const GamificationService = {
         user: {
           _id: doc.user._id.toString(),
           username: doc.user.username,
-          profileImage: await FileUploadService.generateSignedUrl(
-            doc.user.profileImage,
-          ),
+          profileImage: doc.user.profileImage
+            ? await FileUploadService.generateSignedUrl(doc.user.profileImage)
+            : null,
         },
       })
     }
