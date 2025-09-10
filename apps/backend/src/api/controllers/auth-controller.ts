@@ -12,6 +12,7 @@ import { User } from "../models/User"
 import { VerificationToken } from "../models/VerificationToken"
 import AuthService from "../services/AuthService"
 import { FileUploadService } from "../services/file-upload-service"
+import { StreakService } from "../services/streak-service"
 import {
   addSendResetPasswordEmailJob,
   addSendVerificationEmailJob,
@@ -98,6 +99,9 @@ export const login: RequestHandler = catchAsync(async (req, res, next) => {
   const userData: UserObject = user.toObject()
 
   req.user = user
+
+  // Update streak
+  await StreakService.logDailyCheckIn(user._id.toString())
 
   // 4) Send response with subscription data
   sendResponse(res, 200, true, "Login successful", {
