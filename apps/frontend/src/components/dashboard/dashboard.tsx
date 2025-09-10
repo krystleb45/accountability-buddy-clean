@@ -88,6 +88,7 @@ export function Dashboard({
 }: DashboardProps) {
   const pct = userStats.completionRate
   const pointsToNextLevel = userProgress.pointsToNextLevel
+  const nextLevelPoints = pointsToNextLevel + userProgress.points
 
   const goalsCard: ICard = {
     label: "Goals",
@@ -166,7 +167,9 @@ export function Dashboard({
           <div className="mt-6 h-3 w-full rounded-full bg-muted">
             <div
               className="h-3 rounded-full bg-primary"
-              style={{ width: `${100 - pointsToNextLevel}%` }}
+              style={{
+                width: `${(userProgress.points / nextLevelPoints) * 100}%`,
+              }}
             />
           </div>
           <p
