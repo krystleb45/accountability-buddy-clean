@@ -1,10 +1,10 @@
-// src/api/services/StreakService.ts
 import mongoose from "mongoose"
 
-import type { IStreak } from "../models/Streak"
+import type { Streak as IStreak } from "../../types/mongoose.gen"
 
 import { logger } from "../../utils/winstonLogger"
-import Streak from "../models/Streak"
+import { Streak } from "../models/Streak"
+import GamificationService from "./gamification-service"
 
 export interface LeaderboardResult {
   streaks: IStreak[]
@@ -15,17 +15,16 @@ export interface LeaderboardResult {
   }
 }
 
-export async function getUserStreak(userId: string): Promise<IStreak> {
+export async function getUserStreak(userId: string) {
   if (!mongoose.isValidObjectId(userId)) {
     throw new Error("Invalid User ID format.")
   }
-  const streak = await Streak.findOne({ user: userId }).populate(
-    "user",
-    "username",
-  )
+  const streak = await Streak.findOne({ user: userId }).populate("user")
+
   if (!streak) {
     throw new Error("Streak not found for this user.")
   }
+
   return streak
 }
 
@@ -42,25 +41,21 @@ export async function logDailyCheckIn(userId: string): Promise<IStreak> {
       lastCheckIn: new Date(),
       streakCount: 1,
     })
+    GamificationService.addPoints(userId, 10)
     logger.info(`✅ New streak started for user ${userId}`)
     return streak
   }
 
-  const last = streak.lastCheckIn?.toISOString().split("T")[0]
-  const today = new Date().toISOString().split("T")[0]
+  const result = await streak.recordCheckIn()
 
-  if (last === today) {
-    throw new Error("You have already checked in today.")
+  if (result.streakCount > streak.streakCount) {
+    GamificationService.addPoints(userId, 10)
   }
 
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0]
-  streak.streakCount = last === yesterday ? streak.streakCount + 1 : 1
-  streak.lastCheckIn = new Date()
-  await streak.save()
   logger.info(
-    `✅ Streak updated for user ${userId}: ${streak.streakCount} days`,
+    `✅ Streak updated for user ${userId}: ${result.streakCount} days`,
   )
-  return streak
+  return result
 }
 
 export async function resetUserStreak(userId: string): Promise<void> {
@@ -97,4 +92,11 @@ export async function getStreakLeaderboard(
     streaks,
     pagination: { totalEntries, currentPage: page, totalPages },
   }
+}
+
+export const StreakService = {
+  getUserStreak,
+  logDailyCheckIn,
+  resetUserStreak,
+  getStreakLeaderboard,
 }

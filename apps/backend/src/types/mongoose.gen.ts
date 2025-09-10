@@ -246,7 +246,7 @@ export type Activity = {
     | "comment"
     | "reaction"
     | "achievement"
-  description?: string
+  description: string
   metadata?: any
   participants: (User["_id"] | User)[]
   isDeleted?: boolean
@@ -361,7 +361,7 @@ export type ActivityDocument = mongoose.Document<
       | "comment"
       | "reaction"
       | "achievement"
-    description?: string
+    description: string
     metadata?: any
     participants: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     isDeleted?: boolean
@@ -7888,14 +7888,11 @@ export type StreakQuery = mongoose.Query<any, StreakDocument, StreakQueries> &
 export type StreakQueries = {}
 
 export type StreakMethods = {
-  recordCheckIn: (this: StreakDocument, ...args: any[]) => any
-  resetStreak: (this: StreakDocument, ...args: any[]) => any
+  recordCheckIn: (this: StreakDocument) => Promise<StreakDocument>
+  resetStreak: (this: StreakDocument) => Promise<StreakDocument>
 }
 
-export type StreakStatics = {
-  getByUser: (this: StreakModel, ...args: any[]) => any
-  resetUserStreak: (this: StreakModel, ...args: any[]) => any
-}
+export type StreakStatics = {}
 
 /**
  * Mongoose Model type
