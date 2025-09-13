@@ -1,34 +1,31 @@
 // src/app/statistics/page.client.tsx
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
+import { ArrowLeft, ChartBar } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
-import { fetchUserStreak } from "@/api/goal/goal-api"
+import { fetchUserGoalsStreak } from "@/api/goal/goal-api"
 import Card, { CardContent } from "@/components/cards/Card"
 import cardStyles from "@/components/cards/Card.module.css"
-import UserStatisticsChart from "@/components/charts/UserStatisticsChart"
-
-interface Stats {
-  totalGoals: number
-  completedGoals: number
-  activeGoals: number
-  collaborations: number
-  achievements: string[]
-  goalTrends: { date: string; progress: number }[]
-  categoryBreakdown: { category: string; value: number }[]
-  currentStreak: number
-  longestStreak: number
-  completedGoalsPercentage: number
-}
+import { Button } from "@/components/ui/button"
+import { useSubscription } from "@/hooks/useSubscription"
 
 export default function StatisticsClient() {
   const { data: session, status } = useSession()
-  const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const { isSubscriptionActive } = useSubscription()
+
+  const { data: stats } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: fetchDashboardStats,
+    enabled: isSubscriptionActive,
+  })
 
   useEffect(() => {
     if (status !== "authenticated" || !session?.user?.id) {
@@ -37,34 +34,11 @@ export default function StatisticsClient() {
     ;(async () => {
       setLoading(true)
       try {
-        const [dashStats, rawStreakData] = await Promise.all([
-          fetchDashboardStats(),
-          fetchUserStreak(), // Removed the session.user.id argument
+        await Promise.all([
+          fetchUserGoalsStreak(), // Removed the session.user.id argument
         ])
 
         // Safely handle possibly null streak data
-        const currentStreak = rawStreakData?.currentStreak ?? 0
-        const longestStreak = rawStreakData?.longestStreak ?? 0
-
-        const totalGoals = dashStats.totalGoals
-        const completedGoals = dashStats.completedGoals
-        const collaborations = dashStats.collaborations
-        const activeGoals = totalGoals - completedGoals
-        const completedGoalsPercentage =
-          totalGoals > 0 ? Math.round((completedGoals / totalGoals) * 100) : 0
-
-        setStats({
-          totalGoals,
-          completedGoals,
-          activeGoals,
-          collaborations,
-          achievements: [], // TODO: fetch achievements
-          goalTrends: [], // TODO: fetch goal trends
-          categoryBreakdown: [], // TODO: fetch category breakdown
-          currentStreak,
-          longestStreak,
-          completedGoalsPercentage,
-        })
       } catch (err: any) {
         console.error(err)
         setError(err.message || "Failed to load statistics.")
@@ -79,29 +53,25 @@ export default function StatisticsClient() {
       <p className="mt-10 text-center text-gray-400">Loading statistics…</p>
     )
   }
-  if (error) return <p className="mt-10 text-center text-red-500">{error}</p>
-  if (!stats) return null
+  if (error) {
+    return <p className="mt-10 text-center text-red-500">{error}</p>
+  }
+
+  if (!stats) {
+    return null
+  }
 
   return (
-    <div
-      className={`
-        mx-auto w-full max-w-6xl rounded-lg bg-black p-6 text-white shadow-lg
-      `}
-    >
-      <h1 className="mb-6 text-center text-3xl font-bold text-green-400">
-        📊 Your Statistics
-      </h1>
-      <div className="mb-4 text-center">
-        <Link
-          href="/dashboard"
-          className={`
-            text-blue-400
-            hover:underline
-          `}
-        >
-          ← Back to Dashboard
+    <main className="flex flex-col items-start gap-6">
+      <Button variant="link" size="sm" asChild className="!px-0">
+        <Link href="/dashboard">
+          <ArrowLeft /> Back to Dashboard
         </Link>
-      </div>
+      </Button>
+
+      <h1 className="flex items-center gap-2 text-3xl font-bold">
+        <ChartBar size={36} className="text-primary" /> Your Statistics
+      </h1>
 
       <div
         className={`
@@ -118,7 +88,10 @@ export default function StatisticsClient() {
             <p>Total Goals: {stats.totalGoals}</p>
             <p>Completed Goals: {stats.completedGoals}</p>
             <p>Active Goals: {stats.activeGoals}</p>
-            <p>Completion Rate: {stats.completedGoalsPercentage}%</p>
+            <p>
+              Completion Rate: {(stats.completedGoals / stats.totalGoals) * 100}
+              %
+            </p>
             <Link
               href="/goals"
               className={`
@@ -132,7 +105,7 @@ export default function StatisticsClient() {
         </Card>
 
         {/* Streak Tracker Card */}
-        <Card className={cardStyles.card ?? ""}>
+        {/* <Card className={cardStyles.card ?? ""}>
           <CardContent>
             <h2 className="text-center text-2xl font-semibold text-orange-300">
               🔥 Streak Tracker
@@ -155,11 +128,11 @@ export default function StatisticsClient() {
               />
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Achievements Section (full width) */}
-      <Card
+      {/* <Card
         className={`
           mt-6
           ${cardStyles.card ?? ""}
@@ -188,7 +161,7 @@ export default function StatisticsClient() {
             View All Achievements
           </Link>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Collaboration Goals Section */}
       <Card
@@ -205,7 +178,9 @@ export default function StatisticsClient() {
             Track you and your friends' progress together.
           </p>
           <ul className="mt-4 space-y-2">
-            <li>Your progress: {stats.completedGoalsPercentage}%</li>
+            <li>
+              Your progress: {(stats.completedGoals / stats.totalGoals) * 100}%
+            </li>
             <li>Friend A: 80%</li>
             <li>Friend B: 55%</li>
           </ul>
@@ -222,7 +197,7 @@ export default function StatisticsClient() {
       </Card>
 
       {/* Statistics Chart Section (full width) */}
-      <Card
+      {/* <Card
         className={`
           mt-6
           ${cardStyles.card ?? ""}
@@ -239,7 +214,7 @@ export default function StatisticsClient() {
             longestStreak={stats.longestStreak}
           />
         </CardContent>
-      </Card>
-    </div>
+      </Card> */}
+    </main>
   )
 }
