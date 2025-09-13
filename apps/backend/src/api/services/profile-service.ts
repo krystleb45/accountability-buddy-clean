@@ -23,11 +23,17 @@ export class ProfileService {
     const old = await User.findByIdAndUpdate(userId, {
       profileImage: key,
     }).exec()
-    await FileUploadService.deleteFromS3(old?.profileImage || "") // delete old if exists
+
+    if (old?.profileImage) {
+      await FileUploadService.deleteFromS3(old.profileImage || "") // delete old if exists
+    }
   }
 
   static async uploadCoverImage(userId: string, key: string) {
     const old = await User.findByIdAndUpdate(userId, { coverImage: key }).exec()
-    await FileUploadService.deleteFromS3(old?.coverImage || "") // delete old if exists
+
+    if (old?.coverImage) {
+      await FileUploadService.deleteFromS3(old.coverImage || "") // delete old if exists
+    }
   }
 }
