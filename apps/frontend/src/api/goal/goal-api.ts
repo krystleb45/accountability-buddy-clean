@@ -16,9 +16,9 @@ export interface StreakData {
 }
 
 /**
- * Fetch the current user's streak data
+ * Fetch the current user's goals streak data
  */
-export async function fetchUserStreak() {
+export async function fetchUserGoalsStreak() {
   try {
     const resp = await http.get<Envelope<StreakData>>("/goals/streak-dates")
     return resp.data.data

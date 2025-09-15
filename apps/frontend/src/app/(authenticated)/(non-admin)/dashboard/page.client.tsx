@@ -8,7 +8,7 @@ import { useMemo } from "react"
 import { fetchActivities } from "@/api/activity/activity-api"
 import { fetchUserBadges } from "@/api/badge/badge-api"
 import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
-import { fetchUserStreak } from "@/api/goal/goal-api"
+import { fetchUserGoalsStreak } from "@/api/goal/goal-api"
 import { fetchDashboardProgress } from "@/api/progress/progress-api"
 import { Dashboard } from "@/components/dashboard/dashboard"
 import { LoadingSpinner } from "@/components/loading-spinner"
@@ -22,12 +22,12 @@ export default function DashboardClient() {
   const { isSubscriptionActive } = useSubscription()
 
   const {
-    data: rawStreak,
+    data: goalsStreak,
     isPending: isLoadingStreak,
     error: streakError,
   } = useQuery({
-    queryKey: ["raw-streak"],
-    queryFn: fetchUserStreak,
+    queryKey: ["goals-streak"],
+    queryFn: fetchUserGoalsStreak,
     enabled: isSubscriptionActive,
   })
 
@@ -133,7 +133,7 @@ export default function DashboardClient() {
   return !error &&
     !!stats &&
     !!progressData &&
-    !!rawStreak &&
+    !!goalsStreak &&
     !!recentActivities &&
     !!userBadges ? (
     <div>
@@ -145,7 +145,7 @@ export default function DashboardClient() {
           collaborations: stats.collaborations,
           completionRate: stats.completionRate,
         }}
-        streakData={rawStreak}
+        goalsStreakData={goalsStreak}
         userProgress={progressData}
         recentActivities={recentActivities.activities}
         userBadges={userBadges}

@@ -138,9 +138,9 @@ export default function GoalsClient() {
         </div>
       </div>
 
-      <h2 className="flex items-center gap-2 text-3xl font-bold">
+      <h1 className="flex items-center gap-2 text-3xl font-bold">
         <Goal size={36} className="text-primary" /> Your Goals
-      </h2>
+      </h1>
 
       {goals?.length === 0 ? (
         <div className="grid flex-1 place-items-center text-center">

@@ -73,7 +73,7 @@ export interface DashboardProps {
   recentActivities: Activity[]
   userProgress: DashboardProgress
   userBadges: IBadge[]
-  streakData: StreakData
+  goalsStreakData: StreakData
 }
 
 const MotionCard = motion.create(Card)
@@ -84,7 +84,7 @@ export function Dashboard({
   recentActivities,
   userProgress,
   userBadges,
-  streakData,
+  goalsStreakData,
 }: DashboardProps) {
   const pct = userStats.completionRate
   const pointsToNextLevel = userProgress.pointsToNextLevel
@@ -104,8 +104,8 @@ export function Dashboard({
               sm:text-xl
             `}
           >
-            {streakData.dates?.length > 0 ? <Flame /> : null}{" "}
-            {streakData.dates?.length || 0}-Day Streak
+            {goalsStreakData.dates?.length > 0 ? <Flame /> : null}{" "}
+            {goalsStreakData.dates?.length || 0}-Day Streak
           </p>
           <p
             className={`
