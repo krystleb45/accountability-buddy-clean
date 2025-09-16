@@ -1578,6 +1578,8 @@ export type Streak = {
   user: User["_id"] | User
   streakCount?: number
   lastCheckIn?: string | null
+  longestStreak?: number
+  checkInDates: string[]
   _id: string
   createdAt?: string
   updatedAt?: string

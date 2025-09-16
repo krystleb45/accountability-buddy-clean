@@ -8,8 +8,10 @@ import type {
 } from "axios"
 
 import axios from "axios"
-import { getSession, signOut } from "next-auth/react"
+import { getSession } from "next-auth/react"
 import { toast } from "sonner"
+
+import { logout } from "@/api/auth/auth-api"
 
 // All API requests should go through the Next.js API proxy (not directly to Express).
 const BASE_URL = "/api"
@@ -92,7 +94,7 @@ http.interceptors.response.use(
         console.error("Authentication failed")
         if (typeof window !== "undefined") {
           toast.info("Please login to continue")
-          signOut()
+          logout()
         }
         throw new Error("Authentication failed. Please login again.")
       case 403:

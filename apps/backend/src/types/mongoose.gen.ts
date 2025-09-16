@@ -2229,7 +2229,11 @@ export type CollaborationGoalMethods = {
 }
 
 export type CollaborationGoalStatics = {
-  fetchByVisibility: (this: CollaborationGoalModel, ...args: any[]) => any
+  fetchByVisibility: (
+    this: CollaborationGoalModel,
+    visibility: "public" | "private",
+    limit?: number
+  ) => any
 }
 
 /**
@@ -7854,6 +7858,8 @@ export type Streak = {
   user: User["_id"] | User
   streakCount?: number
   lastCheckIn?: Date | null
+  longestStreak?: number
+  checkInDates: Date[]
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
@@ -7936,6 +7942,8 @@ export type StreakDocument = mongoose.Document<
     user: UserDocument["_id"] | UserDocument
     streakCount?: number
     lastCheckIn?: Date | null
+    longestStreak?: number
+    checkInDates: mongoose.Types.Array<Date>
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
