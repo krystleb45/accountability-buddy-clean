@@ -719,29 +719,6 @@ export type Goal = {
 }
 
 /**
- * Lean version of GoalAnalyticsDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GoalAnalyticsDocument.toObject()`. To avoid conflicts with model names, use the type alias `GoalAnalyticsObject`.
- * ```
- * const goalanalyticsObject = goalanalytics.toObject();
- * ```
- */
-export type GoalAnalytics = {
-  user: User["_id"] | User
-  goal: Goal["_id"] | Goal
-  totalTasks?: number
-  completedTasks?: number
-  completionRate?: number
-  averageTaskCompletionTime?: number | null
-  streak?: number
-  bestStreak?: number
-  lastUpdated?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of GoalMessageDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GoalMessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `GoalMessageObject`.
