@@ -18,7 +18,7 @@ export async function validateSubscription(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+) {
   try {
     const userId = req.user.id
 
@@ -77,7 +77,7 @@ export function validateFeatureAccess(requiredFeature: string) {
     req: AuthenticatedRequest,
     res: Response,
     next: NextFunction,
-  ): Promise<void> => {
+  ) => {
     try {
       const userId = req.user.id
 
@@ -87,17 +87,21 @@ export function validateFeatureAccess(requiredFeature: string) {
       const hasAccess = user.hasFeatureAccess(requiredFeature)
 
       if (!hasAccess) {
-        res.status(403).json({
-          success: false,
-          message: `This feature requires a higher subscription plan. Your current plan: ${user.subscriptionTier}`,
-          requiredFeature,
-          currentPlan: user.subscriptionTier,
-          upgradeRequired: true,
-        })
+        sendResponse(
+          res,
+          403,
+          false,
+          `This feature requires a higher subscription plan. Your current plan: ${user.subscriptionTier}`,
+          {
+            requiredFeature,
+            currentPlan: user.subscriptionTier,
+            upgradeRequired: true,
+          },
+        )
         return
       }
 
-      logger.info(
+      logger.debug(
         `✅ Feature access validated for user ${userId}, feature: ${requiredFeature}`,
       )
       next()
@@ -106,10 +110,12 @@ export function validateFeatureAccess(requiredFeature: string) {
         `❌ Error validating feature access for ${requiredFeature}:`,
         error,
       )
-      res.status(500).json({
-        success: false,
-        message: "Server error during feature validation",
-      })
+      next(
+        createError(
+          "Server error during feature access validation",
+          status.INTERNAL_SERVER_ERROR,
+        ),
+      )
     }
   }
 }
@@ -124,7 +130,7 @@ export function trialPrompt(featureName: string) {
     req: AuthenticatedRequest,
     res: Response,
     next: NextFunction,
-  ): Promise<void> => {
+  ) => {
     try {
       const userId = req.user.id
 

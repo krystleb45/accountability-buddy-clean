@@ -1,4 +1,3 @@
-// src/api/services/CollaborationGoalService.ts
 import { Types } from "mongoose"
 
 import { CollaborationGoal } from "../models/CollaborationGoal"
@@ -31,8 +30,13 @@ class CollaborationGoalService {
    * Fetch all goals in which the given user participates.
    */
   static async getForUser(userId: string) {
-    const userObj = new Types.ObjectId(userId)
-    return CollaborationGoal.find({ participants: userObj })
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new Error("Invalid user ID")
+    }
+
+    return CollaborationGoal.find({
+      participants: new Types.ObjectId(userId),
+    })
       .populate("createdBy", "username")
       .populate("participants", "username")
       .exec()

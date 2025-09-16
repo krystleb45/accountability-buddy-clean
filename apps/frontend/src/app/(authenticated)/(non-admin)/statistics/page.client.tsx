@@ -2,68 +2,155 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { ArrowLeft, ChartBar } from "lucide-react"
-import { useSession } from "next-auth/react"
+import { format } from "date-fns"
+import {
+  Activity,
+  ArrowLeft,
+  BarChart,
+  CalendarCheck,
+  CalendarDays,
+  ChartBar,
+  ChartColumn,
+  Goal,
+  Percent,
+  SquareCheckBig,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { LabelList, RadialBar, RadialBarChart } from "recharts"
 
+import type { ChartConfig } from "@/components/ui/chart"
+
+import { getAdvancedAnalytics } from "@/api/analytics/analytics-api"
 import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
-import { fetchUserGoalsStreak } from "@/api/goal/goal-api"
-import Card, { CardContent } from "@/components/cards/Card"
-import cardStyles from "@/components/cards/Card.module.css"
+import { fetchUserStreak } from "@/api/streaks/streak-api"
+import { DashboardStatCard } from "@/components/dashboard"
+import { StreakCalendar } from "@/components/Gamification/streak-calendar"
+import { LoadingSpinner } from "@/components/loading-spinner"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
+import { Progress } from "@/components/ui/progress"
 import { useSubscription } from "@/hooks/useSubscription"
 
+import { AdvancedAnalytics } from "./advanced-analytics"
+
+const chartConfig = {
+  total: {
+    label: "Total Goals",
+    color: "var(--chart-5)",
+  },
+  completed: {
+    label: "Completed Goals",
+    color: "var(--chart-1)",
+  },
+  active: {
+    label: "Active Goals",
+    color: "var(--chart-3)",
+  },
+  collaborations: {
+    label: "Collaborations",
+    color: "var(--chart-2)",
+  },
+} satisfies ChartConfig
+
 export default function StatisticsClient() {
-  const { data: session, status } = useSession()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { isSubscriptionActive, hasAdvancedAnalytics } = useSubscription()
 
-  const { isSubscriptionActive } = useSubscription()
-
-  const { data: stats } = useQuery({
+  const {
+    data: stats,
+    isPending: isLoadingStats,
+    error: statsError,
+  } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: fetchDashboardStats,
     enabled: isSubscriptionActive,
   })
 
-  useEffect(() => {
-    if (status !== "authenticated" || !session?.user?.id) {
-      return
-    }
-    ;(async () => {
-      setLoading(true)
-      try {
-        await Promise.all([
-          fetchUserGoalsStreak(), // Removed the session.user.id argument
-        ])
+  const {
+    data: streak,
+    isPending: isLoadingStreak,
+    error: streakError,
+  } = useQuery({
+    queryKey: ["streak"],
+    queryFn: fetchUserStreak,
+    enabled: isSubscriptionActive,
+  })
 
-        // Safely handle possibly null streak data
-      } catch (err: any) {
-        console.error(err)
-        setError(err.message || "Failed to load statistics.")
-      } finally {
-        setLoading(false)
-      }
-    })()
-  }, [status, session])
+  const {
+    data: advancedAnalytics,
+    isPending: isLoadingAdvancedAnalytics,
+    error: advancedAnalyticsError,
+  } = useQuery({
+    queryKey: ["advanced-analytics"],
+    queryFn: getAdvancedAnalytics,
+    enabled: isSubscriptionActive && hasAdvancedAnalytics,
+  })
+
+  const loading =
+    isLoadingStats || isLoadingStreak || isLoadingAdvancedAnalytics
+  const error =
+    statsError?.message ||
+    streakError?.message ||
+    advancedAnalyticsError?.message ||
+    null
 
   if (loading) {
     return (
-      <p className="mt-10 text-center text-gray-400">Loading statistics…</p>
+      <main className="grid min-h-screen place-items-center">
+        <LoadingSpinner />
+      </main>
     )
   }
   if (error) {
-    return <p className="mt-10 text-center text-red-500">{error}</p>
+    return (
+      <main className="grid min-h-screen place-items-center">
+        <div className="text-center">
+          <XCircle size={60} className="mx-auto mb-6 text-destructive" />
+          <p className="mb-2">There was an error loading your stats.</p>
+          <p className="text-sm text-muted-foreground">{error}</p>
+        </div>
+      </main>
+    )
   }
 
-  if (!stats) {
+  if (!stats || !streak) {
     return null
   }
 
+  const chartData = [
+    {
+      type: "active",
+      count: stats.totalGoals - stats.completedGoals,
+      fill: "var(--color-active)",
+    },
+    {
+      type: "completed",
+      count: stats.completedGoals,
+      fill: "var(--color-completed)",
+    },
+    {
+      type: "total",
+      count: stats.totalGoals,
+      fill: "var(--color-total)",
+    },
+  ]
+
   return (
-    <main className="flex flex-col items-start gap-6">
-      <Button variant="link" size="sm" asChild className="!px-0">
+    <main className="flex flex-col gap-6">
+      <Button variant="link" size="sm" asChild className="self-start !px-0">
         <Link href="/dashboard">
           <ArrowLeft /> Back to Dashboard
         </Link>
@@ -73,63 +160,139 @@ export default function StatisticsClient() {
         <ChartBar size={36} className="text-primary" /> Your Statistics
       </h1>
 
-      <div
-        className={`
-          grid grid-cols-1 gap-6
-          md:grid-cols-2
-        `}
-      >
-        {/* Goal Progress Card */}
-        <Card className={cardStyles.card ?? ""}>
-          <CardContent>
-            <h2 className="text-center text-2xl font-semibold text-green-300">
-              🎯 Goal Progress
-            </h2>
-            <p>Total Goals: {stats.totalGoals}</p>
-            <p>Completed Goals: {stats.completedGoals}</p>
-            <p>Active Goals: {stats.activeGoals}</p>
-            <p>
-              Completion Rate: {(stats.completedGoals / stats.totalGoals) * 100}
-              %
-            </p>
-            <Link
-              href="/goals"
-              className={`
-                mt-3 block text-center text-blue-400
-                hover:underline
-              `}
-            >
-              View Goals
-            </Link>
-          </CardContent>
-        </Card>
-
-        {/* Streak Tracker Card */}
-        {/* <Card className={cardStyles.card ?? ""}>
-          <CardContent>
-            <h2 className="text-center text-2xl font-semibold text-orange-300">
-              🔥 Streak Tracker
-            </h2>
-            <p>Current Streak: {stats.currentStreak} days</p>
-            <p>Longest Streak: {stats.longestStreak} days</p>
+      {/* Goal Progress Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Goal className="text-primary" /> Goals Progress
+          </CardTitle>
+          <CardAction>
+            <Button variant="outline" asChild>
+              <Link href="/goals">View Goals</Link>
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent
+          className={`
+            grid grid-cols-1 gap-4
+            md:grid-cols-2
+          `}
+        >
+          <div className="flex flex-col gap-4">
             <div
               className={`
-                mt-3 h-4 w-full overflow-hidden rounded-lg bg-gray-800
+                grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-3
               `}
             >
-              <div
-                className="h-4 bg-green-500"
-                style={{
-                  width: stats.longestStreak
-                    ? `${(stats.currentStreak / stats.longestStreak) * 100}%`
-                    : "0%",
-                  transition: "width 0.5s ease-in-out",
-                }}
+              <DashboardStatCard
+                title="Total Goals"
+                value={stats.totalGoals}
+                icon={<Goal className="text-chart-2" />}
+              />
+              <DashboardStatCard
+                title="Completed Goals"
+                value={stats.completedGoals}
+                icon={<SquareCheckBig className="text-chart-1" />}
+              />
+              <DashboardStatCard
+                title="Active Goals"
+                value={stats.activeGoals}
+                icon={<Activity className="text-chart-3" />}
+              />
+              <DashboardStatCard
+                title="Collaboration Goals"
+                value={stats.collaborations}
+                icon={<Users className="text-chart-2" />}
               />
             </div>
-          </CardContent>
-        </Card> */}
-      </div>
+            <Card className="flex-1 shadow-none">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Percent className="text-primary" /> Overall Completion Rate
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="mt-auto">
+                <p className="mb-2 text-xl font-bold tabular-nums">
+                  {stats.completionRate}%
+                </p>
+                <Progress value={stats.completionRate} max={100} />
+              </CardContent>
+            </Card>
+          </div>
+          <Card className="shadow-none">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ChartColumn className="text-primary" />
+                Overall Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                config={chartConfig}
+                className="min-h-[20rem] w-full"
+              >
+                <RadialBarChart
+                  data={chartData}
+                  startAngle={-90}
+                  endAngle={380}
+                  innerRadius="30%"
+                  outerRadius="110%"
+                >
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent hideLabel nameKey="type" />}
+                  />
+                  <RadialBar dataKey="count" background>
+                    <LabelList
+                      position="insideStart"
+                      dataKey="type"
+                      className="fill-white capitalize mix-blend-luminosity"
+                      fontSize={16}
+                    />
+                  </RadialBar>
+                </RadialBarChart>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </CardContent>
+      </Card>
+
+      {/* Streak Tracker Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="text-primary" /> Login Streak Tracker
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div
+            className={`
+              mb-4 grid grid-cols-[repeat(auto-fill,minmax(20rem,1fr))] gap-3
+            `}
+          >
+            <DashboardStatCard
+              title="Current Streak"
+              value={`${streak.streakCount ?? 0} day${streak.streakCount === 1 ? "" : "s"}`}
+              icon={<Zap className="text-chart-3" />}
+            />
+            <DashboardStatCard
+              title="Longest Streak"
+              value={`${streak.longestStreak ?? 0} day${streak.longestStreak === 1 ? "" : "s"}`}
+              icon={<CalendarDays className="text-chart-2" />}
+            />
+            <DashboardStatCard
+              title="Last Check-In"
+              value={
+                streak.lastCheckIn
+                  ? format(streak.lastCheckIn, "Pp")
+                  : "No check-ins yet"
+              }
+              icon={<CalendarCheck className="text-chart-1" />}
+            />
+          </div>
+          <StreakCalendar completionDates={streak.checkInDates} />
+        </CardContent>
+      </Card>
 
       {/* Achievements Section (full width) */}
       {/* <Card
@@ -164,19 +327,21 @@ export default function StatisticsClient() {
       </Card> */}
 
       {/* Collaboration Goals Section */}
-      <Card
-        className={`
-          mt-6
-          ${cardStyles.card ?? ""}
-        `}
-      >
-        <CardContent>
-          <h2 className="text-center text-2xl font-semibold text-pink-300">
-            🤝 Collaboration Goals
-          </h2>
-          <p className="text-center text-gray-400">
+      {/* <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Handshake className="text-primary" /> Collaboration Goals
+          </CardTitle>
+          <CardDescription>
             Track you and your friends' progress together.
-          </p>
+          </CardDescription>
+          <CardAction>
+            <Button variant="outline" asChild>
+              <Link href="/collaborations">View Collaborations</Link>
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
           <ul className="mt-4 space-y-2">
             <li>
               Your progress: {(stats.completedGoals / stats.totalGoals) * 100}%
@@ -184,37 +349,37 @@ export default function StatisticsClient() {
             <li>Friend A: 80%</li>
             <li>Friend B: 55%</li>
           </ul>
-          <Link
-            href="/collaborations"
-            className={`
-              mt-3 block text-center text-blue-400
-              hover:underline
-            `}
-          >
-            View Collaborations
-          </Link>
-        </CardContent>
-      </Card>
-
-      {/* Statistics Chart Section (full width) */}
-      {/* <Card
-        className={`
-          mt-6
-          ${cardStyles.card ?? ""}
-        `}
-      >
-        <CardContent>
-          <UserStatisticsChart
-            totalGoals={stats.totalGoals}
-            completedGoals={stats.completedGoals}
-            collaborations={stats.collaborations}
-            goalTrends={stats.goalTrends}
-            categoryBreakdown={stats.categoryBreakdown}
-            currentStreak={stats.currentStreak}
-            longestStreak={stats.longestStreak}
-          />
         </CardContent>
       </Card> */}
+
+      {/* Statistics Chart Section (full width) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart className="text-primary" />
+            Advanced Analytics
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {hasAdvancedAnalytics ? (
+            advancedAnalytics ? (
+              <AdvancedAnalytics
+                goalTrends={advancedAnalytics.goalTrends}
+                categoryBreakdown={advancedAnalytics.categoryBreakdown}
+              />
+            ) : null
+          ) : (
+            <div className="py-20 text-center">
+              <p className="mb-4">
+                Advanced analytics are available for pro and elite users.
+              </p>
+              <Button asChild>
+                <Link href="/subscription">Upgrade now</Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </main>
   )
 }

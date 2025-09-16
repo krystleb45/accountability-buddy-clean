@@ -29,6 +29,7 @@ export interface UserLimits {
   canCreateMore: boolean
   isInTrial: boolean
   daysUntilTrialEnd: number
+  hasAdvancedAnalytics: boolean
 }
 
 /** GET /api/subscription/limits */

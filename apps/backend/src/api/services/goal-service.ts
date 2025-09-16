@@ -1,6 +1,6 @@
 import type { Goal as IGoal, UserDocument } from "src/types/mongoose.gen"
 
-import { startOfDay } from "date-fns"
+import { format, startOfDay } from "date-fns"
 import status from "http-status"
 import mongoose from "mongoose"
 import { uniqueWith } from "remeda"
@@ -336,5 +336,34 @@ export class GoalService {
       logger.error(`❌ Error getting goal summary for user ${userId}:`, error)
       throw error
     }
+  }
+
+  static async getGoalTrends(userId: string) {
+    const goals = await Goal.find({
+      user: userId,
+      completedAt: { $exists: true },
+    })
+
+    return goals.reduce(
+      (acc, goal) => {
+        const date = format(goal.completedAt!, "yyyy-MM-dd")
+        acc[date] = (acc[date] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>,
+    )
+  }
+
+  static async getCategoryBreakdown(userId: string) {
+    const goals = await Goal.find({ user: userId })
+
+    return goals.reduce(
+      (acc, goal) => {
+        const category = goal.category
+        acc[category] = (acc[category] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>,
+    )
   }
 }

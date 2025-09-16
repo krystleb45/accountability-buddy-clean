@@ -15,7 +15,8 @@ import sendResponse from "../utils/sendResponse"
  */
 export const getUserStreak = catchAsync(
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const userId = req.user!.id!
+    const userId = req.user.id
+
     if (!mongoose.isValidObjectId(userId)) {
       sendResponse(res, 400, false, "Invalid User ID format.")
       return
@@ -26,13 +27,12 @@ export const getUserStreak = catchAsync(
       sendResponse(res, 200, true, "User streak fetched successfully", {
         streak,
       })
-    } catch (err: any) {
+    } catch (err) {
       if (err.message === "Streak not found for this user.") {
         const emptyStreak = {
-          currentStreak: 0,
+          streakCount: 0,
           longestStreak: 0,
-          goalProgress: 0,
-          completionDates: [] as string[],
+          lastCheckIn: null,
         }
         sendResponse(res, 200, true, "No streak yet, returning empty", {
           streak: emptyStreak,

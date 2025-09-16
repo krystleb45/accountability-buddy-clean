@@ -135,6 +135,7 @@ export const getUserLimits: RequestHandler = catchAsync(
       hasDMMessaging: user.hasFeatureAccess("dmMessaging"),
       hasPrivateRooms: user.hasFeatureAccess("privateRooms"),
       hasWeeklyMeetings: user.hasFeatureAccess("weeklyMeetings"),
+      hasAdvancedAnalytics: user.hasFeatureAccess("analytics"),
       currentGoalCount: currentCount,
       canCreateMore: canCreate,
       isInTrial: user.isInTrial(),

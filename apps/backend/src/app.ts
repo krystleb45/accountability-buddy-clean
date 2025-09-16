@@ -28,6 +28,7 @@ import activityRoutes from "./api/routes/activity"
 import adminAnalyticsRoutes from "./api/routes/adminAnalytics"
 import adminReports from "./api/routes/adminReports"
 import adminRoutes from "./api/routes/adminRoutes"
+import analyticsRoutes from "./api/routes/analytics"
 import auditRoutes from "./api/routes/audit"
 import badgeRoutes from "./api/routes/badge"
 import blogRoutes from "./api/routes/blog"
@@ -44,7 +45,6 @@ import followRoutes from "./api/routes/follow"
 import friendsRoutes from "./api/routes/friends"
 import gamificationRoutes from "./api/routes/gamification"
 import goalRoutes from "./api/routes/goal"
-import goalAnalyticsRoutes from "./api/routes/goalAnalyticsRoutes"
 import goalMessageRoutes from "./api/routes/goalMessage"
 import groupRoutes from "./api/routes/groupRoute"
 import historyRoutes from "./api/routes/history"
@@ -200,7 +200,7 @@ app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/events", eventRoutes)
 app.use("/api/feedback", feedbackRoutes)
 app.use("/api/file-uploads", fileUploadRoutes)
-app.use("/api/analytics", goalAnalyticsRoutes)
+app.use("/api/analytics", analyticsRoutes)
 app.use("/api/history", historyRoutes)
 app.use("/api/milestone", milestoneRoutes)
 app.use("/api/newsletter", newsletterRoutes)

@@ -73,6 +73,7 @@ export function useSubscription() {
   const hasPrivateRooms = limits?.hasPrivateRooms ?? false
   const hasWeeklyMeetings = limits?.hasWeeklyMeetings ?? false
   const hasStreakTracker = limits?.hasStreakTracker ?? false
+  const hasAdvancedAnalytics = limits?.hasAdvancedAnalytics ?? false
 
   const isInTrial = limits?.isInTrial ?? false
   const daysUntilTrialEnd = limits?.daysUntilTrialEnd ?? 0
@@ -106,6 +107,7 @@ export function useSubscription() {
     hasPrivateRooms,
     hasWeeklyMeetings,
     hasStreakTracker,
+    hasAdvancedAnalytics,
 
     isInTrial,
     daysUntilTrialEnd,

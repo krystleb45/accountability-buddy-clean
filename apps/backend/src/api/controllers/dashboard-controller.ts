@@ -1,4 +1,4 @@
-import type { Request, Response } from "express"
+import type { Response } from "express"
 import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
 import status from "http-status"
@@ -11,9 +11,8 @@ import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
 export const getDashboardStats = catchAsync(
-  async (req: Request, res: Response) => {
-    const authReq = req as AuthenticatedRequest
-    const userId = authReq.user!.id
+  async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user.id
 
     const user = await User.findById(userId)
     if (!user) {

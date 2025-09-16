@@ -81,14 +81,13 @@ CollaborationGoalSchema.methods = {
 }
 
 // --- Static Methods ---
-CollaborationGoalSchema.statics.fetchByVisibility = function (
-  visibility: "public" | "private",
-  limit = 20,
-) {
-  return this.find({ visibility })
-    .sort({ createdAt: -1 })
-    .limit(limit)
-    .populate("createdBy", "username email")
+CollaborationGoalSchema.statics = {
+  fetchByVisibility(visibility: "public" | "private", limit = 20) {
+    return this.find({ visibility })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .populate("createdBy", "username email")
+  },
 }
 
 // --- Model Export ---

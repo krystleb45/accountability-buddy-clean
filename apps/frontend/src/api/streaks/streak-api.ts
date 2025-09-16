@@ -1,15 +1,8 @@
-// src/streaks/streakApi.ts
-
-import axios from "axios"
+import type { Envelope } from "@/types"
+import type { Streak } from "@/types/mongoose.gen"
 
 import { http } from "@/lib/http"
-
-export interface Streak {
-  _id: string
-  user: { _id: string; username: string; profilePicture?: string }
-  streakCount: number
-  lastCheckIn: string | null
-}
+import { getApiErrorMessage } from "@/utils"
 
 export interface LeaderboardPage {
   streaks: Streak[]
@@ -20,22 +13,13 @@ export interface LeaderboardPage {
   }
 }
 
-function logError(fn: string, err: unknown): void {
-  if (axios.isAxiosError(err)) {
-    console.error(`❌ [streakApi::${fn}]`, err.response?.data || err.message)
-  } else {
-    console.error(`❌ [streakApi::${fn}]`, err)
-  }
-}
-
 /** Fetch the current user's streak */
-export async function fetchUserStreak(): Promise<Streak | null> {
+export async function fetchUserStreak() {
   try {
-    const resp = await http.get<Streak>("/streaks")
-    return resp.data
+    const resp = await http.get<Envelope<{ streak: Streak }>>("/streaks")
+    return resp.data.data.streak
   } catch (err) {
-    logError("fetchUserStreak", err)
-    return null
+    throw new Error(getApiErrorMessage(err as Error))
   }
 }
 
@@ -48,8 +32,7 @@ export async function checkIn(date?: string): Promise<Streak | null> {
     )
     return resp.data
   } catch (err) {
-    logError("checkIn", err)
-    return null
+    throw new Error(getApiErrorMessage(err as Error))
   }
 }
 
@@ -64,11 +47,7 @@ export async function fetchLeaderboard(
     })
     return resp.data
   } catch (err) {
-    logError("fetchLeaderboard", err)
-    return {
-      streaks: [],
-      pagination: { totalEntries: 0, currentPage: 1, totalPages: 0 },
-    }
+    throw new Error(getApiErrorMessage(err as Error))
   }
 }
 

@@ -19,6 +19,7 @@ export async function getUserStreak(userId: string) {
   if (!mongoose.isValidObjectId(userId)) {
     throw new Error("Invalid User ID format.")
   }
+
   const streak = await Streak.findOne({ user: userId }).populate("user")
 
   if (!streak) {
@@ -33,29 +34,29 @@ export async function logDailyCheckIn(userId: string): Promise<IStreak> {
     throw new Error("Invalid User ID format.")
   }
 
-  let streak = await Streak.findOne({ user: userId })
+  let currentStreak = await Streak.findOne({ user: userId })
 
-  if (!streak) {
-    streak = await Streak.create({
+  if (!currentStreak) {
+    currentStreak = await Streak.create({
       user: userId,
       lastCheckIn: new Date(),
       streakCount: 1,
     })
     GamificationService.addPoints(userId, 10)
     logger.info(`✅ New streak started for user ${userId}`)
-    return streak
+    return currentStreak
   }
 
-  const result = await streak.recordCheckIn()
+  const newStreak = await currentStreak.recordCheckIn()
 
-  if (result.streakCount > streak.streakCount) {
+  if (newStreak.streakCount > currentStreak.streakCount) {
     GamificationService.addPoints(userId, 10)
   }
 
   logger.info(
-    `✅ Streak updated for user ${userId}: ${result.streakCount} days`,
+    `✅ Streak updated for user ${userId}: ${newStreak.streakCount} days`,
   )
-  return result
+  return newStreak
 }
 
 export async function resetUserStreak(userId: string): Promise<void> {
