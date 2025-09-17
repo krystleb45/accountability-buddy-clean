@@ -42,7 +42,8 @@ export async function logDailyCheckIn(userId: string): Promise<IStreak> {
       lastCheckIn: new Date(),
       streakCount: 1,
     })
-    GamificationService.addPoints(userId, 10)
+    await GamificationService.addPoints(userId, 10)
+    await GamificationService.checkAndAwardBadges(userId, "consistency_master")
     logger.info(`✅ New streak started for user ${userId}`)
     return currentStreak
   }
@@ -50,7 +51,8 @@ export async function logDailyCheckIn(userId: string): Promise<IStreak> {
   const newStreak = await currentStreak.recordCheckIn()
 
   if (newStreak.streakCount > currentStreak.streakCount) {
-    GamificationService.addPoints(userId, 10)
+    await GamificationService.addPoints(userId, 10)
+    await GamificationService.checkAndAwardBadges(userId, "consistency_master")
   }
 
   logger.info(

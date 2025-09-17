@@ -94,6 +94,8 @@ const GamificationService = {
     }
 
     await profile.addPoints(amount)
+
+    await GamificationService.checkAndAwardBadges(userId, "point_earner")
   },
 
   /**
