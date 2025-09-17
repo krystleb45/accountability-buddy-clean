@@ -118,6 +118,10 @@ export class BadgeController {
         return
       }
 
+      if (deleted.iconKey) {
+        await FileUploadService.deleteFromS3(deleted.iconKey)
+      }
+
       sendResponse(res, 200, true, "Badge deleted")
     },
   )
