@@ -11,7 +11,7 @@ async function NonAdminLayout({ children }: { children: React.ReactNode }) {
   const isAdmin = session?.user.role === "admin"
 
   if (isAdmin) {
-    redirect("/admin/dashboard")
+    redirect("/admin")
   }
 
   return children

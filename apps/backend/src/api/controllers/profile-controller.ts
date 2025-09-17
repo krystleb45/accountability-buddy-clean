@@ -37,7 +37,7 @@ export const uploadProfileImage = catchAsync(
       throw createError("No file (profileImage) uploaded", 400)
     }
 
-    const fileNameToSave = `avatar-${req.user.id}-${req.file.originalname}`
+    const fileNameToSave = `avatar-${req.user.id}`
     const { key } = await FileUploadService.uploadToS3({
       buffer: req.file.buffer,
       name: fileNameToSave,
@@ -59,7 +59,7 @@ export const uploadCoverImage = catchAsync(
       throw createError("No image uploaded", 400)
     }
 
-    const fileNameToSave = `cover-${req.user.id}-${req.file.originalname}`
+    const fileNameToSave = `cover-${req.user.id}`
     const { key } = await FileUploadService.uploadToS3({
       buffer: req.file.buffer,
       name: fileNameToSave,

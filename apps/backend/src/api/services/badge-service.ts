@@ -2,11 +2,91 @@ import type { Badge as IBadge } from "src/types/mongoose.gen"
 
 import mongoose, { Types } from "mongoose"
 
+import type { BadgeCreateInput } from "../routes/badge"
+
 import { logger } from "../../utils/winstonLogger"
 import { Badge } from "../models/Badge"
+import { BadgeType } from "../models/BadgeType"
+import { FileUploadService } from "./file-upload-service"
 import { awardPoints } from "./rewardService"
 
 export default class BadgeService {
+  private constructor() {
+    // Private constructor to prevent direct instantiation
+  }
+
+  /** Create a new badge type (admin only) */
+  static async createBadgeType(badgeData: BadgeCreateInput) {
+    const badge = new BadgeType(badgeData)
+    await badge.save()
+    logger.info(`🎖️ Created new badge type: ${badgeData.name}`)
+    return badge
+  }
+
+  /** Get all badge types (admin only) */
+  static async getAllBadgeTypes() {
+    const allBadges = await BadgeType.find().sort({ createdAt: -1 })
+
+    const allBadgesWithIconUrl = []
+
+    for (const badge of allBadges) {
+      const badgeObj = badge.toObject() as typeof badge & { iconUrl?: string }
+      if (badge.iconKey) {
+        // Generate a signed URL or public URL for the icon
+        badgeObj.iconUrl = await FileUploadService.generateSignedUrl(
+          badge.iconKey,
+        )
+      }
+      allBadgesWithIconUrl.push(badgeObj)
+    }
+
+    return allBadgesWithIconUrl
+  }
+
+  /** Upload or update a badge icon (admin only) */
+  static async uploadBadgeIcon(badgeId: string, key: string) {
+    const badge = await BadgeType.findById(badgeId)
+    if (!badge) {
+      throw new Error("Badge not found")
+    }
+
+    badge.iconKey = key
+    await badge.save()
+    logger.info(`📸 Updated badge icon for ${badgeId}`)
+  }
+
+  /** Get badge type by ID (admin only) */
+  static async getBadgeById(badgeId: string) {
+    const badge = await BadgeType.findById(badgeId)
+    if (!badge) {
+      throw new Error("Badge not found")
+    }
+
+    const badgeObj = badge.toObject() as typeof badge & { iconUrl?: string }
+    if (badge.iconKey) {
+      badgeObj.iconUrl = await FileUploadService.generateSignedUrl(
+        badge.iconKey,
+      )
+    }
+
+    return badgeObj
+  }
+
+  /** Update a badge by ID (admin only) */
+  static async updateBadgeById(
+    badgeId: string,
+    updateData: Partial<BadgeCreateInput>,
+  ) {
+    return await BadgeType.findByIdAndUpdate(badgeId, updateData, {
+      new: true,
+    })
+  }
+
+  /** Delete a badge type by ID (admin only) */
+  static async deleteBadgeById(badgeId: string) {
+    return await BadgeType.findByIdAndDelete(badgeId)
+  }
+
   /** Award or upgrade a single badge */
   static async awardBadge(
     userId: string,

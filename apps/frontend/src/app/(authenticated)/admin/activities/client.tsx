@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/pagination"
 import { usePaginationModel } from "@/hooks/use-pagination-model"
 
-export function ClientAdminDashboard() {
+export function AdminActivitiesDashboard() {
   const searchParams = useSearchParams()
   const page = Number.parseInt(searchParams.get("page") || "1", 10) || 1
 

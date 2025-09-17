@@ -1,10 +1,14 @@
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
+import z from "zod"
 
-import * as BadgeController from "../controllers/badge-controller"
+import { BadgeController } from "../controllers/badge-controller"
 import { protect, restrictTo } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import validate from "../middleware/validation-middleware"
+import { BADGE_CONDITIONS } from "../models/BadgeType"
+import { FileUploadService } from "../services/file-upload-service"
 
 const router = Router()
 
@@ -22,6 +26,46 @@ router.use(
 
 // GET /api/badges
 router.get("/", protect, BadgeController.getUserBadges)
+
+/**
+ * POST /api/badges
+ * Create a new badge (admin only)
+ */
+const badgeCreateSchema = z.object({
+  name: z.string().nonempty(),
+  description: z.string().optional(),
+  bronzePointsToAward: z.int().min(0).default(0),
+  silverPointsToAward: z.int().min(0).default(0),
+  goldPointsToAward: z.int().min(0).default(0),
+  conditionToMeet: z.enum(BADGE_CONDITIONS),
+  bronzeAmountRequired: z.int().min(1).default(1),
+  silverAmountRequired: z.int().min(1).default(5),
+  goldAmountRequired: z.int().min(1).default(10),
+  expiresAt: z.coerce.date().optional(),
+})
+
+export type BadgeCreateInput = z.infer<typeof badgeCreateSchema>
+
+router.post(
+  "/",
+  protect,
+  restrictTo("admin"),
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { success: false, message: "Too many requests." },
+  }),
+  validate({
+    bodySchema: badgeCreateSchema,
+  }),
+  BadgeController.createBadge,
+)
+
+/**
+ * GET /api/badges/all
+ * Get all badges (admin only)
+ */
+router.get("/all", protect, restrictTo("admin"), BadgeController.getAllBadges)
 
 // GET /api/badges/showcase
 router.get("/showcase", protect, BadgeController.getUserBadgeShowcase)
@@ -89,6 +133,47 @@ router.delete(
   protect,
   restrictTo("admin"),
   BadgeController.removeExpiredBadges,
+)
+
+/**
+ * PUT /api/badges/:id/icon
+ * Upload or update badge icon (admin only)
+ * multipart/form-data with field name "icon"
+ */
+router.put(
+  "/:id/icon",
+  protect,
+  restrictTo("admin"),
+  FileUploadService.multerUpload.single("icon"),
+  BadgeController.uploadBadgeIcon,
+)
+
+/**
+ * GET /api/badges/:id
+ * Get badge by ID (admin only)
+ */
+router.get("/:id", protect, restrictTo("admin"), BadgeController.getBadgeById)
+
+/**
+ * PATCH /api/badges/:id
+ * Update badge by ID (admin only)
+ */
+router.patch(
+  "/:id",
+  protect,
+  restrictTo("admin"),
+  BadgeController.updateBadgeById,
+)
+
+/**
+ * DELETE /api/badges/:id
+ * Delete badge by ID (admin only)
+ */
+router.delete(
+  "/:id",
+  protect,
+  restrictTo("admin"),
+  BadgeController.deleteBadgeById,
 )
 
 export default router

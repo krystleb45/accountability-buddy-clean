@@ -111,8 +111,8 @@ export const FileUploadService = {
 
   /**
    * ✅ Generate a signed URL for accessing files securely
-   * @param fileKey - S3 key of the file
-   * @param expires - Expiration time for the signed URL in seconds
+   * @param {string} fileKey - S3 key of the file
+   * @param {number} [expires] - Expiration time for the signed URL in seconds
    * @returns Signed URL
    */
   generateSignedUrl: async (
