@@ -1188,6 +1188,139 @@ export type BadgeDocument = mongoose.Document<
   }
 
 /**
+ * Lean version of BadgeTypeDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `BadgeTypeDocument.toObject()`. To avoid conflicts with model names, use the type alias `BadgeTypeObject`.
+ * ```
+ * const badgetypeObject = badgetype.toObject();
+ * ```
+ */
+export type BadgeType = {
+  name: string
+  description?: string
+  bronzePointsToAward?: number
+  silverPointsToAward?: number
+  goldPointsToAward?: number
+  iconKey?: string
+  conditionToMeet:
+    | "goal_completed"
+    | "helper"
+    | "milestone_achiever"
+    | "consistency_master"
+    | "event_badge"
+  bronzeAmountRequired?: number
+  silverAmountRequired?: number
+  goldAmountRequired?: number
+  expiresAt?: Date
+  _id: mongoose.Types.ObjectId
+  createdAt?: Date
+  updatedAt?: Date
+  isExpired: boolean
+}
+
+/**
+ * Lean version of BadgeTypeDocument (type alias of `BadgeType`)
+ *
+ * Use this type alias to avoid conflicts with model names:
+ * ```
+ * import { BadgeType } from "../models"
+ * import { BadgeTypeObject } from "../interfaces/mongoose.gen.ts"
+ *
+ * const badgetypeObject: BadgeTypeObject = badgetype.toObject();
+ * ```
+ */
+export type BadgeTypeObject = BadgeType
+
+/**
+ * Mongoose Query type
+ *
+ * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
+ */
+export type BadgeTypeQuery = mongoose.Query<
+  any,
+  BadgeTypeDocument,
+  BadgeTypeQueries
+> &
+  BadgeTypeQueries
+
+/**
+ * Mongoose Query helper types
+ *
+ * This type represents `BadgeTypeSchema.query`. For most use cases, you should not need to use this type explicitly.
+ */
+export type BadgeTypeQueries = {}
+
+export type BadgeTypeMethods = {
+  getIconUrl: (this: BadgeTypeDocument) => Promise<string>
+}
+
+export type BadgeTypeStatics = {}
+
+/**
+ * Mongoose Model type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const BadgeType = mongoose.model<BadgeTypeDocument, BadgeTypeModel>("BadgeType", BadgeTypeSchema);
+ * ```
+ */
+export type BadgeTypeModel = mongoose.Model<
+  BadgeTypeDocument,
+  BadgeTypeQueries
+> &
+  BadgeTypeStatics
+
+/**
+ * Mongoose Schema type
+ *
+ * Assign this type to new BadgeType schema instances:
+ * ```
+ * const BadgeTypeSchema: BadgeTypeSchema = new mongoose.Schema({ ... })
+ * ```
+ */
+export type BadgeTypeSchema = mongoose.Schema<
+  BadgeTypeDocument,
+  BadgeTypeModel,
+  BadgeTypeMethods,
+  BadgeTypeQueries
+>
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const BadgeType = mongoose.model<BadgeTypeDocument, BadgeTypeModel>("BadgeType", BadgeTypeSchema);
+ * ```
+ */
+export type BadgeTypeDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  BadgeTypeQueries
+> &
+  BadgeTypeMethods & {
+    name: string
+    description?: string
+    bronzePointsToAward?: number
+    silverPointsToAward?: number
+    goldPointsToAward?: number
+    iconKey?: string
+    conditionToMeet:
+      | "goal_completed"
+      | "helper"
+      | "milestone_achiever"
+      | "consistency_master"
+      | "event_badge"
+    bronzeAmountRequired?: number
+    silverAmountRequired?: number
+    goldAmountRequired?: number
+    expiresAt?: Date
+    _id: mongoose.Types.ObjectId
+    createdAt?: Date
+    updatedAt?: Date
+    isExpired: boolean
+  }
+
+/**
  * Lean version of BlogPostCommentDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `BlogPostDocument.toObject()`.

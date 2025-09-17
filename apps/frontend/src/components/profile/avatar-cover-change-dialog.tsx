@@ -11,6 +11,7 @@ import z from "zod"
 
 import { uploadAvatarImage, uploadCoverImage } from "@/api/profile/profile-api"
 import { cn } from "@/lib/utils"
+import { getFileSchema } from "@/utils/zod-utils"
 
 import { Button } from "../ui/button"
 import {
@@ -43,22 +44,7 @@ interface CoverChangeDialogProps {
 }
 
 const avatarCoverChangeSchema = z.object({
-  image: z
-    .union([
-      z
-        .instanceof(File, { message: "Image is required" })
-        // File should not be empty and max 5MB
-        .refine(
-          (file) => !file || file.size !== 0 || file.size <= 1024 * 1024 * 5,
-          {
-            message: "Max size exceeded",
-          },
-        ),
-      z.string(), // to hold default image
-    ])
-    .refine((value) => value instanceof File || typeof value === "string", {
-      message: "Image is required",
-    }),
+  image: getFileSchema("Image"),
 })
 type AvatarCoverChangeData = z.infer<typeof avatarCoverChangeSchema>
 

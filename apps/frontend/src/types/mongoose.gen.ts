@@ -233,6 +233,37 @@ export type Badge = {
 }
 
 /**
+ * Lean version of BadgeTypeDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `BadgeTypeDocument.toObject()`. To avoid conflicts with model names, use the type alias `BadgeTypeObject`.
+ * ```
+ * const badgetypeObject = badgetype.toObject();
+ * ```
+ */
+export type BadgeType = {
+  name: string
+  description?: string
+  bronzePointsToAward?: number
+  silverPointsToAward?: number
+  goldPointsToAward?: number
+  iconKey?: string
+  conditionToMeet:
+    | "goal_completed"
+    | "helper"
+    | "milestone_achiever"
+    | "consistency_master"
+    | "event_badge"
+  bronzeAmountRequired?: number
+  silverAmountRequired?: number
+  goldAmountRequired?: number
+  expiresAt?: string
+  _id: string
+  createdAt?: string
+  updatedAt?: string
+  isExpired: boolean
+}
+
+/**
  * Lean version of BlogPostCommentDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `BlogPostDocument.toObject()`.
