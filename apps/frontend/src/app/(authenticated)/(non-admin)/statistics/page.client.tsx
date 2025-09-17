@@ -100,7 +100,9 @@ export default function StatisticsClient() {
   })
 
   const loading =
-    isLoadingStats || isLoadingStreak || isLoadingAdvancedAnalytics
+    isLoadingStats ||
+    isLoadingStreak ||
+    (isLoadingAdvancedAnalytics && hasAdvancedAnalytics)
   const error =
     statsError?.message ||
     streakError?.message ||

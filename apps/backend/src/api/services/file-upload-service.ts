@@ -1,5 +1,6 @@
 import {
   DeleteObjectCommand,
+  DeleteObjectsCommand,
   GetObjectCommand,
   ListObjectsV2Command,
   ObjectCannedACL,
@@ -145,6 +146,48 @@ export const FileUploadService = {
         error instanceof Error ? error.message : "Unknown error"
       logger.error(`❌ Error generating signed URL for file: ${errorMessage}`)
       throw new Error("Failed to generate signed URL")
+    }
+  },
+
+  /** ✅ Delete all files associated with a user */
+  deleteAllUserFiles: async (userId: string) => {
+    try {
+      if (!userId) {
+        throw new Error("User ID is required to delete user files")
+      }
+
+      const bucketName = process.env.S3_BUCKET
+
+      if (!bucketName) {
+        throw new Error("S3_BUCKET environment variable is not defined")
+      }
+
+      const listParams = {
+        Bucket: bucketName,
+        Prefix: `${userId}-`,
+      }
+
+      const listedObjects = await s3.send(new ListObjectsV2Command(listParams))
+
+      if (listedObjects.Contents && listedObjects.Contents.length > 0) {
+        const deleteParams = {
+          Bucket: bucketName,
+          Delete: { Objects: [] as { Key: string }[] },
+        }
+
+        listedObjects.Contents.forEach(({ Key }) => {
+          if (Key) {
+            deleteParams.Delete.Objects.push({ Key })
+          }
+        })
+
+        await s3.send(new DeleteObjectsCommand(deleteParams))
+      }
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error"
+      logger.error(`❌ Error deleting user files from S3: ${errorMessage}`)
+      throw new Error("Failed to delete user files")
     }
   },
 

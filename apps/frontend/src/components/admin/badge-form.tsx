@@ -2,6 +2,7 @@
 
 import type { Resolver } from "react-hook-form"
 
+import { BADGE_CONDITIONS } from "@ab/shared/badge-conditions"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { addYears, endOfYear, format } from "date-fns"
@@ -54,14 +55,6 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "../ui/shadcn-io/dropzone"
-
-const BADGE_CONDITIONS = [
-  "goal_completed", // e.g., complete 10 goals
-  "helper", // e.g., help 5 users
-  "milestone_achiever", // e.g., complete 10 milestones
-  "consistency_master", // e.g., maintain a streak for 30 days
-  "event_badge", // e.g., participate in a special event
-] as const
 
 const badgeCreateSchema = z.object({
   name: z.string().nonempty(),

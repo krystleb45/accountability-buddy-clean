@@ -10,7 +10,9 @@ import { differenceInDays, isBefore } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
 import { hashPassword } from "../../utils/hashHelper"
+import { FileUploadService } from "../services/file-upload-service"
 import { Activity } from "./Activity"
+import { Badge } from "./Badge"
 import { CollaborationGoal } from "./CollaborationGoal"
 import { Goal } from "./Goal"
 import { Level } from "./Level"
@@ -165,7 +167,7 @@ UserSchema.pre(
   },
 )
 
-async function cleanUp(userId: mongoose.Types.ObjectId) {
+async function cleanUp(userId: string) {
   await Level.deleteOne({ user: userId })
   await Goal.deleteMany({ user: userId })
   await Milestone.deleteMany({ user: userId })
@@ -179,10 +181,12 @@ async function cleanUp(userId: mongoose.Types.ObjectId) {
       })
     },
   )
+  await FileUploadService.deleteAllUserFiles(userId)
+  await Badge.deleteMany({ user: userId })
 }
 
 UserSchema.pre("findOneAndDelete", async function (this, next) {
-  await cleanUp(this.getQuery()._id)
+  await cleanUp(this.getQuery()._id.toString())
   next()
 })
 

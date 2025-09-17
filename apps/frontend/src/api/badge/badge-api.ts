@@ -5,6 +5,10 @@ import type { Badge, BadgeType } from "@/types/mongoose.gen"
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
 
+export type UserBadge = Badge & {
+  badgeType: BadgeType & { iconUrl?: string }
+}
+
 export async function fetchAllBadges() {
   try {
     const resp =
@@ -77,15 +81,8 @@ export async function deleteBadge(badgeId: string) {
 
 export async function fetchUserBadges() {
   try {
-    const resp = await http.get<Envelope<{ badges: Badge[] }>>("/badges")
+    const resp = await http.get<Envelope<{ badges: UserBadge[] }>>("/badges")
 
-    if (!resp.data.success) {
-      console.warn(
-        "[badgeApi] fetchUserBadges returned success=false:",
-        resp.data.message,
-      )
-      return []
-    }
     return resp.data.data.badges
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))

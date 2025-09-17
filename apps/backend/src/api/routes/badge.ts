@@ -1,3 +1,4 @@
+import { BADGE_CONDITIONS } from "@ab/shared/badge-conditions"
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
@@ -7,7 +8,6 @@ import { BadgeController } from "../controllers/badge-controller"
 import { protect, restrictTo } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import validate from "../middleware/validation-middleware"
-import { BADGE_CONDITIONS } from "../models/BadgeType"
 import { FileUploadService } from "../services/file-upload-service"
 
 const router = Router()

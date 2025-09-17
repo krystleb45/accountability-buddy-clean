@@ -1,10 +1,13 @@
+import type { BADGE_CONDITIONS } from "@ab/shared/badge-conditions"
 import type { LevelDocument, PopulatedDocument } from "src/types/mongoose.gen"
 
 import mongoose from "mongoose"
 
+import { BadgeType } from "../models/BadgeType"
+import { Goal } from "../models/Goal"
 import { Level } from "../models/Level"
+import BadgeService from "./badge-service"
 import { FileUploadService } from "./file-upload-service"
-
 /**
  * Business‐logic for gamification: leaderboard, per‐user progress, points, etc.
  */
@@ -90,6 +93,80 @@ const GamificationService = {
     }
 
     await profile.addPoints(amount)
+  },
+
+  /**
+   * Check if any badges should be awarded to the user.
+   * @param userId The ID of the user to check.
+   * @param type The type of badge condition to check (e.g., "goal_completed").
+   */
+  async checkAndAwardBadges(
+    userId: string,
+    type: (typeof BADGE_CONDITIONS)[number],
+  ) {
+    switch (type) {
+      case "goal_completed": {
+        // Get all badge types related to goal completion
+        const goalCompletedBadges = await BadgeType.find({
+          conditionToMeet: "goal_completed",
+        }).exec()
+
+        if (!goalCompletedBadges.length) {
+          return // No badges to check
+        }
+
+        // Get count of completed goals for this user
+        const completedGoalCount = await Goal.countDocuments({
+          user: userId,
+          status: "completed",
+        })
+
+        // Check each badge to see if the user qualifies
+        for (const badge of goalCompletedBadges) {
+          // Determine which level the user qualifies for based on completed goal count
+          let qualifiedLevel = null
+          let nextAmountRequired = null
+          let points = 0
+
+          if (completedGoalCount >= badge.goldAmountRequired) {
+            qualifiedLevel = "Gold"
+            points = badge.goldPointsToAward
+          } else if (completedGoalCount >= badge.silverAmountRequired) {
+            qualifiedLevel = "Silver"
+            nextAmountRequired = badge.goldAmountRequired
+            points = badge.silverPointsToAward
+          } else if (completedGoalCount >= badge.bronzeAmountRequired) {
+            qualifiedLevel = "Bronze"
+            nextAmountRequired = badge.silverAmountRequired
+            points = badge.bronzePointsToAward
+          }
+
+          // If the user qualifies for a level, award the badge
+          if (qualifiedLevel) {
+            await BadgeService.awardBadge(
+              userId,
+              badge._id,
+              qualifiedLevel,
+              points,
+            )
+          }
+
+          // Always update the progress of the badge
+          await BadgeService.updateProgress(
+            userId,
+            badge._id,
+            Math.min(
+              (completedGoalCount / (nextAmountRequired || 1)) * 100,
+              100,
+            ),
+          )
+        }
+        break
+      }
+
+      default:
+        break
+    }
   },
 }
 

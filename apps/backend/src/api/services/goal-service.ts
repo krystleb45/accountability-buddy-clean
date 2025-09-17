@@ -151,10 +151,12 @@ export class GoalService {
       goal.status = "completed"
       goal.completedAt = new Date()
       await GamificationService.addPoints(userId, goal.points)
+      logger.info(`User ${userId} completed goal ${goalId}`)
     } else if (goal.progress > 0) {
       goal.status = "in-progress"
     }
     await goal.save()
+    await GamificationService.checkAndAwardBadges(userId, "goal_completed")
   }
 
   /**
@@ -179,6 +181,7 @@ export class GoalService {
     goal.status = "completed"
     goal.completedAt = new Date()
     await goal.save()
+    await GamificationService.checkAndAwardBadges(userId, "goal_completed")
     logger.info(`User ${userId} completed goal ${goalId}`)
     return goal
   }

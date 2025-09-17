@@ -1063,27 +1063,14 @@ export type AuditTrailDocument = mongoose.Document<
  */
 export type Badge = {
   user: User["_id"] | User
-  badgeType:
-    | "goal_completed"
-    | "helper"
-    | "milestone_achiever"
-    | "consistency_master"
-    | "time_based"
-    | "event_badge"
-  description?: string
+  badgeType: BadgeType["_id"] | BadgeType
   level?: "Bronze" | "Silver" | "Gold"
   progress?: number
-  goal?: number
   dateAwarded?: Date
-  expiresAt?: Date
   isShowcased?: boolean
-  event?: string
-  pointsRewarded?: number
-  badgeIconUrl?: string
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
-  isExpired: boolean
 }
 
 /**
@@ -1114,15 +1101,9 @@ export type BadgeQuery = mongoose.Query<any, BadgeDocument, BadgeQueries> &
  */
 export type BadgeQueries = {}
 
-export type BadgeMethods = {
-  updateProgress: (this: BadgeDocument, amount: number) => Promise<any>
-}
+export type BadgeMethods = {}
 
-export type BadgeStatics = {
-  getNextLevel: (this: BadgeModel, currentLevel: any) => any
-  isExpired: (this: BadgeModel, expiresAt?: Date) => boolean
-  awardPointsForBadge: (this: BadgeModel, badgeType: any) => any
-}
+export type BadgeStatics = {}
 
 /**
  * Mongoose Model type
@@ -1164,27 +1145,14 @@ export type BadgeDocument = mongoose.Document<
 > &
   BadgeMethods & {
     user: UserDocument["_id"] | UserDocument
-    badgeType:
-      | "goal_completed"
-      | "helper"
-      | "milestone_achiever"
-      | "consistency_master"
-      | "time_based"
-      | "event_badge"
-    description?: string
+    badgeType: BadgeTypeDocument["_id"] | BadgeTypeDocument
     level?: "Bronze" | "Silver" | "Gold"
     progress?: number
-    goal?: number
     dateAwarded?: Date
-    expiresAt?: Date
     isShowcased?: boolean
-    event?: string
-    pointsRewarded?: number
-    badgeIconUrl?: string
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-    isExpired: boolean
   }
 
 /**
@@ -1208,6 +1176,7 @@ export type BadgeType = {
     | "milestone_achiever"
     | "consistency_master"
     | "event_badge"
+    | "point_earner"
   bronzeAmountRequired?: number
   silverAmountRequired?: number
   goldAmountRequired?: number
@@ -1310,6 +1279,7 @@ export type BadgeTypeDocument = mongoose.Document<
       | "milestone_achiever"
       | "consistency_master"
       | "event_badge"
+      | "point_earner"
     bronzeAmountRequired?: number
     silverAmountRequired?: number
     goldAmountRequired?: number

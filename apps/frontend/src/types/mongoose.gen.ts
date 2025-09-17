@@ -209,27 +209,14 @@ export type AuditTrail = {
  */
 export type Badge = {
   user: User["_id"] | User
-  badgeType:
-    | "goal_completed"
-    | "helper"
-    | "milestone_achiever"
-    | "consistency_master"
-    | "time_based"
-    | "event_badge"
-  description?: string
+  badgeType: BadgeType["_id"] | BadgeType
   level?: "Bronze" | "Silver" | "Gold"
   progress?: number
-  goal?: number
   dateAwarded?: string
-  expiresAt?: string
   isShowcased?: boolean
-  event?: string
-  pointsRewarded?: number
-  badgeIconUrl?: string
   _id: string
   createdAt?: string
   updatedAt?: string
-  isExpired: boolean
 }
 
 /**
@@ -253,6 +240,7 @@ export type BadgeType = {
     | "milestone_achiever"
     | "consistency_master"
     | "event_badge"
+    | "point_earner"
   bronzeAmountRequired?: number
   silverAmountRequired?: number
   goldAmountRequired?: number

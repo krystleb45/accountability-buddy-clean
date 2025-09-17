@@ -4,17 +4,10 @@ import type {
   BadgeTypeSchema as IBadgeTypeSchema,
 } from "src/types/mongoose.gen"
 
+import { BADGE_CONDITIONS } from "@ab/shared/badge-conditions"
 import mongoose, { Schema } from "mongoose"
 
 import { FileUploadService } from "../services/file-upload-service"
-
-export const BADGE_CONDITIONS = [
-  "goal_completed", // e.g., complete 10 goals
-  "helper", // e.g., help 5 users
-  "milestone_achiever", // e.g., complete 10 milestones
-  "consistency_master", // e.g., maintain a streak for 30 days
-  "event_badge", // e.g., participate in a special event
-] as const
 
 const BadgeTypeSchema: IBadgeTypeSchema = new Schema(
   {

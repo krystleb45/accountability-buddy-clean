@@ -5,7 +5,8 @@
   "author": "",
   "license": "ISC",
   "exports": {
-    "./pricing": "./src/pricing.ts"
+    "./pricing": "./src/pricing.ts",
+    "./badge-conditions": "./src/badge-conditions.ts"
   },
   "scripts": {
     "lint": "eslint --fix",

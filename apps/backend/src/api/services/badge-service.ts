@@ -1,6 +1,6 @@
 import type { Badge as IBadge } from "src/types/mongoose.gen"
 
-import mongoose, { Types } from "mongoose"
+import { Types } from "mongoose"
 
 import type { BadgeCreateInput } from "../routes/badge"
 
@@ -8,7 +8,7 @@ import { logger } from "../../utils/winstonLogger"
 import { Badge } from "../models/Badge"
 import { BadgeType } from "../models/BadgeType"
 import { FileUploadService } from "./file-upload-service"
-import { awardPoints } from "./rewardService"
+import GamificationService from "./gamification-service"
 
 export default class BadgeService {
   private constructor() {
@@ -92,69 +92,54 @@ export default class BadgeService {
     userId: string,
     badgeType: IBadge["badgeType"],
     level: IBadge["level"] = "Bronze",
+    points: number = 0,
   ) {
     const uid = new Types.ObjectId(userId)
     let badge = await Badge.findOne({ user: uid, badgeType })
 
     if (badge) {
-      // upgrade level if possible
-      const nextLevel = Badge.getNextLevel(badge.level)
-      if (nextLevel !== badge.level) {
-        badge.level = nextLevel
+      if (badge.level !== level) {
+        badge.level = level // upgrade level
         await badge.save()
+        await GamificationService.addPoints(userId, points)
         logger.info(
-          `Upgraded badge ${badgeType} to ${nextLevel} for user ${userId}`,
+          `Upgraded badge ${badgeType} to ${level} for user ${userId}`,
         )
       }
     } else {
       // first award
       badge = await Badge.create({ user: uid, badgeType, level })
+      await GamificationService.addPoints(userId, points)
       logger.info(
         `Created new badge ${badgeType} (${level}) for user ${userId}`,
       )
     }
 
-    // award points via your rewardService
-    const points = Badge.awardPointsForBadge(badgeType)
-    await awardPoints(userId, points)
-
     return badge
-  }
-
-  /** Bulk-award or upsert a badge to many users */
-  static async batchAward(
-    userIds: string[],
-    badgeType: IBadge["badgeType"],
-    level: IBadge["level"] = "Bronze",
-  ) {
-    const validIds = userIds.filter((id) => mongoose.isValidObjectId(id))
-    if (!validIds.length) {
-      throw new Error("No valid user IDs provided")
-    }
-
-    // upsert badges
-    const ops = validIds.map((id) => ({
-      updateOne: {
-        filter: { user: new Types.ObjectId(id), badgeType },
-        update: {
-          $setOnInsert: { user: new Types.ObjectId(id), badgeType, level },
-          $set: { badgeType, level },
-        },
-        upsert: true,
-      },
-    }))
-    await Badge.bulkWrite(ops)
-
-    // award points to each
-    const points = Badge.awardPointsForBadge(badgeType)
-    await Promise.all(validIds.map((id) => awardPoints(id, points)))
-
-    return validIds
   }
 
   /** Get all badges for a user */
   static async getUserBadges(userId: string) {
-    return Badge.find({ user: userId }).sort({ createdAt: -1 })
+    const allBadges = await Badge.find({ user: userId })
+      .populate("badgeType")
+      .sort({ createdAt: -1 })
+
+    const badgesWithIconUrl = []
+
+    for (const badge of allBadges) {
+      const badgeObj = badge.toObject() as typeof badge & {
+        badgeType: IBadge["badgeType"] & { iconUrl?: string }
+      }
+      if (badgeObj.badgeType.iconKey) {
+        // Generate a signed URL or public URL for the icon
+        badgeObj.badgeType.iconUrl = await FileUploadService.generateSignedUrl(
+          badgeObj.badgeType.iconKey,
+        )
+      }
+      badgesWithIconUrl.push(badgeObj)
+    }
+
+    return badgesWithIconUrl
   }
 
   /** Get only showcased badges */
@@ -168,15 +153,18 @@ export default class BadgeService {
   static async updateProgress(
     userId: string,
     badgeType: IBadge["badgeType"],
-    increment: number,
+    progress: number,
   ) {
     const uid = new Types.ObjectId(userId)
-    let badge = await Badge.findOne({ user: uid, badgeType })
-    if (!badge) {
-      badge = new Badge({ user: uid, badgeType, progress: increment })
-    } else {
-      badge.progress += increment
+    const badge = await Badge.findOne({ user: uid, badgeType })
+
+    if (badge) {
+      badge.progress = progress
+      logger.debug(
+        `Updating badge progress for ${badgeType} for user ${userId} to ${progress}`,
+      )
     }
+
     await badge.save()
     return badge
   }

@@ -136,14 +136,6 @@ export class BadgeController {
     },
   )
 
-  public static batchAwardBadges = catchAsync(
-    async (req: Request, res: Response) => {
-      const { userIds, badgeType, level } = sanitize(req.body)
-      const awarded = await BadgeService.batchAward(userIds, badgeType, level)
-      sendResponse(res, 200, true, "Badges awarded", { userIds: awarded })
-    },
-  )
-
   public static getUserBadges = catchAsync(
     async (req: AuthenticatedRequest, res: Response) => {
       const userId = req.user.id
