@@ -234,13 +234,7 @@ export type BadgeType = {
   silverPointsToAward?: number
   goldPointsToAward?: number
   iconKey?: string
-  conditionToMeet:
-    | "goal_completed"
-    | "helper"
-    | "milestone_achiever"
-    | "consistency_master"
-    | "event_badge"
-    | "point_earner"
+  conditionToMeet: "goal_completed" | "consistency_master" | "point_earner"
   bronzeAmountRequired?: number
   silverAmountRequired?: number
   goldAmountRequired?: number

@@ -8,6 +8,7 @@ import { Goal } from "../models/Goal"
 import { Level } from "../models/Level"
 import BadgeService from "./badge-service"
 import { FileUploadService } from "./file-upload-service"
+import { StreakService } from "./streak-service"
 /**
  * Business‐logic for gamification: leaderboard, per‐user progress, points, etc.
  */
@@ -159,6 +160,116 @@ const GamificationService = {
               (completedGoalCount / (nextAmountRequired || 1)) * 100,
               100,
             ),
+          )
+        }
+        break
+      }
+
+      case "consistency_master": {
+        // Get all badge types related to consistency mastery
+        const consistencyBadges = await BadgeType.find({
+          conditionToMeet: "consistency_master",
+        }).exec()
+
+        if (!consistencyBadges.length) {
+          return // No badges to check
+        }
+
+        // Get login streak from streak model
+        const loginStreak = await StreakService.getUserStreak(userId)
+
+        // Check each badge to see if the user qualifies
+        for (const badge of consistencyBadges) {
+          // Determine which level the user qualifies for based on login streak
+          let qualifiedLevel = null
+          let nextAmountRequired = null
+          let points = 0
+
+          if (loginStreak.longestStreak >= badge.goldAmountRequired) {
+            qualifiedLevel = "Gold"
+            points = badge.goldPointsToAward
+          } else if (loginStreak.longestStreak >= badge.silverAmountRequired) {
+            qualifiedLevel = "Silver"
+            nextAmountRequired = badge.goldAmountRequired
+            points = badge.silverPointsToAward
+          } else if (loginStreak.longestStreak >= badge.bronzeAmountRequired) {
+            qualifiedLevel = "Bronze"
+            nextAmountRequired = badge.silverAmountRequired
+            points = badge.bronzePointsToAward
+          }
+
+          // If the user qualifies for a level, award the badge
+          if (qualifiedLevel) {
+            await BadgeService.awardBadge(
+              userId,
+              badge._id,
+              qualifiedLevel,
+              points,
+            )
+          }
+
+          // Always update the progress of the badge
+          await BadgeService.updateProgress(
+            userId,
+            badge._id,
+            Math.min(
+              (loginStreak.longestStreak / (nextAmountRequired || 1)) * 100,
+              100,
+            ),
+          )
+        }
+        break
+      }
+
+      case "point_earner": {
+        // Get all badge types related to point earning
+        const pointEarnerBadges = await BadgeType.find({
+          conditionToMeet: "point_earner",
+        }).exec()
+
+        if (!pointEarnerBadges.length) {
+          return // No badges to check
+        }
+
+        // Get user's current points
+        const userLevel = await Level.findOne({ user: userId }).exec()
+        const userPoints = userLevel ? userLevel.points : 0
+
+        // Check each badge to see if the user qualifies
+        for (const badge of pointEarnerBadges) {
+          // Determine which level the user qualifies for based on points
+          let qualifiedLevel = null
+          let nextAmountRequired = null
+          let points = 0
+
+          if (userPoints >= badge.goldAmountRequired) {
+            qualifiedLevel = "Gold"
+            points = badge.goldPointsToAward
+          } else if (userPoints >= badge.silverAmountRequired) {
+            qualifiedLevel = "Silver"
+            nextAmountRequired = badge.goldAmountRequired
+            points = badge.silverPointsToAward
+          } else if (userPoints >= badge.bronzeAmountRequired) {
+            qualifiedLevel = "Bronze"
+            nextAmountRequired = badge.silverAmountRequired
+            points = badge.bronzePointsToAward
+          }
+
+          // If the user qualifies for a level, award the badge
+          if (qualifiedLevel) {
+            await BadgeService.awardBadge(
+              userId,
+              badge._id,
+              qualifiedLevel,
+              points,
+            )
+          }
+
+          // Always update the progress of the badge
+          await BadgeService.updateProgress(
+            userId,
+            badge._id,
+            Math.min((userPoints / (nextAmountRequired || 1)) * 100, 100),
           )
         }
         break
