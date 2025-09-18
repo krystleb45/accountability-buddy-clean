@@ -64,19 +64,6 @@ const UserSchema: IUserSchema = new Schema(
       },
     },
 
-    preferences: {
-      language: { type: String, default: "en" },
-      theme: {
-        type: String,
-        enum: ["light", "dark", "auto"],
-        default: "light",
-      },
-      publicProfile: { type: Boolean, default: true },
-      showLocation: { type: Boolean, default: false },
-      showGoals: { type: Boolean, default: true },
-      showInterests: { type: Boolean, default: true },
-    },
-
     // Enhanced Stripe / Subscriptions
     stripeCustomerId: { type: String },
     stripeSubscriptionId: { type: String },
@@ -117,10 +104,8 @@ const UserSchema: IUserSchema = new Schema(
     // Settings
     settings: {
       notifications: {
-        email: { type: Boolean, default: false },
+        email: { type: Boolean, default: true },
         sms: { type: Boolean, default: false },
-        push: { type: Boolean, default: false },
-        enableNotifications: { type: Boolean, default: false },
       },
       privacy: {
         profileVisibility: {
@@ -128,7 +113,6 @@ const UserSchema: IUserSchema = new Schema(
           enum: ["public", "friends", "private"],
           default: "public",
         },
-        searchVisibility: { type: Boolean, default: true },
       },
     },
   },

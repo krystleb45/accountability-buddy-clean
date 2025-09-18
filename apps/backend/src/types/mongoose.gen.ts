@@ -8318,14 +8318,6 @@ export type User = {
       longitude?: number
     }
   }
-  preferences: {
-    language?: string
-    theme?: "light" | "dark" | "auto"
-    publicProfile?: boolean
-    showLocation?: boolean
-    showGoals?: boolean
-    showInterests?: boolean
-  }
   stripeCustomerId?: string
   stripeSubscriptionId?: string
   subscription_status?: "trial" | "active" | "expired" | "canceled" | "past_due"
@@ -8346,12 +8338,9 @@ export type User = {
     notifications: {
       email?: boolean
       sms?: boolean
-      push?: boolean
-      enableNotifications?: boolean
     }
     privacy: {
       profileVisibility?: "public" | "friends" | "private"
-      searchVisibility?: boolean
     }
   }
   _id: mongoose.Types.ObjectId
@@ -8478,14 +8467,6 @@ export type UserDocument = mongoose.Document<
         longitude?: number
       }
     }
-    preferences: {
-      language?: string
-      theme?: "light" | "dark" | "auto"
-      publicProfile?: boolean
-      showLocation?: boolean
-      showGoals?: boolean
-      showInterests?: boolean
-    }
     stripeCustomerId?: string
     stripeSubscriptionId?: string
     subscription_status?:
@@ -8511,12 +8492,9 @@ export type UserDocument = mongoose.Document<
       notifications: {
         email?: boolean
         sms?: boolean
-        push?: boolean
-        enableNotifications?: boolean
       }
       privacy: {
         profileVisibility?: "public" | "friends" | "private"
-        searchVisibility?: boolean
       }
     }
     _id: mongoose.Types.ObjectId

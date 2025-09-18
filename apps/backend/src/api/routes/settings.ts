@@ -1,14 +1,13 @@
-// src/api/routes/setting.ts
 import type { NextFunction, Request, Response } from "express"
 
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
-import { check } from "express-validator"
 import sanitize from "mongo-sanitize"
+import z from "zod"
 
 import * as settingsController from "../controllers/SettingsController"
 import { protect } from "../middleware/auth-middleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
+import validate from "../middleware/validation-middleware"
 
 const router = Router()
 
@@ -29,53 +28,51 @@ function sanitizeBody(req: Request, _res: Response, next: NextFunction): void {
 router.get("/", protect, settingsController.getUserSettings)
 
 /** PUT /api/settings/update */
+const settingsUpdateSchema = z
+  .object({
+    notifications: z.object({
+      email: z.boolean(),
+      sms: z.boolean(),
+    }),
+    privacy: z.object({
+      profileVisibility: z.enum(["public", "friends", "private"]),
+    }),
+  })
+  .partial()
+
+export type SettingsUpdateInput = z.infer<typeof settingsUpdateSchema>
+
 router.put(
   "/update",
   protect,
   settingsLimiter,
   sanitizeBody,
-  [
-    check("emailNotifications").optional().isBoolean(),
-    check("smsNotifications").optional().isBoolean(),
-    check("theme").optional().isIn(["light", "dark"]),
-    check("language").optional().isIn(["en", "es", "fr", "de", "zh"]),
-  ],
-  handleValidationErrors,
+  validate({
+    bodySchema: settingsUpdateSchema,
+  }),
   settingsController.updateUserSettings,
 )
 
 /** PUT /api/settings/password */
+const passwordUpdateSchema = z.object({
+  currentPassword: z.string().min(1, "Current password is required"),
+  newPassword: z.string().min(8, "New password must be at least 8 characters"),
+})
+
+export type PasswordUpdateInput = z.infer<typeof passwordUpdateSchema>
+
 router.put(
   "/password",
   protect,
   settingsLimiter,
   sanitizeBody,
-  [
-    check("currentPassword", "Current password is required").notEmpty(),
-    check("newPassword", "New password must be at least 6 characters").isLength(
-      { min: 6 },
-    ),
-  ],
-  handleValidationErrors,
+  validate({
+    bodySchema: passwordUpdateSchema,
+  }),
   settingsController.updateUserPassword,
 )
 
-/** PUT /api/settings/notifications */
-router.put(
-  "/notifications",
-  protect,
-  settingsLimiter,
-  sanitizeBody,
-  [
-    check("emailNotifications").isBoolean(),
-    check("smsNotifications").isBoolean(),
-    check("pushNotifications").isBoolean(),
-  ],
-  handleValidationErrors,
-  settingsController.updateNotificationPreferences,
-)
-
 /** DELETE /api/settings/account */
-router.delete("/account", protect, settingsController.deactivateUserAccount)
+router.delete("/account", protect, settingsController.deleteUserAccount)
 
 export default router
