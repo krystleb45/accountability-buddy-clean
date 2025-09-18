@@ -20,12 +20,12 @@ const GamificationService = {
     const skip = (page - 1) * limit
 
     const [rawDocs, totalUsers] = await Promise.all([
-      Level.find()
+      Level.find({ role: { $ne: "admin" } })
         .sort({ level: -1, points: -1 })
         .skip(skip)
         .limit(limit)
         .populate("user", "username profileImage"),
-      Level.countDocuments(),
+      Level.countDocuments({ role: { $ne: "admin" } }),
     ])
 
     const entries = []
