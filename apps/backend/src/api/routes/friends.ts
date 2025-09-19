@@ -1,10 +1,12 @@
 // src/api/routes/friends.ts
 import { Router } from "express"
-import { check, param, query } from "express-validator"
+import { check, param } from "express-validator"
+import z from "zod"
 
 import friendshipController from "../controllers/FriendshipController"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import validate from "../middleware/validation-middleware"
 
 const router = Router()
 
@@ -73,11 +75,16 @@ router.get("/", protect, friendshipController.getFriendsList)
  * GET /api/friends/online
  * Get user's online friends
  */
+const onlineFriendsQuerySchema = z.object({
+  limit: z.coerce.number().min(1).max(50).default(5),
+})
+
+export type OnlineFriendsQuery = z.infer<typeof onlineFriendsQuerySchema>
+
 router.get(
   "/online",
   protect,
-  [query("limit").optional().isInt({ min: 1, max: 50 })],
-  handleValidationErrors,
+  validate({ querySchema: onlineFriendsQuerySchema }),
   friendshipController.getOnlineFriends,
 )
 

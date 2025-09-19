@@ -1,20 +1,15 @@
-// src/api/models/Message.ts
-import type { Document, Model, Types } from "mongoose"
+import type { Types } from "mongoose"
+import type {
+  MessageSchema as IMessageSchema,
+  MessageDocument,
+  MessageModel,
+} from "src/types/mongoose.gen"
 
+import { messageStatuses } from "@ab/shared/message"
 import mongoose, { Schema } from "mongoose"
 
-// --- Types ---
-export type MessageType = "private" | "group"
-export type MessageStatus = "sent" | "delivered" | "seen" | "deleted" | "edited"
-
 // --- Reaction Subdocument ---
-export interface IReaction {
-  userId: Types.ObjectId
-  emoji: string
-  reactedAt: Date
-}
-
-const ReactionSchema = new Schema<IReaction>(
+const ReactionSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     emoji: { type: String, required: true },
@@ -24,12 +19,7 @@ const ReactionSchema = new Schema<IReaction>(
 )
 
 // --- Attachment Subdocument ---
-export interface IAttachment {
-  url: string
-  type: "image" | "video" | "file"
-}
-
-const AttachmentSchema = new Schema<IAttachment>(
+const AttachmentSchema = new Schema(
   {
     url: { type: String, required: true, trim: true },
     type: { type: String, enum: ["image", "video", "file"], required: true },
@@ -37,43 +27,8 @@ const AttachmentSchema = new Schema<IAttachment>(
   { _id: false },
 )
 
-// --- Message Document Interface ---
-export interface IMessage extends Document {
-  chatId: Types.ObjectId
-  senderId: Types.ObjectId
-  receiverId?: Types.ObjectId
-  text?: string
-  messageType: MessageType
-  status: MessageStatus
-  reactions: Types.DocumentArray<IReaction>
-  attachments: Types.DocumentArray<IAttachment>
-  replyTo?: Types.ObjectId
-  timestamp: Date
-  createdAt: Date
-  updatedAt: Date
-
-  // Virtuals
-  reactionCount: number
-  attachmentCount: number
-
-  // Instance methods
-  addReaction: (userId: Types.ObjectId, emoji: string) => Promise<IMessage>
-  removeReaction: (userId: Types.ObjectId) => Promise<IMessage>
-  edit: (newText: string) => Promise<IMessage>
-  softDelete: () => Promise<IMessage>
-}
-
-// --- Message Model Interface ---
-export interface IMessageModel extends Model<IMessage> {
-  getByChat: (chatId: Types.ObjectId, limit?: number) => Promise<IMessage[]>
-  getUserMessages: (
-    userId: Types.ObjectId,
-    limit?: number,
-  ) => Promise<IMessage[]>
-}
-
 // --- Schema Definition ---
-const MessageSchema = new Schema<IMessage, IMessageModel>(
+const MessageSchema: IMessageSchema = new Schema(
   {
     chatId: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
     senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
@@ -82,13 +37,12 @@ const MessageSchema = new Schema<IMessage, IMessageModel>(
     messageType: { type: String, enum: ["private", "group"], required: true },
     status: {
       type: String,
-      enum: ["sent", "delivered", "seen", "deleted", "edited"],
+      enum: messageStatuses,
       default: "sent",
     },
     reactions: { type: [ReactionSchema], default: [] },
     attachments: { type: [AttachmentSchema], default: [] },
     replyTo: { type: Schema.Types.ObjectId, ref: "Message" },
-    timestamp: { type: Date, default: (): Date => new Date() },
   },
   {
     timestamps: true,
@@ -98,16 +52,16 @@ const MessageSchema = new Schema<IMessage, IMessageModel>(
 )
 
 // --- Virtuals ---
-MessageSchema.virtual("reactionCount").get(function (this: IMessage): number {
+MessageSchema.virtual("reactionCount").get(function (this): number {
   return this.reactions.length
 })
 
-MessageSchema.virtual("attachmentCount").get(function (this: IMessage): number {
+MessageSchema.virtual("attachmentCount").get(function (this): number {
   return this.attachments.length
 })
 
 // --- Middleware ---
-MessageSchema.pre<IMessage>("save", function (next): void {
+MessageSchema.pre("save", function (next): void {
   if (this.isModified("text") && this.status !== "deleted") {
     this.status = "edited"
   }
@@ -115,69 +69,47 @@ MessageSchema.pre<IMessage>("save", function (next): void {
 })
 
 // --- Instance Methods ---
-MessageSchema.methods.addReaction = async function (
-  this: IMessage,
-  userId: Types.ObjectId,
-  emoji: string,
-): Promise<IMessage> {
-  this.reactions.push({ userId, emoji, reactedAt: new Date() })
-  await this.save()
-  return this
-}
-
-MessageSchema.methods.removeReaction = async function (
-  this: IMessage,
-  userId: Types.ObjectId,
-): Promise<IMessage> {
-  this.reactions = this.reactions.filter(
-    (r): boolean => !r.userId.equals(userId),
-  ) as any
-  await this.save()
-  return this
-}
-
-MessageSchema.methods.edit = async function (
-  this: IMessage,
-  newText: string,
-): Promise<IMessage> {
-  this.text = newText
-  this.status = "edited"
-  await this.save()
-  return this
-}
-
-MessageSchema.methods.softDelete = async function (
-  this: IMessage,
-): Promise<IMessage> {
-  this.status = "deleted"
-  await this.save()
-  return this
+MessageSchema.methods = {
+  async addReaction(this, userId: Types.ObjectId, emoji: string) {
+    this.reactions.push({ userId, emoji, reactedAt: new Date() })
+    await this.save()
+    return this
+  },
+  async removeReaction(this, userId: Types.ObjectId) {
+    this.reactions.pull({ userId })
+    await this.save()
+    return this
+  },
+  async edit(this, newText: string) {
+    this.text = newText
+    this.status = "edited"
+    await this.save()
+    return this
+  },
+  async softDelete(this) {
+    this.status = "deleted"
+    await this.save()
+    return this
+  },
 }
 
 // --- Static Methods ---
-MessageSchema.statics.getByChat = function (
-  this: IMessageModel,
-  chatId: Types.ObjectId,
-  limit = 50,
-): Promise<IMessage[]> {
-  return this.find({ chatId })
-    .sort({ timestamp: -1 })
-    .limit(limit)
-    .populate("senderId", "username profileImage")
-    .populate("reactions.userId", "username")
-    .exec()
-}
-
-MessageSchema.statics.getUserMessages = function (
-  this: IMessageModel,
-  userId: Types.ObjectId,
-  limit = 50,
-): Promise<IMessage[]> {
-  return this.find({ $or: [{ senderId: userId }, { receiverId: userId }] })
-    .sort({ timestamp: -1 })
-    .limit(limit)
-    .populate("chatId")
-    .exec()
+MessageSchema.statics = {
+  getByChat(this, chatId: Types.ObjectId, limit = 50) {
+    return this.find({ chatId })
+      .sort({ timestamp: -1 })
+      .limit(limit)
+      .populate("senderId", "username profileImage")
+      .populate("reactions.userId", "username")
+      .exec()
+  },
+  getUserMessages(this, userId: Types.ObjectId, limit = 50) {
+    return this.find({ $or: [{ senderId: userId }, { receiverId: userId }] })
+      .sort({ timestamp: -1 })
+      .limit(limit)
+      .populate("chatId")
+      .exec()
+  },
 }
 
 // --- Indexes ---
@@ -187,8 +119,7 @@ MessageSchema.index({ status: 1 })
 MessageSchema.index({ replyTo: 1 })
 
 // --- Model Export ---
-export const Message = mongoose.model<IMessage, IMessageModel>(
-  "Message",
-  MessageSchema,
-)
-export default Message
+export const Message: MessageModel = mongoose.model<
+  MessageDocument,
+  MessageModel
+>("Message", MessageSchema)

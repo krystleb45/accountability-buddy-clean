@@ -1,13 +1,15 @@
+import type { User as IUser } from "src/types/mongoose.gen"
+
 import mongoose, { Types } from "mongoose"
 
 import type { IFriendRequest } from "../models/FriendRequest"
-import type { IUser } from "../models/User"
 
 import { createError } from "../middleware/errorHandler"
 import Follow from "../models/Follow"
 import FriendRequest from "../models/FriendRequest"
 import Notification from "../models/Notification"
 import { User } from "../models/User"
+import { FileUploadService } from "./file-upload-service"
 
 interface Follower {
   id: string
@@ -15,7 +17,6 @@ interface Follower {
   avatarUrl?: string
 }
 type Following = Follower
-type FriendDoc = IUser
 
 const FriendService = {
   // ─── FOLLOWS ─────────────────────────────────────────
@@ -200,18 +201,31 @@ const FriendService = {
     })
   },
 
-  async listFriends(userId: string): Promise<FriendDoc[]> {
+  async listFriends(userId: string) {
     if (!mongoose.isValidObjectId(userId))
       throw createError("Invalid user ID", 400)
 
     const user = await User.findById(userId).populate(
       "friends",
-      "username email profileImage",
+      "username email profileImage activeStatus",
     )
 
-    if (!user) throw createError("User not found", 404)
+    if (!user) {
+      throw createError("User not found", 404)
+    }
 
-    return user.friends as unknown as FriendDoc[]
+    const friends = []
+
+    for (const friend of user.friends) {
+      friends.push({
+        ...friend.toObject(),
+        profileImage: friend.profileImage
+          ? await FileUploadService.generateSignedUrl(friend.profileImage)
+          : undefined,
+      })
+    }
+
+    return friends
   },
 
   async pendingRequests(

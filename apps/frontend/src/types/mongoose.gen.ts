@@ -783,11 +783,9 @@ export type Group = {
   members: (User["_id"] | User)[]
   createdBy: User["_id"] | User
   visibility?: "public" | "private"
-  isPublic?: boolean
-  inviteOnly?: boolean
   isActive?: boolean
   lastActivity?: string
-  avatar?: string | null
+  avatarKey?: string | null
   tags: string[]
   unreadMessages: GroupUnreadMessage[]
   typingUsers: (User["_id"] | User)[]
@@ -975,7 +973,6 @@ export type Message = {
   reactions: MessageReaction[]
   attachments: MessageAttachment[]
   replyTo?: Message["_id"] | Message
-  timestamp?: string
   _id: string
   createdAt?: string
   updatedAt?: string

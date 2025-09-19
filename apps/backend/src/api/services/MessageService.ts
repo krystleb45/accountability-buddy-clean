@@ -1,11 +1,12 @@
 // src/api/services/MessageService.ts
-import { Types } from "mongoose"
+import type { Message as IMessage } from "src/types/mongoose.gen"
 
-import type { IMessage, MessageType } from "../models/Message"
+import { Types } from "mongoose"
 
 import { createError } from "../middleware/errorHandler"
 import { Message } from "../models/Message"
 import { User } from "../models/User"
+import { FileUploadService } from "./file-upload-service"
 
 export interface MessagePage {
   messages: IMessage[]
@@ -106,7 +107,7 @@ export default class MessageService {
       senderId,
       receiverId: messageType === "private" ? recipientId : undefined, // Changed from "direct" to "private"
       text: messageContent,
-      messageType: messageType as MessageType,
+      messageType,
       status: "sent",
       timestamp: new Date(),
     })
@@ -412,11 +413,8 @@ export default class MessageService {
   /**
    * Get recent messages for dashboard
    */
-  static async getRecentMessages(
-    userId: string,
-    limit = 5,
-  ): Promise<IMessage[]> {
-    return await Message.find({
+  static async getRecentMessages(userId: string, limit = 5) {
+    const messages = await Message.find({
       $or: [{ senderId: userId }, { receiverId: userId }],
       status: { $ne: "deleted" },
     })
@@ -425,6 +423,32 @@ export default class MessageService {
       .populate("senderId", "username email profileImage")
       .populate("receiverId", "username email profileImage")
       .exec()
+
+    const recentMessages = []
+
+    for (const msg of messages) {
+      recentMessages.push({
+        ...msg,
+        senderId: {
+          ...msg.senderId,
+          profileImage: msg.senderId?.profileImage
+            ? await FileUploadService.generateSignedUrl(
+                msg.senderId.profileImage,
+              )
+            : undefined,
+        },
+        receiverId: {
+          ...msg.receiverId,
+          profileImage: msg.receiverId?.profileImage
+            ? await FileUploadService.generateSignedUrl(
+                msg.receiverId.profileImage,
+              )
+            : undefined,
+        },
+      })
+    }
+
+    return recentMessages
   }
 
   /**

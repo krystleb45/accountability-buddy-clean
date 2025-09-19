@@ -6,9 +6,9 @@ import { getServerSession } from "next-auth/next"
 import dynamic from "next/dynamic"
 import { notFound, redirect } from "next/navigation"
 
-import type { Community as APICommunity } from "@/api/community/communityApi"
+import type { Community as APICommunity } from "@/api/community/community-api"
 
-import { fetchCommunityById } from "@/api/community/communityApi"
+import { fetchCommunityById } from "@/api/community/community-api"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 interface Params {

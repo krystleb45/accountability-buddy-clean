@@ -6,7 +6,7 @@ import type { ChangeEvent } from "react"
 import { useSession } from "next-auth/react"
 import React, { useEffect, useRef, useState } from "react"
 
-import type { Community } from "@/api/community/communityApi"
+import type { Community } from "@/api/community/community-api"
 import type { Message } from "@/api/messages/messageApi"
 
 import { fetchMessages, sendMessage } from "@/api/messages/messageApi"
@@ -84,11 +84,7 @@ export default function ClientCommunityDetail({ community }: Props) {
       </h1>
       <p className="mb-6 text-gray-600">{community.description}</p>
 
-      <div
-        className={`
-        flex-1 space-y-2 overflow-y-auto bg-white p-4 shadow-inner
-      `}
-      >
+      <div className="flex-1 space-y-2 overflow-y-auto bg-white p-4 shadow-inner">
         {messages.map((msg) => (
           <div
             key={msg._id}

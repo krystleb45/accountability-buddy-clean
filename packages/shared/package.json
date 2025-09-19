@@ -6,7 +6,9 @@
   "license": "ISC",
   "exports": {
     "./pricing": "./src/pricing.ts",
-    "./badge-conditions": "./src/badge-conditions.ts"
+    "./badge-conditions": "./src/badge-conditions.ts",
+    "./group-categories": "./src/group-categories.ts",
+    "./message": "./src/message.ts"
   },
   "scripts": {
     "lint": "eslint --fix",

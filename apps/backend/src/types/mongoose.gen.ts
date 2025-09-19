@@ -3716,11 +3716,9 @@ export type Group = {
   members: (User["_id"] | User)[]
   createdBy: User["_id"] | User
   visibility?: "public" | "private"
-  isPublic?: boolean
-  inviteOnly?: boolean
   isActive?: boolean
   lastActivity?: Date
-  avatar?: string | null
+  avatarKey?: string | null
   tags: string[]
   unreadMessages: GroupUnreadMessage[]
   typingUsers: (User["_id"] | User)[]
@@ -3761,14 +3759,14 @@ export type GroupQuery = mongoose.Query<any, GroupDocument, GroupQueries> &
 export type GroupQueries = {}
 
 export type GroupMethods = {
-  addMember: (this: GroupDocument, ...args: any[]) => any
-  removeMember: (this: GroupDocument, ...args: any[]) => any
-  incrementUnread: (this: GroupDocument, ...args: any[]) => any
-  clearUnread: (this: GroupDocument, ...args: any[]) => any
+  addMember: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
+  removeMember: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
+  incrementUnread: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
+  clearUnread: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
 }
 
 export type GroupStatics = {
-  findPublicGroups: (this: GroupModel, ...args: any[]) => any
+  findPublicGroups: (this: GroupModel) => any
 }
 
 /**
@@ -3832,11 +3830,9 @@ export type GroupDocument = mongoose.Document<
     members: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     createdBy: UserDocument["_id"] | UserDocument
     visibility?: "public" | "private"
-    isPublic?: boolean
-    inviteOnly?: boolean
     isActive?: boolean
     lastActivity?: Date
-    avatar?: string | null
+    avatarKey?: string | null
     tags: mongoose.Types.Array<string>
     unreadMessages: mongoose.Types.DocumentArray<GroupUnreadMessageDocument>
     typingUsers: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
@@ -4655,7 +4651,6 @@ export type Message = {
   reactions: MessageReaction[]
   attachments: MessageAttachment[]
   replyTo?: Message["_id"] | Message
-  timestamp?: Date
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
@@ -4696,15 +4691,26 @@ export type MessageQuery = mongoose.Query<
 export type MessageQueries = {}
 
 export type MessageMethods = {
-  addReaction: (this: MessageDocument, ...args: any[]) => any
-  removeReaction: (this: MessageDocument, ...args: any[]) => any
-  edit: (this: MessageDocument, ...args: any[]) => any
-  softDelete: (this: MessageDocument, ...args: any[]) => any
+  addReaction: (
+    this: MessageDocument,
+    userId: Types.ObjectId,
+    emoji: string
+  ) => Promise<any>
+  removeReaction: (
+    this: MessageDocument,
+    userId: Types.ObjectId
+  ) => Promise<any>
+  edit: (this: MessageDocument, newText: string) => Promise<any>
+  softDelete: (this: MessageDocument) => Promise<any>
 }
 
 export type MessageStatics = {
-  getByChat: (this: MessageModel, ...args: any[]) => any
-  getUserMessages: (this: MessageModel, ...args: any[]) => any
+  getByChat: (this: MessageModel, chatId: Types.ObjectId, limit?: number) => any
+  getUserMessages: (
+    this: MessageModel,
+    userId: Types.ObjectId,
+    limit?: number
+  ) => any
 }
 
 /**
@@ -4776,7 +4782,6 @@ export type MessageDocument = mongoose.Document<
     reactions: mongoose.Types.DocumentArray<MessageReactionDocument>
     attachments: mongoose.Types.DocumentArray<MessageAttachmentDocument>
     replyTo?: MessageDocument["_id"] | MessageDocument
-    timestamp?: Date
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date

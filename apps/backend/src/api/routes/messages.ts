@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from "express"
 import { Router } from "express"
 import { check, param, query } from "express-validator"
 import { isValidObjectId } from "mongoose"
+import z from "zod"
 
 import * as MessageController from "../controllers/MessageController"
 import { protect } from "../middleware/auth-middleware"
@@ -11,6 +12,7 @@ import {
   validateFeatureAccess,
   validateSubscription,
 } from "../middleware/subscription-validation"
+import validate from "../middleware/validation-middleware"
 import catchAsync from "../utils/catchAsync"
 
 const router = Router()
@@ -129,17 +131,18 @@ router.post(
  * GET /api/messages/recent
  * Get recent messages for dashboard (all plans)
  */
+const recentMessageQuerySchema = z.object({
+  limit: z.coerce.number().min(1).max(50).default(5),
+})
+
+export type RecentMessageQuery = z.infer<typeof recentMessageQuerySchema>
+
 router.get(
   "/recent",
   protect,
   validateSubscription,
-  [query("limit").optional().isInt({ min: 1, max: 50 })],
-  handleValidationErrors,
-  catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await MessageController.getRecentMessages(req, res, next)
-    },
-  ),
+  validate({ querySchema: recentMessageQuerySchema }),
+  MessageController.getRecentMessages,
 )
 
 /**
@@ -150,11 +153,7 @@ router.get(
   "/unread-count",
   protect,
   validateSubscription,
-  catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await MessageController.getUnreadCount(req, res, next)
-    },
-  ),
+  MessageController.getUnreadCount,
 )
 
 /**

@@ -84,8 +84,8 @@ export const createGroup = catchAsync(
  * GET /api/groups/my-groups - Get user's joined groups (ADDED MISSING FUNCTION)
  */
 export const getMyGroups = catchAsync(
-  async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
-    const userId = req.user!.id
+  async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user.id
     const groups = await GroupService.getMyGroups(userId)
     sendResponse(res, 200, true, "Your groups retrieved successfully", groups)
   },

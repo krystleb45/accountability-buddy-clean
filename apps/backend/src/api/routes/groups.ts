@@ -61,7 +61,7 @@ router.post(
   groupController.createGroup,
 )
 
-// GET /api/groups/my-groups - Get user's joined groups (no middleware needed)
+// GET /api/groups/my-groups - Get user's joined groups
 router.get("/my-groups", protect, groupController.getMyGroups)
 
 // GET /api/groups/:groupId - Get specific group details

@@ -2,6 +2,7 @@
 import type { NextFunction, Response } from "express"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { OnlineFriendsQuery } from "../routes/friends"
 
 import FriendService from "../services/FriendService"
 import catchAsync from "../utils/catchAsync"
@@ -98,15 +99,14 @@ export default {
     },
   ),
 
-  getFriendsList: catchAsync(async (_req, res, next) => {
-    const me = _req.user!.id
-    try {
-      const list = await FriendService.listFriends(me)
+  getFriendsList: catchAsync(
+    async (req: AuthenticatedRequest, res: Response) => {
+      const userId = req.user.id
+
+      const list = await FriendService.listFriends(userId)
       sendResponse(res, 200, true, "Friends list", { friends: list })
-    } catch (err) {
-      return next(err)
-    }
-  }),
+    },
+  ),
 
   getPendingFriendRequests: catchAsync(async (_req, res, next) => {
     const me = _req.user!.id
@@ -134,29 +134,24 @@ export default {
     }
   }),
 
-  // Added getOnlineFriends as part of the default export object
   getOnlineFriends: catchAsync(
-    async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-      const userId = req.user!.id
-      const limit = Number.parseInt(req.query.limit as string) || 5
+    async (
+      req: AuthenticatedRequest<unknown, unknown, unknown, OnlineFriendsQuery>,
+      res: Response,
+    ) => {
+      const userId = req.user.id
+      const limit = req.query.limit
 
-      try {
-        // Use FriendService (not FriendshipService) to match your existing pattern
-        const friends = await FriendService.listFriends(userId)
+      const friends = await FriendService.listFriends(userId)
 
-        // Mock online status for now - replace with real logic
-        const onlineFriends = friends.slice(0, limit).map((friend) => ({
-          ...friend,
-          isOnline: Math.random() > 0.3, // 70% chance of being "online"
-        }))
+      const onlineFriends = friends
+        .filter((friend) => friend.activeStatus === "online")
+        .slice(0, limit)
 
-        sendResponse(res, 200, true, "Online friends fetched successfully", {
-          friends: onlineFriends,
-          count: onlineFriends.length,
-        })
-      } catch (err) {
-        return next(err)
-      }
+      sendResponse(res, 200, true, "Online friends fetched successfully", {
+        friends: onlineFriends,
+        count: onlineFriends.length,
+      })
     },
   ),
 }

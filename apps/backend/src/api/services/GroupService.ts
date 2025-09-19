@@ -1,12 +1,12 @@
 import type { Server } from "socket.io"
+import type { Group as IGroup } from "src/types/mongoose.gen"
 
 import mongoose from "mongoose"
 
-import type { IGroup } from "../models/Group"
 import type { IGroupMessage } from "../models/GroupMessage"
 
 import { logger } from "../../utils/winstonLogger"
-import Group from "../models/Group"
+import { Group } from "../models/Group"
 import GroupMessage from "../models/GroupMessage"
 import Notification from "../models/Notification"
 
@@ -366,29 +366,12 @@ class GroupService {
   /**
    * List groups the user has joined
    */
-  async getMyGroups(userId: string): Promise<FormattedGroup[]> {
+  async getMyGroups(userId: string) {
     const userObjectId = new mongoose.Types.ObjectId(userId)
 
-    const groups = await Group.find({ members: userObjectId })
-      .populate("createdBy", "name")
+    return await Group.find({ members: userObjectId, isActive: true })
       .sort({ lastActivity: -1 })
       .lean()
-
-    return groups.map((group) => ({
-      id: group._id.toString(),
-      name: group.name,
-      description: group.description || "",
-      category: group.category || "general",
-      memberCount: group.members?.length || 0,
-      isPublic: group.isPublic ?? true,
-      isJoined: true,
-      lastActivity:
-        group.lastActivity?.toISOString() || group.createdAt.toISOString(),
-      avatar: group.avatar || null,
-      tags: group.tags || [],
-      createdBy: (group.createdBy as any)?.name || "Unknown",
-      createdAt: group.createdAt.toISOString(),
-    }))
   }
 
   /**
