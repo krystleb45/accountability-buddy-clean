@@ -14,14 +14,14 @@ import {
   FaUserFriends,
 } from "react-icons/fa"
 
-import type { FollowUser } from "@/api/friends/friendApi"
+import type { FollowUser } from "@/api/friends/friend-api"
 
 import {
   acceptFriendRequest,
   declineFriendRequest,
   fetchFriendRequests,
   fetchFriends,
-} from "@/api/friends/friendApi"
+} from "@/api/friends/friend-api"
 
 const FriendsClient: React.FC = () => {
   const { data: session, status } = useSession()

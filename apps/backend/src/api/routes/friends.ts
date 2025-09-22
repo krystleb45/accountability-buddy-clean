@@ -24,8 +24,11 @@ const router = Router()
 router.post(
   "/request",
   protect,
-  [check("recipientId", "Recipient ID is required").isMongoId()],
-  handleValidationErrors,
+  validate({
+    bodySchema: z.object({
+      recipientId: z.string().min(1, "Recipient ID is required"),
+    }),
+  }),
   friendshipController.sendFriendRequest,
 )
 

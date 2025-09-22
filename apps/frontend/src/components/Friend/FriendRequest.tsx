@@ -11,7 +11,7 @@ import {
   acceptFriendRequest,
   declineFriendRequest,
   fetchFriendRequests,
-} from "@/api/friends/friendApi"
+} from "@/api/friends/friend-api"
 
 import styles from "./FriendRequest.module.css"
 

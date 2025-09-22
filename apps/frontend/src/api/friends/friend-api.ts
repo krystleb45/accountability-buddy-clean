@@ -2,15 +2,23 @@
 
 import axios from "axios"
 
-import { http } from "@/lib/http"
+import type { Envelope } from "@/types"
 
-export interface FollowUser {
-  _id: unknown
-  username: unknown
+import { http } from "@/lib/http"
+import { getApiErrorMessage } from "@/utils"
+
+export interface UserRecommendation {
   id: string
+  _id: string
   name: string
-  email?: string
-  profilePicture?: string
+  email: string
+  username: string
+  profileImage: string
+  interests: string[]
+  mutualFriends: number
+  similarityScore: number
+  bio: string
+  category: "fitness" | "study" | "career" | "general"
 }
 
 /**
@@ -238,76 +246,17 @@ export async function fetchFriendRequests(
 
 /**
  * Fetch AI-recommended friends.
- * GET /friends/recommendations?userId=
+ * GET /friends/recommendations
  */
-export async function fetchFriendSuggestions(
-  userId: string,
-): Promise<FollowUser[]> {
-  if (!userId) return []
+export async function fetchFriendSuggestions() {
   try {
-    console.log("🔍 API: Fetching friend suggestions for userId:", userId)
+    const resp = await http.get<
+      Envelope<{ recommendedFriends: UserRecommendation[] }>
+    >("/friends/recommendations")
 
-    const resp = await http.get("/friends/recommendations", {
-      params: { userId },
-    })
-
-    console.log("📡 API: Full response:", resp)
-    console.log("📡 API: Response data:", resp.data)
-    console.log("📡 API: Response data type:", typeof resp.data)
-
-    // Handle the sendResponse format from your backend
-    let recommendations = []
-
-    if (resp.data) {
-      if (Array.isArray(resp.data)) {
-        // Direct array response
-        recommendations = resp.data
-        console.log("📦 API: Using direct array response")
-      } else if (
-        resp.data.success &&
-        resp.data.data &&
-        resp.data.data.recommendedFriends
-      ) {
-        // sendResponse format: { success: true, data: { recommendedFriends: [...] } }
-        recommendations = resp.data.data.recommendedFriends
-        console.log("📦 API: Using sendResponse format with recommendedFriends")
-      } else if (resp.data.data && Array.isArray(resp.data.data)) {
-        // sendResponse format: { success: true, data: [...] }
-        recommendations = resp.data.data
-        console.log("📦 API: Using sendResponse format with direct data array")
-      } else if (
-        resp.data.recommendedFriends &&
-        Array.isArray(resp.data.recommendedFriends)
-      ) {
-        // Flat format: { recommendedFriends: [...] }
-        recommendations = resp.data.recommendedFriends
-        console.log("📦 API: Using flat recommendedFriends format")
-      } else {
-        console.warn("⚠️ API: Unexpected response format:", resp.data)
-        console.warn("⚠️ API: Available keys:", Object.keys(resp.data))
-
-        // Try to find any array in the response
-        for (const [key, value] of Object.entries(resp.data)) {
-          if (Array.isArray(value)) {
-            console.log(`📦 API: Found array in key "${key}":`, value)
-            recommendations = value
-            break
-          }
-        }
-      }
-    }
-
-    console.log("✅ API: Final recommendations:", recommendations)
-    console.log("✅ API: Recommendations count:", recommendations.length)
-
-    return recommendations || []
+    return resp.data.data.recommendedFriends
   } catch (error) {
-    console.error("❌ [friendApi::fetchFriendSuggestions] Full error:", error)
-    if (axios.isAxiosError(error)) {
-      console.error("❌ API: Response data:", error.response?.data)
-      console.error("❌ API: Response status:", error.response?.status)
-    }
-    return []
+    throw new Error(getApiErrorMessage(error as Error))
   }
 }
 
@@ -315,25 +264,11 @@ export async function fetchFriendSuggestions(
  * Send a friend request.
  * POST /friends/request
  */
-export async function sendFriendRequest(
-  userId: string,
-  recipientId: string,
-): Promise<boolean> {
-  if (!userId || !recipientId) return false
+export async function sendFriendRequest(recipientId: string) {
   try {
-    const requestData = { userId, recipientId }
-    console.log("📤 Sending friend request with exact data:", requestData)
-
-    const response = await http.post("/friends/request", requestData)
-    console.log("✅ Friend request response:", response.data)
-    return true
+    await http.post("/friends/request", { recipientId })
   } catch (error) {
-    console.error("❌ [friendApi::sendFriendRequest] Full error:", error)
-    if (axios.isAxiosError(error)) {
-      console.error("❌ Response data:", error.response?.data)
-      console.error("❌ Response status:", error.response?.status)
-    }
-    return false
+    throw new Error(getApiErrorMessage(error as Error))
   }
 }
 
@@ -401,7 +336,9 @@ export async function removeFriend(
   userId: string,
   friendId: string,
 ): Promise<boolean> {
-  if (!userId || !friendId) return false
+  if (!userId || !friendId) {
+    return false
+  }
   try {
     await http.delete(`/friends/remove/${encodeURIComponent(friendId)}`, {
       params: { userId },

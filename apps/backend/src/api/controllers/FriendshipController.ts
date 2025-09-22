@@ -11,19 +11,14 @@ import sendResponse from "../utils/sendResponse"
 export default {
   sendFriendRequest: catchAsync(
     async (
-      req: AuthenticatedRequest<any, { recipientId: string }>,
+      req: AuthenticatedRequest<unknown, unknown, { recipientId: string }>,
       res: Response,
-      next: NextFunction,
     ) => {
-      const me = req.user!.id
-      const them = req.body.recipientId
+      const userId = req.user.id
+      const recipientId = req.body.recipientId
 
-      try {
-        await FriendService.sendRequest(me, them)
-        sendResponse(res, 201, true, "Friend request sent")
-      } catch (err) {
-        return next(err)
-      }
+      await FriendService.sendRequest(userId, recipientId)
+      sendResponse(res, 201, true, "Friend request sent")
     },
   ),
 
@@ -118,21 +113,18 @@ export default {
     }
   }),
 
-  getAIRecommendedFriends: catchAsync(async (_req, res, next) => {
-    const me = _req.user!.id
-    try {
-      const recs = await FriendService.aiRecommendations(me)
-      // console.log("🎯 Controller: Sending recommendations response:", recs);
-      // console.log("🎯 Controller: Recommendations count:", recs?.length || 0);
+  getAIRecommendedFriends: catchAsync(
+    async (req: AuthenticatedRequest, res: Response) => {
+      const userId = req.user.id
+
+      const recs = await FriendService.aiRecommendations(userId)
 
       // Make sure this matches what your frontend expects
       sendResponse(res, 200, true, "Recommendations", {
         recommendedFriends: recs,
       })
-    } catch (err) {
-      return next(err)
-    }
-  }),
+    },
+  ),
 
   getOnlineFriends: catchAsync(
     async (

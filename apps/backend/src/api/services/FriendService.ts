@@ -2,11 +2,10 @@ import type { User as IUser } from "src/types/mongoose.gen"
 
 import mongoose, { Types } from "mongoose"
 
-import type { IFriendRequest } from "../models/FriendRequest"
-
+import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
 import Follow from "../models/Follow"
-import FriendRequest from "../models/FriendRequest"
+import { FriendRequest } from "../models/FriendRequest"
 import Notification from "../models/Notification"
 import { User } from "../models/User"
 import { FileUploadService } from "./file-upload-service"
@@ -75,19 +74,22 @@ const FriendService = {
   },
 
   // ─── FRIEND REQUESTS ─────────────────────────────────
-  async sendRequest(senderId: string, recipientId: string): Promise<void> {
+  async sendRequest(senderId: string, recipientId: string) {
     if (!mongoose.isValidObjectId(recipientId))
       throw createError("Invalid recipient ID", 400)
+
     if (senderId === recipientId)
       throw createError("Cannot friend yourself", 400)
 
-    const exists = await FriendRequest.findOne<IFriendRequest>({
+    const exists = await FriendRequest.findOne({
       $or: [
         { sender: senderId, recipient: recipientId },
         { sender: recipientId, recipient: senderId },
       ],
     })
-    if (exists) throw createError("Request already exists", 400)
+    if (exists) {
+      throw createError("Request already exists", 400)
+    }
 
     await FriendRequest.create({
       sender: senderId,
@@ -243,25 +245,22 @@ const FriendService = {
     )
   },
 
-  // ADD THE aiRecommendations METHOD HERE, INSIDE THE OBJECT
-  async aiRecommendations(userId: string): Promise<any[]> {
-    // console.log("🤖 Getting AI recommendations for user:", userId);
-
+  async aiRecommendations(userId: string) {
     try {
       // Step 1: Get current user data
-      const currentUser = (await User.findById(userId)
+      const currentUser = await User.findById(userId)
         .select(
           "username email profileImage friends goals interests location preferences",
         )
-        .lean()) as any
+        .lean()
 
       if (!currentUser) {
         throw createError("User not found", 404)
       }
 
       // Get current user's friend IDs as strings for exclusion
-      const currentFriendIds = (currentUser.friends || []).map((id: any) =>
-        id.toString(),
+      const currentFriendIds = currentUser.friends.map((friend) =>
+        friend._id.toString(),
       )
 
       // Step 2: Get all pending/sent friend requests to exclude them
@@ -275,14 +274,12 @@ const FriendService = {
       const excludedUserIds = new Set([
         userId, // Exclude self
         ...currentFriendIds, // Exclude current friends
-        ...pendingRequests.map((req) => req.sender.toString()),
-        ...pendingRequests.map((req) => req.recipient.toString()),
+        ...pendingRequests.map((req) => req.sender._id.toString()),
+        ...pendingRequests.map((req) => req.recipient._id.toString()),
       ])
 
-      // Replace the pipeline section in your aiRecommendations method
-
-      // Step 3: Build recommendation pipeline with proper typing
-      const pipeline: any[] = [
+      // Step 3: Build recommendation pipeline
+      const pipeline = [
         // Match potential friends (exclude self, current friends, and pending requests)
         {
           $match: {
@@ -293,6 +290,9 @@ const FriendService = {
             },
             // Only include active users (check both fields for compatibility)
             $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
+            role: {
+              $ne: "admin", // Exclude admins
+            },
           },
         },
 
@@ -550,15 +550,7 @@ const FriendService = {
                       "$friends",
                       {
                         $literal: currentFriendIds.map(
-                          (
-                            id:
-                              | string
-                              | number
-                              | mongoose.mongo.BSON.ObjectId
-                              | Uint8Array<ArrayBufferLike>
-                              | mongoose.mongo.BSON.ObjectIdLike
-                              | undefined,
-                          ) => new Types.ObjectId(id),
+                          (id) => new Types.ObjectId(id),
                         ),
                       },
                     ],
@@ -700,13 +692,11 @@ const FriendService = {
       // Execute the aggregation
       const recommendations = await User.aggregate(pipeline)
 
-      // console.log(`✅ Found ${recommendations.length} friend recommendations for user ${userId}`);
-
       // If we have fewer than 5 recommendations, fill with random active users
       if (recommendations.length < 5) {
         // console.log("🔄 Adding random users to reach minimum recommendations");
 
-        const additionalUsers = (await User.find({
+        const additionalUsers = await User.find({
           _id: {
             $nin: [
               ...Array.from(excludedUserIds).map(
@@ -716,10 +706,11 @@ const FriendService = {
             ],
           },
           $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
+          role: { $ne: "admin" }, // Exclude admins
         })
           .select("username email profileImage profileImage interests bio")
           .limit(5 - recommendations.length)
-          .lean()) as any[]
+          .lean()
 
         // Format additional users to match recommendation structure
         const formattedAdditional = additionalUsers.map((user) => ({
@@ -742,23 +733,31 @@ const FriendService = {
         recommendations.push(...formattedAdditional)
       }
 
+      // fetch signed URLs for profile images
+      for (const rec of recommendations) {
+        if (rec.profileImage && !rec.profileImage.startsWith("http")) {
+          rec.profileImage = await FileUploadService.generateSignedUrl(
+            rec.profileImage,
+          )
+        }
+      }
+
       return recommendations
     } catch (error) {
-      console.error("❌ Error in aiRecommendations:", error)
+      logger.error("❌ Error in aiRecommendations:", error)
 
       // Fallback to basic recommendations in case of error
-      // console.log("🔄 Falling back to basic recommendations");
-
       try {
         const fallbackUsers = (await User.find({
           _id: { $ne: userId },
           $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
+          role: { $ne: "admin" }, // Exclude admins
         })
           .select("username email profileImage profileImage interests bio")
           .limit(6)
           .lean()) as any[]
 
-        return fallbackUsers.map((user) => ({
+        const formattedFallbackUsers = fallbackUsers.map((user) => ({
           id: user._id.toString(),
           _id: user._id.toString(),
           name: user.username || user.email,
@@ -774,12 +773,23 @@ const FriendService = {
             `Hello! I'm ${user.username || "a new user"} looking to connect with others.`,
           category: "general",
         }))
+
+        // fetch signed URLs for profile images
+        for (const rec of formattedFallbackUsers) {
+          if (rec.profileImage && !rec.profileImage.startsWith("http")) {
+            rec.profileImage = await FileUploadService.generateSignedUrl(
+              rec.profileImage,
+            )
+          }
+        }
+
+        return formattedFallbackUsers
       } catch (fallbackError) {
         console.error("❌ Error in fallback recommendations:", fallbackError)
         return []
       }
     }
-  }, // <- Make sure this method ends with a comma, not semicolon
-} // <- This closes the FriendService object
+  },
+}
 
 export default FriendService

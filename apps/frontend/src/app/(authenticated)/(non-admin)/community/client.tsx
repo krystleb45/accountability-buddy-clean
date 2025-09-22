@@ -9,9 +9,9 @@ import {
   MessageSquareDotIcon,
   MessageSquareIcon,
   MessageSquareOff,
-  SearchIcon,
   UserRoundCheckIcon,
   Users2,
+  UserSearchIcon,
   UsersRoundIcon,
   XCircle,
 } from "lucide-react"
@@ -120,9 +120,9 @@ export function CommunityClient() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/community/discover">
-            <SearchIcon />
-            Discover
+          <Link href="/friends/discover">
+            <UserSearchIcon />
+            Discover friends
           </Link>
         </Button>
       </div>

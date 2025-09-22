@@ -3238,7 +3238,7 @@ export type FollowDocument = mongoose.Document<
 export type FriendRequest = {
   sender: User["_id"] | User
   recipient: User["_id"] | User
-  status?: "pending" | "accepted" | "declined" | "rejected"
+  status?: "pending" | "accepted" | "declined"
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
@@ -3279,9 +3279,21 @@ export type FriendRequestQueries = {}
 export type FriendRequestMethods = {}
 
 export type FriendRequestStatics = {
-  sendRequest: (this: FriendRequestModel, ...args: any[]) => any
-  respondRequest: (this: FriendRequestModel, ...args: any[]) => any
-  getRequestsForUser: (this: FriendRequestModel, ...args: any[]) => any
+  sendRequest: (
+    this: FriendRequestModel,
+    sender: Types.ObjectId,
+    recipient: Types.ObjectId
+  ) => Promise<any>
+  respondRequest: (
+    this: FriendRequestModel,
+    requestId: Types.ObjectId,
+    status: FriendRequestStatus
+  ) => Promise<any>
+  getRequestsForUser: (
+    this: FriendRequestModel,
+    userId: Types.ObjectId,
+    status?: FriendRequestStatus
+  ) => any
 }
 
 /**
@@ -3328,7 +3340,7 @@ export type FriendRequestDocument = mongoose.Document<
   FriendRequestMethods & {
     sender: UserDocument["_id"] | UserDocument
     recipient: UserDocument["_id"] | UserDocument
-    status?: "pending" | "accepted" | "declined" | "rejected"
+    status?: "pending" | "accepted" | "declined"
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
@@ -8305,7 +8317,6 @@ export type User = {
   isLocked?: boolean
   active?: boolean
   friends: (User["_id"] | User)[]
-  friendRequests: (User["_id"] | User)[]
   followers: (User["_id"] | User)[]
   following: (User["_id"] | User)[]
   rewards: (Reward["_id"] | Reward)[]
@@ -8450,7 +8461,6 @@ export type UserDocument = mongoose.Document<
     isLocked?: boolean
     active?: boolean
     friends: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
-    friendRequests: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     followers: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     following: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     rewards: mongoose.Types.Array<RewardDocument["_id"] | RewardDocument>

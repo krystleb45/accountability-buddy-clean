@@ -680,7 +680,7 @@ export type Follow = {
 export type FriendRequest = {
   sender: User["_id"] | User
   recipient: User["_id"] | User
-  status?: "pending" | "accepted" | "declined" | "rejected"
+  status?: "pending" | "accepted" | "declined"
   _id: string
   createdAt?: string
   updatedAt?: string
@@ -1666,7 +1666,6 @@ export type User = {
   isLocked?: boolean
   active?: boolean
   friends: (User["_id"] | User)[]
-  friendRequests: (User["_id"] | User)[]
   followers: (User["_id"] | User)[]
   following: (User["_id"] | User)[]
   rewards: (Reward["_id"] | Reward)[]

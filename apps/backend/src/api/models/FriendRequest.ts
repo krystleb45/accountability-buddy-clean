@@ -1,41 +1,16 @@
-// src/api/models/FriendRequest.ts
+import type { FriendRequestStatus } from "@ab/shared/friends"
+import type { Types } from "mongoose"
+import type {
+  FriendRequestDocument,
+  FriendRequestModel,
+  FriendRequestSchema as IFriendRequestSchema,
+} from "src/types/mongoose.gen"
 
-import type { Document, Model, Types } from "mongoose"
-
+import { FRIENDSHIP_STATUS } from "@ab/shared/friends"
 import mongoose, { Schema } from "mongoose"
 
-// --- Types & Interfaces ---
-export type FriendRequestStatus =
-  | "pending"
-  | "accepted"
-  | "declined"
-  | "rejected"
-
-export interface IFriendRequest extends Document {
-  sender: Types.ObjectId // User who sent the request
-  recipient: Types.ObjectId // User receiving the request
-  status: FriendRequestStatus
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface IFriendRequestModel extends Model<IFriendRequest> {
-  sendRequest: (
-    sender: Types.ObjectId,
-    recipient: Types.ObjectId,
-  ) => Promise<IFriendRequest>
-  respondRequest: (
-    requestId: Types.ObjectId,
-    status: FriendRequestStatus,
-  ) => Promise<IFriendRequest | null>
-  getRequestsForUser: (
-    userId: Types.ObjectId,
-    status?: FriendRequestStatus,
-  ) => Promise<IFriendRequest[]>
-}
-
 // --- Schema Definition ---
-const FriendRequestSchema = new Schema<IFriendRequest>(
+const FriendRequestSchema: IFriendRequestSchema = new Schema(
   {
     sender: {
       type: Schema.Types.ObjectId,
@@ -49,7 +24,7 @@ const FriendRequestSchema = new Schema<IFriendRequest>(
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "declined", "rejected"],
+      enum: FRIENDSHIP_STATUS,
       default: "pending",
     },
   },
@@ -67,42 +42,36 @@ FriendRequestSchema.index({ recipient: 1, status: 1 })
 FriendRequestSchema.index({ sender: 1 })
 
 // --- Static Methods ---
-FriendRequestSchema.statics.sendRequest = async function (
-  sender: Types.ObjectId,
-  recipient: Types.ObjectId,
-): Promise<IFriendRequest> {
-  const existing = await this.findOne({ sender, recipient })
-  if (existing) {
-    throw new Error("Friend request already exists")
-  }
-  return this.create({ sender, recipient })
-}
-
-FriendRequestSchema.statics.respondRequest = async function (
-  requestId: Types.ObjectId,
-  status: FriendRequestStatus,
-): Promise<IFriendRequest | null> {
-  const req = await this.findById(requestId)
-  if (!req) return null
-  req.status = status
-  await req.save()
-  return req
-}
-
-FriendRequestSchema.statics.getRequestsForUser = function (
-  userId: Types.ObjectId,
-  status?: FriendRequestStatus,
-): Promise<IFriendRequest[]> {
-  const filter: Record<string, unknown> = { recipient: userId }
-  if (status) filter.status = status
-  return this.find(filter)
-    .sort({ createdAt: -1 })
-    .populate("sender", "username profileImage")
+FriendRequestSchema.statics = {
+  async sendRequest(sender: Types.ObjectId, recipient: Types.ObjectId) {
+    const existing = await this.findOne({ sender, recipient })
+    if (existing) {
+      throw new Error("Friend request already exists")
+    }
+    return this.create({ sender, recipient })
+  },
+  async respondRequest(requestId: Types.ObjectId, status: FriendRequestStatus) {
+    const req = await this.findById(requestId)
+    if (!req) {
+      return null
+    }
+    req.status = status
+    await req.save()
+    return req
+  },
+  getRequestsForUser(userId: Types.ObjectId, status?: FriendRequestStatus) {
+    const filter: Record<string, unknown> = { recipient: userId }
+    if (status) {
+      filter.status = status
+    }
+    return this.find(filter)
+      .sort({ createdAt: -1 })
+      .populate("sender", "username profileImage")
+  },
 }
 
 // --- Model Export ---
-export const FriendRequest = mongoose.model<
-  IFriendRequest,
-  IFriendRequestModel
+export const FriendRequest: FriendRequestModel = mongoose.model<
+  FriendRequestDocument,
+  FriendRequestModel
 >("FriendRequest", FriendRequestSchema)
-export default FriendRequest

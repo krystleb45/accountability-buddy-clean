@@ -40,7 +40,6 @@ const UserSchema: IUserSchema = new Schema(
 
     // Relationships
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     rewards: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reward" }],
