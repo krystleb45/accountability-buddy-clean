@@ -1,6 +1,6 @@
-// src/api/routes/friends.ts
 import { Router } from "express"
-import { check, param } from "express-validator"
+import { param } from "express-validator"
+import { isMongoId } from "validator"
 import z from "zod"
 
 import friendshipController from "../controllers/FriendshipController"
@@ -39,8 +39,14 @@ router.post(
 router.post(
   "/accept",
   protect,
-  [check("requestId", "Request ID is required").isMongoId()],
-  handleValidationErrors,
+  validate({
+    bodySchema: z.object({
+      requestId: z
+        .string()
+        .min(1, "Request ID is required")
+        .refine((val) => isMongoId(val), { message: "Invalid Request ID" }),
+    }),
+  }),
   friendshipController.acceptFriendRequest,
 )
 
@@ -51,9 +57,15 @@ router.post(
 router.post(
   "/decline",
   protect,
-  [check("requestId", "Request ID is required").isMongoId()],
-  handleValidationErrors,
-  friendshipController.rejectFriendRequest,
+  validate({
+    bodySchema: z.object({
+      requestId: z
+        .string()
+        .min(1, "Request ID is required")
+        .refine((val) => isMongoId(val), { message: "Invalid Request ID" }),
+    }),
+  }),
+  friendshipController.declineFriendRequest,
 )
 
 /**

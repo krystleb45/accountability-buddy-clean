@@ -1,4 +1,4 @@
-import type { User as IUser } from "src/types/mongoose.gen"
+import type { User as IUser, UserDocument } from "src/types/mongoose.gen"
 
 import mongoose, { Types } from "mongoose"
 
@@ -105,16 +105,16 @@ const FriendService = {
     })
   },
 
-  async acceptRequest(requestId: string, userId: string): Promise<void> {
-    if (!mongoose.isValidObjectId(requestId))
-      throw createError("Invalid request ID", 400)
+  async acceptRequest(requestId: string, userId: string) {
+    const reqDoc = await FriendRequest.findById(requestId)
 
-    const reqDoc = await FriendRequest.findById<
-      IFriendRequest & mongoose.Document
-    >(requestId)
-    if (!reqDoc) throw createError("Friend request not found", 404)
-    if (reqDoc.recipient.toString() !== userId)
+    if (!reqDoc) {
+      throw createError("Friend request not found", 404)
+    }
+
+    if (reqDoc.recipient._id.toString() !== userId) {
       throw createError("Not allowed", 403)
+    }
 
     reqDoc.status = "accepted"
     await reqDoc.save()
@@ -137,33 +137,26 @@ const FriendService = {
       type: "friend_request",
       link: "/friends",
     })
-    await Notification.createNotification({
-      user: new Types.ObjectId(userId),
-      sender: new Types.ObjectId(userId),
-      message: `You are now friends with ${other}.`,
-      type: "friend_request",
-      link: "/friends",
-    })
   },
 
-  async rejectRequest(requestId: string, userId: string): Promise<void> {
+  async declineRequest(requestId: string, userId: string) {
     if (!mongoose.isValidObjectId(requestId))
       throw createError("Invalid request ID", 400)
 
-    const reqDoc = await FriendRequest.findById<
-      IFriendRequest & mongoose.Document
-    >(requestId)
-    if (!reqDoc) throw createError("Friend request not found", 404)
-    if (reqDoc.recipient.toString() !== userId)
+    const reqDoc = await FriendRequest.findById(requestId)
+    if (!reqDoc) {
+      throw createError("Friend request not found", 404)
+    }
+    if (reqDoc.recipient._id.toString() !== userId)
       throw createError("Not allowed", 403)
 
-    reqDoc.status = "rejected"
+    reqDoc.status = "declined"
     await reqDoc.save()
 
     await Notification.createNotification({
       user: new Types.ObjectId(reqDoc.sender.toString()),
       sender: new Types.ObjectId(userId),
-      message: `${userId} rejected your friend request.`,
+      message: `${userId} declined your friend request.`,
       type: "friend_request",
       link: "/friends",
     })
@@ -207,10 +200,7 @@ const FriendService = {
     if (!mongoose.isValidObjectId(userId))
       throw createError("Invalid user ID", 400)
 
-    const user = await User.findById(userId).populate(
-      "friends",
-      "username email profileImage activeStatus",
-    )
+    const user = await User.findById(userId).populate("friends")
 
     if (!user) {
       throw createError("User not found", 404)
@@ -230,19 +220,31 @@ const FriendService = {
     return friends
   },
 
-  async pendingRequests(
-    userId: string,
-  ): Promise<(IFriendRequest & { sender: IUser })[]> {
+  async pendingRequests(userId: string) {
     if (!mongoose.isValidObjectId(userId))
       throw createError("Invalid user ID", 400)
 
-    return FriendRequest.find({
+    const requests = await FriendRequest.find({
       recipient: userId,
       status: "pending",
-    }).populate<IFriendRequest & { sender: IUser }>(
-      "sender",
-      "username email profileImage",
-    )
+    }).populate("sender")
+
+    // get signed URLs for profile images
+    const populatedRequests = []
+    for (const req of requests) {
+      const sender = req.sender as UserDocument
+      populatedRequests.push({
+        ...req.toObject(),
+        sender: {
+          ...sender.toObject(),
+          profileImage: sender.profileImage
+            ? await FileUploadService.generateSignedUrl(sender.profileImage)
+            : undefined,
+        },
+      })
+    }
+
+    return populatedRequests
   },
 
   async aiRecommendations(userId: string) {

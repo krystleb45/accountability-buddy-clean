@@ -1,20 +1,25 @@
 // src/app/friends/page.client.tsx
 "use client"
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  ArrowLeft,
+  BellIcon,
+  BellRingIcon,
+  CheckIcon,
+  Loader,
+  MessageSquare,
+  SearchIcon,
+  Users2,
+  XCircle,
+  XIcon,
+} from "lucide-react"
 import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
+import Image from "next/image"
 import Link from "next/link"
-import React, { useCallback, useEffect, useState } from "react"
-import {
-  FaArrowLeft,
-  FaBell,
-  FaCheck,
-  FaComments,
-  FaTimes,
-  FaUserFriends,
-} from "react-icons/fa"
-
-import type { FollowUser } from "@/api/friends/friend-api"
+import { useState } from "react"
+import { toast } from "sonner"
 
 import {
   acceptFriendRequest,
@@ -22,432 +27,388 @@ import {
   fetchFriendRequests,
   fetchFriends,
 } from "@/api/friends/friend-api"
+import { LoadingSpinner } from "@/components/loading-spinner"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 
-const FriendsClient: React.FC = () => {
-  const { data: session, status } = useSession()
-  const userId = session?.user?.id as string
+export function FriendsClient() {
+  const { status } = useSession()
 
-  const [friends, setFriends] = useState<FollowUser[]>([])
-  const [friendRequests, setFriendRequests] = useState<
-    { id: string; sender: FollowUser }[]
-  >([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [loadingRequestIds, setLoadingRequestIds] = useState<string[]>([])
 
-  // Load friends & requests once we have a userId
-  useEffect(() => {
-    if (status !== "authenticated" || !userId) {
-      setLoading(false)
-      return
-    }
+  const {
+    data: friends,
+    isLoading: friendsLoading,
+    error: friendsError,
+  } = useQuery({
+    queryKey: ["friends"],
+    queryFn: fetchFriends,
+    enabled: status === "authenticated",
+  })
 
-    const fetchData = async (): Promise<void> => {
-      setLoading(true)
-      try {
-        const [friendsData, requestsData] = await Promise.all([
-          fetchFriends(userId),
-          fetchFriendRequests(userId),
-        ])
-        console.log("🔍 Friends API Response:", friendsData)
-        console.log("🔍 Requests API Response:", requestsData)
+  const {
+    data: requests,
+    isLoading: requestsLoading,
+    error: requestsError,
+  } = useQuery({
+    queryKey: ["friendRequests"],
+    queryFn: fetchFriendRequests,
+    enabled: status === "authenticated",
+  })
 
-        // Ensure we always set arrays
-        const friendsArray = Array.isArray(friendsData) ? friendsData : []
-        const requestsArray = Array.isArray(requestsData) ? requestsData : []
+  const isLoading = friendsLoading || requestsLoading
+  const error = friendsError || requestsError || null
 
-        setFriends(friendsArray)
-        setFriendRequests(requestsArray)
-        setError(null) // Clear any previous errors
-      } catch (err) {
-        console.error("Failed to fetch friends or requests:", err)
-        setError("Failed to load friends data. Please try refreshing the page.")
-        // Set empty arrays as fallback
-        setFriends([])
-        setFriendRequests([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [status, userId])
-
-  const handleAcceptRequest = useCallback(
-    async (requestId: string) => {
-      if (!userId) return
-      try {
-        await acceptFriendRequest(userId, requestId)
-        setFriendRequests((prev) => prev.filter((req) => req.id !== requestId))
-        const updated = await fetchFriends(userId)
-        setFriends(updated || [])
-      } catch (err) {
-        console.error("Error accepting friend request:", err)
-        setError("Failed to accept request.")
-      }
+  const queryClient = useQueryClient()
+  const { mutate: acceptRequest } = useMutation({
+    mutationFn: (requestId: string) => acceptFriendRequest(requestId),
+    onMutate: (requestId: string) => {
+      setLoadingRequestIds((prev) => [...prev, requestId])
     },
-    [userId],
-  )
-
-  const handleRejectRequest = useCallback(
-    async (requestId: string) => {
-      if (!userId) return
-      try {
-        await declineFriendRequest(userId, requestId)
-        setFriendRequests((prev) => prev.filter((req) => req.id !== requestId))
-      } catch (err) {
-        console.error("Error declining friend request:", err)
-        setError("Failed to decline request.")
-      }
+    onSettled: (_, _e, requestId) => {
+      setLoadingRequestIds((prev) => prev.filter((id) => id !== requestId))
     },
-    [userId],
-  )
+    onSuccess: () => {
+      // Refetch friend requests and friends list after accepting
+      queryClient.invalidateQueries({ queryKey: ["friendRequests"] })
+      queryClient.invalidateQueries({ queryKey: ["friends"] })
+      toast.success("Friend request accepted", {
+        description: "You can now chat with your new accountability buddy!",
+      })
+    },
+    onError: (error) => {
+      toast.error("Failed to accept friend request. Please try again.", {
+        description: error.message,
+      })
+    },
+  })
 
-  const safeFriends = Array.isArray(friends) ? friends : []
-  const filteredFriends = safeFriends.filter((f) =>
+  const { mutate: declineRequest } = useMutation({
+    mutationFn: (requestId: string) => declineFriendRequest(requestId),
+    onMutate: (requestId: string) => {
+      setLoadingRequestIds((prev) => [...prev, requestId])
+    },
+    onSettled: (_, _e, requestId) => {
+      setLoadingRequestIds((prev) => prev.filter((id) => id !== requestId))
+    },
+    onSuccess: () => {
+      // Refetch friend requests after declining
+      queryClient.invalidateQueries({ queryKey: ["friendRequests"] })
+      toast.success("Friend request declined")
+    },
+    onError: (error) => {
+      toast.error("Failed to decline friend request. Please try again.", {
+        description: error.message,
+      })
+    },
+  })
+
+  const handleAcceptRequest = async (requestId: string) => {
+    acceptRequest(requestId)
+  }
+
+  const handleRejectRequest = async (requestId: string) => {
+    declineRequest(requestId)
+  }
+
+  const filteredFriends = (friends || []).filter((f) =>
     f?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  if (status === "loading" || loading) {
+  if (status === "loading" || isLoading) {
     return (
-      <div
-        className={`
-          flex min-h-screen items-center justify-center bg-gradient-to-br
-          from-gray-900 via-gray-800 to-black
-        `}
-      >
-        <div className="text-center">
-          <div
-            className={`
-              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
-              border-green-400
-            `}
-          ></div>
-          <p className="text-gray-400">Loading friends...</p>
-        </div>
+      <div className="grid min-h-screen place-items-center">
+        <LoadingSpinner />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div
-        className={`
-          flex min-h-screen items-center justify-center bg-gradient-to-br
-          from-gray-900 via-gray-800 to-black
-        `}
-      >
+      <div className="grid min-h-screen place-items-center">
         <div className="text-center">
-          <p className="mb-4 text-red-500">{error}</p>
-          <Link
-            href="/community"
-            className={`
-              text-green-400
-              hover:text-green-300
-            `}
-          >
-            ← Back to Community
-          </Link>
+          <XCircle size={60} className="mx-auto mb-6 text-destructive" />
+          <p className="mb-2">There was an error loading your friends.</p>
+          <p className="text-sm text-muted-foreground">{error.message}</p>
         </div>
       </div>
     )
   }
 
+  if (!friends || !requests) {
+    return null
+  }
+
   return (
-    <div
-      className={`
-        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
-        text-white
-      `}
-    >
-      <div className="mx-auto max-w-4xl p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <Link
-            href="/community"
-            className={`
-              mb-4 inline-flex items-center text-green-400
-              hover:text-green-300
-            `}
-          >
-            <FaArrowLeft className="mr-2" />
-            Back to Community
-          </Link>
+    <main className="flex min-h-screen flex-col gap-6">
+      <Button variant="link" size="sm" asChild className="self-start !px-0">
+        <Link href="/community">
+          <ArrowLeft /> Back to Community
+        </Link>
+      </Button>
 
-          <div className="flex items-center justify-between">
-            <h1 className="flex items-center text-4xl font-bold text-white">
-              <FaUserFriends className="mr-3 text-green-400" />
-              Friends
-            </h1>
-            {friendRequests.length > 0 && (
-              <div className="relative">
-                <FaBell className="text-3xl text-yellow-400" />
-                <span
-                  className={`
-                    absolute -top-2 -right-2 min-w-[20px] rounded-full
-                    bg-red-500 px-2 py-1 text-center text-xs font-bold
-                    text-white
-                  `}
-                >
-                  {friendRequests.length}
-                </span>
-              </div>
-            )}
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="flex items-center gap-2 text-3xl font-bold">
+          <Users2 size={36} className="text-primary" /> Friends
+        </h1>
+        {requests.length > 0 && (
+          <div className="relative">
+            <BellIcon className="size-8 text-chart-3" />
+            <span
+              className={`
+                absolute top-0 right-0 grid aspect-square min-w-5
+                translate-x-1/3 -translate-y-1/2 place-items-center rounded-full
+                bg-destructive text-xs font-bold
+              `}
+            >
+              {requests.length}
+            </span>
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* Friend Requests Section */}
-        {friendRequests.length > 0 && (
+      {/* Friend Requests Section */}
+      {requests.length > 0 && (
+        <>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className={`
-              mb-8 rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-lg
-            `}
           >
-            <h2
-              className={`
-                mb-4 flex items-center text-2xl font-semibold text-green-400
-              `}
-            >
-              <FaBell className="mr-2" />
-              Pending Friend Requests
-            </h2>
-            <div className="space-y-4">
-              {friendRequests.map((req) => (
-                <motion.div
-                  key={req.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className={`
-                    flex items-center justify-between rounded-lg bg-gray-700 p-4
-                  `}
-                >
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={req.sender.profilePicture || "/default-avatar.png"}
-                      alt="Avatar"
-                      className={`
-                        size-12 rounded-full border-2 border-gray-600
-                        object-cover
-                      `}
-                    />
-                    <div>
-                      <p className="font-semibold text-white">
-                        {req.sender.name}
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        Wants to be your accountability buddy
-                      </p>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <BellRingIcon className="text-yellow-400" />
+                  Pending Friend Requests
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {requests.map((req) => (
+                  <motion.div
+                    key={req._id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className={`
+                      flex items-center justify-between rounded-lg bg-muted p-4
+                    `}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Image
+                        src={req.sender.profileImage || "/default-avatar.png"}
+                        alt="Avatar"
+                        className={`
+                          size-12 rounded-full border-2 border-background
+                          object-cover
+                        `}
+                        width={48}
+                        height={48}
+                      />
+                      <div>
+                        <p className="font-semibold">{req.sender.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Wants to be your accountability buddy
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex space-x-3">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`
-                        flex items-center rounded-lg bg-green-600 px-4 py-2
-                        text-white transition
-                        hover:bg-green-500
-                      `}
-                      onClick={() => handleAcceptRequest(req.id)}
-                    >
-                      <FaCheck className="mr-1" />
-                      Accept
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className={`
-                        flex items-center rounded-lg bg-red-600 px-4 py-2
-                        text-white transition
-                        hover:bg-red-500
-                      `}
-                      onClick={() => handleRejectRequest(req.id)}
-                    >
-                      <FaTimes className="mr-1" />
-                      Decline
-                    </motion.button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+                    <div className="flex space-x-3">
+                      <Button
+                        onClick={() => handleAcceptRequest(req._id)}
+                        disabled={loadingRequestIds.includes(req._id)}
+                      >
+                        <CheckIcon />
+                        Accept
+                        {loadingRequestIds.includes(req._id) && (
+                          <Loader className="animate-spin" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => handleRejectRequest(req._id)}
+                        disabled={loadingRequestIds.includes(req._id)}
+                      >
+                        <XIcon />
+                        Decline
+                        {loadingRequestIds.includes(req._id) && (
+                          <Loader className="animate-spin" />
+                        )}
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </CardContent>
+            </Card>
           </motion.div>
-        )}
+          <Separator />
+        </>
+      )}
 
-        {/* Friends List Section */}
-        <div
+      {/* Friends List Section */}
+
+      {/* Search */}
+      <div className="relative w-full max-w-md">
+        <SearchIcon
           className={`
-            rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-lg
+            absolute top-1/2 left-3 size-4 -translate-y-1/2
+            text-muted-foreground
           `}
-        >
-          <h2
-            className={`
-              mb-6 flex items-center text-2xl font-semibold text-green-400
-            `}
-          >
-            <FaUserFriends className="mr-2" />
-            Your Accountability Buddies ({safeFriends.length})
-          </h2>
+        />
+        <Input
+          type="search"
+          placeholder="Search friends..."
+          className="pl-10"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-          {/* Search */}
-          <input
-            type="text"
-            placeholder="Search friends..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className={`
-              mb-6 w-full rounded-lg border border-gray-600 bg-gray-700 p-4
-              text-white
-              placeholder:text-gray-400
-              focus:border-green-400 focus:ring-2 focus:ring-green-400
-              focus:outline-none
-            `}
-          />
-
-          {/* Friends Grid */}
-          {filteredFriends.length === 0 ? (
-            <div className="py-12 text-center">
-              <FaUserFriends className="mx-auto mb-4 text-6xl text-gray-600" />
-              <p className="mb-2 text-xl text-gray-400">
-                {safeFriends.length === 0
-                  ? "No friends yet"
-                  : "No friends match your search"}
-              </p>
-              <p className="text-gray-500">
-                {safeFriends.length === 0
-                  ? "Start connecting with accountability partners to stay motivated!"
-                  : "Try a different search term"}
-              </p>
-              {safeFriends.length === 0 && (
-                <Link
-                  href="/community/discover"
-                  className={`
-                    mt-4 inline-block rounded-lg bg-green-600 px-6 py-3
-                    text-white transition
-                    hover:bg-green-500
-                  `}
-                >
-                  Find Friends
-                </Link>
-              )}
-            </div>
-          ) : (
-            <div
-              className={`
-                grid grid-cols-1 gap-4
-                md:grid-cols-2
-                lg:grid-cols-3
-              `}
-            >
-              {filteredFriends.map((friend, index) => (
-                <motion.div
-                  key={friend.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`
-                    rounded-lg border border-gray-600 bg-gray-700 p-4
-                    transition-all duration-200
-                    hover:border-green-400
-                  `}
-                >
-                  <div className="mb-4 flex items-center gap-3">
-                    <img
-                      src={friend.profilePicture || "/default-avatar.png"}
-                      alt="Profile"
-                      className={`
-                        size-12 rounded-full border-2 border-gray-600
-                        object-cover
-                      `}
-                    />
-                    <div className="flex-1">
-                      <p className="font-semibold text-white">{friend.name}</p>
-                      <p className="text-sm text-gray-400">
-                        Accountability Buddy
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Link
-                      href={`/messages?friendId=${friend.id}`}
-                      className={`
-                        flex flex-1 items-center justify-center rounded-lg
-                        bg-blue-600 px-3 py-2 text-white transition
-                        hover:bg-blue-500
-                      `}
-                    >
-                      <FaComments className="mr-2" />
-                      Chat
-                    </Link>
-                    <Link
-                      href={`/friends/${friend.id}`}
-                      className={`
-                        flex flex-1 items-center justify-center rounded-lg
-                        bg-gray-600 px-3 py-2 text-white transition
-                        hover:bg-gray-500
-                      `}
-                    >
-                      View Profile
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+      {/* Friends Grid */}
+      {filteredFriends.length === 0 ? (
+        <div className="py-12 text-center">
+          <Users2 className="mx-auto mb-4 size-16 text-muted-foreground" />
+          <p className="text-xl">
+            {friends.length === 0
+              ? "No friends yet"
+              : "No friends match your search"}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {friends.length === 0
+              ? "Start connecting with accountability partners to stay motivated!"
+              : "Try a different search term"}
+          </p>
+          {friends.length === 0 && (
+            <Button asChild className="mt-4">
+              <Link href="/friends/discover">
+                <SearchIcon />
+                Find Friends
+              </Link>
+            </Button>
           )}
         </div>
-
-        {/* Quick Actions */}
+      ) : (
         <div
           className={`
-            mt-8 grid grid-cols-1 gap-4
-            md:grid-cols-3
+            grid grid-cols-1 gap-6
+            md:grid-cols-2
+            lg:grid-cols-3
           `}
         >
-          <Link
-            href="/community/discover"
-            className={`
-              rounded-lg bg-green-600 p-4 text-center transition
-              hover:bg-green-500
-            `}
-          >
-            <div className="mb-2 text-2xl">🔍</div>
-            <div className="font-semibold">Find Friends</div>
-            <div className="text-sm opacity-90">
-              Discover new accountability partners
-            </div>
-          </Link>
+          {filteredFriends.map((friend, index) => (
+            <motion.div
+              key={friend._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src={friend.profileImage || "/default-avatar.png"}
+                      alt={friend.username}
+                      className={`
+                        size-12 rounded-full border-2 border-background
+                        object-cover
+                      `}
+                      width={48}
+                      height={48}
+                    />
+                    <div className="flex-1">
+                      <CardTitle>{friend.name}</CardTitle>
+                      <CardDescription>@{friend.username}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
 
-          <Link
-            href="/community/groups"
-            className={`
-              rounded-lg bg-purple-600 p-4 text-center transition
-              hover:bg-purple-500
-            `}
-          >
-            <div className="mb-2 text-2xl">👥</div>
-            <div className="font-semibold">Join Groups</div>
-            <div className="text-sm opacity-90">
-              Connect with like-minded people
-            </div>
-          </Link>
-
-          <Link
-            href="/messages"
-            className={`
-              rounded-lg bg-blue-600 p-4 text-center transition
-              hover:bg-blue-500
-            `}
-          >
-            <div className="mb-2 text-2xl">💬</div>
-            <div className="font-semibold">Messages</div>
-            <div className="text-sm opacity-90">Chat with your network</div>
-          </Link>
+                <CardFooter
+                  className={`
+                    gap-2
+                    *:flex-1
+                  `}
+                >
+                  <Button variant="secondary" asChild>
+                    <Link href={`/community/${friend._id}`}>View Profile</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href={`/messages?friendId=${friend._id}`}>
+                      <MessageSquare />
+                      Chat
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          ))}
         </div>
+      )}
+
+      {/* Quick Actions */}
+      <div
+        className={`
+          mt-10 grid grid-cols-1 gap-6 border-t pt-6
+          md:grid-cols-3
+        `}
+      >
+        <Link href="/friends/discover" className="group">
+          <Card
+            className={`
+              text-center transition-colors
+              group-hover:bg-muted
+            `}
+          >
+            <CardContent>
+              <SearchIcon className="mx-auto mb-4 size-8 text-primary" />
+              <CardTitle>Find Friends</CardTitle>
+              <CardDescription className="text-pretty">
+                Discover new accountability partners
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/community/groups" className="group">
+          <Card
+            className={`
+              text-center transition-colors
+              group-hover:bg-muted
+            `}
+          >
+            <CardContent>
+              <Users2 className="mx-auto mb-4 size-8 text-chart-2" />
+              <CardTitle>Join Groups</CardTitle>
+              <CardDescription className="text-pretty">
+                Connect with like-minded people
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/messages" className="group">
+          <Card
+            className={`
+              text-center transition-colors
+              group-hover:bg-muted
+            `}
+          >
+            <CardContent>
+              <MessageSquare className="mx-auto mb-4 size-8 text-chart-4" />
+              <CardTitle>Messages</CardTitle>
+              <CardDescription className="text-pretty">
+                Chat with your network
+              </CardDescription>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
-    </div>
+    </main>
   )
 }
-
-export default FriendsClient

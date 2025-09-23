@@ -176,7 +176,7 @@ export function DiscoverClient() {
         <div className="relative w-full max-w-md">
           <SearchIcon
             className={`
-              absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2
+              absolute top-1/2 left-3 size-4 -translate-y-1/2
               text-muted-foreground
             `}
           />
@@ -258,7 +258,7 @@ export function DiscoverClient() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="text-center">
+                <Card className="h-full text-center">
                   <Image
                     src={person.profileImage || "/default-avatar.png"}
                     alt={person.name}
@@ -303,7 +303,7 @@ export function DiscoverClient() {
                       </div>
                     )}
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="mt-auto">
                     <Button
                       type="button"
                       onClick={() => handleSendRequest(person.id)}

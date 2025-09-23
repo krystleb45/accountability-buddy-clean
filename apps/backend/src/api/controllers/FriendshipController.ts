@@ -24,37 +24,27 @@ export default {
 
   acceptFriendRequest: catchAsync(
     async (
-      req: AuthenticatedRequest<any, { requestId: string }>,
+      req: AuthenticatedRequest<unknown, unknown, { requestId: string }>,
       res: Response,
-      next: NextFunction,
     ) => {
-      const me = req.user!.id
+      const userId = req.user.id
       const id = req.body.requestId
 
-      try {
-        await FriendService.acceptRequest(id, me)
-        sendResponse(res, 200, true, "Friend request accepted")
-      } catch (err) {
-        return next(err)
-      }
+      await FriendService.acceptRequest(id, userId)
+      sendResponse(res, 200, true, "Friend request accepted")
     },
   ),
 
-  rejectFriendRequest: catchAsync(
+  declineFriendRequest: catchAsync(
     async (
-      req: AuthenticatedRequest<{ requestId: string }>,
+      req: AuthenticatedRequest<unknown, unknown, { requestId: string }>,
       res: Response,
-      next: NextFunction,
     ) => {
-      const me = req.user!.id
-      const id = req.params.requestId
+      const userId = req.user.id
+      const id = req.body.requestId
 
-      try {
-        await FriendService.rejectRequest(id, me)
-        sendResponse(res, 200, true, "Friend request rejected")
-      } catch (err) {
-        return next(err)
-      }
+      await FriendService.declineRequest(id, userId)
+      sendResponse(res, 200, true, "Friend request declined")
     },
   ),
 
@@ -103,15 +93,15 @@ export default {
     },
   ),
 
-  getPendingFriendRequests: catchAsync(async (_req, res, next) => {
-    const me = _req.user!.id
-    try {
-      const list = await FriendService.pendingRequests(me)
+  getPendingFriendRequests: catchAsync(
+    async (req: AuthenticatedRequest, res: Response) => {
+      const userId = req.user.id
+
+      const list = await FriendService.pendingRequests(userId)
+
       sendResponse(res, 200, true, "Pending requests", { requests: list })
-    } catch (err) {
-      return next(err)
-    }
-  }),
+    },
+  ),
 
   getAIRecommendedFriends: catchAsync(
     async (req: AuthenticatedRequest, res: Response) => {
