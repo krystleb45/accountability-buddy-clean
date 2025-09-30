@@ -51,7 +51,9 @@ async function startServer(): Promise<void> {
     }
 
     // 2) Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URI!)
+    await mongoose.connect(process.env.MONGO_URI!, {
+      dbName: "accountability-buddy",
+    })
     logger.info("✅ MongoDB connected")
 
     // 2a) Check up on email service

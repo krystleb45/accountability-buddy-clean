@@ -44,7 +44,9 @@ async function seedRoles(): Promise<void> {
 
   try {
     // Connect to MongoDB
-    await mongoose.connect(mongoUri)
+    await mongoose.connect(mongoUri, {
+      dbName: "accountability-buddy",
+    })
     logger.info("Connected to MongoDB")
 
     // Fetch existing roles
