@@ -58,7 +58,7 @@ export function LeaderboardPreview() {
                       : null}
               </span>
               <Image
-                src={l.user.profileImage || "/default-avatar.png"}
+                src={l.user.profileImage || "/default-avatar.svg"}
                 alt={l.user.username}
                 width={32}
                 height={32}

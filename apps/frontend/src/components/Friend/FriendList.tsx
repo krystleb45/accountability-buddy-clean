@@ -165,7 +165,7 @@ const FriendList: React.FC = () => {
               <li key={req._id} className={styles.listItem}>
                 <div className={styles.profile}>
                   <img
-                    src={req.sender.profilePicture ?? "/default-avatar.png"}
+                    src={req.sender.profilePicture ?? "/default-avatar.svg"}
                     alt={`${req.sender.name}'s avatar`}
                     className={styles.avatar}
                   />
@@ -211,7 +211,7 @@ const FriendList: React.FC = () => {
             >
               <div className={styles.profile}>
                 <img
-                  src={friend.profilePicture ?? "/default-avatar.png"}
+                  src={friend.profilePicture ?? "/default-avatar.svg"}
                   alt={`${friend.name}'s avatar`}
                   className={styles.avatar}
                 />

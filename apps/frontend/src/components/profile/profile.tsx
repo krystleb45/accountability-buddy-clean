@@ -121,7 +121,7 @@ export function Profile() {
           <Image
             height={64}
             width={64}
-            src={profile.profileImage || "/default-avatar.png"}
+            src={profile.profileImage || "/default-avatar.svg"}
             alt={profile.username || "Avatar"}
             className={`
               size-16 shrink-0 rounded-full border-2 border-background

@@ -93,7 +93,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
           `}
         >
           <Image
-            src={creator.profilePicture || "/default-avatar.png"}
+            src={creator.profilePicture || "/default-avatar.svg"}
             alt={`${creator.username}'s avatar`}
             className="size-8 rounded-full"
           />

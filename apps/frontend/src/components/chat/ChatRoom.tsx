@@ -130,7 +130,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ chatId }) => {
                   )
                 }
                 isSender={msg.senderId === user?.id}
-                avatarUrl={msg.avatarUrl || "/default-avatar.png"}
+                avatarUrl={msg.avatarUrl || "/default-avatar.svg"}
                 timestamp={new Date(msg.timestamp).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",

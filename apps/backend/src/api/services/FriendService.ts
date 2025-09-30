@@ -592,7 +592,7 @@ const FriendService = {
             profileImage: {
               $ifNull: [
                 { $ifNull: ["$profileImage", "$profileImage"] },
-                "/default-avatar.png",
+                "/default-avatar.svg",
               ],
             },
             interests: { $ifNull: ["$interests", []] },
@@ -722,7 +722,7 @@ const FriendService = {
           email: user.email,
           username: user.username,
           profileImage:
-            user.profileImage || user.profileImage || "/default-avatar.png",
+            user.profileImage || user.profileImage || "/default-avatar.svg",
           interests: user.interests || [],
           mutualFriends: 0,
           similarityScore: 1,
@@ -766,7 +766,7 @@ const FriendService = {
           email: user.email,
           username: user.username,
           profileImage:
-            user.profileImage || user.profileImage || "/default-avatar.png",
+            user.profileImage || user.profileImage || "/default-avatar.svg",
           interests: user.interests || [],
           mutualFriends: 0,
           similarityScore: 1,

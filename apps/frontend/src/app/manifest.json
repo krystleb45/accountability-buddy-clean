@@ -1,6 +1,6 @@
 {
   "name": "Accountability Buddy",
-  "short_name": "Accountability Buddy",
+  "short_name": "AB",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#0b131a",
+  "theme_color": "#1dd10e",
   "background_color": "#0b131a",
   "display": "standalone"
 }

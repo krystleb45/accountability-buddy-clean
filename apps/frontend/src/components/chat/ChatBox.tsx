@@ -57,7 +57,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             id: `${data.senderId}-${new Date(data.timestamp).getTime()}`,
             senderName: data.senderName,
             content: data.message,
-            avatarUrl: "/default-avatar.png",
+            avatarUrl: "/default-avatar.svg",
             timestamp: data.timestamp,
           },
         ])
@@ -79,7 +79,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       id: timestamp,
       senderName: user.name,
       content: text,
-      avatarUrl: user.avatarUrl || "/default-avatar.png",
+      avatarUrl: user.avatarUrl || "/default-avatar.svg",
       timestamp,
     }
 

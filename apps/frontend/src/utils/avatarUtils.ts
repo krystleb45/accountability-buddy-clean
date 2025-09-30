@@ -18,7 +18,7 @@ type AvatarUser = Partial<Pick<UserProfile, "avatarUrl" | "fullName">> &
  */
 export function getAvatarUrl(
   user: AvatarUser,
-  fallback = "/default-avatar.png",
+  fallback = "/default-avatar.svg",
 ): string {
   const url = user.avatarUrl?.trim()
   return url && url !== "" ? url : fallback

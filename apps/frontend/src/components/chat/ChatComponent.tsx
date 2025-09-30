@@ -40,7 +40,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ chatId }) => {
               key={msg.id}
               message={msg.content}
               isSender={msg.senderName === "You"}
-              avatarUrl={msg.avatarUrl ?? "/default-avatar.png"}
+              avatarUrl={msg.avatarUrl ?? "/default-avatar.svg"}
               timestamp={new Date(msg.timestamp).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",

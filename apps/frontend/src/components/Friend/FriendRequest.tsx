@@ -119,7 +119,7 @@ const FriendRequestComponent: React.FC = () => {
             >
               <div className={styles.profile}>
                 <img
-                  src={req.sender.profilePicture ?? "/default-avatar.png"}
+                  src={req.sender.profilePicture ?? "/default-avatar.svg"}
                   alt={req.sender.name}
                   className={styles.avatar}
                 />

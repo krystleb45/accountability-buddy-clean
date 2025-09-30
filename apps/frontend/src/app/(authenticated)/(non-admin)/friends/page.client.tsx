@@ -204,7 +204,7 @@ export function FriendsClient() {
                   >
                     <div className="flex items-center gap-2">
                       <Image
-                        src={req.sender.profileImage || "/default-avatar.png"}
+                        src={req.sender.profileImage || "/default-avatar.svg"}
                         alt="Avatar"
                         className={`
                           size-12 rounded-full border-2 border-background
@@ -313,7 +313,7 @@ export function FriendsClient() {
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <Image
-                      src={friend.profileImage || "/default-avatar.png"}
+                      src={friend.profileImage || "/default-avatar.svg"}
                       alt={friend.username}
                       className={`
                         size-12 rounded-full border-2 border-background

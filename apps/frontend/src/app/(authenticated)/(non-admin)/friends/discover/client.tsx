@@ -260,7 +260,7 @@ export function DiscoverClient() {
               >
                 <Card className="h-full text-center">
                   <Image
-                    src={person.profileImage || "/default-avatar.png"}
+                    src={person.profileImage || "/default-avatar.svg"}
                     alt={person.name}
                     className={`
                       mx-auto size-16 rounded-full border-2 border-background

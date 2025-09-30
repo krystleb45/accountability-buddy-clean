@@ -147,7 +147,7 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({
 
         <label className={styles.uploadCard}>
           <img
-            src={avatarPreview || "/default-avatar.png"}
+            src={avatarPreview || "/default-avatar.svg"}
             alt="Avatar preview"
             className={styles.avatarPreview}
           />

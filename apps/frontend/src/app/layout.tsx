@@ -23,6 +23,21 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Accountability Buddy",
   description: "Your goal-tracking accountability partner.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon0.svg", type: "image/svg+xml" },
+      { url: "/icon1.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [
+      { url: "/apple-icon.png", sizes: "180x180" },
+    ],
+  },
+  appleWebApp: {
+    title: "Accountability Buddy",
+    statusBarStyle: "default",
+  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {

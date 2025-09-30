@@ -84,21 +84,6 @@ temp/
 *.tsbuildinfo
 .tsbuildinfo
 
-# ========================
-# 🖼️ Media & Uploads
-# ========================
-uploads/
-public/uploads/
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.svg
-*.webp
-# Add back specific images you want to track:
-# !public/logo.png
-# !public/favicon.ico
 
 # ========================
 # 📱 Mobile & React Native

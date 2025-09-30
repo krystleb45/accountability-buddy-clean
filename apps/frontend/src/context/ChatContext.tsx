@@ -62,7 +62,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
       setUser({
         id: parsed.id,
         name: parsed.name,
-        avatarUrl: parsed.avatarUrl || "/default-avatar.png",
+        avatarUrl: parsed.avatarUrl || "/default-avatar.svg",
       })
       connectSocket(token)
     }
@@ -88,7 +88,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({
         senderName: data.senderName,
         content: data.message,
         timestamp: data.timestamp,
-        avatarUrl: data.avatarUrl || "/default-avatar.png",
+        avatarUrl: data.avatarUrl || "/default-avatar.svg",
       }
       setMessages((prev) => ({
         ...prev,
