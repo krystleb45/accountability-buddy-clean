@@ -513,6 +513,7 @@ export default function SubscriptionClient() {
                         const isDowngradeOption = isDowngrade(plan.id)
                         const newPrice = getNewPrice(plan.id, newBillingCycle)
                         const priceDiff = getPriceDiff(plan.id, newBillingCycle)
+                        const formattedPriceDiff = Math.abs(priceDiff).toFixed(2).replace(/\.00$/, '')
 
                         return (
                           <Card
@@ -545,7 +546,7 @@ export default function SubscriptionClient() {
                                   <div className="mt-1 text-sm">
                                     {priceDiff > 0 ? (
                                       <span className="text-primary">
-                                        +${priceDiff} per{" "}
+                                        +${formattedPriceDiff} per{" "}
                                         {newBillingCycle === "monthly"
                                           ? "month"
                                           : "year"}{" "}
@@ -553,7 +554,7 @@ export default function SubscriptionClient() {
                                       </span>
                                     ) : priceDiff < 0 ? (
                                       <span className="text-chart-3">
-                                        ${Math.abs(priceDiff)} per{" "}
+                                        ${formattedPriceDiff} per{" "}
                                         {newBillingCycle === "monthly"
                                           ? "month"
                                           : "year"}{" "}
