@@ -5,11 +5,10 @@
     "target": "esnext",
     "jsx": "preserve",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "baseUrl": ".",
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
     "typeRoots": ["node_modules/@types"],
@@ -17,7 +16,6 @@
     "allowJs": true,
     "strict": true,
     "strictNullChecks": true,
-    "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,

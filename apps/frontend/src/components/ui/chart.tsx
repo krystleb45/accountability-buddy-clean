@@ -36,7 +36,6 @@ function useChart() {
 }
 
 function ChartContainer({
-  ref,
   id,
   className,
   children,
@@ -47,7 +46,7 @@ function ChartContainer({
   children: React.ComponentProps<
     typeof RechartsPrimitive.ResponsiveContainer
   >["children"]
-} & { ref?: React.RefObject<HTMLDivElement | null> }) {
+}) {
   const uniqueId = React.useId()
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
 
@@ -56,8 +55,8 @@ function ChartContainer({
   return (
     <ChartContext value={contextValue}>
       <div
+        data-slot="chart"
         data-chart={chartId}
-        ref={ref}
         className={cn(
           `
             flex aspect-video justify-center text-xs
@@ -65,14 +64,14 @@ function ChartContainer({
             [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50
             [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border
             [&_.recharts-dot[stroke='#fff']]:stroke-transparent
-            [&_.recharts-layer]:outline-none
+            [&_.recharts-layer]:outline-hidden
             [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border
             [&_.recharts-radial-bar-background-sector]:fill-muted
             [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted
             [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border
-            [&_.recharts-sector]:outline-none
+            [&_.recharts-sector]:outline-hidden
             [&_.recharts-sector[stroke='#fff']]:stroke-transparent
-            [&_.recharts-surface]:outline-none
+            [&_.recharts-surface]:outline-hidden
           `,
           className,
         )}
@@ -86,7 +85,6 @@ function ChartContainer({
     </ChartContext>
   )
 }
-ChartContainer.displayName = "Chart"
 
 function ChartStyle({ id, config }: { id: string; config: ChartConfig }) {
   const colorConfig = Object.entries(config).filter(
@@ -124,7 +122,6 @@ ${colorConfig
 const ChartTooltip = RechartsPrimitive.Tooltip
 
 function ChartTooltipContent({
-  ref,
   active,
   payload,
   className,
@@ -145,7 +142,7 @@ function ChartTooltipContent({
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
     labelKey?: string
-  } & { ref?: React.RefObject<HTMLDivElement | null> }) {
+  }) {
   const { config } = useChart()
 
   const tooltipLabel = React.useMemo(() => {
@@ -192,7 +189,6 @@ function ChartTooltipContent({
 
   return (
     <div
-      ref={ref}
       className={cn(
         `
           grid min-w-[8rem] items-start gap-1.5 rounded-lg border
@@ -232,8 +228,8 @@ function ChartTooltipContent({
                         <div
                           className={cn(
                             `
-                              shrink-0 rounded-[2px]
-                              border-[var(--color-border)] bg-[var(--color-bg)]
+                              shrink-0 rounded-[2px] border-(--color-border)
+                              bg-(--color-bg)
                             `,
                             {
                               "h-2.5 w-2.5": indicator === "dot",
@@ -254,7 +250,7 @@ function ChartTooltipContent({
                     )}
                     <div
                       className={cn(
-                        "flex flex-1 justify-between gap-2 leading-none",
+                        "flex flex-1 justify-between leading-none",
                         nestLabel ? "items-end" : "items-center",
                       )}
                     >
@@ -283,12 +279,10 @@ function ChartTooltipContent({
     </div>
   )
 }
-ChartTooltipContent.displayName = "ChartTooltip"
 
 const ChartLegend = RechartsPrimitive.Legend
 
 function ChartLegendContent({
-  ref,
   className,
   hideIcon = false,
   payload,
@@ -298,7 +292,7 @@ function ChartLegendContent({
   Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
     hideIcon?: boolean
     nameKey?: string
-  } & { ref?: React.RefObject<HTMLDivElement | null> }) {
+  }) {
   const { config } = useChart()
 
   if (!payload?.length) {
@@ -307,7 +301,6 @@ function ChartLegendContent({
 
   return (
     <div
-      ref={ref}
       className={cn(
         "flex items-center justify-center gap-4",
         verticalAlign === "top" ? "pb-3" : "pt-3",
@@ -347,7 +340,6 @@ function ChartLegendContent({
     </div>
   )
 }
-ChartLegendContent.displayName = "ChartLegend"
 
 // Helper to extract item config from a payload.
 function getPayloadConfigFromPayload(

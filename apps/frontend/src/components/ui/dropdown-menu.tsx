@@ -112,7 +112,7 @@ function DropdownMenuItem({
 function DropdownMenuCheckboxItem({
   className,
   children,
-  checked = "indeterminate",
+  checked,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>) {
   return (

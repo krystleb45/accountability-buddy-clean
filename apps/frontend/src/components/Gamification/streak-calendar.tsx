@@ -108,6 +108,7 @@ export function StreakCalendar({ completionDates }: StreakCalendarProps) {
                       z-50 rounded bg-popover px-2 py-1 text-xs
                       text-popover-foreground shadow
                     `}
+                    arrowClassName="bg-popover fill-popover"
                   >
                     {tooltipContent}
                   </TooltipContent>
