@@ -2,6 +2,7 @@ import type { CountryData } from "country-region-data"
 
 import { allCountries as countryRegionData } from "country-region-data"
 import { useEffect, useState } from "react"
+import { CircleFlag } from "react-circle-flags"
 
 import {
   Select,
@@ -56,6 +57,10 @@ function CountrySelect({
       <SelectContent>
         {countries.map(([countryName, countryShortCode]) => (
           <SelectItem key={countryShortCode} value={countryName}>
+            <CircleFlag
+              countryCode={countryShortCode.toLowerCase()}
+              className="size-5"
+            />{" "}
             {countryName}
           </SelectItem>
         ))}
