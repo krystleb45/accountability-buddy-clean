@@ -1,12 +1,14 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { CameraOff, Clock, MapPin, XCircle } from "lucide-react"
+import { CameraOff, Clock, Goal, MapPin, XCircle } from "lucide-react"
 import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 
+import { getMemberGoals } from "@/api/goal/goal-api"
 import { getMemberByUsername } from "@/api/users/user-api"
+import { GoalCard } from "@/components/goals/goal-card"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -48,6 +50,18 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
 
   const currentTime = useGetCurrentTimeWithTimezone(member?.timezone || "UTC")
 
+  const {
+    data: goals,
+    isLoading: isLoadingGoals,
+    error: goalsError,
+  } = useQuery({
+    queryKey: ["member-goals", username],
+    queryFn: async () => {
+      return getMemberGoals(username)
+    },
+    enabled: !!member && member.privacy === "public",
+  })
+
   if (status === "loading" || isLoading) {
     return (
       <div className="grid min-h-screen place-items-center">
@@ -73,180 +87,230 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
   }
 
   return (
-    <MotionCard
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className={cn("w-full overflow-hidden", {
-        "pt-0": member.privacy === "public",
-      })}
+    <motion.div
+      className="flex flex-col gap-6 pb-8"
+      transition={{ staggerChildren: 0.1 }}
     >
-      {/* Cover */}
-      {member.privacy === "public" && (
-        <div className="relative aspect-[5/1] min-h-52 w-full">
-          {member.coverImage ? (
-            <Image
-              src={member.coverImage}
-              alt="Cover"
-              fill
-              sizes="(min-width: 1280px) 1280px, 100vw"
-              className="size-full object-cover"
-              priority
-              key={member.coverImage}
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center bg-muted">
-              <div
-                className={`
-                  flex flex-col items-center gap-2 text-muted-foreground
-                `}
-              >
-                <CameraOff className="size-8" />
-                <p>No Cover Image</p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Avatar */}
-      <CardHeader>
-        <div className="flex items-center gap-4">
-          <Image
-            height={64}
-            width={64}
-            src={member.profileImage || "/default-avatar.svg"}
-            alt={member.username || "Avatar"}
-            className={`
-              size-16 shrink-0 rounded-full border-2 border-background
-              object-cover
-            `}
-            key={member.profileImage}
-          />
-          <div>
-            <CardTitle>{member.name}</CardTitle>
-            <CardDescription>@{member.username}</CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex flex-col gap-6">
-        {member.privacy === "private" ? (
-          <div className="text-center text-muted-foreground">
-            This profile is private.
-          </div>
-        ) : member.privacy === "friends" ? (
-          <div className="text-center text-muted-foreground">
-            This profile is only visible to friends.
-          </div>
-        ) : (
-          <>
-            {/* Bio */}
-            <section>
-              <h2 className="mb-2 text-sm font-bold">Bio</h2>
-              {member.bio ? (
-                <p>{member.bio}</p>
-              ) : (
-                <p className="text-muted-foreground">No bio yet.</p>
-              )}
-            </section>
-
-            {/* Interests */}
-            <section>
-              <h2 className="mb-2 text-sm font-bold">Interests</h2>
-              {member.interests && member.interests.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {member.interests.map((interest) => (
-                    <Badge
-                      key={interest}
-                      variant="outline"
-                      className={`
-                        text-sm
-                        has-[button[disabled]]:opacity-50
-                      `}
-                    >
-                      {interest}
-                    </Badge>
-                  ))}
+      <MotionCard
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={cn("w-full overflow-hidden", {
+          "pt-0": member.privacy === "public",
+        })}
+      >
+        {/* Cover */}
+        {member.privacy === "public" && (
+          <div className="relative aspect-[5/1] min-h-52 w-full">
+            {member.coverImage ? (
+              <Image
+                src={member.coverImage}
+                alt="Cover"
+                fill
+                sizes="(min-width: 1280px) 1280px, 100vw"
+                className="size-full object-cover"
+                priority
+                key={member.coverImage}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-muted">
+                <div
+                  className={`
+                    flex flex-col items-center gap-2 text-muted-foreground
+                  `}
+                >
+                  <CameraOff className="size-8" />
+                  <p>No Cover Image</p>
                 </div>
-              ) : (
-                <p className="text-muted-foreground">No interests yet.</p>
-              )}
-            </section>
+              </div>
+            )}
+          </div>
+        )}
 
-            <div
+        {/* Avatar */}
+        <CardHeader>
+          <div className="flex items-center gap-4">
+            <Image
+              height={64}
+              width={64}
+              src={member.profileImage || "/default-avatar.svg"}
+              alt={member.username || "Avatar"}
               className={`
-                grid grid-cols-1 gap-6
-                md:grid-cols-2
+                size-16 shrink-0 rounded-full border-2 border-background
+                object-cover
               `}
-            >
-              {/* Location */}
+              key={member.profileImage}
+            />
+            <div>
+              <CardTitle>{member.name}</CardTitle>
+              <CardDescription>@{member.username}</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="flex flex-col gap-6">
+          {member.privacy === "private" ? (
+            <div className="text-center text-muted-foreground">
+              This profile is private.
+            </div>
+          ) : member.privacy === "friends" ? (
+            <div className="text-center text-muted-foreground">
+              This profile is only visible to friends.
+            </div>
+          ) : (
+            <>
+              {/* Bio */}
               <section>
-                <h2 className="mb-2 text-sm font-bold">Location</h2>
-                {member.location ? (
-                  <div>
-                    <div className="mb-2 flex items-center gap-2">
-                      <MapPin className="size-5" />{" "}
-                      <p>
-                        {member.location.city}, {member.location.state},{" "}
-                        {member.location.country}
-                      </p>
-                    </div>
-                    {member.location.coordinates && (
-                      <div
-                        className={`
-                          mb-2 flex items-center gap-2 text-sm
-                          text-muted-foreground
-                        `}
-                      >
-                        <Clock className="h-4 w-5" />{" "}
-                        <p className="font-mono">{currentTime}</p>
-                      </div>
-                    )}
-                  </div>
+                <h2 className="mb-2 text-sm font-bold">Bio</h2>
+                {member.bio ? (
+                  <p>{member.bio}</p>
                 ) : (
-                  <p className="text-muted-foreground">No location set.</p>
+                  <p className="text-muted-foreground">No bio yet.</p>
                 )}
               </section>
 
-              {/* Friends */}
+              {/* Interests */}
               <section>
-                <h2 className="mb-2 text-sm font-bold">Friends</h2>
-                {member.friends.length > 0 ? (
-                  <div className="flex -space-x-2">
-                    {member.friends.map((friend) => (
-                      <TooltipProvider key={friend._id}>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Image
-                              height={32}
-                              width={32}
-                              src={friend.profileImage || "/default-avatar.svg"}
-                              alt={friend.username || "Avatar"}
-                              className={`
-                                size-8 shrink-0 rounded-full border-2
-                                border-background object-cover
-                              `}
-                              key={friend.profileImage}
-                            />
-                          </TooltipTrigger>
-
-                          <TooltipContent className="text-center">
-                            <p className="font-bold">{friend.name}</p>
-                            <p>@{friend.username}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                <h2 className="mb-2 text-sm font-bold">Interests</h2>
+                {member.interests && member.interests.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {member.interests.map((interest) => (
+                      <Badge
+                        key={interest}
+                        variant="outline"
+                        className={`
+                          text-sm
+                          has-[button[disabled]]:opacity-50
+                        `}
+                      >
+                        {interest}
+                      </Badge>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No friends yet.</p>
+                  <p className="text-muted-foreground">No interests yet.</p>
                 )}
               </section>
+
+              <div
+                className={`
+                  grid grid-cols-1 gap-6
+                  md:grid-cols-2
+                `}
+              >
+                {/* Location */}
+                <section>
+                  <h2 className="mb-2 text-sm font-bold">Location</h2>
+                  {member.location ? (
+                    <div>
+                      <div className="mb-2 flex items-center gap-2">
+                        <MapPin className="size-5" />{" "}
+                        <p>
+                          {member.location.city}, {member.location.state},{" "}
+                          {member.location.country}
+                        </p>
+                      </div>
+                      {member.location.coordinates && (
+                        <div
+                          className={`
+                            mb-2 flex items-center gap-2 text-sm
+                            text-muted-foreground
+                          `}
+                        >
+                          <Clock className="h-4 w-5" />{" "}
+                          <p className="font-mono">{currentTime}</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">No location set.</p>
+                  )}
+                </section>
+
+                {/* Friends */}
+                <section>
+                  <h2 className="mb-2 text-sm font-bold">Friends</h2>
+                  {member.friends.length > 0 ? (
+                    <div className="flex -space-x-2">
+                      {member.friends.map((friend) => (
+                        <TooltipProvider key={friend._id}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Image
+                                height={32}
+                                width={32}
+                                src={
+                                  friend.profileImage || "/default-avatar.svg"
+                                }
+                                alt={friend.username || "Avatar"}
+                                className={`
+                                  size-8 shrink-0 rounded-full border-2
+                                  border-background object-cover
+                                `}
+                                key={friend.profileImage}
+                              />
+                            </TooltipTrigger>
+
+                            <TooltipContent className="text-center">
+                              <p className="font-bold">{friend.name}</p>
+                              <p>@{friend.username}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground">No friends yet.</p>
+                  )}
+                </section>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </MotionCard>
+      <MotionCard
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Goal className="text-primary" /> Goals
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoadingGoals ? (
+            <div className="grid min-h-32 place-items-center">
+              <LoadingSpinner />
             </div>
-          </>
-        )}
-      </CardContent>
-    </MotionCard>
+          ) : goalsError ? (
+            <div className="grid min-h-32 place-items-center">
+              <div className="text-center">
+                <XCircle size={40} className="mx-auto mb-4 text-destructive" />
+                <p className="text-sm text-muted-foreground">
+                  {(goalsError as Error).message}
+                </p>
+              </div>
+            </div>
+          ) : goals && goals.length > 0 ? (
+            <div
+              className={`
+                grid grid-cols-1 gap-6
+                sm:grid-cols-2
+                lg:grid-cols-3
+              `}
+            >
+              {goals.map((goal) => (
+                <GoalCard key={goal._id} goal={goal} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground">
+              This member has not set any public goals yet.
+            </p>
+          )}
+        </CardContent>
+      </MotionCard>
+    </motion.div>
   )
 }

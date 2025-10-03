@@ -118,4 +118,19 @@ router.patch(
   }),
 )
 
+/**
+ * GET /api/goals/member/:username
+ * Get public goals for a specific member by username
+ */
+router.get(
+  "/member/:username",
+  protect,
+  validate({
+    paramsSchema: z.object({
+      username: z.string(),
+    }),
+  }),
+  goalController.getPublicGoalsByMemberUsername,
+)
+
 export default router

@@ -369,4 +369,18 @@ export class GoalService {
       {} as Record<string, number>,
     )
   }
+
+  static async getUserPublicGoals(userId: string) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new CustomError("Invalid user ID", 400)
+    }
+
+    return await Goal.find({
+      user: userId,
+      visibility: "public",
+      status: { $ne: "archived" },
+    })
+      .sort({ createdAt: -1 })
+      .exec()
+  }
 }

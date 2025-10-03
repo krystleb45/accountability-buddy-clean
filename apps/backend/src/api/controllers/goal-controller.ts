@@ -259,3 +259,22 @@ export const deleteGoal = catchAsync(
     sendResponse(res, 200, true, "Goal deleted successfully")
   },
 )
+
+export const getPublicGoalsByMemberUsername = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ username: string }>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const { username } = req.params
+
+    const member = await User.findOne({ username })
+    if (!member) {
+      return next(createError("Member not found", 404))
+    }
+
+    const goals = await GoalService.getUserPublicGoals(member._id.toString())
+
+    sendResponse(res, 200, true, "Member's public goals retrieved", { goals })
+  },
+)
