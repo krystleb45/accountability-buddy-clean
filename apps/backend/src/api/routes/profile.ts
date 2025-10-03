@@ -16,6 +16,19 @@ const updateProfileSchema = z.object({
   username: z.string().trim().optional(),
   bio: z.string().trim().optional(),
   interests: z.array(z.string().trim()).optional(),
+  location: z
+    .object({
+      city: z.string().trim(),
+      state: z.string().trim(),
+      country: z.string().trim(),
+      coordinates: z
+        .object({
+          latitude: z.number().min(-90).max(90),
+          longitude: z.number().min(-180).max(180),
+        })
+        .optional(),
+    })
+    .optional(),
 })
 export type UpdateProfileData = z.infer<typeof updateProfileSchema>
 

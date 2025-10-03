@@ -2,6 +2,7 @@ import type { UpdateProfileData } from "../routes/profile"
 
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
+import { GeocodingService } from "./geocoding-service"
 
 export class ProfileService {
   /**
@@ -10,6 +11,15 @@ export class ProfileService {
   static async updateProfile(userId: string, updates: UpdateProfileData) {
     if (Object.keys(updates).length === 0) {
       throw createError("No updatable fields provided", 400)
+    }
+
+    if ("location" in updates && !updates.location.coordinates) {
+      const coordinates = await GeocodingService.geocode(
+        updates.location.city,
+        updates.location.state,
+        updates.location.country,
+      )
+      updates.location.coordinates = coordinates
     }
 
     await User.findByIdAndUpdate(userId, updates).exec()
