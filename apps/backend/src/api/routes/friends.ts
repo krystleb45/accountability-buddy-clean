@@ -6,6 +6,7 @@ import z from "zod"
 import friendshipController from "../controllers/FriendshipController"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import { isVerified } from "../middleware/is-verified-middleware"
 import validate from "../middleware/validation-middleware"
 
 const router = Router()
@@ -24,6 +25,7 @@ const router = Router()
 router.post(
   "/request",
   protect,
+  isVerified,
   validate({
     bodySchema: z.object({
       recipientId: z.string().min(1, "Recipient ID is required"),
@@ -39,6 +41,7 @@ router.post(
 router.post(
   "/accept",
   protect,
+  isVerified,
   validate({
     bodySchema: z.object({
       requestId: z
@@ -57,6 +60,7 @@ router.post(
 router.post(
   "/decline",
   protect,
+  isVerified,
   validate({
     bodySchema: z.object({
       requestId: z
