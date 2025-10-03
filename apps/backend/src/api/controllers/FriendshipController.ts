@@ -4,7 +4,7 @@ import type { NextFunction, Response } from "express"
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 import type { OnlineFriendsQuery } from "../routes/friends"
 
-import FriendService from "../services/FriendService"
+import FriendService from "../services/friend-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 

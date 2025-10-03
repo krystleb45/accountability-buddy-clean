@@ -1,7 +1,7 @@
 // src/api/controllers/FollowController.ts
 import type { NextFunction, Request, Response } from "express"
 
-import FriendService from "../services/FriendService"
+import FriendService from "../services/friend-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 

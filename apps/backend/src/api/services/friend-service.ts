@@ -611,13 +611,19 @@ const FriendService = {
                             $ifNull: [
                               {
                                 $setIntersection: [
-                                  "$interests",
+                                  {
+                                    $map: {
+                                      input: { $ifNull: ["$interests", []] },
+                                      as: "interest",
+                                      in: { $toLower: "$$interest" },
+                                    },
+                                  },
                                   [
-                                    "Fitness",
-                                    "Running",
-                                    "Yoga",
-                                    "Swimming",
-                                    "Cycling",
+                                    "fitness",
+                                    "running",
+                                    "yoga",
+                                    "swimming",
+                                    "cycling",
                                   ],
                                 ],
                               },
@@ -638,13 +644,19 @@ const FriendService = {
                             $ifNull: [
                               {
                                 $setIntersection: [
-                                  "$interests",
+                                  {
+                                    $map: {
+                                      input: { $ifNull: ["$interests", []] },
+                                      as: "interest",
+                                      in: { $toLower: "$$interest" },
+                                    },
+                                  },
                                   [
-                                    "Programming",
-                                    "Study",
-                                    "Learning",
-                                    "Reading",
-                                    "Education",
+                                    "programming",
+                                    "study",
+                                    "learning",
+                                    "reading",
+                                    "education",
                                   ],
                                 ],
                               },
@@ -665,12 +677,18 @@ const FriendService = {
                             $ifNull: [
                               {
                                 $setIntersection: [
-                                  "$interests",
+                                  {
+                                    $map: {
+                                      input: { $ifNull: ["$interests", []] },
+                                      as: "interest",
+                                      in: { $toLower: "$$interest" },
+                                    },
+                                  },
                                   [
-                                    "Business",
-                                    "Career",
-                                    "Leadership",
-                                    "Networking",
+                                    "business",
+                                    "career",
+                                    "leadership",
+                                    "networking",
                                   ],
                                 ],
                               },

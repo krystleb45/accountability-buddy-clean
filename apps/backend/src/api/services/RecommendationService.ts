@@ -9,7 +9,7 @@ import type { IUser } from "../models/User"
 
 import BlogService from "./blogService"
 import BookService from "./book-service"
-import FriendshipService from "./FriendService"
+import FriendshipService from "./friend-service"
 import GoalService from "./goal-service"
 
 export interface RecommendationResult<T> {
