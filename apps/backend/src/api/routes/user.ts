@@ -1,10 +1,12 @@
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
+import z from "zod"
 
 import * as userCtrl from "../controllers/userController"
 import { protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import validate from "../middleware/validation-middleware"
 
 const router = Router()
 
@@ -15,6 +17,21 @@ const sensitiveLimiter = rateLimit({
 })
 
 router.use(protect)
+
+/**
+ * GET /api/users/:username
+ * Get member info by username
+ */
+router.get(
+  "/:username",
+  protect,
+  validate({
+    paramsSchema: z.object({
+      username: z.string(),
+    }),
+  }),
+  userCtrl.getMemberInfo,
+)
 
 // Profile
 router.get("/profile", protect, userCtrl.getUserProfile)

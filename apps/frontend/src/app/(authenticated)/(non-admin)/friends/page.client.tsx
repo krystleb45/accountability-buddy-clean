@@ -214,7 +214,17 @@ export function FriendsClient() {
                         height={48}
                       />
                       <div>
-                        <p className="font-semibold">{req.sender.name}</p>
+                        <p className="font-semibold">
+                          <Button
+                            variant="link"
+                            asChild
+                            className="!px-0 !py-0 text-base"
+                          >
+                            <Link href={`/member/${req.sender.username}`}>
+                              {req.sender.name}
+                            </Link>
+                          </Button>
+                        </p>
                         <p className="text-sm text-muted-foreground">
                           Wants to be your accountability buddy
                         </p>
@@ -336,7 +346,9 @@ export function FriendsClient() {
                   `}
                 >
                   <Button variant="secondary" asChild>
-                    <Link href={`/community/${friend._id}`}>View Profile</Link>
+                    <Link href={`/member/${friend.username}`}>
+                      View Profile
+                    </Link>
                   </Button>
                   <Button asChild>
                     <Link href={`/messages?friendId=${friend._id}`}>

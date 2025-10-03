@@ -7,6 +7,17 @@ import { UserService } from "../services/user-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
+export const getMemberInfo = catchAsync(
+  async (req: AuthenticatedRequest<{ username: string }>, res: Response) => {
+    const member = await UserService.getMemberByUsername(
+      req.params.username,
+      req.user.id,
+    )
+
+    sendResponse(res, 200, true, "Member info fetched", { member })
+  },
+)
+
 export const getUserProfile = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {
     const user = await UserService.getUserById(req.user!.id)

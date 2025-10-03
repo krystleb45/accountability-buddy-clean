@@ -303,12 +303,21 @@ export function DiscoverClient() {
                       </div>
                     )}
                   </CardContent>
-                  <CardFooter className="mt-auto">
+                  <CardFooter
+                    className={`
+                      mt-auto gap-4
+                      *:flex-1
+                    `}
+                  >
+                    <Button variant="secondary" asChild>
+                      <Link href={`/member/${person.username}`}>
+                        View Profile
+                      </Link>
+                    </Button>
                     <Button
                       type="button"
                       onClick={() => handleSendRequest(person.id)}
                       disabled={sendingRequests.has(person.id)}
-                      className="w-full"
                     >
                       <UserPlus />
                       {sendingRequests.has(person.id)

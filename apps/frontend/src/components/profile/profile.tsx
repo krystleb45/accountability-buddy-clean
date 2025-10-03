@@ -134,8 +134,8 @@ export function Profile() {
             key={profile.profileImage}
           />
           <div>
-            <CardTitle>{profile.username}</CardTitle>
-            <CardDescription>{profile.email}</CardDescription>
+            <CardTitle>{profile.name}</CardTitle>
+            <CardDescription>@{profile.username}</CardDescription>
           </div>
         </div>
         <CardAction className="row-span-1">
@@ -284,13 +284,16 @@ export function Profile() {
                   {profile.location.country}
                 </p>
               </div>
-              {/* prettier-ignore */}
-              <div className={`
-                mb-2 flex items-center gap-2 text-sm text-muted-foreground
-              `}>
-                <Clock className="h-4 w-5" />{" "}
-                <p className="font-mono">{currentTime}</p>
-              </div>
+              {profile.location.coordinates && (
+                <div
+                  className={`
+                    mb-2 flex items-center gap-2 text-sm text-muted-foreground
+                  `}
+                >
+                  <Clock className="h-4 w-5" />{" "}
+                  <p className="font-mono">{currentTime}</p>
+                </div>
+              )}
             </div>
           ) : (
             <p className="text-muted-foreground">No location set.</p>

@@ -6,6 +6,7 @@ export function useProfile() {
   return {
     profile: user
       ? {
+          name: user.name,
           username: user.username,
           email: user.email,
           bio: user.bio,

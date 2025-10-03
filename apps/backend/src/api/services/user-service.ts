@@ -8,12 +8,13 @@ import { Types } from "mongoose"
 import type { IBadge } from "../models/Badge"
 import type { CheckInDocument } from "../models/CheckIn"
 
+import { CustomError } from "../middleware/errorHandler"
 import Badge from "../models/Badge"
 import CheckIn from "../models/CheckIn" // <-- ensure this model exists
 import { Goal } from "../models/Goal"
 import Streak from "../models/Streak"
 import { User } from "../models/User"
-import { CustomError } from "./errorHandler"
+import { FileUploadService } from "./file-upload-service"
 
 interface LeaderboardOpts {
   sortBy: "xp" | "goals" | "streaks"
@@ -21,6 +22,83 @@ interface LeaderboardOpts {
 }
 
 export class UserService {
+  static async getMemberByUsername(username: string, currentUserId: string) {
+    const publicFields: (keyof IUser)[] = [
+      "username",
+      "profileImage",
+      "name",
+      "bio",
+      "location",
+      "coverImage",
+      "friends",
+      "interests",
+      "settings",
+    ]
+    const user = await User.findOne({ username })
+      .select(publicFields.join(" "))
+      .populate("friends", "username profileImage name") // Populate friends with limited fields
+
+    if (!user) {
+      throw new CustomError("User not found", 404)
+    }
+
+    if (user.settings.privacy.profileVisibility === "private") {
+      // return only basic public info
+      return {
+        username: user.username,
+        profileImage: user.profileImage,
+        name: user.name,
+        privacy: user.settings.privacy.profileVisibility,
+      }
+    }
+
+    if (
+      user.settings.privacy.profileVisibility === "friends" &&
+      !user.friends.some((friend) => friend._id.toString() === currentUserId)
+    ) {
+      // return only basic public info
+      return {
+        username: user.username,
+        profileImage: user.profileImage,
+        name: user.name,
+        privacy: user.settings.privacy.profileVisibility,
+      }
+    }
+
+    const userData: IUser & {
+      timezone: string
+      privacy: IUser["settings"]["privacy"]["profileVisibility"]
+      friends: Pick<IUser, "_id" | "username" | "profileImage" | "name">[]
+    } = user.toObject()
+    delete userData.settings // Remove settings from the response
+    userData.timezone = await user.getTimezone()
+    userData.privacy = "public"
+
+    if (user.profileImage) {
+      userData.profileImage = await FileUploadService.generateSignedUrl(
+        user.profileImage,
+      )
+    }
+
+    if (user.coverImage) {
+      userData.coverImage = await FileUploadService.generateSignedUrl(
+        user.coverImage,
+      )
+    }
+
+    if (userData.friends.length > 0) {
+      for (const friend of userData.friends) {
+        if (friend.profileImage) {
+          friend.profileImage = await FileUploadService.generateSignedUrl(
+            friend.profileImage,
+          )
+        }
+      }
+    }
+
+    return userData
+  }
+
   static async getUserById(userId: string) {
     const user = await User.findById(userId).select("-password")
     if (!user) {
