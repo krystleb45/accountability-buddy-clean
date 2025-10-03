@@ -1,27 +1,36 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import {
   AwardIcon,
   CameraOff,
   Clock,
   Goal,
+  Loader,
   MapPin,
+  MessageSquare,
+  UserPlus2,
   XCircle,
 } from "lucide-react"
 import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
+import Link from "next/link"
+import { useMemo } from "react"
+import { toast } from "sonner"
 
 import { fetchBadgesByUsername } from "@/api/badge/badge-api"
+import { sendFriendRequest } from "@/api/friends/friend-api"
 import { getMemberGoals } from "@/api/goal/goal-api"
 import { getMemberByUsername } from "@/api/users/user-api"
 import { BadgeCard } from "@/components/badge/badge-card"
 import { GoalCard } from "@/components/goals/goal-card"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -33,6 +42,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useAuth } from "@/context/auth/auth-context"
 import { useGetCurrentTimeWithTimezone } from "@/hooks/use-get-current-time-with-timezone"
 import { cn } from "@/lib/utils"
 
@@ -44,6 +54,7 @@ const MotionCard = motion.create(Card)
 
 export function MemberPageClient({ username }: MemberPageClientProps) {
   const { status } = useSession()
+  const { user } = useAuth()
 
   const {
     data: member,
@@ -57,7 +68,26 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
     enabled: status === "authenticated" && !!username, // Only run the query if username is provided
   })
 
+  const { mutate: sendRequest, isPending: isSendingRequest } = useMutation({
+    mutationFn: (recipientId: string) => sendFriendRequest(recipientId),
+    onSuccess: async () => {
+      toast.success("Friend request sent!")
+    },
+    onError: (error) => {
+      toast.error("Error sending friend request", {
+        description: error.message,
+      })
+    },
+  })
+
   const currentTime = useGetCurrentTimeWithTimezone(member?.timezone || "UTC")
+
+  const isFriend = useMemo(() => {
+    if (!user || !member) {
+      return false
+    }
+    return member.friends.some((friend) => friend._id === user._id)
+  }, [user, member])
 
   const {
     data: goals,
@@ -167,6 +197,31 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
               <CardDescription>@{member.username}</CardDescription>
             </div>
           </div>
+
+          <CardAction>
+            {isFriend ? (
+              <Button asChild variant="outline">
+                <Link href={`/messages?friendId=${member._id}`}>
+                  <MessageSquare />
+                  Chat
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                disabled={isSendingRequest}
+                onClick={() => sendRequest(member._id)}
+              >
+                <UserPlus2 />{" "}
+                {isSendingRequest ? (
+                  <>
+                    Sending... <Loader className="animate-spin" />
+                  </>
+                ) : (
+                  "Add Friend"
+                )}
+              </Button>
+            )}
+          </CardAction>
         </CardHeader>
 
         <CardContent className="flex flex-col gap-6">
