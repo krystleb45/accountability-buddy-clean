@@ -7,6 +7,7 @@ import type { BadgeCreateInput } from "../routes/badge"
 import { logger } from "../../utils/winstonLogger"
 import { Badge } from "../models/Badge"
 import { BadgeType } from "../models/BadgeType"
+import { User } from "../models/User"
 import { FileUploadService } from "./file-upload-service"
 import GamificationService from "./gamification-service"
 
@@ -176,5 +177,57 @@ export default class BadgeService {
       expiresAt: { $lt: new Date() },
     })
     return result.deletedCount ?? 0
+  }
+
+  /** Get badges for a member by their username (public profile) */
+  static async getBadgesByUsername(username: string) {
+    const badges = await Badge.aggregate([
+      {
+        $lookup: {
+          from: User.collection.name,
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: "$userDetails" },
+      { $match: { "userDetails.username": username } },
+      {
+        $lookup: {
+          from: BadgeType.collection.name,
+          localField: "badgeType",
+          foreignField: "_id",
+          as: "badgeTypeDetails",
+        },
+      },
+      { $unwind: "$badgeTypeDetails" },
+      {
+        $project: {
+          _id: 1,
+          user: 1,
+          badgeType: "$badgeTypeDetails",
+          level: 1,
+          progress: 1,
+          isShowcased: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          expiresAt: 1,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ])
+
+    // Generate signed URLs for badge icons
+    for (const badge of badges) {
+      if (badge.badgeType.iconKey) {
+        badge.badgeType.iconUrl = await FileUploadService.generateSignedUrl(
+          badge.badgeType.iconKey,
+        )
+      }
+    }
+
+    return badges as (IBadge & {
+      badgeType: IBadge["badgeType"] & { iconUrl?: string }
+    })[]
   }
 }

@@ -20,7 +20,6 @@ import {
   Users,
 } from "lucide-react"
 import { motion } from "motion/react"
-import Image from "next/image"
 import Link from "next/link"
 import React from "react"
 
@@ -32,16 +31,15 @@ import type { Activity } from "@/types/mongoose.gen"
 import { LeaderboardPreview } from "@/components/Gamification/LeaderboardPreview"
 import { cn } from "@/lib/utils"
 
+import { BadgeCard } from "../badge/badge-card"
 import { Badge } from "../ui/badge"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card"
-import { Progress } from "../ui/progress"
 import DashboardStatCard from "./DashboardStatCard"
 
 type ICard = {
@@ -270,42 +268,7 @@ export function Dashboard({
         userBadges.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-4">
             {userBadges.slice(0, 3).map((b) => (
-              <Card key={b._id} className="gap-4 py-4 shadow-none">
-                <CardContent className="px-4">
-                  <div className="flex flex-col items-center gap-2">
-                    <Image
-                      src={b.badgeType.iconUrl || ""}
-                      alt={b.badgeType.name}
-                      width={48}
-                      height={48}
-                      className={cn(
-                        "size-12 shrink-0 rounded-full border-2 object-cover",
-                        {
-                          "border-amber-700": b.level === "Bronze",
-                          "border-gray-400": b.level === "Silver",
-                          "border-yellow-400": b.level === "Gold",
-                        },
-                      )}
-                    />
-                    <p className="text-center text-pretty">
-                      {b.badgeType.name}
-                    </p>
-                  </div>
-                </CardContent>
-                {b.level === "Gold" &&
-                b.progress &&
-                b.progress >= 100 ? null : (
-                  <CardFooter className="block border-t px-4 !pt-4">
-                    <Progress value={b.progress} />
-                    <p className="mt-2 text-xs">
-                      <span className="text-muted-foreground">
-                        Progress to Next Level:
-                      </span>{" "}
-                      <strong>{b.progress}%</strong>
-                    </p>
-                  </CardFooter>
-                )}
-              </Card>
+              <BadgeCard key={b._id} badge={b} />
             ))}
           </div>
         ) : (

@@ -147,6 +147,18 @@ export async function updateBadgeProgress(
   }
 }
 
+export async function fetchBadgesByUsername(username: string) {
+  try {
+    const resp = await http.get<Envelope<{ badges: UserBadge[] }>>(
+      `/badges/member/${encodeURIComponent(username)}`,
+    )
+
+    return resp.data.data.badges
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
 export default {
   fetchUserBadges,
   fetchShowcasedBadges,

@@ -1,13 +1,22 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { CameraOff, Clock, Goal, MapPin, XCircle } from "lucide-react"
+import {
+  AwardIcon,
+  CameraOff,
+  Clock,
+  Goal,
+  MapPin,
+  XCircle,
+} from "lucide-react"
 import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 
+import { fetchBadgesByUsername } from "@/api/badge/badge-api"
 import { getMemberGoals } from "@/api/goal/goal-api"
 import { getMemberByUsername } from "@/api/users/user-api"
+import { BadgeCard } from "@/components/badge/badge-card"
 import { GoalCard } from "@/components/goals/goal-card"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
@@ -58,6 +67,18 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
     queryKey: ["member-goals", username],
     queryFn: async () => {
       return getMemberGoals(username)
+    },
+    enabled: !!member && member.privacy === "public",
+  })
+
+  const {
+    data: badges,
+    isLoading: isLoadingBadges,
+    error: badgesError,
+  } = useQuery({
+    queryKey: ["member-badges", username],
+    queryFn: async () => {
+      return fetchBadgesByUsername(username)
     },
     enabled: !!member && member.privacy === "public",
   })
@@ -307,6 +328,44 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
           ) : (
             <p className="text-center text-muted-foreground">
               This member has not set any public goals yet.
+            </p>
+          )}
+        </CardContent>
+      </MotionCard>
+
+      <MotionCard
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AwardIcon className="text-primary" /> Badges
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoadingBadges ? (
+            <div className="grid min-h-32 place-items-center">
+              <LoadingSpinner />
+            </div>
+          ) : badgesError ? (
+            <div className="grid min-h-32 place-items-center">
+              <div className="text-center">
+                <XCircle size={40} className="mx-auto mb-4 text-destructive" />
+                <p className="text-sm text-muted-foreground">
+                  {(badgesError as Error).message}
+                </p>
+              </div>
+            </div>
+          ) : badges && badges.length > 0 ? (
+            <div className="flex flex-wrap justify-center gap-4">
+              {badges.map((badge) => (
+                <BadgeCard key={badge._id} badge={badge} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground">
+              This member has not earned any badges yet.
             </p>
           )}
         </CardContent>

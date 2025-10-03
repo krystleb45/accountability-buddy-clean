@@ -176,4 +176,19 @@ router.delete(
   BadgeController.deleteBadgeById,
 )
 
+/**
+ * GET /api/badges/member/:username
+ * Get badges for a specific member by username
+ */
+router.get(
+  "/member/:username",
+  protect,
+  validate({
+    paramsSchema: z.object({
+      username: z.string().nonempty(),
+    }),
+  }),
+  BadgeController.getMemberBadges,
+)
+
 export default router

@@ -180,4 +180,13 @@ export class BadgeController {
       }
     },
   )
+
+  public static getMemberBadges = catchAsync(
+    async (req: AuthenticatedRequest<{ username: string }>, res: Response) => {
+      const { username } = req.params
+
+      const badges = await BadgeService.getBadgesByUsername(username)
+      sendResponse(res, 200, true, "Member badges", { badges })
+    },
+  )
 }
