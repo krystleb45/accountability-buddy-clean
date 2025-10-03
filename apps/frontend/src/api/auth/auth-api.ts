@@ -37,7 +37,10 @@ export async function sendVerificationEmail() {
 
 export async function fetchMe() {
   try {
-    const resp = await http.get<Envelope<{ user: User }>>("/auth/me")
+    const resp =
+      await http.get<Envelope<{ user: User & { timezone: string } }>>(
+        "/auth/me",
+      )
     return resp.data.data.user
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))

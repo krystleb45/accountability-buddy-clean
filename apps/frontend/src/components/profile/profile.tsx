@@ -1,13 +1,14 @@
 "use client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { CameraOff, Pencil, X } from "lucide-react"
+import { CameraOff, Clock, MapPin, Pencil, X } from "lucide-react"
 import { motion } from "motion/react"
 import Image from "next/image"
 import { useState } from "react"
 import { toast } from "sonner"
 
 import { updateProfile } from "@/api/profile/profile-api"
+import { useGetCurrentTimeWithTimezone } from "@/hooks/use-get-current-time-with-timezone"
 import { useProfile } from "@/hooks/use-profile"
 import { useSubscription } from "@/hooks/useSubscription"
 
@@ -31,6 +32,7 @@ import {
 import { AvatarCoverChangeDialog } from "./avatar-cover-change-dialog"
 import { EditBioForm } from "./edit-bio-form"
 import { EditInterestsForm } from "./edit-interests-form"
+import { EditLocationForm } from "./edit-location-form"
 
 const MotionCard = motion.create(Card)
 
@@ -39,8 +41,10 @@ export function Profile() {
 
   const [editingBio, setEditingBio] = useState(false)
   const [editingInterests, setEditingInterests] = useState(false)
+  const [editingLocation, setEditingLocation] = useState(false)
 
   const { profile } = useProfile()
+  const currentTime = useGetCurrentTimeWithTimezone(profile?.timezone || "UTC")
 
   const queryClient = useQueryClient()
   const { mutate: updateInterests, isPending: isUpdatingInterests } =
@@ -240,10 +244,57 @@ export function Profile() {
           )}
         </section>
 
-        {/* Achievements & Badges */}
+        {/* Location */}
         <section>
-          <h2 className="mb-2 text-sm font-bold">Achievements & Badges</h2>
-          {/* <FavoriteBadges /> */}
+          <div className="mb-2 flex items-center gap-2">
+            <h2 className="text-sm font-bold">Location</h2>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-6"
+                    onClick={() => setEditingLocation((prev) => !prev)}
+                  >
+                    {editingLocation ? (
+                      <X className="size-4" />
+                    ) : (
+                      <Pencil className="size-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {editingLocation ? "Cancel" : "Edit Location"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+          {editingLocation ? (
+            <EditLocationForm
+              currentLocation={profile.location}
+              onCancel={() => setEditingLocation(false)}
+            />
+          ) : profile.location ? (
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <MapPin className="size-5" />{" "}
+                <p>
+                  {profile.location.city}, {profile.location.state},{" "}
+                  {profile.location.country}
+                </p>
+              </div>
+              {/* prettier-ignore */}
+              <div className={`
+                mb-2 flex items-center gap-2 text-sm text-muted-foreground
+              `}>
+                <Clock className="h-4 w-5" />{" "}
+                <p className="font-mono">{currentTime}</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-muted-foreground">No location set.</p>
+          )}
         </section>
       </CardContent>
     </MotionCard>

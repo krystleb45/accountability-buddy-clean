@@ -8296,6 +8296,19 @@ export type TrackerDocument = mongoose.Document<
   }
 
 /**
+ * Lean version of UserLocationCoordinateDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
+ * ```
+ * const userObject = user.toObject();
+ * ```
+ */
+export type UserLocationCoordinate = {
+  latitude: number
+  longitude: number
+}
+
+/**
  * Lean version of UserDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserObject`.
@@ -8328,11 +8341,7 @@ export type User = {
     country?: string
     state?: string
     city?: string
-    timezone?: string
-    coordinates: {
-      latitude?: number
-      longitude?: number
-    }
+    coordinates?: UserLocationCoordinate
   }
   stripeCustomerId?: string
   stripeSubscriptionId?: string
@@ -8406,6 +8415,7 @@ export type UserMethods = {
     badgeId: mongoose.Types.ObjectId
   ) => Promise<void>
   getGoalLimit: (this: UserDocument) => number
+  getTimezone: (this: UserDocument) => Promise<any>
 }
 
 export type UserStatics = {}
@@ -8434,6 +8444,19 @@ export type UserSchema = mongoose.Schema<
   UserMethods,
   UserQueries
 >
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const User = mongoose.model<UserDocument, UserModel>("User", UserSchema);
+ * ```
+ */
+export type UserLocationCoordinateDocument = mongoose.Document<any> & {
+  latitude: number
+  longitude: number
+}
 
 /**
  * Mongoose Document type
@@ -8476,11 +8499,7 @@ export type UserDocument = mongoose.Document<
       country?: string
       state?: string
       city?: string
-      timezone?: string
-      coordinates: {
-        latitude?: number
-        longitude?: number
-      }
+      coordinates?: UserLocationCoordinateDocument
     }
     stripeCustomerId?: string
     stripeSubscriptionId?: string

@@ -96,7 +96,11 @@ export function EditInterestsForm({
             </FormItem>
           )}
         />
-        <div className="flex justify-end gap-2">
+        <div className={`
+          flex justify-end gap-2
+          *:flex-1
+          md:*:flex-none
+        `}>
           <Button variant="outline" onClick={onCancel}>
             Cancel
           </Button>

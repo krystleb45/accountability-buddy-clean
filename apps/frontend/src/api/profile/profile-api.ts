@@ -1,4 +1,5 @@
 import type { Envelope } from "@/types"
+import type { User } from "@/types/mongoose.gen"
 
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
@@ -10,13 +11,14 @@ export interface ProfileData {
   interests?: string[] | undefined
   profileImage?: string
   coverImage?: string
+  location?: User["location"]
 }
 
 /**
  * Unified update endpoint: accepts JSON fields or FormData for image uploads.
  */
 export async function updateProfile(
-  fields: Partial<Pick<ProfileData, "bio" | "interests">>,
+  fields: Partial<Pick<ProfileData, "bio" | "interests" | "location">>,
 ) {
   try {
     await http.patch("/profile", fields)

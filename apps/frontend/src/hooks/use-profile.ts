@@ -12,6 +12,8 @@ export function useProfile() {
           interests: user.interests,
           profileImage: user.profileImage,
           coverImage: user.coverImage,
+          location: user.location,
+          timezone: user.timezone,
         }
       : undefined,
     isLoading: loading,

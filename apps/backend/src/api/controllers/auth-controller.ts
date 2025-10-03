@@ -132,7 +132,9 @@ const getCurrentUser: RequestHandler = catchAsync(async (req, res, next) => {
     await user.save()
   }
 
-  const userData: UserObject = user.toObject()
+  const userData: UserObject & {
+    timezone: string
+  } = user.toObject()
 
   if (userData.coverImage) {
     userData.coverImage = await FileUploadService.generateSignedUrl(
@@ -145,6 +147,8 @@ const getCurrentUser: RequestHandler = catchAsync(async (req, res, next) => {
       userData.profileImage,
     )
   }
+
+  userData.timezone = await user.getTimezone()
 
   sendResponse(res, 200, true, "User fetched successfully", {
     user: userData,

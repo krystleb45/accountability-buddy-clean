@@ -1645,6 +1645,19 @@ export type Tracker = {
 }
 
 /**
+ * Lean version of UserLocationCoordinateDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
+ * ```
+ * const userObject = user.toObject();
+ * ```
+ */
+export type UserLocationCoordinate = {
+  latitude: number
+  longitude: number
+}
+
+/**
  * Lean version of UserDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserObject`.
@@ -1677,11 +1690,7 @@ export type User = {
     country?: string
     state?: string
     city?: string
-    timezone?: string
-    coordinates: {
-      latitude?: number
-      longitude?: number
-    }
+    coordinates?: UserLocationCoordinate
   }
   stripeCustomerId?: string
   stripeSubscriptionId?: string

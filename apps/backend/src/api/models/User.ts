@@ -10,7 +10,9 @@ import { differenceInDays, isBefore } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
 import { hashPassword } from "../../utils/hashHelper"
+import { logger } from "../../utils/winstonLogger"
 import { FileUploadService } from "../services/file-upload-service"
+import { GeocodingService } from "../services/geocoding-service"
 import { Activity } from "./Activity"
 import { Badge } from "./Badge"
 import { CollaborationGoal } from "./CollaborationGoal"
@@ -56,11 +58,13 @@ const UserSchema: IUserSchema = new Schema(
       country: { type: String },
       state: { type: String },
       city: { type: String },
-      timezone: { type: String },
-      coordinates: {
-        latitude: { type: Number },
-        longitude: { type: Number },
-      },
+      coordinates: new Schema(
+        {
+          latitude: { type: Number, required: true },
+          longitude: { type: Number, required: true },
+        },
+        { _id: false },
+      ),
     },
 
     // Enhanced Stripe / Subscriptions
@@ -235,6 +239,27 @@ UserSchema.methods = {
     }
 
     return limits[tier]
+  },
+  async getTimezone() {
+    if (
+      this.location.coordinates?.latitude &&
+      this.location.coordinates?.longitude
+    ) {
+      try {
+        return await GeocodingService.getTimezoneFromCoordinates(
+          this.location.coordinates.latitude,
+          this.location.coordinates.longitude,
+        )
+      } catch (error) {
+        logger.error(
+          `Error fetching timezone: ${(error as Error).message}`,
+          error,
+        )
+        return "UTC"
+      }
+    }
+
+    return "UTC"
   },
 }
 

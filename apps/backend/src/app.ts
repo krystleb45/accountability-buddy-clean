@@ -44,6 +44,7 @@ import fileUploadRoutes from "./api/routes/fileUpload"
 import followRoutes from "./api/routes/follow"
 import friendsRoutes from "./api/routes/friends"
 import gamificationRoutes from "./api/routes/gamification"
+import geocodingRoutes from "./api/routes/geocoding"
 import goalRoutes from "./api/routes/goal"
 import goalMessageRoutes from "./api/routes/goalMessage"
 import groupRoutes from "./api/routes/groups"
@@ -219,6 +220,7 @@ app.use("/api/tasks", taskRoutes)
 app.use("/api/tracker", trackerRoutes)
 app.use("/api/user-points", userPointsRoutes)
 app.use("/api/xp-history", xpHistoryRoutes)
+app.use("/api/geocoding", geocodingRoutes)
 
 // ─── Meta-test catch-all for *.test ───────────────────────────
 app.use((req, res, next) => {
