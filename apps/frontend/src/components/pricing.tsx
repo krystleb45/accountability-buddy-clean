@@ -215,15 +215,39 @@ export function Pricing({
       >
         <p
           className={`
-            flex items-center gap-2 justify-self-center text-muted-foreground
+            flex flex-col items-center gap-2 justify-self-center
+            text-muted-foreground
+            sm:flex-row
           `}
         >
-          <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
-          7-day money-back guarantee •{" "}
-          <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
-          Cancel anytime •{" "}
-          <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
-          Secure payment
+          <div>
+            <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
+            7-day money-back guarantee
+          </div>
+          <span
+            className={`
+              hidden
+              sm:inline-block
+            `}
+          >
+            •
+          </span>
+          <div>
+            <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
+            Cancel anytime
+          </div>
+          <span
+            className={`
+              hidden
+              sm:inline-block
+            `}
+          >
+            •
+          </span>
+          <div>
+            <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
+            Secure payment
+          </div>
         </p>
         <p className="text-sm text-muted-foreground">
           Join thousands of users achieving their goals with accountability
