@@ -1,12 +1,12 @@
-import type { Types } from "mongoose"
+import { categories } from "@ab/shared/categories"
+import mongoose, { Schema } from "mongoose"
+import mongooseLeanVirtuals from "mongoose-lean-virtuals"
+
 import type {
   GroupDocument,
   GroupModel,
   GroupSchema as IGroupSchema,
-} from "src/types/mongoose.gen"
-
-import { groupCategories } from "@ab/shared/group-categories"
-import mongoose, { Schema } from "mongoose"
+} from "../../types/mongoose.gen"
 
 // --- Subschemas ---
 const UnreadSchema = new Schema(
@@ -25,8 +25,8 @@ const GroupSchema: IGroupSchema = new Schema(
     category: {
       type: String,
       required: true,
-      enum: groupCategories,
-      default: "Learning & Education",
+      enum: categories.map((c) => c.id),
+      default: "study",
     },
     members: [{ type: Schema.Types.ObjectId, ref: "User" }],
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
@@ -37,7 +37,7 @@ const GroupSchema: IGroupSchema = new Schema(
     },
     isActive: { type: Boolean, default: true },
     lastActivity: { type: Date, default: Date.now },
-    avatarKey: { type: String, default: null },
+    avatar: { type: String, default: null },
     tags: { type: [String], default: [], maxlength: 5 },
     unreadMessages: { type: [UnreadSchema], default: [] },
     typingUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
@@ -55,7 +55,6 @@ GroupSchema.index({ name: 1, isActive: 1 })
 GroupSchema.index({ members: 1 })
 GroupSchema.index({ visibility: 1 })
 GroupSchema.index({ category: 1 })
-GroupSchema.index({ isPublic: 1 })
 GroupSchema.index({ lastActivity: -1 })
 GroupSchema.index({ tags: 1 })
 GroupSchema.index({ "unreadMessages.userId": 1 })
@@ -67,6 +66,10 @@ GroupSchema.virtual("memberCount").get(function (this): number {
 
 GroupSchema.virtual("typingCount").get(function (this): number {
   return this.typingUsers.length
+})
+
+GroupSchema.virtual("isPublic").get(function (this): boolean {
+  return this.visibility === "public"
 })
 
 // --- Middleware ---
@@ -86,7 +89,7 @@ GroupSchema.pre("save", function (next: (err?: Error) => void): void {
 
 // --- Instance Methods ---
 GroupSchema.methods = {
-  async addMember(this, userId: Types.ObjectId) {
+  async addMember(this, userId: mongoose.Types.ObjectId) {
     if (!this.members.includes(userId)) {
       this.members.push(userId)
       this.lastActivity = new Date()
@@ -94,13 +97,13 @@ GroupSchema.methods = {
     }
     return this
   },
-  async removeMember(this, userId: Types.ObjectId) {
+  async removeMember(this, userId: mongoose.Types.ObjectId) {
     this.members.pull(userId)
     this.lastActivity = new Date()
     await this.save()
     return this
   },
-  async incrementUnread(this, userId: Types.ObjectId) {
+  async incrementUnread(this, userId: mongoose.Types.ObjectId) {
     const um = this.unreadMessages.find((u) => u.userId._id.equals(userId))
     if (um) {
       um.count += 1
@@ -110,7 +113,7 @@ GroupSchema.methods = {
     await this.save()
     return this
   },
-  async clearUnread(this, userId: Types.ObjectId) {
+  async clearUnread(this, userId: mongoose.Types.ObjectId) {
     const um = this.unreadMessages.find((u) => u.userId._id.equals(userId))
     if (um) {
       um.count = 0
@@ -128,6 +131,8 @@ GroupSchema.statics = {
       .exec()
   },
 }
+
+GroupSchema.plugin(mongooseLeanVirtuals)
 
 // --- Model Export ---
 export const Group: GroupModel = mongoose.model<GroupDocument, GroupModel>(

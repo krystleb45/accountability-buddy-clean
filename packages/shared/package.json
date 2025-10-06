@@ -7,9 +7,10 @@
   "exports": {
     "./pricing": "./src/pricing.ts",
     "./badge-conditions": "./src/badge-conditions.ts",
-    "./group-categories": "./src/group-categories.ts",
+    "./categories": "./src/categories.ts",
     "./message": "./src/message.ts",
-    "./friends": "./src/friends.ts"
+    "./friends": "./src/friends.ts",
+    "./socket-events": "./src/socket-events/index.ts"
   },
   "scripts": {
     "lint": "eslint --fix",

@@ -1,0 +1,5 @@
+export const JOIN_GROUP_ROOM = "joinGroupRoom"
+export const LEAVE_GROUP_ROOM = "leaveGroupRoom"
+export const NEW_GROUP_MESSAGE = "newGroupMessage"
+export const USER_JOINED_GROUP = "userJoinedGroup"
+export const USER_LEFT_GROUP = "userLeftGroup"

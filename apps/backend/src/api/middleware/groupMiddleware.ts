@@ -1,99 +1,46 @@
 import type { NextFunction, Request, Response } from "express"
+import type { Group as IGroup } from "src/types/mongoose.gen"
 
 import mongoose from "mongoose"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import Group from "../models/Group"
+import { Group } from "../models/Group"
 import catchAsync from "../utils/catchAsync"
+import { CustomError } from "./errorHandler"
 
 // Extend Request interface to include group data
 declare module "express" {
   interface Request {
-    group?: any // Will store the group document
     isGroupMember?: boolean
     isGroupAdmin?: boolean
   }
 }
 
 /**
- * Check if group exists and attach to req.group
- */
-export const checkGroupExists = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { groupId } = req.params
-
-    if (!groupId) {
-      res.status(400).json({
-        success: false,
-        message: "Group ID is required",
-      })
-      return
-    }
-
-    // Validate ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(groupId)) {
-      res.status(400).json({
-        success: false,
-        message: "Invalid group ID format",
-      })
-      return
-    }
-
-    const group = await Group.findById(groupId)
-      .populate("createdBy", "name email")
-      .populate("members", "name email")
-
-    if (!group) {
-      res.status(404).json({
-        success: false,
-        message: "Group not found",
-      })
-      return
-    }
-
-    if (!group.isActive) {
-      res.status(410).json({
-        success: false,
-        message: "Group is no longer active",
-      })
-      return
-    }
-
-    // Attach group to request for use in controllers
-    req.group = group
-    next()
-  },
-)
-
-/**
  * Check if user is a member of the group
  */
 export const checkGroupMembership = catchAsync(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const userId = req.user!.id
-    const group = req.group
+  async (
+    req: AuthenticatedRequest<{ groupId: string }>,
+    _res: Response,
+    next: NextFunction,
+  ) => {
+    const userId = req.user.id
+    const groupId = req.params.groupId
+    const group = await Group.findById(groupId)
 
     if (!group) {
-      res.status(500).json({
-        success: false,
-        message:
-          "Group data not found. Make sure checkGroupExists middleware runs first.",
-      })
-      return
+      throw new CustomError("Group not found", 404)
     }
 
     const userObjectId = new mongoose.Types.ObjectId(userId)
-    const isMember = group.members.some((member: any) =>
+    const isMember = group.members.some((member) =>
       member._id.equals(userObjectId),
     )
 
     if (!isMember) {
-      res.status(403).json({
-        success: false,
-        message: "Access denied. You must be a member of this group.",
-      })
-      return
+      throw new CustomError("Access denied. Not a group member.", 403)
     }
 
     // Attach membership status to request
@@ -107,18 +54,9 @@ export const checkGroupMembership = catchAsync(
  */
 export const checkGroupAdmin = catchAsync(
   async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const userId = req.user!.id
+    const userId = req.user.id
     const group = req.group
-    const userRole = req.user!.role
-
-    if (!group) {
-      res.status(500).json({
-        success: false,
-        message:
-          "Group data not found. Make sure checkGroupExists middleware runs first.",
-      })
-      return
-    }
+    const userRole = req.user.role
 
     const userObjectId = new mongoose.Types.ObjectId(userId)
 
@@ -129,11 +67,7 @@ export const checkGroupAdmin = catchAsync(
     const isSystemAdmin = userRole === "admin"
 
     if (!isGroupCreator && !isSystemAdmin) {
-      res.status(403).json({
-        success: false,
-        message: "Access denied. Only group admins can perform this action.",
-      })
-      return
+      throw new CustomError("Admin access required", 403)
     }
 
     // Attach admin status to request
@@ -183,99 +117,8 @@ export const checkGroupAccess = catchAsync(
   },
 )
 
-/**
- * Check if user can join the group
- */
-export const checkCanJoinGroup = catchAsync(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const userId = req.user!.id
-    const group = req.group
-
-    if (!group) {
-      res.status(500).json({
-        success: false,
-        message:
-          "Group data not found. Make sure checkGroupExists middleware runs first.",
-      })
-      return
-    }
-
-    const userObjectId = new mongoose.Types.ObjectId(userId)
-
-    // Check if already a member
-    const isAlreadyMember = group.members.some((member: any) =>
-      member._id.equals(userObjectId),
-    )
-    if (isAlreadyMember) {
-      res.status(400).json({
-        success: false,
-        message: "You are already a member of this group",
-      })
-      return
-    }
-
-    // Check if group is invite-only
-    if (!group.isPublic && group.inviteOnly) {
-      // TODO: Check for pending invitation
-      // For now, we'll allow it if the group exists
-      // You can implement invitation checking here later
-    }
-
-    next()
-  },
-)
-
-/**
- * Check if user can leave the group
- */
-export const checkCanLeaveGroup = catchAsync(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const userId = req.user!.id
-    const group = req.group
-
-    if (!group) {
-      res.status(500).json({
-        success: false,
-        message:
-          "Group data not found. Make sure checkGroupExists middleware runs first.",
-      })
-      return
-    }
-
-    const userObjectId = new mongoose.Types.ObjectId(userId)
-
-    // Check if user is a member
-    const isMember = group.members.some((member: any) =>
-      member._id.equals(userObjectId),
-    )
-    if (!isMember) {
-      res.status(400).json({
-        success: false,
-        message: "You are not a member of this group",
-      })
-      return
-    }
-
-    // Check if user is the only admin/creator
-    const isCreator = group.createdBy._id.equals(userObjectId)
-    if (isCreator && group.members.length === 1) {
-      res.status(400).json({
-        success: false,
-        message:
-          "Cannot leave group as the only member. Delete the group instead.",
-      })
-      return
-    }
-
-    next()
-  },
-)
-
 export default {
-  checkGroupExists,
   checkGroupMembership,
   checkGroupAdmin,
   checkGroupAccess,
-  checkCanJoinGroup,
-  checkCanLeaveGroup,
 }

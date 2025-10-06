@@ -1,3 +1,5 @@
+import type { Category } from "@ab/shared/categories"
+
 import type { Envelope } from "@/types"
 import type { FriendRequest, User } from "@/types/mongoose.gen"
 
@@ -15,7 +17,7 @@ export interface UserRecommendation {
   mutualFriends: number
   similarityScore: number
   bio: string
-  category: "fitness" | "study" | "career" | "general"
+  category: Category
 }
 
 /**

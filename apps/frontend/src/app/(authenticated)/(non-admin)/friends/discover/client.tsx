@@ -1,13 +1,11 @@
 "use client"
 
+import type { Category } from "@ab/shared/categories"
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   ActivityIcon,
   ArrowLeft,
-  BicepsFlexed,
-  BookOpenTextIcon,
-  BriefcaseBusinessIcon,
-  EllipsisIcon,
   GoalIcon,
   Handshake,
   MessageSquareText,
@@ -29,6 +27,7 @@ import {
   fetchFriendSuggestions,
   sendFriendRequest,
 } from "@/api/friends/friend-api"
+import { CategoryFilterButton } from "@/components/category-filter-button"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -41,14 +40,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { getCategoriesWithCount } from "@/lib/categories"
 
 export function DiscoverClient() {
   const { status } = useSession()
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] =
-    useState<UserRecommendation["category"]>("general")
+  const [selectedCategory, setSelectedCategory] = useState<
+    UserRecommendation["category"] | "all"
+  >("all")
   const [sendingRequests, setSendingRequests] = useState<Set<string>>(
     () => new Set(),
   )
@@ -114,32 +114,16 @@ export function DiscoverClient() {
     )
   }
 
-  const categories = [
-    {
-      id: "general",
-      label: "All",
-      icon: EllipsisIcon,
-      count: suggestions.length,
-    },
-    {
-      id: "fitness",
-      label: "Fitness",
-      icon: BicepsFlexed,
-      count: suggestions.filter((s) => s.category === "fitness").length,
-    },
-    {
-      id: "study",
-      label: "Study",
-      icon: BookOpenTextIcon,
-      count: suggestions.filter((s) => s.category === "study").length,
-    },
-    {
-      id: "career",
-      label: "Career",
-      icon: BriefcaseBusinessIcon,
-      count: suggestions.filter((s) => s.category === "career").length,
-    },
-  ] as const
+  const categories = getCategoriesWithCount({
+    all: suggestions?.length || 0,
+    fitness: suggestions?.filter((s) => s.category === "fitness").length || 0,
+    study: suggestions?.filter((s) => s.category === "study").length || 0,
+    career: suggestions?.filter((s) => s.category === "career").length || 0,
+    lifestyle:
+      suggestions?.filter((s) => s.category === "lifestyle").length || 0,
+    creative: suggestions?.filter((s) => s.category === "creative").length || 0,
+    tech: suggestions?.filter((s) => s.category === "tech").length || 0,
+  })
 
   // Apply filters
   const filteredSuggestions = suggestions.filter((s) => {
@@ -149,7 +133,7 @@ export function DiscoverClient() {
         interest.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     const matchesCategory =
-      selectedCategory === "general" || s.category === selectedCategory
+      selectedCategory === "all" || s.category === selectedCategory
     return matchesSearch && matchesCategory
   })
 
@@ -193,37 +177,25 @@ export function DiscoverClient() {
       {/* Categories */}
       <div
         className={`
-          grid grid-cols-2 gap-4
-          md:grid-cols-4
+          flex gap-4 overflow-x-auto
+          md:flex-wrap md:overflow-x-hidden
         `}
       >
         {categories.map((category) => (
-          <motion.button
+          <CategoryFilterButton
             key={category.id}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setSelectedCategory(category.id)}
-            className="cursor-pointer"
-          >
-            <Card
-              className={cn({
-                "border-2 border-primary": selectedCategory === category.id,
-              })}
-            >
-              <CardContent>
-                <category.icon className="mx-auto size-8 text-primary" />
-                <CardTitle className="mt-4 mb-2">{category.label}</CardTitle>
-                <CardDescription>{category.count} people</CardDescription>
-              </CardContent>
-            </Card>
-          </motion.button>
+            category={category}
+            onClick={(id) => setSelectedCategory(id as Category | "all")}
+            isSelected={selectedCategory === category.id}
+            label="people"
+          />
         ))}
       </div>
 
       {/* People Grid */}
       <div>
         <h2 className="mb-6 text-2xl font-semibold text-primary">
-          {selectedCategory === "general"
+          {selectedCategory === "all"
             ? "All Suggestions"
             : `${categories.find((c) => c.id === selectedCategory)?.label} Enthusiasts`}{" "}
           <small className="font-mono">({filteredSuggestions.length})</small>

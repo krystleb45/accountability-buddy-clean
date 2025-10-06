@@ -1,14 +1,20 @@
+import type { Category } from "@ab/shared/categories"
 import type { Server } from "socket.io"
-import type { Group as IGroup } from "src/types/mongoose.gen"
 
+import { NEW_GROUP_MESSAGE } from "@ab/shared/socket-events"
 import mongoose from "mongoose"
 
-import type { IGroupMessage } from "../models/GroupMessage"
+import type { Group as IGroup, UserDocument } from "../../types/mongoose.gen"
 
 import { logger } from "../../utils/winstonLogger"
+import { CustomError } from "../middleware/errorHandler"
 import { Group } from "../models/Group"
-import GroupMessage from "../models/GroupMessage"
+import { GroupInvitation } from "../models/GroupInvitation"
+import { Message } from "../models/Message"
 import Notification from "../models/Notification"
+import { User } from "../models/User"
+import { FileUploadService } from "./file-upload-service"
+import MessageService from "./message-service"
 
 interface FormattedGroup {
   id: string
@@ -25,30 +31,16 @@ interface FormattedGroup {
   createdAt: string
 }
 
-interface FormattedMember {
-  id: string
-  name: string
-  email: string
-  profileImage: string | null
-  role: "admin" | "member"
-  joinedAt: string
-  isOnline: boolean
-}
-
 class GroupService {
   /**
    * Get all groups with optional filters
    */
-  async getGroups(
-    userId: string,
-    category?: string,
-    search?: string,
-  ): Promise<FormattedGroup[]> {
-    const filter: any = {
-      isPublic: true, // Only show public groups in general listing
+  async getGroups(category?: Category, search?: string) {
+    const filter: mongoose.FilterQuery<IGroup> = {
+      visibility: "public", // Only show public groups in general listing
     }
 
-    if (category && category !== "all") {
+    if (category) {
       filter.category = category
     }
 
@@ -61,31 +53,25 @@ class GroupService {
     }
 
     const groups = await Group.find(filter)
-      .populate("createdBy", "name")
+      .populate("createdBy", "name profilePicture username")
       .sort({ lastActivity: -1 })
       .limit(20)
-      .lean()
+      .lean({ virtuals: true })
 
-    // Check which groups the user has joined
-    const userObjectId = new mongoose.Types.ObjectId(userId)
+    for (const group of groups) {
+      if (group.avatar) {
+        group.avatar = await FileUploadService.generateSignedUrl(group.avatar)
+      }
 
-    return groups.map((group) => ({
-      id: group._id.toString(),
-      name: group.name,
-      description: group.description || "",
-      category: group.category || "general",
-      memberCount: group.members?.length || 0,
-      isPublic: group.isPublic ?? true,
-      isJoined:
-        group.members?.some((memberId: any) => memberId.equals(userObjectId)) ||
-        false,
-      lastActivity:
-        group.lastActivity?.toISOString() || group.createdAt.toISOString(),
-      avatar: group.avatar || null,
-      tags: group.tags || [],
-      createdBy: (group.createdBy as any)?.name || "Unknown",
-      createdAt: group.createdAt.toISOString(),
-    }))
+      if ((group.createdBy as UserDocument).profileImage) {
+        ;(group.createdBy as UserDocument).profileImage =
+          await FileUploadService.generateSignedUrl(
+            (group.createdBy as UserDocument).profileImage,
+          )
+      }
+    }
+
+    return groups
   }
 
   /**
@@ -98,131 +84,86 @@ class GroupService {
    */
   // In your GroupService.ts, update the createGroup method to ensure creator is properly added:
 
-  async createGroup(
-    name: string,
-    description: string,
-    category: string,
-    creatorId: string,
-    privacy?: string,
-    tags?: string[],
-  ): Promise<FormattedGroup> {
-    // console.log("=== GroupService.createGroup DEBUG ===");
-    // console.log("Parameters received:");
-    // console.log("- name:", name);
-    // console.log("- description:", description);
-    // console.log("- category:", category);
-    // console.log("- creatorId:", creatorId);
-    // console.log("- privacy:", privacy);
-    // console.log("- tags:", tags);
-
-    if (!name || !description || !category || !creatorId) {
-      const error =
-        "Missing required fields: name, description, category, or creatorId"
-      console.error(error)
-      throw new Error(error)
-    }
-
+  async createGroup({
+    name,
+    description,
+    category,
+    privacy,
+    creatorId,
+    tags,
+  }: {
+    name: string
+    description: string
+    category: Category
+    creatorId: string
+    privacy: "public" | "private"
+    tags?: string[]
+  }) {
     try {
-      const isPublic =
-        privacy === "public" || privacy === "Public Group" || !privacy
-
-      // console.log("Creating group with isPublic:", isPublic);
-
       const creatorObjectId = new mongoose.Types.ObjectId(creatorId)
 
-      const groupData = {
+      const group = await Group.create({
         name: name.trim(),
         description: description.trim(),
         category,
-        isPublic,
-        visibility: isPublic ? "public" : "private", // Ensure visibility matches isPublic
-        inviteOnly: !isPublic,
+        visibility: privacy,
         tags: tags || [],
         createdBy: creatorObjectId,
         members: [creatorObjectId], // IMPORTANT: Creator is automatically a member
         lastActivity: new Date(),
         unreadMessages: [],
-      }
-
-      // console.log("Group data being saved:", groupData);
-
-      const group = await Group.create(groupData)
-
-      // console.log("Group created successfully in database:", {
-      //   id: group._id.toString(),
-      //   name: group.name,
-      //   category: group.category,
-      //   isPublic: group.isPublic,
-      //   createdBy: group.createdBy.toString(),
-      //   members: group.members.length
-      // });
+      })
 
       await group.populate("createdBy", "name")
 
       logger.info(`Group ${group._id} created by ${creatorId}`)
 
-      const result = {
-        id: group._id.toString(),
-        name: group.name,
-        description: group.description ?? "",
-        category: group.category,
-        memberCount: group.members.length, // Use actual members length
-        isPublic: group.isPublic,
-        isJoined: true, // Creator is always joined
-        lastActivity: group.lastActivity.toISOString(),
-        avatar: group.avatar || null,
-        tags: group.tags || [],
-        createdBy: (group.createdBy as any)?.name || "Unknown",
-        createdAt: group.createdAt.toISOString(),
-      }
-
-      // console.log("Returning formatted group:", result);
-      return result
+      return group.toObject()
     } catch (error) {
-      console.error("Error creating group in database:", error)
       logger.error(`Failed to create group: ${error}`)
       throw error
     }
   }
 
+  async updateAvatarImage(groupId: string, key: string) {
+    await Group.findByIdAndUpdate(groupId, { avatar: key }).exec()
+  }
+
   /**
    * Get specific group details
    */
-  async getGroupDetails(
-    groupId: string,
-    userId: string,
-  ): Promise<FormattedGroup | null> {
+  async getGroupDetails(groupId: string, userId: string) {
     const group = await Group.findById(groupId)
-      .populate("createdBy", "name")
-      .lean()
+      .populate("createdBy", "name profileImage username")
+      .lean({ virtuals: true })
 
-    if (!group) return null
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
 
-    const userObjectId = new mongoose.Types.ObjectId(userId)
     const isJoined =
-      group.members?.some((memberId: any) => memberId.equals(userObjectId)) ||
-      false
+      group.members?.some((member) => member._id.equals(userId)) || false
 
-    // For private groups, only return details if user is a member
     if (!group.isPublic && !isJoined) {
-      return null
+      throw new CustomError("Access denied. Not a group member.", 403)
     }
 
-    return {
-      id: group._id.toString(),
-      name: group.name,
-      description: group.description || "",
-      category: group.category || "general",
-      memberCount: group.members?.length || 0,
-      isPublic: group.isPublic ?? true,
-      isJoined,
-      lastActivity:
-        group.lastActivity?.toISOString() || group.createdAt.toISOString(),
-      avatar: group.avatar || null,
-      tags: group.tags || [],
-      createdBy: (group.createdBy as any)?.name || "Unknown",
-      createdAt: group.createdAt.toISOString(),
+    const { members: _, ...groupData } = group
+
+    if (groupData.avatar) {
+      groupData.avatar = await FileUploadService.generateSignedUrl(
+        groupData.avatar,
+      )
     }
+
+    if ((groupData.createdBy as UserDocument).profileImage) {
+      ;(groupData.createdBy as UserDocument).profileImage =
+        await FileUploadService.generateSignedUrl(
+          (groupData.createdBy as UserDocument).profileImage,
+        )
+    }
+
+    return groupData
   }
 
   /**
@@ -230,56 +171,61 @@ class GroupService {
    */
   async joinGroup(groupId: string, userId: string, io: Server): Promise<void> {
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
 
     // Check if group is private and requires invitation
-    if (!group.isPublic && group.inviteOnly) {
-      throw new Error("This group requires an invitation")
+    if (!group.isPublic) {
+      const invitation = await GroupInvitation.findOne({
+        groupId: group._id,
+        recipient: userId,
+        status: "pending",
+      })
+
+      if (!invitation) {
+        throw new CustomError("This group requires an invitation", 403)
+      }
     }
 
-    const uid = new mongoose.Types.ObjectId(userId)
-    if (group.members.some((m) => m.equals(uid))) {
-      throw new Error("Already a member")
+    if (group.members.some((m) => m._id.equals(userId))) {
+      throw new CustomError("Already a member of this group", 400)
     }
 
-    group.members.push(uid)
-    group.lastActivity = new Date()
+    group.members.push(userId)
     await group.save()
 
     // Notify everyone in the group room
     io.in(groupId).emit("userJoined", { userId })
-
-    logger.info(`User ${userId} joined group ${groupId}`)
   }
 
   /**
-   * Remove a member from a group
+   * Leave a group
    */
-  async leaveGroup(groupId: string, userId: string, io: Server): Promise<void> {
+  async leaveGroup(groupId: string, userId: string, io: Server) {
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
-
-    const uid = new mongoose.Types.ObjectId(userId)
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
 
     // Check if user is a member
-    if (!group.members.some((m) => m.equals(uid))) {
-      throw new Error("Not a member of this group")
+    if (!group.members.some((m) => m._id.equals(userId))) {
+      throw new CustomError("Not a member of this group", 400)
     }
 
     // Prevent creator from leaving if they're the only admin
-    if (group.createdBy.equals(uid)) {
-      // You might want to implement admin transfer logic here
-      // For now, we'll allow it but could add admin count check
+    if (group.createdBy.equals(userId)) {
+      throw new CustomError(
+        "Group creator cannot leave the group. Delete the group instead",
+        400,
+      )
     }
 
-    group.members = group.members.filter((m) => !m.equals(uid))
-    group.lastActivity = new Date()
+    group.members.pull(userId)
     await group.save()
 
     // Broadcast to the group room
     io.in(groupId).emit("userLeft", { userId })
-
-    logger.info(`User ${userId} left group ${groupId}`)
   }
 
   /**
@@ -366,71 +312,92 @@ class GroupService {
   /**
    * List groups the user has joined
    */
-  async getMyGroups(userId: string) {
+  async getUserGroups(userId: string) {
     const userObjectId = new mongoose.Types.ObjectId(userId)
 
-    return await Group.find({ members: userObjectId, isActive: true })
+    const groups = await Group.find({ members: userObjectId, isActive: true })
+      .populate("createdBy", "name profilePicture username")
       .sort({ lastActivity: -1 })
-      .lean()
+      .lean({ virtuals: true })
+
+    for (const group of groups) {
+      if (group.avatar) {
+        group.avatar = await FileUploadService.generateSignedUrl(group.avatar)
+      }
+
+      if ((group.createdBy as UserDocument).profileImage) {
+        ;(group.createdBy as UserDocument).profileImage =
+          await FileUploadService.generateSignedUrl(
+            (group.createdBy as UserDocument).profileImage,
+          )
+      }
+    }
+
+    return groups
   }
 
   /**
    * Get group members
    */
-  async getGroupMembers(
-    groupId: string,
-    userId: string,
-  ): Promise<FormattedMember[]> {
-    const group = await Group.findById(groupId)
-      .populate("members", "name email profileImage lastActive")
-      .populate("createdBy", "_id")
+  async getGroupMembers(groupId: string, userId: string) {
+    const group = await Group.findById(groupId).populate(
+      "members",
+      "name username profileImage",
+    )
 
-    if (!group) throw new Error("Group not found")
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
 
     // Check if user is a member
     const userObjectId = new mongoose.Types.ObjectId(userId)
-    if (!group.members.some((member: any) => member._id.equals(userObjectId))) {
-      throw new Error("Not authorized to view members")
+    if (!group.members.some((member) => member._id.equals(userObjectId))) {
+      throw new CustomError("Not authorized to view members", 403)
     }
 
-    return (group.members as any[]).map((member) => ({
-      id: member._id.toString(),
-      name: member.name,
-      email: member.email,
-      profileImage: member.profileImage || null,
-      role: member._id.equals(group.createdBy._id) ? "admin" : "member",
-      joinedAt: member.createdAt?.toISOString() || new Date().toISOString(),
-      isOnline: member.lastActive
-        ? Date.now() - new Date(member.lastActive).getTime() < 5 * 60 * 1000
-        : false,
-    }))
+    const membersData: IUser[] = []
+
+    for (const member of group.members as UserDocument[]) {
+      let profileImage = member.profileImage
+      if (profileImage) {
+        profileImage = await FileUploadService.generateSignedUrl(profileImage)
+      }
+
+      const memberData = member.toObject()
+
+      membersData.push({
+        ...memberData,
+        profileImage,
+      })
+    }
+
+    return membersData
   }
 
   /**
-   * Get group messages (simplified - no pagination)
+   * Get group messages
    */
   async getGroupMessages(
     groupId: string,
     userId: string,
-  ): Promise<IGroupMessage[]> {
+    options: {
+      limit?: number
+      page?: number
+      before?: string
+    } = {},
+  ) {
     // Check if user is a member
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
-
-    const userObjectId = new mongoose.Types.ObjectId(userId)
-    if (!group.members.some((member) => member.equals(userObjectId))) {
-      throw new Error("Not authorized to view messages")
+    if (!group) {
+      throw new CustomError("Group not found", 404)
     }
 
-    const messages = await GroupMessage.find({
-      groupId: new mongoose.Types.ObjectId(groupId),
-    })
-      .populate("senderId", "name profileImage")
-      .sort({ createdAt: -1 })
-      .limit(50) // Default limit
-      .lean()
+    const userObjectId = new mongoose.Types.ObjectId(userId)
+    if (!group.members.some((member) => member._id.equals(userObjectId))) {
+      throw new CustomError("Not authorized to view messages", 403)
+    }
 
-    return messages.reverse() // Return in chronological order
+    return await MessageService.getMessagesInThread(groupId, options)
   }
 
   /**
@@ -441,42 +408,57 @@ class GroupService {
     userId: string,
     content: string,
     io: Server,
-  ): Promise<IGroupMessage> {
-    // Check if user is a member
-    const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
-
-    const userObjectId = new mongoose.Types.ObjectId(userId)
-    if (!group.members.some((member) => member.equals(userObjectId))) {
-      throw new Error("Not authorized to send messages")
-    }
-
-    const message = await GroupMessage.create({
-      groupId: new mongoose.Types.ObjectId(groupId),
-      senderId: userObjectId,
-      content: content.trim(),
-      timestamp: new Date(),
-    })
-
-    await message.populate("senderId", "name profileImage")
+  ) {
+    const message = await MessageService.sendMessage(
+      userId,
+      undefined,
+      content,
+      "group",
+      groupId,
+    )
 
     // Update group's last activity
-    group.lastActivity = new Date()
-    await group.save()
+    await Group.findByIdAndUpdate(groupId, { lastActivity: new Date() }).exec()
 
     // Emit to group room
-    io.in(groupId).emit("newGroupMessage", {
-      id: message._id.toString(),
-      senderId: userId,
-      senderName: (message.senderId as any).name,
-      content: message.content,
-      timestamp: message.timestamp.toISOString(),
+    io.in(groupId).emit(NEW_GROUP_MESSAGE, {
+      ...message.toObject(),
       type: "message",
     })
+  }
 
-    logger.info(`Message sent to group ${groupId} by ${userId}`)
+  /**
+   * Request invitation to private group
+   */
+  async requestGroupInvite(groupId: string, userId: string) {
+    const group = await Group.findById(groupId)
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
 
-    return message
+    // Check if user is already a member
+    if (group.members.some((member) => member._id.equals(userId))) {
+      throw new CustomError("Already a member of this group", 400)
+    }
+
+    const user = await User.findById(userId)
+
+    // Create invitation
+    await GroupInvitation.create({
+      groupId: group._id,
+      sender: userId,
+      recipient: group.createdBy, // Send to group creator/admin
+      status: "pending",
+    })
+
+    // Notify group admin
+    await Notification.create({
+      user: group.createdBy,
+      message: `User ${user.username} has requested to join your group "${group.name}"`,
+      type: "invitation",
+      read: false,
+      link: `/groups/${groupId}`,
+    })
   }
 
   /**

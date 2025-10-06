@@ -1,7 +1,11 @@
-// src/api/services/MessageService.ts
-import type { Message as IMessage } from "src/types/mongoose.gen"
+import type { FilterQuery } from "mongoose"
 
 import { Types } from "mongoose"
+
+import type {
+  Message as IMessage,
+  UserDocument,
+} from "../../types/mongoose.gen"
 
 import { createError } from "../middleware/errorHandler"
 import { Message } from "../models/Message"
@@ -57,9 +61,9 @@ export default class MessageService {
     senderId: string,
     recipientId?: string,
     content?: string,
-    messageType: string = "private", // Changed from "direct" to "private"
+    messageType: string = "private",
     groupId?: string,
-  ): Promise<IMessage> {
+  ) {
     if (!Types.ObjectId.isValid(senderId)) {
       throw createError("Invalid sender ID", 400)
     }
@@ -78,11 +82,11 @@ export default class MessageService {
       if (!receiver) {
         throw createError("Recipient not found", 404)
       }
-    } else if (messageType === "group") {
-      if (!groupId || !Types.ObjectId.isValid(groupId)) {
-        throw createError("Invalid group ID for group message", 400)
-      }
-      // Add group validation here if you have a Group model
+    } else if (
+      messageType === "group" &&
+      (!groupId || !Types.ObjectId.isValid(groupId))
+    ) {
+      throw createError("Invalid group ID for group message", 400)
     }
 
     const messageContent = content?.trim()
@@ -93,7 +97,6 @@ export default class MessageService {
     // Create or find chat ID (for now, use a combination approach)
     let chatId: Types.ObjectId
     if (messageType === "private") {
-      // Changed from "direct" to "private"
       // For private messages, create a consistent chatId from user IDs
       const ids = [senderId, recipientId!].sort()
       chatId = new Types.ObjectId(ids.join("").slice(0, 24).padEnd(24, "0"))
@@ -102,18 +105,25 @@ export default class MessageService {
       chatId = new Types.ObjectId(groupId)
     }
 
-    const message = await Message.create({
+    let message = await Message.create({
       chatId,
       senderId,
-      receiverId: messageType === "private" ? recipientId : undefined, // Changed from "direct" to "private"
+      receiverId: messageType === "private" ? recipientId : undefined,
       text: messageContent,
       messageType,
       status: "sent",
-      timestamp: new Date(),
     })
 
     // Populate sender info before returning
-    await message.populate("senderId", "username email profileImage")
+    message = await message.populate("senderId", "username email profileImage")
+
+    if ((message.senderId as UserDocument)?.profileImage) {
+      ;(message.senderId as UserDocument).profileImage =
+        await FileUploadService.generateSignedUrl(
+          (message.senderId as UserDocument).profileImage,
+        )
+    }
+
     return message
   }
 
@@ -340,20 +350,19 @@ export default class MessageService {
    */
   static async getMessagesInThread(
     threadId: string,
-    _userId: string, // Prefixed with underscore to indicate intentionally unused
     options: {
       limit?: number
       page?: number
       before?: string
     } = {},
-  ): Promise<{ messages: IMessage[]; hasMore: boolean; total: number }> {
+  ) {
     const { limit = 50, page = 1, before } = options
 
     if (!Types.ObjectId.isValid(threadId)) {
       throw createError("Invalid thread ID", 400)
     }
 
-    const query: any = {
+    const query: FilterQuery<IMessage> = {
       chatId: threadId,
       status: { $ne: "deleted" },
     }
@@ -370,15 +379,25 @@ export default class MessageService {
     const messages = await Message.find(query)
       .sort({ timestamp: -1 })
       .skip((page - 1) * limit)
-      .limit(limit + 1) // Get one extra to check if there are more
+      .limit(limit)
       .populate("senderId", "username email profileImage")
       .populate("receiverId", "username email profileImage")
       .exec()
 
-    const hasMore = messages.length > limit
-    if (hasMore) {
-      messages.pop() // Remove the extra message
+    for (const msg of messages) {
+      if (msg.senderId?.profileImage) {
+        msg.senderId.profileImage = await FileUploadService.generateSignedUrl(
+          msg.senderId.profileImage,
+        )
+      }
+      if (msg.receiverId?.profileImage) {
+        msg.receiverId.profileImage = await FileUploadService.generateSignedUrl(
+          msg.receiverId.profileImage,
+        )
+      }
     }
+
+    const hasMore = total > limit
 
     return {
       messages: messages.reverse(), // Return in chronological order

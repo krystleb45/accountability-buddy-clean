@@ -9,8 +9,8 @@ export const runtime = "nodejs"
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("Missing NEXTAUTH_SECRET")
 }
-if (!process.env.BACKEND_URL) {
-  throw new Error("Missing BACKEND_URL")
+if (!process.env.NEXT_PUBLIC_BACKEND_URL) {
+  throw new Error("Missing NEXT_PUBLIC_BACKEND_URL")
 }
 
 export const authOptions: NextAuthOptions = {
@@ -32,7 +32,7 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const res = await axios.post<{ data: { user: User } }>(
-            `${process.env.BACKEND_URL}/api/auth/login`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`,
             {
               email: credentials.email,
               password: credentials.password,

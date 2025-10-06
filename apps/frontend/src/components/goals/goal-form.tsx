@@ -312,6 +312,9 @@ export function GoalForm({ goal }: GoalFormProps) {
                   placeholder="Enter a tag"
                   tags={tags}
                   className="sm:min-w-[450px]"
+                  styleClasses={{
+                    input: "focus-visible:outline-hidden",
+                  }}
                   setTags={(newTags) => {
                     setTags(newTags)
                     setValue(

@@ -30,6 +30,7 @@ const AttachmentSchema = new Schema(
 // --- Schema Definition ---
 const MessageSchema: IMessageSchema = new Schema(
   {
+    // equal to groupId for group messages
     chatId: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
     senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     receiverId: { type: Schema.Types.ObjectId, ref: "User" },

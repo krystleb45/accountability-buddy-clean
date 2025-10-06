@@ -773,19 +773,13 @@ export type GroupUnreadMessage = {
 export type Group = {
   name: string
   description?: string
-  category:
-    | "Fitness & Health"
-    | "Learning & Education"
-    | "Career & Business"
-    | "Lifestyle & Hobbies"
-    | "Creative & Arts"
-    | "Technology"
+  category: "fitness" | "study" | "career" | "lifestyle" | "creative" | "tech"
   members: (User["_id"] | User)[]
   createdBy: User["_id"] | User
   visibility?: "public" | "private"
   isActive?: boolean
   lastActivity?: string
-  avatarKey?: string | null
+  avatar?: string | null
   tags: string[]
   unreadMessages: GroupUnreadMessage[]
   typingUsers: (User["_id"] | User)[]
@@ -795,6 +789,7 @@ export type Group = {
   updatedAt?: string
   memberCount: number
   typingCount: number
+  isPublic: boolean
 }
 
 /**
@@ -810,27 +805,6 @@ export type GroupInvitation = {
   sender: User["_id"] | User
   recipient: User["_id"] | User
   status?: "pending" | "accepted" | "rejected"
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of GroupMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GroupMessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `GroupMessageObject`.
- * ```
- * const groupmessageObject = groupmessage.toObject();
- * ```
- */
-export type GroupMessage = {
-  groupId: Group["_id"] | Group
-  senderId: User["_id"] | User
-  content: string
-  timestamp?: string
-  type?: "message" | "system"
-  editedAt?: string | null
-  deletedAt?: string | null
   _id: string
   createdAt?: string
   updatedAt?: string

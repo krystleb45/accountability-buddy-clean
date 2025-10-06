@@ -618,12 +618,18 @@ const FriendService = {
                                       in: { $toLower: "$$interest" },
                                     },
                                   },
+                                  // @keep-sorted
                                   [
-                                    "fitness",
-                                    "running",
-                                    "yoga",
-                                    "swimming",
                                     "cycling",
+                                    "exercise",
+                                    "fitness",
+                                    "health",
+                                    "nutrition",
+                                    "running",
+                                    "swimming",
+                                    "wellness",
+                                    "workout",
+                                    "yoga",
                                   ],
                                 ],
                               },
@@ -651,12 +657,17 @@ const FriendService = {
                                       in: { $toLower: "$$interest" },
                                     },
                                   },
+                                  // @keep-sorted
                                   [
-                                    "programming",
-                                    "study",
+                                    "academic",
+                                    "courses",
+                                    "education",
+                                    "knowledge",
                                     "learning",
                                     "reading",
-                                    "education",
+                                    "research",
+                                    "study",
+                                    "training",
                                   ],
                                 ],
                               },
@@ -684,11 +695,17 @@ const FriendService = {
                                       in: { $toLower: "$$interest" },
                                     },
                                   },
+                                  // @keep-sorted
                                   [
                                     "business",
                                     "career",
+                                    "entrepreneurship",
+                                    "finance",
                                     "leadership",
+                                    "management",
+                                    "marketing",
                                     "networking",
+                                    "professional",
                                   ],
                                 ],
                               },
@@ -700,6 +717,123 @@ const FriendService = {
                       ],
                     },
                     then: "career",
+                  },
+                  {
+                    case: {
+                      $gt: [
+                        {
+                          $size: {
+                            $ifNull: [
+                              {
+                                $setIntersection: [
+                                  {
+                                    $map: {
+                                      input: { $ifNull: ["$interests", []] },
+                                      as: "interest",
+                                      in: { $toLower: "$$interest" },
+                                    },
+                                  },
+                                  // @keep-sorted
+                                  [
+                                    "cooking",
+                                    "games",
+                                    "gardening",
+                                    "hobbies",
+                                    "lifestyle",
+                                    "movies",
+                                    "music",
+                                    "social",
+                                    "sports",
+                                    "travel",
+                                  ],
+                                ],
+                              },
+                              [],
+                            ],
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                    then: "lifestyle",
+                  },
+                  {
+                    case: {
+                      $gt: [
+                        {
+                          $size: {
+                            $ifNull: [
+                              {
+                                $setIntersection: [
+                                  {
+                                    $map: {
+                                      input: { $ifNull: ["$interests", []] },
+                                      as: "interest",
+                                      in: { $toLower: "$$interest" },
+                                    },
+                                  },
+                                  // @keep-sorted
+                                  [
+                                    "artistic",
+                                    "arts",
+                                    "crafts",
+                                    "creative",
+                                    "creativity",
+                                    "design",
+                                    "drawing",
+                                    "painting",
+                                    "photography",
+                                    "writing",
+                                  ],
+                                ],
+                              },
+                              [],
+                            ],
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                    then: "creative",
+                  },
+                  {
+                    case: {
+                      $gt: [
+                        {
+                          $size: {
+                            $ifNull: [
+                              {
+                                $setIntersection: [
+                                  {
+                                    $map: {
+                                      input: { $ifNull: ["$interests", []] },
+                                      as: "interest",
+                                      in: { $toLower: "$$interest" },
+                                    },
+                                  },
+                                  // @keep-sorted
+                                  [
+                                    "ai",
+                                    "coding",
+                                    "computer",
+                                    "data",
+                                    "development",
+                                    "engineering",
+                                    "programming",
+                                    "software",
+                                    "tech",
+                                    "technology",
+                                  ],
+                                ],
+                              },
+                              [],
+                            ],
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                    then: "tech",
                   },
                 ],
                 default: "general",

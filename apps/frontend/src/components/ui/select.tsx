@@ -142,8 +142,11 @@ function SelectLabel({
 function SelectItem({
   className,
   children,
+  description,
   ...props
-}: React.ComponentProps<typeof SelectPrimitive.Item>) {
+}: React.ComponentProps<typeof SelectPrimitive.Item> & {
+  description?: string | React.ReactNode
+}) {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
@@ -156,7 +159,6 @@ function SelectItem({
           [&_svg]:pointer-events-none [&_svg]:shrink-0
           [&_svg:not([class*='size-'])]:size-4
           [&_svg:not([class*='text-'])]:text-muted-foreground
-          *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2
         `,
         className,
       )}
@@ -170,7 +172,24 @@ function SelectItem({
           <CheckIcon className="size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      <div
+        className={`
+          group
+          *:[span]:flex *:[span]:items-center *:[span]:gap-2
+        `}
+      >
+        <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+        {description && (
+          <p
+            className={`
+              text-xs text-muted-foreground
+              group-has-[svg]:pl-6
+            `}
+          >
+            {description}
+          </p>
+        )}
+      </div>
     </SelectPrimitive.Item>
   )
 }

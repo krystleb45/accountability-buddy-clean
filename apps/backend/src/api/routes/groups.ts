@@ -1,19 +1,16 @@
-// src/api/routes/groupRoute.ts - WITH GROUP MIDDLEWARE
+import { categories } from "@ab/shared/categories"
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
+import z from "zod"
 
-import * as groupController from "../controllers/groupController"
+import * as groupController from "../controllers/group-controller"
 import { protect } from "../middleware/auth-middleware"
-import {
-  checkCanJoinGroup,
-  checkCanLeaveGroup,
-  checkGroupAccess,
-  checkGroupAdmin,
-  checkGroupExists,
-  checkGroupMembership,
-} from "../middleware/groupMiddleware"
+import { checkGroupAdmin } from "../middleware/groupMiddleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
+import { validateSubscription } from "../middleware/subscription-validation"
+import validate from "../middleware/validation-middleware"
+import { FileUploadService } from "../services/file-upload-service"
 
 const router = Router()
 const groupLimiter = rateLimit({
@@ -22,74 +19,66 @@ const groupLimiter = rateLimit({
   message: "Too many group requests",
 })
 
-// GET /api/groups - Get all groups (no middleware needed - public listing)
-router.get("/", protect, groupController.getGroups)
+/**
+ * GET /api/groups - Get all groups with optional filters
+ */
+const getGroupsQuerySchema = z.object({
+  category: z.enum(categories.map((c) => c.id)).optional(),
+  search: z.string().optional(),
+})
 
-// POST /api/groups - Create new group
+export type GetGroupsQueryParams = z.infer<typeof getGroupsQuerySchema>
+
+router.get(
+  "/",
+  protect,
+  validate({ querySchema: getGroupsQuerySchema }),
+  groupController.getGroups,
+)
+
+/**
+ * POST /api/groups - Create a new group
+ */
 router.post(
   "/",
   protect,
-  // checkSubscription("paid"), // TEMPORARILY REMOVE FOR TESTING
+  validateSubscription,
   groupLimiter,
-  [
-    check("name", "Group name is required").notEmpty(),
-    check("name", "Group name must be between 3 and 50 characters").isLength({
-      min: 3,
-      max: 50,
-    }),
-    check("description", "Description is required").notEmpty(),
-    check(
-      "description",
-      "Description must be between 10 and 200 characters",
-    ).isLength({ min: 10, max: 200 }),
-    check("category", "Category is required").notEmpty(),
-    // UPDATED: Match your UI categories
-    check("category", "Invalid category").isIn([
-      "Fitness & Health",
-      "Learning & Education",
-      "Career & Business",
-      "Lifestyle & Hobbies",
-      "Creative & Arts",
-      "Technology",
-    ]),
-    check("tags", "Tags must be an array").optional().isArray(),
-    check("tags.*", "Each tag must be a string").optional().isString(),
-    check("isPublic", "isPublic must be a boolean").optional().isBoolean(),
-    check("inviteOnly", "inviteOnly must be a boolean").optional().isBoolean(),
-  ],
-  handleValidationErrors,
+  FileUploadService.multerUpload.single("avatar"),
   groupController.createGroup,
 )
 
-// GET /api/groups/my-groups - Get user's joined groups
+/**
+ * GET /api/groups/my-groups - Get groups the user is a member of
+ */
 router.get("/my-groups", protect, groupController.getMyGroups)
 
-// GET /api/groups/:groupId - Get specific group details
+/**
+ * GET /api/groups/:groupId - Get group details
+ */
 router.get(
   "/:groupId",
   protect,
-  checkGroupExists, // ✅ Check group exists
-  checkGroupAccess, // ✅ Check public or member access
+  validate({
+    paramsSchema: z.object({
+      groupId: z.string().nonempty(),
+    }),
+  }),
   groupController.getGroupDetails,
 )
 
-// POST /api/groups/:groupId/join - Join a group
-router.post(
-  "/:groupId/join",
-  protect,
-  groupLimiter,
-  checkGroupExists, // ✅ Check group exists
-  checkCanJoinGroup, // ✅ Check if user can join
-  groupController.joinGroup,
-)
+/**
+ * POST /api/groups/:groupId/join - Join a group
+ */
+router.post("/:groupId/join", protect, groupLimiter, groupController.joinGroup)
 
-// POST /api/groups/:groupId/leave - Leave a group
+/**
+ * POST /api/groups/:groupId/leave - Leave a group
+ */
 router.post(
   "/:groupId/leave",
   protect,
   groupLimiter,
-  checkGroupExists, // ✅ Check group exists
-  checkCanLeaveGroup, // ✅ Check if user can leave
   groupController.leaveGroup,
 )
 
@@ -98,7 +87,6 @@ router.put(
   "/:groupId",
   protect,
   groupLimiter,
-  checkGroupExists, // ✅ Check group exists
   checkGroupAdmin, // ✅ Check admin permissions
   [
     check("name", "Group name must be between 3 and 50 characters")
@@ -122,18 +110,23 @@ router.delete(
   "/:groupId",
   protect,
   groupLimiter,
-  checkGroupExists, // ✅ Check group exists
   checkGroupAdmin, // ✅ Check admin permissions
   groupController.deleteGroup,
 )
 
-// GET /api/groups/:groupId/members - Get group members (members only)
-router.get(
-  "/:groupId/members",
+/**
+ * GET /api/groups/:groupId/members - Get group members (members only)
+ */
+router.get("/:groupId/members", protect, groupController.getGroupMembers)
+
+/**
+ * POST /api/groups/:groupId/request-invite - Request invitation to private group
+ */
+router.post(
+  "/:groupId/request-invite",
   protect,
-  checkGroupExists, // ✅ Check group exists
-  checkGroupMembership, // ✅ Check user is member
-  groupController.getGroupMembers,
+  groupLimiter,
+  groupController.requestGroupInvite,
 )
 
 // POST /api/groups/:groupId/invite - Invite user to group (admin only)
@@ -141,7 +134,6 @@ router.post(
   "/:groupId/invite",
   protect,
   groupLimiter,
-  checkGroupExists, // ✅ Check group exists
   checkGroupAdmin, // ✅ Check admin permissions
   [
     check("userId", "User ID is required").notEmpty(),
@@ -156,32 +148,51 @@ router.delete(
   "/:groupId/remove/:userId",
   protect,
   groupLimiter,
-  checkGroupExists, // ✅ Check group exists
   checkGroupAdmin, // ✅ Check admin permissions
   groupController.removeMember,
 )
 
-// GET /api/groups/:groupId/messages - Get group messages (members only)
+/**
+ * GET /api/groups/:groupId/messages - Get group messages (members only)
+ */
+const queryParamsSchema = z.object({
+  limit: z.coerce
+    .number()
+    .min(1, { message: "Limit must be at least 1" })
+    .max(100, { message: "Limit cannot exceed 100" })
+    .optional(),
+  page: z.coerce
+    .number()
+    .min(1, { message: "Page must be at least 1" })
+    .optional(),
+})
+export type GroupMessagesQueryParams = z.infer<typeof queryParamsSchema>
+
 router.get(
   "/:groupId/messages",
   protect,
-  checkGroupExists, // ✅ Check group exists
-  checkGroupMembership, // ✅ Check user is member
+  validate({ querySchema: queryParamsSchema }),
   groupController.getGroupMessages,
 )
 
-// POST /api/groups/:groupId/messages - Send group message (members only)
+/**
+ * POST /api/groups/:groupId/messages - Send group message
+ */
+const sendMessageBodySchema = z.object({
+  content: z
+    .string()
+    .min(1, { message: "Message content cannot be empty" })
+    .max(1000, { message: "Message content cannot exceed 1000 characters" })
+    .trim(),
+})
+
+export type SendGroupMessageBody = z.infer<typeof sendMessageBodySchema>
+
 router.post(
   "/:groupId/messages",
   protect,
   groupLimiter,
-  checkGroupExists, // ✅ Check group exists
-  checkGroupMembership, // ✅ Check user is member
-  [
-    check("content", "Message content is required").notEmpty(),
-    check("content", "Message too long").isLength({ max: 1000 }),
-  ],
-  handleValidationErrors,
+  validate({ bodySchema: sendMessageBodySchema }),
   groupController.sendGroupMessage,
 )
 

@@ -3,7 +3,7 @@ import type { Response } from "express"
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 import type { RecentMessageQuery } from "../routes/messages"
 
-import MessageService from "../services/MessageService"
+import MessageService from "../services/message-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 

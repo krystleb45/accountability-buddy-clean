@@ -19,7 +19,7 @@ async function Layout({ children }: { children: ReactNode }) {
   const isAdmin = session.user.role === "admin"
 
   return (
-    <div className="mx-auto min-h-screen max-w-7xl p-6">
+    <div className="mx-auto flex min-h-screen max-w-7xl flex-col p-6">
       {!isAdmin && (
         <>
           <RenewSubscriptionBanner />

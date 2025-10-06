@@ -122,7 +122,7 @@ export async function fetchCommunityStats(): Promise<CommunityStats> {
   try {
     const [friendsData, groupsResponse, messagesResponse] = await Promise.all([
       http.get<Envelope<{ friends: User[] }>>("/friends"),
-      http.get<Envelope<Group[]>>("/groups/my-groups"),
+      http.get<Envelope<{ groups: Group[] }>>("/groups/my-groups"),
       http.get<Envelope<{ count: number }>>("/messages/unread-count"),
     ])
 
@@ -130,7 +130,7 @@ export async function fetchCommunityStats(): Promise<CommunityStats> {
     const onlineFriends = friendsData.data.data.friends.filter(
       (friend) => friend.activeStatus === "online",
     ).length
-    const activeGroups = groupsResponse.data.data.length
+    const activeGroups = groupsResponse.data.data.groups.length
     const unreadMessages = messagesResponse.data.data.count
 
     return { totalFriends, activeGroups, unreadMessages, onlineFriends }

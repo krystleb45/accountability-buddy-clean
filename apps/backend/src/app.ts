@@ -100,14 +100,8 @@ app.use(helmet())
 
 app.use(
   cors({
-    origin: [
-      "https://accountability-buddy-clean.vercel.app",
-      "https://accountability-buddy-clean-git-main-krystle-berry-s-projects.vercel.app",
-      "http://localhost:3000", // for local development
-      "http://localhost:3001", // backup local port
-    ],
+    origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
   }),
 )

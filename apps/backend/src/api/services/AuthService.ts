@@ -55,7 +55,7 @@ const AuthService = {
     return jwt.sign(payload, ACCESS_TOKEN_SECRET, opts)
   },
 
-  async verifyToken(token: string): Promise<JwtPayload> {
+  async verifyToken(token: string) {
     try {
       return jwt.verify(token, ACCESS_TOKEN_SECRET) as JwtPayload
     } catch (err) {

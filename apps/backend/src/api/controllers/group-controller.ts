@@ -1,8 +1,18 @@
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import { categories } from "@ab/shared/categories"
+import z from "zod"
 
-import GroupService from "../services/GroupService"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type {
+  GetGroupsQueryParams,
+  GroupMessagesQueryParams,
+  SendGroupMessageBody,
+} from "../routes/groups"
+
+import { CustomError } from "../middleware/errorHandler"
+import { FileUploadService } from "../services/file-upload-service"
+import GroupService from "../services/group-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
@@ -10,73 +20,67 @@ import sendResponse from "../utils/sendResponse"
  * GET /api/groups - Get all groups with optional filters
  */
 export const getGroups = catchAsync(
-  async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest<unknown, unknown, unknown, GetGroupsQueryParams>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
     const { category, search } = req.query
-    const userId = req.user!.id
 
-    const groups = await GroupService.getGroups(
-      userId,
-      category as string,
-      search as string,
-    )
+    const groups = await GroupService.getGroups(category, search)
 
-    sendResponse(res, 200, true, "Groups retrieved successfully", groups)
+    sendResponse(res, 200, true, "Groups retrieved successfully", { groups })
   },
 )
 
 /**
- * POST /api/groups - Create new group (FIXED VERSION)
+ * POST /api/groups - Create new group
  */
+const createGroupSchema = z.object({
+  name: z.string().min(3).max(50),
+  description: z.string().min(10).max(200),
+  category: z.enum(categories.map((cat) => cat.id)),
+  isPublic: z.boolean(),
+  tags: z.array(z.string().max(20)).max(5),
+})
+
+type CreateGroupFormData = z.infer<typeof createGroupSchema>
+
 export const createGroup = catchAsync(
-  async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
-    // console.log("=== GROUP CONTROLLER DEBUG ===");
-    // console.log("Full request body:", JSON.stringify(req.body, null, 2));
-    // console.log("User from middleware:", req.user);
+  async (
+    req: AuthenticatedRequest<unknown, unknown, CreateGroupFormData>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const formData = req.body
+    const parsedData = createGroupSchema.safeParse(formData)
 
-    // Extract all fields from the form
-    const {
-      name,
-      description,
-      category,
-      privacy, // Could be 'Public Group' or 'Private Group'
-      tags, // Array of tags
-      isPublic, // Alternative boolean field
-    } = req.body
-
-    const creatorId = req.user!.id
-
-    // console.log("Extracted fields:");
-    // console.log("- name:", name);
-    // console.log("- description:", description);
-    // console.log("- category:", category);
-    // console.log("- privacy:", privacy);
-    // console.log("- isPublic:", isPublic);
-    // console.log("- tags:", tags);
-    // console.log("- creatorId:", creatorId);
-
-    // Validate required fields
-    if (!name || !description || !category) {
-      console.error("Missing required fields")
-      sendResponse(
-        res,
-        400,
-        false,
-        "Name, description, and category are required",
-      )
-      return // Fixed: explicit return
+    if (!parsedData.success) {
+      throw new CustomError("Invalid form data", 400, parsedData.error.issues)
     }
 
-    const group = await GroupService.createGroup(
-      name,
-      description,
-      category,
-      creatorId,
-      privacy || (isPublic ? "public" : "private"),
-      tags,
-    )
+    if (!req.file) {
+      throw new CustomError("Avatar image is required", 400)
+    }
 
-    // console.log("Controller: Group created successfully:", group);
-    sendResponse(res, 201, true, "Group created successfully", group)
+    const creatorId = req.user.id
+
+    const group = await GroupService.createGroup({
+      ...parsedData.data,
+      privacy: parsedData.data.isPublic ? "public" : "private",
+      creatorId,
+    })
+
+    const fileNameToSave = `${group._id}-avatar`
+    const { key } = await FileUploadService.uploadToS3({
+      buffer: req.file.buffer,
+      name: fileNameToSave,
+      mimetype: req.file.mimetype,
+    })
+
+    await GroupService.updateAvatarImage(group._id.toString(), key)
+
+    sendResponse(res, 201, true, "Group created successfully", { group })
   },
 )
 
@@ -86,14 +90,15 @@ export const createGroup = catchAsync(
 export const getMyGroups = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {
     const userId = req.user.id
-    const groups = await GroupService.getMyGroups(userId)
-    sendResponse(res, 200, true, "Your groups retrieved successfully", groups)
+    const groups = await GroupService.getUserGroups(userId)
+    sendResponse(res, 200, true, "Your groups retrieved successfully", {
+      groups,
+    })
   },
 )
 
 /**
  * GET /api/groups/:groupId - Get specific group details
- * Middleware: checkGroupExists, checkGroupAccess
  */
 export const getGroupDetails = catchAsync(
   async (
@@ -102,17 +107,17 @@ export const getGroupDetails = catchAsync(
     _next: NextFunction,
   ) => {
     const { groupId } = req.params
-    const userId = req.user!.id
+    const userId = req.user.id
 
-    // Group existence already verified by middleware
     const group = await GroupService.getGroupDetails(groupId, userId)
-    sendResponse(res, 200, true, "Group details retrieved successfully", group)
+    sendResponse(res, 200, true, "Group details retrieved successfully", {
+      group,
+    })
   },
 )
 
 /**
  * POST /api/groups/:groupId/join - Join a group
- * Middleware: checkGroupExists, checkCanJoinGroup
  */
 export const joinGroup = catchAsync(
   async (
@@ -121,17 +126,16 @@ export const joinGroup = catchAsync(
     _next: NextFunction,
   ) => {
     const { groupId } = req.params
-    const userId = req.user!.id
+    const userId = req.user.id
 
-    // Group existence and join eligibility already verified by middleware
     await GroupService.joinGroup(groupId, userId, globalThis.io)
+
     sendResponse(res, 200, true, "Joined group successfully")
   },
 )
 
 /**
  * POST /api/groups/:groupId/leave - Leave a group
- * Middleware: checkGroupExists, checkCanLeaveGroup
  */
 export const leaveGroup = catchAsync(
   async (
@@ -142,8 +146,8 @@ export const leaveGroup = catchAsync(
     const { groupId } = req.params
     const userId = req.user!.id
 
-    // Group existence and leave eligibility already verified by middleware
     await GroupService.leaveGroup(groupId, userId, globalThis.io)
+
     sendResponse(res, 200, true, "Left group successfully")
   },
 )
@@ -190,7 +194,6 @@ export const deleteGroup = catchAsync(
 
 /**
  * GET /api/groups/:groupId/members - Get group members
- * Middleware: checkGroupExists, checkGroupMembership
  */
 export const getGroupMembers = catchAsync(
   async (
@@ -199,17 +202,31 @@ export const getGroupMembers = catchAsync(
     _next: NextFunction,
   ) => {
     const { groupId } = req.params
-    const userId = req.user!.id
+    const userId = req.user.id
 
-    // Group existence and membership already verified by middleware
     const members = await GroupService.getGroupMembers(groupId, userId)
-    sendResponse(
-      res,
-      200,
-      true,
-      "Group members retrieved successfully",
+
+    sendResponse(res, 200, true, "Group members retrieved successfully", {
       members,
-    )
+    })
+  },
+)
+
+/**
+ * POST /api/groups/:groupId/request-invite - Request invitation to private group
+ */
+export const requestGroupInvite = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ groupId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { groupId } = req.params
+    const userId = req.user.id
+
+    await GroupService.requestGroupInvite(groupId, userId)
+
+    sendResponse(res, 200, true, "Group invite requested successfully")
   },
 )
 
@@ -264,19 +281,27 @@ export const removeMember = catchAsync(
 
 /**
  * GET /api/groups/:groupId/messages - Get group messages
- * Middleware: checkGroupExists, checkGroupMembership
  */
 export const getGroupMessages = catchAsync(
   async (
-    req: AuthenticatedRequest<{ groupId: string }>,
+    req: AuthenticatedRequest<
+      { groupId: string },
+      unknown,
+      unknown,
+      GroupMessagesQueryParams
+    >,
     res: Response,
     _next: NextFunction,
   ) => {
     const { groupId } = req.params
-    const userId = req.user!.id
+    const userId = req.user.id
+    const { limit, page } = req.query
 
-    // Group existence and membership already verified by middleware
-    const messages = await GroupService.getGroupMessages(groupId, userId)
+    const messages = await GroupService.getGroupMessages(groupId, userId, {
+      limit,
+      page,
+    })
+
     sendResponse(
       res,
       200,
@@ -289,26 +314,24 @@ export const getGroupMessages = catchAsync(
 
 /**
  * POST /api/groups/:groupId/messages - Send group message
- * Middleware: checkGroupExists, checkGroupMembership
  */
 export const sendGroupMessage = catchAsync(
   async (
-    req: AuthenticatedRequest<{ groupId: string }>,
+    req: AuthenticatedRequest<
+      { groupId: string },
+      unknown,
+      SendGroupMessageBody
+    >,
     res: Response,
     _next: NextFunction,
   ) => {
     const { groupId } = req.params
     const { content } = req.body
-    const userId = req.user!.id
+    const userId = req.user.id
 
     // Group existence and membership already verified by middleware
-    const message = await GroupService.sendGroupMessage(
-      groupId,
-      userId,
-      content,
-      globalThis.io,
-    )
-    sendResponse(res, 201, true, "Message sent successfully", message)
+    await GroupService.sendGroupMessage(groupId, userId, content, globalThis.io)
+    sendResponse(res, 201, true, "Message sent successfully")
   },
 )
 

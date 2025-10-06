@@ -94,12 +94,9 @@ async function startServer(): Promise<void> {
     // 3) Create HTTP server and setup Socket.IO with all features
     const httpServer = createServer(app)
 
-    const { io, socketService } = socketServer(httpServer)
+    const { io } = socketServer(httpServer)
     globalThis.io = io
-
-    // 🆕 REGISTER the socket service with Express app so controllers can access it
-    app.set("anonymousMilitarySocketService", socketService)
-    logger.info("✅ Anonymous military socket service registered")
+    logger.info("✅ Socket.IO server initialized")
 
     // 4) Start listening
     const PORT = Number.parseInt(process.env.PORT || "5000", 10)

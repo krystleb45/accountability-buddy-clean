@@ -3718,19 +3718,13 @@ export type GroupUnreadMessage = {
 export type Group = {
   name: string
   description?: string
-  category:
-    | "Fitness & Health"
-    | "Learning & Education"
-    | "Career & Business"
-    | "Lifestyle & Hobbies"
-    | "Creative & Arts"
-    | "Technology"
+  category: "fitness" | "study" | "career" | "lifestyle" | "creative" | "tech"
   members: (User["_id"] | User)[]
   createdBy: User["_id"] | User
   visibility?: "public" | "private"
   isActive?: boolean
   lastActivity?: Date
-  avatarKey?: string | null
+  avatar?: string | null
   tags: string[]
   unreadMessages: GroupUnreadMessage[]
   typingUsers: (User["_id"] | User)[]
@@ -3740,6 +3734,7 @@ export type Group = {
   updatedAt?: Date
   memberCount: number
   typingCount: number
+  isPublic: boolean
 }
 
 /**
@@ -3771,14 +3766,76 @@ export type GroupQuery = mongoose.Query<any, GroupDocument, GroupQueries> &
 export type GroupQueries = {}
 
 export type GroupMethods = {
-  addMember: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
-  removeMember: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
-  incrementUnread: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
-  clearUnread: (this: GroupDocument, userId: Types.ObjectId) => Promise<any>
+  addMember: (
+    this: GroupDocument,
+    userId: Types.ObjectId
+  ) => Promise<GroupDocument>
+  removeMember: (
+    this: GroupDocument,
+    userId: Types.ObjectId
+  ) => Promise<GroupDocument>
+  incrementUnread: (
+    this: GroupDocument,
+    userId: Types.ObjectId
+  ) => Promise<GroupDocument>
+  clearUnread: (
+    this: GroupDocument,
+    userId: Types.ObjectId
+  ) => Promise<GroupDocument>
 }
 
 export type GroupStatics = {
-  findPublicGroups: (this: GroupModel) => any
+  findPublicGroups: (
+    this: GroupModel
+  ) => Promise<
+    (mongoose.Document<
+      unknown,
+      import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupQueries,
+      GroupDocument
+    > &
+      mongoose.Document<
+        Types.ObjectId,
+        import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupQueries,
+        any
+      > &
+      import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupMethods & {
+        name: string
+        description?: string
+        category:
+          | "fitness"
+          | "study"
+          | "career"
+          | "lifestyle"
+          | "creative"
+          | "tech"
+        members: Types.Array<
+          | Types.ObjectId
+          | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
+        >
+        createdBy:
+          | Types.ObjectId
+          | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
+        visibility?: "private" | "public"
+        isActive?: boolean
+        lastActivity?: Date
+        avatar?: string
+        tags: Types.Array<string>
+        unreadMessages: Types.DocumentArray<
+          import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupUnreadMessageDocument
+        >
+        typingUsers: Types.Array<
+          | Types.ObjectId
+          | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
+        >
+        isPinned?: boolean
+        _id: Types.ObjectId
+        createdAt?: Date
+        updatedAt?: Date
+        memberCount: number
+        typingCount: number
+        isPublic: boolean
+      } & Required<{ _id: Types.ObjectId }>)[]
+  >
 }
 
 /**
@@ -3832,19 +3889,13 @@ export type GroupDocument = mongoose.Document<
   GroupMethods & {
     name: string
     description?: string
-    category:
-      | "Fitness & Health"
-      | "Learning & Education"
-      | "Career & Business"
-      | "Lifestyle & Hobbies"
-      | "Creative & Arts"
-      | "Technology"
+    category: "fitness" | "study" | "career" | "lifestyle" | "creative" | "tech"
     members: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     createdBy: UserDocument["_id"] | UserDocument
     visibility?: "public" | "private"
     isActive?: boolean
     lastActivity?: Date
-    avatarKey?: string | null
+    avatar?: string | null
     tags: mongoose.Types.Array<string>
     unreadMessages: mongoose.Types.DocumentArray<GroupUnreadMessageDocument>
     typingUsers: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
@@ -3854,6 +3905,7 @@ export type GroupDocument = mongoose.Document<
     updatedAt?: Date
     memberCount: number
     typingCount: number
+    isPublic: boolean
   }
 
 /**
@@ -3908,11 +3960,7 @@ export type GroupInvitationQueries = {}
 
 export type GroupInvitationMethods = {}
 
-export type GroupInvitationStatics = {
-  sendInvitation: (this: GroupInvitationModel, ...args: any[]) => any
-  respondInvitation: (this: GroupInvitationModel, ...args: any[]) => any
-  getPendingForUser: (this: GroupInvitationModel, ...args: any[]) => any
-}
+export type GroupInvitationStatics = {}
 
 /**
  * Mongoose Model type
@@ -3963,125 +4011,6 @@ export type GroupInvitationDocument = mongoose.Document<
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-  }
-
-/**
- * Lean version of GroupMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GroupMessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `GroupMessageObject`.
- * ```
- * const groupmessageObject = groupmessage.toObject();
- * ```
- */
-export type GroupMessage = {
-  groupId: Group["_id"] | Group
-  senderId: User["_id"] | User
-  content: string
-  timestamp?: Date
-  type?: "message" | "system"
-  editedAt?: Date | null
-  deletedAt?: Date | null
-  _id: mongoose.Types.ObjectId
-  createdAt?: Date
-  updatedAt?: Date
-}
-
-/**
- * Lean version of GroupMessageDocument (type alias of `GroupMessage`)
- *
- * Use this type alias to avoid conflicts with model names:
- * ```
- * import { GroupMessage } from "../models"
- * import { GroupMessageObject } from "../interfaces/mongoose.gen.ts"
- *
- * const groupmessageObject: GroupMessageObject = groupmessage.toObject();
- * ```
- */
-export type GroupMessageObject = GroupMessage
-
-/**
- * Mongoose Query type
- *
- * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
- */
-export type GroupMessageQuery = mongoose.Query<
-  any,
-  GroupMessageDocument,
-  GroupMessageQueries
-> &
-  GroupMessageQueries
-
-/**
- * Mongoose Query helper types
- *
- * This type represents `GroupMessageSchema.query`. For most use cases, you should not need to use this type explicitly.
- */
-export type GroupMessageQueries = {}
-
-export type GroupMessageMethods = {}
-
-export type GroupMessageStatics = {}
-
-/**
- * Mongoose Model type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const GroupMessage = mongoose.model<GroupMessageDocument, GroupMessageModel>("GroupMessage", GroupMessageSchema);
- * ```
- */
-export type GroupMessageModel = mongoose.Model<
-  GroupMessageDocument,
-  GroupMessageQueries
-> &
-  GroupMessageStatics
-
-/**
- * Mongoose Schema type
- *
- * Assign this type to new GroupMessage schema instances:
- * ```
- * const GroupMessageSchema: GroupMessageSchema = new mongoose.Schema({ ... })
- * ```
- */
-export type GroupMessageSchema = mongoose.Schema<
-  GroupMessageDocument,
-  GroupMessageModel,
-  GroupMessageMethods,
-  GroupMessageQueries
->
-
-/**
- * Mongoose Document type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const GroupMessage = mongoose.model<GroupMessageDocument, GroupMessageModel>("GroupMessage", GroupMessageSchema);
- * ```
- */
-export type GroupMessageDocument = mongoose.Document<
-  mongoose.Types.ObjectId,
-  GroupMessageQueries
-> &
-  GroupMessageMethods & {
-    groupId: GroupDocument["_id"] | GroupDocument
-    senderId: UserDocument["_id"] | UserDocument
-    content: string
-    timestamp?: Date
-    type?: "message" | "system"
-    editedAt?: Date | null
-    deletedAt?: Date | null
-    _id: mongoose.Types.ObjectId
-    createdAt?: Date
-    updatedAt?: Date
-    formattedMessage: {
-      id: string
-      senderId: string
-      senderName: string
-      content: string
-      timestamp: string
-      type: "message" | "system"
-    }
   }
 
 /**

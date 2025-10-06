@@ -110,7 +110,12 @@ export function CommunityClient() {
       </Button>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div
+        className={`
+          flex flex-col gap-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
         <div>
           <h1 className="flex items-center gap-2 text-3xl font-bold">
             <Handshake size={36} className="text-primary" /> Community Hub
@@ -146,7 +151,7 @@ export function CommunityClient() {
               {stats.totalFriends}
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="mt-auto">
             <Button
               variant="outline"
               asChild
@@ -176,7 +181,7 @@ export function CommunityClient() {
               {stats.activeGroups}
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="mt-auto">
             <Button
               variant="outline"
               asChild
@@ -206,7 +211,7 @@ export function CommunityClient() {
               {stats.unreadMessages}
             </div>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="mt-auto">
             <Button
               variant="outline"
               asChild

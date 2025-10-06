@@ -2,7 +2,7 @@
 const nextConfig = {
   async rewrites() {
     const backend = (
-      process.env.BACKEND_URL || "http://localhost:5050"
+      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5050"
     ).replace(/\/$/, "")
     return {
       // Ensure backend auth endpoints override local Next route handlers
@@ -43,6 +43,10 @@ const nextConfig = {
         {
           source: "/api/:path*",
           destination: `${backend}/api/:path*`,
+        },
+        {
+          source: "/socket.io/:path*",
+          destination: `${backend}/socket.io/:path*`,
         },
       ],
     }

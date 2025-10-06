@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { SessionProvider } from "next-auth/react"
 
 import { AuthProvider } from "@/context/auth/auth-context"
+import { SocketProvider } from "@/context/auth/socket-context"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,7 +32,9 @@ export function Providers({ children }: Props) {
     <QueryClientProvider client={queryClient}>
       {/* Refetch every hour because access tokens expires in an hour */}
       <SessionProvider refetchInterval={60 * 60}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <SocketProvider>{children}</SocketProvider>
+        </AuthProvider>
       </SessionProvider>
 
       <ReactQueryDevtools initialIsOpen={false} />

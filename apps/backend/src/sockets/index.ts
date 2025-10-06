@@ -3,35 +3,18 @@ import type { Socket } from "socket.io"
 
 import { Server } from "socket.io"
 
-import Notification from "../api/models/Notification"
-import { AnonymousMilitarySocketService } from "../api/services/AnonymousMilitarySocketService" // ADD THIS
 import AuthService from "../api/services/AuthService"
 import { logger } from "../utils/winstonLogger"
-import { setupAnonymousMilitaryChat } from "./anonymousMilitaryChat"
-import chatSocket from "./chat"
+import groupSocket from "./groups"
 
-interface DecodedToken {
-  userId: string
-  role: string
-}
-
-function socketServer(server: HttpServer): {
-  io: Server
-  socketService: AnonymousMilitarySocketService
-} {
+function socketServer(server: HttpServer) {
   const io = new Server(server, {
+    addTrailingSlash: false,
     cors: {
       origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
-      methods: ["GET", "POST"],
       credentials: true,
     },
   })
-
-  // 🆕 CREATE the socket service for anonymous military chat
-  const anonymousSocketService = new AnonymousMilitarySocketService(io)
-
-  // Setup anonymous military chat (no auth required)
-  setupAnonymousMilitaryChat(io)
 
   /**
    * @desc    Middleware to authenticate WebSocket connections using JWT.
@@ -39,10 +22,7 @@ function socketServer(server: HttpServer): {
    */
   io.use(async (socket: Socket, next) => {
     try {
-      // Support token via query or Authorization header
-      const rawToken =
-        (socket.handshake.query.token as string) ||
-        (socket.handshake.headers.authorization as string)
+      const rawToken = socket.handshake.auth.token as string
 
       if (!rawToken) {
         logger.warn("Socket connection attempted without a token.")
@@ -54,7 +34,7 @@ function socketServer(server: HttpServer): {
         : rawToken
 
       // VERIFY the JWT
-      const decoded = (await AuthService.verifyToken(token)) as DecodedToken
+      const decoded = await AuthService.verifyToken(token)
       if (!decoded.userId) {
         throw new Error("Invalid token payload")
       }
@@ -75,52 +55,11 @@ function socketServer(server: HttpServer): {
     const { id: userId } = socket.data.user as { id: string; role: string }
     logger.info(`User connected: ${userId}`)
 
-    // Attach chat-specific event handlers
-    chatSocket(io, socket)
-
-    /**
-     * @desc    Fetches notifications for the connected user.
-     */
-    socket.on("fetchNotifications", async () => {
-      try {
-        const notifications = await Notification.find({ user: userId }).sort({
-          createdAt: -1,
-        })
-        socket.emit("notifications", notifications)
-      } catch (err) {
-        logger.error(
-          `Error fetching notifications for user ${userId}: ${(err as Error).message}`,
-        )
-        socket.emit("error", "Unable to fetch notifications.")
-      }
-    })
-
-    /**
-     * @desc    Handles new notifications.
-     * @param   notification - The notification data to emit.
-     */
-    socket.on(
-      "newNotification",
-      (notification: { userId: string; message: string }) => {
-        if (notification && notification.userId) {
-          io.to(notification.userId).emit("newNotification", notification)
-        } else {
-          logger.warn("Invalid notification data received.")
-          socket.emit("error", "Invalid notification data.")
-        }
-      },
-    )
-
-    /**
-     * @desc    Handles user disconnection.
-     */
-    socket.on("disconnect", (reason) => {
-      logger.info(`User disconnected: ${userId} (${reason})`)
-    })
+    // Set up socket handlers for different features
+    groupSocket(io, socket)
   })
 
-  // 🆕 RETURN both io and the socket service
-  return { io, socketService: anonymousSocketService }
+  return { io }
 }
 
 export default socketServer

@@ -26,6 +26,7 @@ const badgeVariants = cva(
         `,
         secondary: `
           border-transparent bg-secondary text-secondary-foreground
+          [&>svg]:text-primary
           [a&]:hover:bg-secondary/90
         `,
         destructive: `

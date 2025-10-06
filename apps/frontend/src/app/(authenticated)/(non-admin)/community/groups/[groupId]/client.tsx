@@ -1,547 +1,524 @@
-// src/app/community/groups/[groupId]/client.tsx - CLEAN VERSION
 "use client"
 
-import { AnimatePresence, motion } from "motion/react"
-import { useSession } from "next-auth/react"
-import { useParams, useRouter } from "next/navigation"
-import React, { useEffect, useState } from "react"
 import {
-  FaArrowLeft,
-  FaCalendarAlt,
-  FaCheck,
-  FaComments,
-  FaCrown,
-  FaExclamationTriangle,
-  FaGlobe,
-  FaLock,
-  FaPaperPlane,
-  FaTimes,
-  FaUsers,
-} from "react-icons/fa"
+  JOIN_GROUP_ROOM,
+  LEAVE_GROUP_ROOM,
+  NEW_GROUP_MESSAGE,
+} from "@ab/shared/socket-events"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { format, formatDistanceToNow } from "date-fns"
+import {
+  ArrowLeft,
+  CalendarPlus,
+  CrownIcon,
+  GlobeIcon,
+  HexagonIcon,
+  LockIcon,
+  MessageSquare,
+  SendIcon,
+  Users2,
+  XCircle,
+} from "lucide-react"
+import { motion } from "motion/react"
+import { useSession } from "next-auth/react"
+import Image from "next/image"
+import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import z from "zod"
 
-import { http } from "@/utils"
+import type { GroupMessage } from "@/api/groups/group-api"
 
-interface Group {
-  _id: string
-  name: string
-  description: string
-  category: string
-  privacy: "public" | "private"
-  memberCount: number
-  createdBy: {
-    _id: string
-    username: string
-  }
-  createdAt: string
-  updatedAt: string
+import {
+  fetchGroupDetails,
+  fetchGroupMembers,
+  fetchGroupMessages,
+  sendGroupMessage,
+} from "@/api/groups/group-api"
+import { LoadingSpinner } from "@/components/loading-spinner"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { useSocket } from "@/context/auth/socket-context"
+import { cn } from "@/lib/utils"
+
+const MotionCard = motion.create(Card)
+const MotionLink = motion.create(Link)
+
+interface GroupDetailClientProps {
+  groupId: string
 }
 
-interface Member {
-  _id: string
-  username: string
-  email: string
-  role: string
-  joinedAt: string
-}
+const messageFormSchema = z.object({
+  content: z.string().min(1, "Message cannot be empty").max(1000).trim(),
+})
 
-interface Message {
-  _id: string
-  content: string
-  sender: {
-    _id: string
-    username: string
-  }
-  createdAt: string
-  updatedAt: string
-}
+type MessageFormData = z.infer<typeof messageFormSchema>
 
-export default function GroupDetailClient() {
+export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const { data: session, status } = useSession()
-  const params = useParams()
-  const router = useRouter()
-  const groupId = params.groupId as string
+  const userId = session?.user?.id
+  const queryClient = useQueryClient()
 
-  const [group, setGroup] = useState<Group | null>(null)
-  const [members, setMembers] = useState<Member[]>([])
-  const [messages, setMessages] = useState<Message[]>([])
-  const [newMessage, setNewMessage] = useState("")
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const [sendingMessage, setSendingMessage] = useState(false)
+  const [messages, setMessages] = useState<GroupMessage[]>([])
 
-  const loadGroupData = async () => {
-    try {
-      setLoading(true)
-      setError(null)
+  const {
+    data: group,
+    isLoading: isLoadingGroup,
+    error: groupError,
+  } = useQuery({
+    queryKey: ["group", groupId],
+    queryFn: async () => fetchGroupDetails(groupId),
+    enabled: status === "authenticated" && !!groupId,
+  })
 
-      console.log("🚀 [CLIENT] Loading group data for:", groupId)
-      console.log("🔍 [CLIENT] Session data:", {
-        user: session?.user?.email,
-        hasAccessToken: !!(session?.user as any)?.accessToken,
-        tokenPreview: `${(session?.user as any)?.accessToken?.substring(0, 20)}...`,
-      })
+  const {
+    data: members,
+    isLoading: isLoadingMembers,
+    error: membersError,
+  } = useQuery({
+    queryKey: ["groupMembers", groupId],
+    queryFn: async () => fetchGroupMembers(groupId),
+    enabled: status === "authenticated" && !!groupId,
+  })
 
-      // Load all data in parallel
-      const [groupResponse, membersResponse, messagesResponse] =
-        await Promise.all([
-          http.get(`/groups/${groupId}`).catch((err) => {
-            console.error(`❌ [CLIENT] Failed to load group data:`, err)
-            throw new Error(`Failed to load group data: ${err.message}`)
-          }),
-          http.get(`/groups/${groupId}/members`).catch((err) => {
-            console.error(`❌ [CLIENT] Failed to load members data:`, err)
-            return null
-          }),
-          http.get(`/groups/${groupId}/messages`).catch((err) => {
-            console.error(`❌ [CLIENT] Failed to load messages data:`, err)
-            return null
-          }),
-        ])
-
-      // Handle group details
-      const groupData = groupResponse.data
-      console.log("✅ [CLIENT] Group data loaded:", groupData)
-
-      // Try different response formats
-      const group = groupData.data || groupData.group || groupData
-      console.log("🔍 [CLIENT] Extracted group:", group)
-      setGroup(group)
-
-      // Handle members
-      if (membersResponse) {
-        const membersData = membersResponse.data
-        console.log("✅ [CLIENT] Members data loaded:", membersData)
-
-        // Try different response formats
-        const members =
-          membersData.data || membersData.members || membersData || []
-        console.log("🔍 [CLIENT] Extracted members:", members)
-        setMembers(Array.isArray(members) ? members : [])
-      }
-
-      if (messagesResponse) {
-        // Handle messages
-        const messagesData = messagesResponse.data
-        console.log("✅ [CLIENT] Messages data loaded:", messagesData)
-
-        // Try different response formats
-        const messages =
-          messagesData.data || messagesData.messages || messagesData || []
-        console.log("🔍 [CLIENT] Extracted messages:", messages)
-        setMessages(Array.isArray(messages) ? messages : [])
-      }
-    } catch (err: any) {
-      console.error("💥 [CLIENT] Error loading group data:", err)
-      setError(err.message || "Failed to load group details")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const {
+    data: queryMessages,
+    isLoading: isLoadingMessages,
+    error: messagesError,
+  } = useQuery({
+    queryKey: ["groupMessages", groupId],
+    queryFn: async () => fetchGroupMessages(groupId),
+    enabled: status === "authenticated" && !!groupId,
+    select: (data) => data.messages,
+  })
 
   useEffect(() => {
-    if (status !== "authenticated" || !groupId) {
-      setLoading(false)
-      return
-    }
-
-    loadGroupData()
-  }, [status, groupId])
-
-  // Auto-hide messages
-  useEffect(() => {
-    if (successMessage || error) {
-      const timer = setTimeout(() => {
-        setSuccessMessage(null)
-        setError(null)
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-    return undefined // Explicitly return undefined when no cleanup needed
-  }, [successMessage, error])
-
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!newMessage.trim() || sendingMessage) {
-      return
-    }
-
-    try {
-      setSendingMessage(true)
-      console.log("🚀 [CLIENT] Sending message:", newMessage)
-
-      const response = await fetch(`/api/groups/${groupId}/messages`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: newMessage.trim(),
-        }),
-      })
-
-      console.log("📥 [CLIENT] Send message response status:", response.status)
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null)
-        throw new Error(
-          errorData?.message || `Failed to send message: ${response.status}`,
+    if (queryMessages) {
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+      setMessages((prev) => {
+        // Merge new messages with existing ones, avoiding duplicates
+        const messageMap = new Map(prev.map((msg) => [msg._id, msg]))
+        queryMessages.forEach((msg) => messageMap.set(msg._id, msg))
+        return Array.from(messageMap.values()).sort(
+          (a, b) =>
+            new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime(),
         )
-      }
-
-      const messageData = await response.json()
-      console.log("✅ [CLIENT] Message sent successfully:", messageData)
-
-      // Add new message to the list
-      const newMessageObj = messageData.data || messageData
-      setMessages((prev) => [...prev, newMessageObj])
-      setNewMessage("")
-      setSuccessMessage("Message sent! 📨")
-    } catch (err: any) {
-      console.error("💥 [CLIENT] Failed to send message:", err)
-      setError(err.message || "Failed to send message")
-    } finally {
-      setSendingMessage(false)
+      })
     }
+  }, [queryMessages])
+
+  const chatRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTo({
+        top: chatRef.current.scrollHeight,
+        behavior: "smooth",
+      })
+    }
+  }, [messages])
+
+  const isLoading =
+    status === "loading" ||
+    isLoadingGroup ||
+    isLoadingMembers ||
+    isLoadingMessages
+
+  const error =
+    groupError?.message || membersError?.message || messagesError?.message
+
+  const form = useForm({
+    resolver: zodResolver(messageFormSchema),
+    defaultValues: {
+      content: "",
+    },
+  })
+
+  const { socket, isConnected, joinRoom, leaveRoom } = useSocket()
+
+  useEffect(() => {
+    if (!socket || !isConnected || !groupId) {
+      return
+    }
+
+    // Join the group room
+    joinRoom(groupId, JOIN_GROUP_ROOM)
+
+    // Listen for new messages
+    const handleNewMessage = (messageData: GroupMessage) => {
+      setMessages((prev) => {
+        // Avoid duplicate messages
+        if (prev.some((msg) => msg._id === messageData._id)) {
+          return prev
+        }
+        return [...prev, messageData]
+      })
+    }
+
+    const handleSocketError = (error: any) => {
+      console.error("❌ Socket error:", error)
+      toast.error("Connection error. Please try again.", {
+        description:
+          error.message || "An unknown error occurred while connecting to chat",
+      })
+    }
+
+    // Register event listeners
+    socket.on(NEW_GROUP_MESSAGE, handleNewMessage)
+    socket.on("error", handleSocketError)
+
+    // Cleanup function
+    return () => {
+      socket.off(NEW_GROUP_MESSAGE, handleNewMessage)
+      socket.off("error", handleSocketError)
+
+      // Leave the room when component unmounts
+      leaveRoom(groupId, LEAVE_GROUP_ROOM)
+    }
+  }, [socket, isConnected, groupId, joinRoom, leaveRoom, queryClient])
+
+  const { mutate: sendMessageMutate, isPending: isSending } = useMutation({
+    mutationFn: async (data: MessageFormData) => {
+      return sendGroupMessage(groupId, data.content)
+    },
+    onSuccess: () => {
+      // Clear the input field
+      form.reset()
+      queryClient.invalidateQueries({ queryKey: ["groupMessages", groupId] })
+    },
+    onError: (error) => {
+      toast.error("Failed to send message. Please try again.", {
+        description:
+          error.message || "An unknown error occurred while sending message",
+      })
+    },
+  })
+
+  const sendMessage = async (data: MessageFormData) => {
+    if (isSending) {
+      return // Prevent multiple submissions
+    }
+    sendMessageMutate(data)
   }
 
-  if (status === "loading" || loading) {
+  if (isLoading) {
     return (
-      <div
-        className={`
-          flex min-h-screen items-center justify-center bg-gradient-to-br
-          from-gray-900 via-gray-800 to-black
-        `}
-      >
+      <div className="grid min-h-screen place-items-center">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="grid min-h-screen place-items-center">
         <div className="text-center">
-          <div
-            className={`
-              mx-auto mb-4 size-12 animate-spin rounded-full border-b-2
-              border-green-400
-            `}
-          ></div>
-          <p className="text-gray-400">Loading group details...</p>
+          <XCircle size={60} className="mx-auto mb-6 text-destructive" />
+          <p className="mb-2">There was an error loading the group.</p>
+          <p className="text-sm text-muted-foreground">{error}</p>
         </div>
       </div>
     )
   }
 
-  if (status !== "authenticated") {
+  if (!group) {
     return (
-      <div
-        className={`
-          flex min-h-screen items-center justify-center bg-gradient-to-br
-          from-gray-900 via-gray-800 to-black
-        `}
-      >
+      <div className="grid min-h-screen place-items-center">
         <div className="text-center">
-          <p className="text-gray-400">Please log in to view group details.</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error && !group) {
-    return (
-      <div
-        className={`
-          flex min-h-screen items-center justify-center bg-gradient-to-br
-          from-gray-900 via-gray-800 to-black
-        `}
-      >
-        <div className="max-w-lg text-center">
-          <FaExclamationTriangle className="mx-auto mb-4 text-6xl text-red-500" />
-          <h2 className="mb-4 text-2xl font-bold text-red-400">
-            Failed to load group details
-          </h2>
-          <p className="mb-6 text-red-300">{error}</p>
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={loadGroupData}
-              className={`
-                rounded-lg bg-green-600 px-6 py-3 text-white transition
-                hover:bg-green-500
-              `}
-            >
-              Try Again
-            </button>
-            <button
-              onClick={() => router.push("/community/groups")}
-              className={`
-                flex items-center rounded-lg bg-gray-600 px-6 py-3 text-white
-                transition
-                hover:bg-gray-500
-              `}
-            >
-              <FaArrowLeft className="mr-2" />
-              Back to Groups
-            </button>
-          </div>
+          <XCircle size={60} className="mx-auto mb-6 text-destructive" />
+          <p className="mb-2">Group not found.</p>
+          <p className="text-sm text-muted-foreground">
+            The group you are looking for does not exist or has been deleted.
+          </p>
         </div>
       </div>
     )
   }
 
   return (
-    <div
-      className={`
-        min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
-        text-white
-      `}
-    >
-      <div className="mx-auto max-w-7xl p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => router.push("/community/groups")}
-            className={`
-              mb-4 inline-flex items-center text-green-400
-              hover:text-green-300
-            `}
-          >
-            <FaArrowLeft className="mr-2" />
-            Back to Groups
-          </button>
+    <div className="flex flex-1 flex-col gap-6">
+      <Button variant="link" size="sm" asChild className="self-start !px-0">
+        <Link href="/community/groups">
+          <ArrowLeft /> Back to Groups
+        </Link>
+      </Button>
 
-          {group && (
-            <div className="rounded-lg border border-gray-700 bg-gray-800 p-6">
-              <div className="mb-4 flex items-start justify-between">
-                <div className="flex-1">
-                  <h1 className="mb-2 text-3xl font-bold text-white">
-                    {group.name}
-                  </h1>
-                  <p className="mb-4 text-gray-300">{group.description}</p>
-
-                  <div className="flex items-center gap-4 text-sm text-gray-400">
-                    <span className="flex items-center">
-                      <FaUsers className="mr-1" />
-                      {members.length} member{members.length !== 1 ? "s" : ""}
-                    </span>
-                    <span className="flex items-center">
-                      {group.privacy === "private" ? (
-                        <FaLock className="mr-1" />
-                      ) : (
-                        <FaGlobe className="mr-1" />
-                      )}
-                      {group.privacy}
-                    </span>
-                    <span className="flex items-center">
-                      <FaCrown className="mr-1" />
-                      {group.createdBy?.username || "Unknown"}
-                    </span>
-                    <span className="flex items-center">
-                      <FaCalendarAlt className="mr-1" />
-                      {new Date(group.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* Header */}
+      <div
+        className={`
+          flex flex-col gap-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
+        <div className="flex items-center gap-4">
+          {group.avatar ? (
+            <Image
+              src={group.avatar}
+              alt={group.name}
+              width={80}
+              height={80}
+              className={`
+                size-20 overflow-hidden rounded-full border border-muted
+                object-contain
+              `}
+            />
+          ) : (
+            <HexagonIcon className="size-20 text-primary" />
           )}
+          <div>
+            <h1 className="text-3xl font-bold">{group.name}</h1>
+            {group.description && (
+              <p className="text-sm text-muted-foreground">
+                {group.description}
+              </p>
+            )}
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Badge variant="secondary">
+                <Users2 />
+                <span className="font-mono">{members?.length}</span>{" "}
+                {members?.length === 1 ? "Member" : "Members"}
+              </Badge>
+              <Badge variant="secondary">
+                {group.isPublic ? <GlobeIcon /> : <LockIcon />}{" "}
+                {group.isPublic ? "Public" : "Private"}
+              </Badge>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href={`/member/${group.createdBy.username}`}>
+                      <Badge variant="secondary">
+                        <CrownIcon /> @{group.createdBy.username}
+                      </Badge>
+                    </Link>
+                  </TooltipTrigger>
+
+                  <TooltipContent>
+                    Created by @{group.createdBy.username}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              {group.createdAt && (
+                <Badge variant="secondary">
+                  <CalendarPlus />
+                  Created{" "}
+                  {formatDistanceToNow(group.createdAt, { addSuffix: true })}
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={`
+          grid flex-1 grid-cols-1 gap-6
+          lg:grid-cols-4
+        `}
+      >
+        {/* Messages Section */}
+        <div className="lg:col-span-3">
+          <Card className="h-full">
+            {/* Messages Header */}
+            <CardHeader className="border-b">
+              <CardTitle>
+                <MessageSquare className="mr-2 inline-block text-primary" />{" "}
+                Messages
+              </CardTitle>
+            </CardHeader>
+
+            {/* Messages List */}
+            <CardContent
+              className="max-h-[75dvh] flex-1 space-y-4 overflow-y-auto"
+              ref={chatRef}
+            >
+              {messages.length > 0 ? (
+                messages.map((message) => {
+                  const isUserMessage = message.senderId._id === userId
+
+                  return (
+                    <div
+                      key={message._id}
+                      className={cn("flex", {
+                        "justify-end": isUserMessage,
+                      })}
+                    >
+                      <div>
+                        <MotionCard
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={cn("gap-0 py-2", {
+                            "rounded-xl rounded-bl-none": !isUserMessage,
+                            "rounded-xl rounded-br-none border-primary":
+                              isUserMessage,
+                          })}
+                        >
+                          <CardHeader className="block">
+                            <CardTitle
+                              className={`
+                                w-full text-xs font-medium text-muted-foreground
+                                hover:underline
+                              `}
+                            >
+                              <Link
+                                href={`/member/${message.senderId.username}`}
+                              >
+                                @{message.senderId.username}
+                              </Link>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p>{message.text}</p>
+                          </CardContent>
+                        </MotionCard>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <p
+                                className={cn(
+                                  `
+                                    mt-1 font-mono text-2xs
+                                    text-muted-foreground
+                                  `,
+                                  {
+                                    "text-right": isUserMessage,
+                                  },
+                                )}
+                              >
+                                {formatDistanceToNow(message.createdAt!, {
+                                  addSuffix: true,
+                                })}
+                              </p>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="bottom"
+                              align={isUserMessage ? "end" : "start"}
+                            >
+                              {format(message.createdAt!, "PPp")}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="flex flex-1 items-center justify-center">
+                  <p className="text-center text-muted-foreground">
+                    No messages yet. Start the conversation!
+                  </p>
+                </div>
+              )}
+            </CardContent>
+
+            {/* Message Input */}
+            <CardFooter className="mt-auto border-t">
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(sendMessage)}
+                  className="flex flex-1 items-end gap-2"
+                >
+                  <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormControl>
+                          <Input
+                            placeholder="Type your message..."
+                            className="w-full"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" size="sm" disabled={isSending}>
+                    <SendIcon /> {isSending ? "Sending..." : "Send"}
+                  </Button>
+                </form>
+              </Form>
+            </CardFooter>
+          </Card>
         </div>
 
-        {/* Success/Error Messages */}
-        <AnimatePresence>
-          {successMessage && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`
-                mb-6 flex items-center justify-between rounded-lg bg-green-600
-                p-4 text-white
-              `}
-            >
-              <div className="flex items-center">
-                <FaCheck className="mr-2" />
-                {successMessage}
-              </div>
-              <button
-                onClick={() => setSuccessMessage(null)}
-                className={`
-                  text-green-200
-                  hover:text-white
-                `}
-              >
-                <FaTimes />
-              </button>
-            </motion.div>
-          )}
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className={`
-                mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4
-                text-white
-              `}
-            >
-              {error}
-              <button
-                onClick={() => setError(null)}
-                className={`
-                  text-red-200
-                  hover:text-white
-                `}
-              >
-                <FaTimes />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
+        {/* Members Section */}
         <div
           className={`
-            grid grid-cols-1 gap-6
-            lg:grid-cols-4
+            sticky top-20 self-start
+            lg:col-span-1
           `}
         >
-          {/* Messages Section */}
-          <div className="lg:col-span-3">
-            <div
-              className={`
-                flex h-96 flex-col rounded-lg border border-gray-700 bg-gray-800
-              `}
-            >
-              {/* Messages Header */}
-              <div className="border-b border-gray-700 p-4">
-                <h2
-                  className={`
-                    flex items-center text-xl font-semibold text-green-400
-                  `}
-                >
-                  <FaComments className="mr-2" />
-                  Messages ({messages.length})
-                </h2>
-              </div>
+          <Card>
+            <CardHeader className="border-b">
+              <CardTitle>
+                <Users2 className="mr-2 inline-block text-primary" /> Members{" "}
+                <span className="font-mono">({members?.length || 0})</span>
+              </CardTitle>
+            </CardHeader>
 
-              {/* Messages List */}
-              <div className="flex-1 space-y-4 overflow-y-auto p-4">
-                {messages.length > 0 ? (
-                  messages.map((message) => (
-                    <motion.div
-                      key={message._id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="rounded-lg bg-gray-700 p-3"
-                    >
-                      <div className="mb-2 flex items-center gap-2">
-                        <div
-                          className={`
-                            flex size-6 items-center justify-center rounded-full
-                            bg-green-500 text-xs font-bold
-                          `}
-                        >
-                          {message.sender?.username?.charAt(0)?.toUpperCase() ||
-                            "?"}
-                        </div>
-                        <span className="font-medium text-white">
-                          {message.sender?.username || "Unknown User"}
-                        </span>
-                        <span className="text-xs text-gray-400">
-                          {new Date(message.createdAt).toLocaleString()}
-                        </span>
-                      </div>
-                      <p className="text-gray-200">{message.content}</p>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="flex flex-1 items-center justify-center">
-                    <p className="text-center text-gray-500">
-                      No messages yet. Start the conversation!
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Message Input */}
-              <form
-                onSubmit={sendMessage}
-                className="border-t border-gray-700 p-4"
-              >
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type your message..."
+            <CardContent className="max-h-[75dvh] space-y-4 overflow-y-auto">
+              {members && members.length > 0 ? (
+                members.map((member) => (
+                  <MotionLink
+                    href={`/member/${member.username}`}
+                    key={member._id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
                     className={`
-                      flex-1 rounded-lg bg-gray-700 px-4 py-2 text-white
-                      focus:ring-2 focus:ring-green-400 focus:outline-none
-                    `}
-                    disabled={sendingMessage}
-                  />
-                  <button
-                    type="submit"
-                    disabled={!newMessage.trim() || sendingMessage}
-                    className={`
-                      flex items-center rounded-lg bg-green-600 px-4 py-2
-                      text-white transition
-                      hover:bg-green-500
-                      disabled:cursor-not-allowed disabled:bg-gray-600
+                      flex items-center gap-3 rounded-md p-2
+                      hover:bg-accent
                     `}
                   >
-                    <FaPaperPlane
-                      className={sendingMessage ? "animate-pulse" : ""}
-                    />
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          {/* Members Section */}
-          <div className="lg:col-span-1">
-            <div className="rounded-lg border border-gray-700 bg-gray-800 p-4">
-              <h2
-                className={`
-                  mb-4 flex items-center text-xl font-semibold text-green-400
-                `}
-              >
-                <FaUsers className="mr-2" />
-                Members ({members.length})
-              </h2>
-
-              <div className="max-h-80 space-y-3 overflow-y-auto">
-                {members.length > 0 ? (
-                  members.map((member) => (
-                    <motion.div
-                      key={member._id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
+                    <Image
+                      src={member.profileImage || "/default-avatar.svg"}
+                      alt={member.username || member.name || "User"}
+                      width={40}
+                      height={40}
                       className={`
-                        flex items-center gap-3 rounded bg-gray-700 p-2
+                        size-10 rounded-full border border-muted object-cover
                       `}
-                    >
-                      <div
-                        className={`
-                          flex size-8 items-center justify-center rounded-full
-                          bg-green-500 text-sm font-bold text-white
-                        `}
-                      >
-                        {member.username?.charAt(0)?.toUpperCase() || "?"}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-white">
-                          {member.username || "Unknown User"}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {member.role || "Member"}
-                        </p>
-                      </div>
-                    </motion.div>
-                  ))
-                ) : (
-                  <p className="py-4 text-center text-gray-500">
-                    No members found
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium">@{member.username}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {member._id === group.createdBy._id
+                          ? "Admin"
+                          : "Member"}
+                      </p>
+                    </div>
+                  </MotionLink>
+                ))
+              ) : (
+                <p className="py-4 text-center text-muted-foreground">
+                  No members found
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
