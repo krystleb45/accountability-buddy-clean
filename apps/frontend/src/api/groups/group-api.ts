@@ -212,21 +212,13 @@ export async function requestGroupInvite(groupId: string) {
  * Invite a member to group
  * POST /api/groups/:id/invite
  */
-export async function inviteMember(
-  groupId: string,
-  userId: string,
-): Promise<boolean> {
-  if (!groupId || !userId) return false
+export async function inviteMember(groupId: string, userId: string) {
   try {
-    console.log(`[API] Inviting user ${userId} to group ${groupId}`)
     await http.post(`/groups/${encodeURIComponent(groupId)}/invite`, {
       userId,
     })
-    console.log(`[API] Successfully sent invitation`)
-    return true
   } catch (error) {
-    console.error(`[API] Error inviting member:`, error)
-    return handleError("inviteMember", error, false)
+    throw new Error(getApiErrorMessage(error as Error))
   }
 }
 
@@ -353,6 +345,26 @@ export async function rejectGroupInvitation(invitationId: string) {
     await http.delete(
       `/groups/invitations/${encodeURIComponent(invitationId)}/reject`,
     )
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
+ * GET /api/groups/:groupId/invite-recommendations
+ * Get invite recommendations (admin only)
+ */
+export async function fetchGroupRecommendations(groupId: string) {
+  try {
+    const resp = await http.get<
+      Envelope<{
+        recommendations: (Pick<
+          User,
+          "_id" | "name" | "username" | "profileImage"
+        > & { score: number })[]
+      }>
+    >(`/groups/${encodeURIComponent(groupId)}/invite-recommendations`)
+    return resp.data.data.recommendations
   } catch (error) {
     throw new Error(getApiErrorMessage(error as Error))
   }

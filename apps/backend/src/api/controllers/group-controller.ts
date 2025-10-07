@@ -239,21 +239,16 @@ export const requestGroupInvite = catchAsync(
  */
 export const inviteMember = catchAsync(
   async (
-    req: AuthenticatedRequest<{ groupId: string }>,
+    req: AuthenticatedRequest<{ groupId: string }, unknown, { userId: string }>,
     res: Response,
     _next: NextFunction,
   ) => {
     const { groupId } = req.params
     const { userId: inviteeId } = req.body
-    const inviterId = req.user!.id
+    const inviterId = req.user.id
 
     // Group existence and admin status already verified by middleware
-    await GroupService.inviteMember(
-      groupId,
-      inviteeId,
-      inviterId,
-      globalThis.io,
-    )
+    await GroupService.inviteMember(groupId, inviteeId, inviterId)
     sendResponse(res, 200, true, "Invitation sent successfully")
   },
 )
@@ -436,5 +431,32 @@ export const rejectGroupInvitation = catchAsync(
     await GroupService.rejectGroupInvitation(invitationId, userId)
 
     sendResponse(res, 200, true, "Group invitation rejected successfully")
+  },
+)
+
+/**
+ * GET /api/groups/:groupId/invite-recommendations - Get invite recommendations (admin only)
+ */
+export const getInviteRecommendations = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ groupId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { groupId } = req.params
+    const userId = req.user.id
+
+    const recommendations = await GroupService.getInviteRecommendations(
+      groupId,
+      userId,
+    )
+
+    sendResponse(
+      res,
+      200,
+      true,
+      "Invite recommendations retrieved successfully",
+      { recommendations },
+    )
   },
 )

@@ -64,7 +64,7 @@ export function PendingGroupInvitationsDialog({
   } = useQuery({
     queryKey: ["groupInvitations", groupId],
     queryFn: async () => fetchGroupInvitations(groupId),
-    enabled: status === "authenticated" && !!groupId,
+    enabled: status === "authenticated" && !!groupId && open,
   })
 
   const { mutate: mutateAcceptInvitation } = useMutation({

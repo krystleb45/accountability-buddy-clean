@@ -1,13 +1,11 @@
 import { categories } from "@ab/shared/categories"
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
-import { check } from "express-validator"
 import z from "zod"
 
 import * as groupController from "../controllers/group-controller"
 import { protect } from "../middleware/auth-middleware"
 import { checkGroupAdmin } from "../middleware/groupMiddleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
 import { validateSubscription } from "../middleware/subscription-validation"
 import validate from "../middleware/validation-middleware"
 import { FileUploadService } from "../services/file-upload-service"
@@ -58,6 +56,28 @@ router.get("/my-groups", protect, groupController.getMyGroups)
  * Get user's group invites (both sent and received)
  */
 router.get("/invitations", protect, groupController.getUserGroupInvitations)
+
+/**
+ * POST /api/groups/invitations/:invitationId/accept
+ * Accept a group invitation
+ */
+router.post(
+  "/invitations/:invitationId/accept",
+  protect,
+  groupLimiter,
+  groupController.acceptGroupInvitation,
+)
+
+/**
+ * DELETE /api/groups/invitations/:invitationId/reject
+ * Reject a group invitation (admin only)
+ */
+router.delete(
+  "/invitations/:invitationId/reject",
+  protect,
+  groupLimiter,
+  groupController.rejectGroupInvitation,
+)
 
 /**
  * GET /api/groups/:groupId - Get group details
@@ -132,17 +152,26 @@ router.post(
   groupController.requestGroupInvite,
 )
 
+/**
+ * GET /api/groups/:groupId/invite-recommendations - Get invite recommendations (admin only)
+ */
+router.get(
+  "/:groupId/invite-recommendations",
+  protect,
+  groupLimiter,
+  groupController.getInviteRecommendations,
+)
+
 // POST /api/groups/:groupId/invite - Invite user to group (admin only)
 router.post(
   "/:groupId/invite",
   protect,
   groupLimiter,
-  checkGroupAdmin, // ✅ Check admin permissions
-  [
-    check("userId", "User ID is required").notEmpty(),
-    check("userId", "Invalid user ID").isMongoId(),
-  ],
-  handleValidationErrors,
+  validate({
+    bodySchema: z.object({
+      userId: z.string().nonempty(),
+    }),
+  }),
   groupController.inviteMember,
 )
 
@@ -219,28 +248,6 @@ router.get(
   protect,
   groupLimiter,
   groupController.getGroupInvitations,
-)
-
-/**
- * POST /api/groups/invitations/:invitationId/accept
- * Accept a group invitation
- */
-router.post(
-  "/invitations/:invitationId/accept",
-  protect,
-  groupLimiter,
-  groupController.acceptGroupInvitation,
-)
-
-/**
- * DELETE /api/groups/invitations/:invitationId/reject
- * Reject a group invitation (admin only)
- */
-router.delete(
-  "/invitations/:invitationId/reject",
-  protect,
-  groupLimiter,
-  groupController.rejectGroupInvitation,
 )
 
 export default router

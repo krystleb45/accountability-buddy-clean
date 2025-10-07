@@ -16,7 +16,9 @@ import { GeocodingService } from "../services/geocoding-service"
 import { Activity } from "./Activity"
 import { Badge } from "./Badge"
 import { CollaborationGoal } from "./CollaborationGoal"
+import { FriendRequest } from "./FriendRequest"
 import { Goal } from "./Goal"
+import { Group } from "./Group"
 import { Level } from "./Level"
 import { Milestone } from "./Milestone"
 import { Reminder } from "./Reminder"
@@ -49,7 +51,6 @@ const UserSchema: IUserSchema = new Schema(
       { type: mongoose.Schema.Types.ObjectId, ref: "Achievement" },
     ],
     badges: [{ type: mongoose.Schema.Types.ObjectId, ref: "Badge" }],
-    pinnedGoals: [{ type: mongoose.Schema.Types.ObjectId, ref: "Goal" }],
     featuredAchievements: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Achievement" },
     ],
@@ -160,6 +161,12 @@ async function cleanUp(userId: string) {
   await Milestone.deleteMany({ user: userId })
   await Reminder.deleteMany({ user: userId })
   await Activity.deleteMany({ user: userId })
+  await FriendRequest.deleteMany({
+    $or: [{ sender: userId }, { recipient: userId }],
+  })
+  await mongoose.model("GroupInvitation").deleteMany({
+    $or: [{ sender: userId }, { recipient: userId }],
+  })
   await CollaborationGoal.find({ participants: userId }).then(
     (collaborationGoals) => {
       collaborationGoals.forEach((goal) => {
@@ -170,6 +177,12 @@ async function cleanUp(userId: string) {
   )
   await FileUploadService.deleteAllUserFiles(userId)
   await Badge.deleteMany({ user: userId })
+  // remove user from other users' friends
+  await mongoose
+    .model("User")
+    .updateMany({ friends: userId }, { $pull: { friends: userId } })
+  // remove user from groups
+  await Group.updateMany({ members: userId }, { $pull: { members: userId } })
 }
 
 UserSchema.pre("findOneAndDelete", async function (this, next) {

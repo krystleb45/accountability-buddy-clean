@@ -33,6 +33,7 @@ import {
 } from "@/api/groups/group-api"
 import { AvatarCoverChangeDialog } from "@/components/group/avatar-cover-change-dialog"
 import { GroupDetailsChangeDialog } from "@/components/group/group-details-change-dialog"
+import { InviteMembersDialog } from "@/components/group/invite-members-dialog"
 import { PendingGroupInvitationsDialog } from "@/components/group/pending-group-invitations-dialog"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
@@ -287,9 +288,11 @@ export function GroupAdminClient({ groupId }: GroupAdminClientProps) {
                 <PencilIcon /> Edit Group Details
               </Button>
             </GroupDetailsChangeDialog>
-            <Button>
-              <MailPlusIcon /> Invite Members
-            </Button>
+            <InviteMembersDialog groupId={group._id}>
+              <Button>
+                <MailPlusIcon /> Invite Members
+              </Button>
+            </InviteMembersDialog>
           </div>
         </div>
 

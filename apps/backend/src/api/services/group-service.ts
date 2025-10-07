@@ -18,6 +18,7 @@ import { logger } from "../../utils/winstonLogger"
 import { CustomError } from "../middleware/errorHandler"
 import { Group } from "../models/Group"
 import { GroupInvitation } from "../models/GroupInvitation"
+import { Message } from "../models/Message"
 import Notification from "../models/Notification"
 import { User } from "../models/User"
 import { FileUploadService } from "./file-upload-service"
@@ -204,7 +205,7 @@ class GroupService {
     }
 
     // Prevent creator from leaving if they're the only admin
-    if (group.createdBy.equals(userId)) {
+    if (group.createdBy._id.equals(userId)) {
       throw new CustomError(
         "Group creator cannot leave the group. Delete the group instead",
         400,
@@ -255,15 +256,18 @@ class GroupService {
     isAdmin = false,
   ): Promise<void> {
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
+    if (!group) {
+      throw new Error("Group not found")
+    }
 
     if (!isAdmin && group.createdBy.toString() !== requesterId) {
       throw new Error("Not authorized")
     }
 
     // Delete associated messages
-    await GroupMessage.deleteMany({
-      groupId: new mongoose.Types.ObjectId(groupId),
+    await Message.deleteMany({
+      chatId: new mongoose.Types.ObjectId(groupId),
+      messageType: "group",
     })
 
     await group.deleteOne()
@@ -425,44 +429,36 @@ class GroupService {
   /**
    * Invite a member to group
    */
-  async inviteMember(
-    groupId: string,
-    inviteeId: string,
-    inviterId: string,
-    io: Server,
-  ): Promise<void> {
+  async inviteMember(groupId: string, inviteeId: string, inviterId: string) {
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
 
-    // Check if inviter is a member
-    const inviterObjectId = new mongoose.Types.ObjectId(inviterId)
-    if (!group.members.some((member) => member.equals(inviterObjectId))) {
-      throw new Error("Not authorized to invite members")
+    // Check if inviter is a admin
+    if (!group.createdBy._id.equals(inviterId)) {
+      throw new CustomError("Not authorized to invite members", 403)
     }
 
     // Check if invitee is already a member
-    const inviteeObjectId = new mongoose.Types.ObjectId(inviteeId)
-    if (group.members.some((member) => member.equals(inviteeObjectId))) {
-      throw new Error("User is already a member")
+    if (group.members.some((member) => member._id.equals(inviteeId))) {
+      throw new CustomError("User is already a member", 400)
     }
 
-    const notification = await Notification.create({
+    await GroupInvitation.create({
+      groupId: group._id,
+      sender: inviterId,
+      recipient: inviteeId,
+      status: "pending",
+    })
+
+    await Notification.create({
       user: inviteeId,
       message: `You've been invited to join group "${group.name}"`,
-      type: "invitation",
+      type: "group_invite",
       read: false,
-      link: `/groups/${groupId}`,
+      link: `/community/groups`,
     })
-
-    // Emit to the user room
-    io.to(inviteeId).emit("groupInvitation", {
-      groupId,
-      message: notification.message,
-    })
-
-    logger.info(
-      `Invitation for group ${groupId} sent to ${inviteeId} by ${inviterId}`,
-    )
   }
 
   /**
@@ -511,7 +507,9 @@ class GroupService {
     io: Server,
   ): Promise<void> {
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
+    if (!group) {
+      throw new Error("Group not found")
+    }
 
     const notification = await Notification.create({
       user: userId,
@@ -700,6 +698,416 @@ class GroupService {
       read: false,
       link: `/community/groups`,
     })
+  }
+
+  /**
+   * Get invite recommendations (admin only) - Advanced pipeline
+   */
+  async getInviteRecommendations(groupId: string, adminId: string) {
+    const group = await Group.findById(groupId).populate(
+      "members",
+      "friends interests location",
+    )
+
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
+
+    // Check if requester is admin
+    if (!group.createdBy._id.equals(adminId)) {
+      throw new CustomError("Only group admin can view recommendations", 403)
+    }
+
+    // Get existing group invitations to exclude users who already have pending invites
+    const existingInvitations = await GroupInvitation.find({
+      groupId: group._id,
+      status: "pending",
+    }).select("recipient sender")
+
+    // Build exclusion list
+    const excludedUserIds = new Set([
+      ...group.members.map((member) => member._id.toString()),
+      ...existingInvitations.map((inv) => inv.recipient.toString()),
+      ...existingInvitations.map((inv) => inv.sender.toString()),
+    ])
+
+    try {
+      // Step 1: Friend-based recommendations (highest priority)
+      const friendRecommendations = await this._getFriendBasedRecommendations(
+        group.members.map((m) => m._id.toString()),
+        excludedUserIds,
+      )
+
+      // Step 2: Interest-based recommendations
+      const interestRecommendations =
+        await this._getInterestBasedRecommendations(
+          group.members.flatMap((m) => m.interests || []),
+          excludedUserIds,
+        )
+      // Step 3: Location-based recommendations
+      const locationRecommendations =
+        await this._getLocationBasedRecommendations(
+          group.members.map((m) => m.location),
+          excludedUserIds,
+        )
+
+      // Step 4: Activity-based recommendations
+      const activityRecommendations =
+        await this._getActivityBasedRecommendations(
+          {
+            id: group._id.toString(),
+            category: group.category,
+            tags: group.tags,
+          },
+          excludedUserIds,
+        )
+
+      // Combine and score all recommendations
+      const combinedRecommendations = this._combineAndScoreRecommendations({
+        friendBased: friendRecommendations,
+        interestBased: interestRecommendations,
+        locationBased: locationRecommendations,
+        activityBased: activityRecommendations,
+      })
+
+      // Sort by score and limit to top 20
+      const topRecommendations = combinedRecommendations
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 20)
+
+      if (topRecommendations.length === 0) {
+        throw new Error("No recommendations found")
+      }
+
+      // Generate signed URLs for profile images
+      for (const user of topRecommendations) {
+        if (user.profileImage) {
+          user.profileImage = await FileUploadService.generateSignedUrl(
+            user.profileImage,
+          )
+        }
+      }
+
+      return topRecommendations
+    } catch (error) {
+      logger.error(`Error getting invite recommendations: ${error}`)
+
+      // Fallback to simple recommendations - just exclude current group members
+      const fallbackRecommendations = await User.find({
+        _id: { $nin: [...excludedUserIds] },
+      })
+        .select("name username profileImage")
+        .limit(20)
+        .lean()
+
+      for (const user of fallbackRecommendations) {
+        if (user.profileImage) {
+          user.profileImage = await FileUploadService.generateSignedUrl(
+            user.profileImage,
+          )
+        }
+      }
+
+      return fallbackRecommendations.map((user) => ({
+        ...user,
+        score: 1,
+        reasons: ["Active user"],
+      }))
+    }
+  }
+
+  /**
+   * Get friend-based recommendations (friends of current members)
+   */
+  private async _getFriendBasedRecommendations(
+    groupMemberIds: string[],
+    excludedUserIds: Set<string>,
+  ) {
+    // Find friends of current group members
+    const friendConnections = await User.aggregate([
+      { $match: { _id: { $in: groupMemberIds } } },
+      { $unwind: "$friends" },
+      {
+        $match: {
+          friends: {
+            $nin: Array.from(excludedUserIds),
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$friends",
+          connectionCount: { $sum: 1 },
+          connectedMembers: { $push: "$username" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $project: {
+          _id: "$user._id",
+          name: "$user.name",
+          username: "$user.username",
+          profileImage: "$user.profileImage",
+          connectionCount: 1,
+          connectedMembers: 1,
+        },
+      },
+    ])
+
+    return friendConnections.map((user) => ({
+      ...user,
+      score: Math.min(user.connectionCount * 3, 10), // Max 10 points
+      reasons: [
+        `Connected to ${user.connectionCount} group member${user.connectionCount > 1 ? "s" : ""}`,
+      ],
+    }))
+  }
+
+  /**
+   * Get interest-based recommendations
+   */
+  private async _getInterestBasedRecommendations(
+    memberInterests: string[],
+    excludedUserIds: Set<string>,
+  ) {
+    if (memberInterests.length === 0) {
+      return []
+    }
+
+    const users = await User.find({
+      _id: {
+        $nin: Array.from(excludedUserIds),
+      },
+      interests: { $in: memberInterests },
+    })
+      .select("name username profileImage interests")
+      .lean()
+
+    return users.map((user) => {
+      const commonInterests = (user.interests || []).filter((interest) =>
+        memberInterests.includes(interest),
+      )
+
+      return {
+        ...user,
+        score: Math.min(commonInterests.length * 2, 8), // Max 8 points
+        reasons: [
+          `Shares ${commonInterests.length} interest${commonInterests.length > 1 ? "s" : ""}: ${commonInterests.slice(0, 3).join(", ")}`,
+        ],
+      }
+    })
+  }
+
+  /**
+   * Get location-based recommendations
+   */
+  private async _getLocationBasedRecommendations(
+    memberLocations: IUser["location"][],
+    excludedUserIds: Set<string>,
+  ) {
+    // Filter out null, undefined locations and extract meaningful location data
+    const validLocations = memberLocations.filter(
+      (location): location is NonNullable<IUser["location"]> =>
+        location != null &&
+        !!(location.country || location.state || location.city),
+    )
+
+    if (validLocations.length === 0) {
+      return []
+    }
+
+    // Build location matching query - prioritize exact matches but also consider partial matches
+    const locationQueries = validLocations
+      .map((loc) => {
+        const conditions: any[] = []
+
+        // Exact city match (highest priority)
+        if (loc.city) {
+          conditions.push({ "location.city": loc.city })
+        }
+
+        // Same state (if no city or as fallback)
+        if (loc.state) {
+          conditions.push({ "location.state": loc.state })
+        }
+
+        // Same country (lowest priority)
+        if (loc.country) {
+          conditions.push({ "location.country": loc.country })
+        }
+
+        return conditions
+      })
+      .flat()
+
+    if (locationQueries.length === 0) {
+      return []
+    }
+
+    const users = await User.find({
+      _id: {
+        $nin: Array.from(excludedUserIds).map(
+          (id) => new mongoose.Types.ObjectId(id),
+        ),
+      },
+      $or: locationQueries,
+      location: { $exists: true, $ne: null },
+    })
+      .select("name username profileImage location")
+      .lean()
+
+    return users.map((user) => {
+      // Calculate match quality and score
+      let score = 0
+      let matchType = ""
+      const matchDetails: string[] = []
+
+      for (const memberLoc of validLocations) {
+        // City match (highest priority - 4 points)
+        if (memberLoc.city && user.location?.city === memberLoc.city) {
+          score = Math.max(score, 4)
+          matchType = "city"
+          matchDetails.push(user.location.city)
+          break
+        }
+        // State match (medium priority - 3 points)
+        else if (memberLoc.state && user.location?.state === memberLoc.state) {
+          score = Math.max(score, 3)
+          matchType = matchType || "state"
+          if (!matchDetails.includes(user.location.state)) {
+            matchDetails.push(user.location.state)
+          }
+        }
+        // Country match (lowest priority - 2 points)
+        else if (
+          memberLoc.country &&
+          user.location?.country === memberLoc.country
+        ) {
+          score = Math.max(score, 2)
+          matchType = matchType || "country"
+          if (!matchDetails.includes(user.location.country)) {
+            matchDetails.push(user.location.country)
+          }
+        }
+      }
+
+      // Build reason text based on match type
+      const locationStr = [
+        user.location?.city,
+        user.location?.state,
+        user.location?.country,
+      ]
+        .filter(Boolean)
+        .join(", ")
+
+      const reasonText =
+        matchType === "city"
+          ? `Same city: ${locationStr}`
+          : matchType === "state"
+            ? `Same state: ${locationStr}`
+            : `Same country: ${locationStr}`
+
+      return {
+        ...user,
+        score,
+        reasons: [reasonText],
+      }
+    })
+  }
+
+  /**
+   * Get activity-based recommendations (users active in similar groups)
+   */
+  private async _getActivityBasedRecommendations(
+    {
+      id,
+      category,
+      tags,
+    }: {
+      id: string
+      category: IGroup["category"]
+      tags: IGroup["tags"]
+    },
+    excludedUserIds: Set<string>,
+  ) {
+    // Find users in groups with similar category or tags
+    const similarGroups = await Group.find({
+      _id: { $ne: id },
+      $or: [{ category }, { tags: { $in: tags || [] } }],
+    })
+      .select("members")
+      .lean()
+
+    const activeUserIds = [
+      ...new Set(
+        similarGroups.flatMap((g) => g.members.map((m) => m._id.toString())),
+      ),
+    ].filter((id) => !excludedUserIds.has(id))
+
+    if (activeUserIds.length === 0) {
+      return []
+    }
+
+    const users = await User.find({
+      _id: { $in: activeUserIds.map((id) => new mongoose.Types.ObjectId(id)) },
+    })
+      .select("name username profileImage")
+      .lean()
+
+    return users.map((user) => ({
+      ...user,
+      score: 2, // Fixed 2 points for activity in similar groups
+      reasons: [`Active in similar ${category} groups`],
+    }))
+  }
+
+  /**
+   * Combine and score all recommendations
+   */
+  private _combineAndScoreRecommendations(recommendations: {
+    friendBased: (IUser & { score: number; reasons: string[] })[]
+    interestBased: (IUser & { score: number; reasons: string[] })[]
+    locationBased: (IUser & { score: number; reasons: string[] })[]
+    activityBased: (IUser & { score: number; reasons: string[] })[]
+  }) {
+    const userMap = new Map()
+
+    // Combine all recommendation sources
+    const allRecommendations = [
+      ...recommendations.friendBased,
+      ...recommendations.interestBased,
+      ...recommendations.locationBased,
+      ...recommendations.activityBased,
+    ]
+
+    for (const rec of allRecommendations) {
+      const userId = rec._id.toString()
+
+      if (userMap.has(userId)) {
+        const existing = userMap.get(userId)
+        existing.score += rec.score
+        existing.reasons.push(...rec.reasons)
+      } else {
+        userMap.set(userId, {
+          _id: rec._id,
+          name: rec.name,
+          username: rec.username,
+          profileImage: rec.profileImage,
+          score: rec.score,
+          reasons: [...rec.reasons],
+        })
+      }
+    }
+
+    return Array.from(userMap.values())
   }
 }
 
