@@ -15,12 +15,17 @@ import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { useState } from "react"
 
-import { fetchGroups, fetchMyGroups } from "@/api/groups/group-api"
+import {
+  fetchGroups,
+  fetchMyGroups,
+  fetchUserGroupInvitations,
+} from "@/api/groups/group-api"
 import { CategoryFilterButton } from "@/components/category-filter-button"
 import { GroupCard } from "@/components/group/group-card"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Separator } from "@/components/ui/separator"
 import { getCategoriesWithCount } from "@/lib/categories"
 
 function GroupsClient() {
@@ -51,8 +56,22 @@ function GroupsClient() {
     enabled: !!userId,
   })
 
-  const isLoading = status === "loading" || isLoadingGroups || isLoadingMyGroups
-  const error = groupsError || myGroupsError
+  const {
+    data: userGroupInvitations,
+    isPending: isLoadingUserGroupInvitations,
+    error: userGroupInvitationsError,
+  } = useQuery({
+    queryKey: ["userGroupInvitations", userId],
+    queryFn: () => fetchUserGroupInvitations(),
+    enabled: !!userId,
+  })
+
+  const isLoading =
+    status === "loading" ||
+    isLoadingGroups ||
+    isLoadingMyGroups ||
+    isLoadingUserGroupInvitations
+  const error = groupsError || myGroupsError || userGroupInvitationsError
 
   if (isLoading) {
     return (
@@ -138,6 +157,43 @@ function GroupsClient() {
         </Button>
       </div>
 
+      {/* My Groups Section */}
+      {myGroups.length > 0 && (
+        <>
+          <div>
+            <h2 className="mb-6 text-2xl font-semibold text-primary">
+              My Groups{" "}
+              <small className="font-mono">({filteredGroups.length})</small>
+            </h2>
+            <div
+              className={`
+                grid grid-cols-1 gap-4
+                md:grid-cols-2
+                lg:grid-cols-3
+              `}
+            >
+              {myGroups.map((group) => (
+                <GroupCard
+                  key={group._id}
+                  group={group}
+                  isJoined={true}
+                  smallVersion
+                />
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+        </>
+      )}
+
+      <h2 className="text-2xl font-semibold text-primary">
+        {selectedCategory === "all"
+          ? "All Groups"
+          : `${categories.find((c) => c.id === selectedCategory)?.label} Groups`}{" "}
+        <small className="font-mono">({filteredGroups.length})</small>
+      </h2>
+
       {/* Search */}
       <div className="relative w-full max-w-md">
         <SearchIcon
@@ -177,13 +233,6 @@ function GroupsClient() {
 
       {/* Groups Grid */}
       <div>
-        <h2 className="mb-6 text-2xl font-semibold text-primary">
-          {selectedCategory === "all"
-            ? "All Groups"
-            : `${categories.find((c) => c.id === selectedCategory)?.label} Groups`}{" "}
-          <small className="font-mono">({filteredGroups.length})</small>
-        </h2>
-
         {filteredGroups.length === 0 ? (
           <div className="py-12 text-center">
             <Users2 className="mx-auto mb-4 size-16 text-muted-foreground" />
@@ -208,6 +257,14 @@ function GroupsClient() {
           >
             {filteredGroups.map((group, index) => {
               const isJoined = myGroups.some((g) => g._id === group._id)
+              const isRequested = userGroupInvitations.some(
+                (inv) =>
+                  inv.groupId._id === group._id && inv.status === "pending",
+              )
+              const isRejected = userGroupInvitations.some(
+                (inv) =>
+                  inv.groupId._id === group._id && inv.status === "rejected",
+              )
 
               return (
                 <GroupCard
@@ -215,141 +272,16 @@ function GroupsClient() {
                   group={group}
                   index={index}
                   isJoined={isJoined}
+                  isRequested={isRequested}
+                  isRejected={isRejected}
                 />
               )
             })}
           </div>
         )}
       </div>
-
-      {/* My Groups Section */}
-      {myGroups.length > 0 && (
-        <div>
-          <h2 className="mb-6 text-2xl font-semibold text-primary">
-            My Groups{" "}
-            <small className="font-mono">({filteredGroups.length})</small>
-          </h2>
-          <div
-            className={`
-              grid grid-cols-1 gap-4
-              md:grid-cols-2
-              lg:grid-cols-3
-            `}
-          >
-            {myGroups.map((group) => (
-              <GroupCard
-                key={group._id}
-                group={group}
-                isJoined={true}
-                smallVersion
-              />
-            ))}
-          </div>
-        </div>
-      )}
     </main>
   )
 }
-// <div
-//   className={`
-//     min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black
-//     text-white
-//   `}
-// >
-//   <div className="mx-auto max-w-7xl p-6">
-//     {/* Header */}
-//     <div className="mb-8">
-//       <Link
-//         href="/friends"
-//         className={`
-//           mb-4 inline-flex items-center text-green-400
-//           hover:text-green-300
-//         `}
-//       >
-//         <FaArrowLeft className="mr-2" />
-//         Back to Friends
-//       </Link>
-
-//     </div>
-
-//     {/* Success/Error Messages */}
-//     <AnimatePresence>
-//       {successMessage && (
-//         <motion.div
-//           initial={{ opacity: 0, y: -20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           exit={{ opacity: 0, y: -20 }}
-//           className={`
-//             mb-6 flex items-center justify-between rounded-lg bg-green-600
-//             p-4 text-white
-//           `}
-//         >
-//           <div className="flex items-center">
-//             <FaCheck className="mr-2" />
-//             {successMessage}
-//           </div>
-//           <button
-//             onClick={() => setSuccessMessage(null)}
-//             className={`
-//               text-green-200
-//               hover:text-white
-//             `}
-//           >
-//             <FaTimes />
-//           </button>
-//         </motion.div>
-//       )}
-
-//       {error && (
-//         <motion.div
-//           initial={{ opacity: 0, y: -20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           exit={{ opacity: 0, y: -20 }}
-//           className={`
-//             mb-6 flex items-center justify-between rounded-lg bg-red-600 p-4
-//             text-white
-//           `}
-//         >
-//           {error}
-//           <button
-//             type="button"
-//             onClick={() => setError(null)}
-//             className={`
-//               text-red-200
-//               hover:text-white
-//             `}
-//           >
-//             <FaTimes />
-//           </button>
-//         </motion.div>
-//       )}
-//     </AnimatePresence>
-
-//     {/* Search */}
-//     <div className="mb-6">
-//       <div className="relative">
-//         <FaSearch
-//           className={`
-//             absolute top-1/2 left-4 -translate-y-1/2 text-gray-400
-//           `}
-//         />
-//         <input
-//           type="text"
-//           placeholder="Search groups, interests..."
-//           value={searchQuery}
-//           onChange={(e) => setSearchQuery(e.target.value)}
-//           className={`
-//             w-full rounded-lg border border-gray-600 bg-gray-800 py-4 pr-4
-//             pl-12 text-white
-//             placeholder:text-gray-400
-//             focus:border-green-400 focus:ring-2 focus:ring-green-400
-//             focus:outline-none
-//           `}
-//         />
-//       </div>
-//     </div>
-
-//   </div>
-// </div>
 
 export default GroupsClient

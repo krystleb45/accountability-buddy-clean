@@ -1,44 +1,34 @@
 import type { Category } from "@ab/shared/categories"
 import type { Server } from "socket.io"
 
-import { NEW_GROUP_MESSAGE } from "@ab/shared/socket-events"
+import {
+  NEW_GROUP_MESSAGE,
+  USER_REMOVED_FROM_GROUP,
+} from "@ab/shared/socket-events"
 import mongoose from "mongoose"
 
-import type { Group as IGroup, UserDocument } from "../../types/mongoose.gen"
+import type {
+  Group as IGroup,
+  User as IUser,
+  UserDocument,
+} from "../../types/mongoose.gen"
+import type { UpdateGroupBody } from "../routes/groups"
 
 import { logger } from "../../utils/winstonLogger"
 import { CustomError } from "../middleware/errorHandler"
 import { Group } from "../models/Group"
 import { GroupInvitation } from "../models/GroupInvitation"
-import { Message } from "../models/Message"
 import Notification from "../models/Notification"
 import { User } from "../models/User"
 import { FileUploadService } from "./file-upload-service"
 import MessageService from "./message-service"
-
-interface FormattedGroup {
-  id: string
-  name: string
-  description: string
-  category: string
-  memberCount: number
-  isPublic: boolean
-  isJoined: boolean
-  lastActivity: string
-  avatar: string | null
-  tags: string[]
-  createdBy: string
-  createdAt: string
-}
 
 class GroupService {
   /**
    * Get all groups with optional filters
    */
   async getGroups(category?: Category, search?: string) {
-    const filter: mongoose.FilterQuery<IGroup> = {
-      visibility: "public", // Only show public groups in general listing
-    }
+    const filter: mongoose.FilterQuery<IGroup> = {}
 
     if (category) {
       filter.category = category
@@ -234,55 +224,26 @@ class GroupService {
   async updateGroup(
     groupId: string,
     userId: string,
-    updates: Partial<IGroup>,
-  ): Promise<FormattedGroup> {
+    updates: Pick<IGroup, keyof UpdateGroupBody>,
+  ) {
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
-
-    // Check if user is admin (creator or has admin role)
-    const userObjectId = new mongoose.Types.ObjectId(userId)
-    if (!group.createdBy.equals(userObjectId)) {
-      throw new Error("Only group admin can update group details")
+    if (!group) {
+      throw new CustomError("Group not found", 404)
     }
 
-    // Update allowed fields
-    const allowedUpdates = [
-      "name",
-      "description",
-      "category",
-      "tags",
-      "isPublic",
-      "avatar",
-    ]
-    Object.keys(updates).forEach((key) => {
-      if (
-        allowedUpdates.includes(key) &&
-        updates[key as keyof IGroup] !== undefined
-      ) {
-        ;(group as any)[key] = updates[key as keyof IGroup]
-      }
-    })
+    // Check if user is admin (creator or has admin role)
+    if (!group.createdBy._id.equals(userId)) {
+      throw new CustomError("Only group admin can update group details", 403)
+    }
+
+    group.name = updates.name
+    group.description = updates.description
+    group.category = updates.category
+    group.visibility = updates.isPublic ? "public" : "private"
+    group.tags.splice(0, group.tags.length, ...(updates.tags || []))
 
     group.lastActivity = new Date()
     await group.save()
-    await group.populate("createdBy", "name")
-
-    logger.info(`Group ${groupId} updated by ${userId}`)
-
-    return {
-      id: group._id.toString(),
-      name: group.name,
-      description: group.description || "",
-      category: group.category || "general",
-      memberCount: group.members?.length || 0,
-      isPublic: group.isPublic ?? true,
-      isJoined: true, // User must be admin to update, so they're definitely joined
-      lastActivity: group.lastActivity.toISOString(),
-      avatar: group.avatar || null,
-      tags: group.tags || [],
-      createdBy: (group.createdBy as any).name,
-      createdAt: group.createdAt.toISOString(),
-    }
   }
 
   /**
@@ -352,7 +313,7 @@ class GroupService {
     // Check if user is a member
     const userObjectId = new mongoose.Types.ObjectId(userId)
     if (!group.members.some((member) => member._id.equals(userObjectId))) {
-      throw new CustomError("Not authorized to view members", 403)
+      throw new CustomError("Not a member of this group", 403)
     }
 
     const membersData: IUser[] = []
@@ -455,7 +416,7 @@ class GroupService {
     await Notification.create({
       user: group.createdBy,
       message: `User ${user.username} has requested to join your group "${group.name}"`,
-      type: "invitation",
+      type: "group_invite",
       read: false,
       link: `/groups/${groupId}`,
     })
@@ -512,39 +473,33 @@ class GroupService {
     memberToRemove: string,
     adminId: string,
     io: Server,
-  ): Promise<void> {
+  ) {
     const group = await Group.findById(groupId)
-    if (!group) throw new Error("Group not found")
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
 
     // Check if requester is admin
-    const adminObjectId = new mongoose.Types.ObjectId(adminId)
-    if (!group.createdBy.equals(adminObjectId)) {
-      throw new Error("Only group admin can remove members")
+    if (!group.createdBy._id.equals(adminId)) {
+      throw new CustomError("Only group admin can remove members", 403)
     }
 
     // Check if member exists
-    const memberObjectId = new mongoose.Types.ObjectId(memberToRemove)
-    if (!group.members.some((member) => member.equals(memberObjectId))) {
-      throw new Error("User is not a member of this group")
+    if (!group.members.some((member) => member._id.equals(memberToRemove))) {
+      throw new CustomError("User is not a member of this group", 404)
     }
 
     // Cannot remove the group creator
-    if (group.createdBy.equals(memberObjectId)) {
-      throw new Error("Cannot remove group creator")
+    if (group.createdBy._id.equals(memberToRemove)) {
+      throw new CustomError("Cannot remove the group creator", 400)
     }
 
-    group.members = group.members.filter(
-      (member) => !member.equals(memberObjectId),
-    )
+    group.members.pull(memberToRemove)
     group.lastActivity = new Date()
     await group.save()
 
     // Notify the group
-    io.in(groupId).emit("memberRemoved", { userId: memberToRemove })
-
-    logger.info(
-      `Member ${memberToRemove} removed from group ${groupId} by ${adminId}`,
-    )
+    io.in(groupId).emit(USER_REMOVED_FROM_GROUP, { userId: memberToRemove })
   }
 
   /**
@@ -573,6 +528,178 @@ class GroupService {
     })
 
     logger.info(`Invitation for group ${groupId} sent to ${userId}`)
+  }
+
+  /**
+   * Get user's group invitations (both sent and received)
+   */
+  async getUserGroupInvitations(userId: string) {
+    const invitations = await GroupInvitation.find({
+      $or: [{ sender: userId }, { recipient: userId }],
+      status: { $in: ["pending", "rejected"] },
+    })
+      .populate(
+        "groupId",
+        "name avatar memberCount description isPublic createdBy",
+      )
+      .populate("sender", "name username profileImage")
+      .populate("recipient", "name username profileImage")
+      .sort({ createdAt: -1 })
+      .lean()
+
+    for (const invite of invitations) {
+      if ((invite.sender as UserDocument).profileImage) {
+        ;(invite.sender as UserDocument).profileImage =
+          await FileUploadService.generateSignedUrl(
+            (invite.sender as UserDocument).profileImage,
+          )
+      }
+
+      if ((invite.recipient as UserDocument).profileImage) {
+        ;(invite.recipient as UserDocument).profileImage =
+          await FileUploadService.generateSignedUrl(
+            (invite.recipient as UserDocument).profileImage,
+          )
+      }
+    }
+
+    return invitations
+  }
+
+  /**
+   * Get group invitations (admin only)
+   */
+  async getGroupInvitations(groupId: string, adminId: string) {
+    const group = await Group.findById(groupId).select("createdBy")
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
+
+    // Check if requester is admin
+    if (!group.createdBy._id.equals(adminId)) {
+      throw new CustomError("Only group admin can view invitations", 403)
+    }
+
+    const invitations = await GroupInvitation.find({
+      groupId: group._id,
+      status: "pending",
+    })
+      .populate(
+        "groupId",
+        "name avatar memberCount description isPublic createdBy",
+      )
+      .populate("sender", "name username profileImage")
+      .populate("recipient", "name username profileImage")
+      .sort({ createdAt: -1 })
+      .lean()
+
+    for (const invite of invitations) {
+      if ((invite.sender as UserDocument).profileImage) {
+        ;(invite.sender as UserDocument).profileImage =
+          await FileUploadService.generateSignedUrl(
+            (invite.sender as UserDocument).profileImage,
+          )
+      }
+
+      if ((invite.recipient as UserDocument).profileImage) {
+        ;(invite.recipient as UserDocument).profileImage =
+          await FileUploadService.generateSignedUrl(
+            (invite.recipient as UserDocument).profileImage,
+          )
+      }
+    }
+
+    return invitations
+  }
+
+  /**
+   * Accept a group invitation
+   */
+  async acceptGroupInvitation(invitationId: string, userId: string) {
+    const invitation = await GroupInvitation.findById(invitationId)
+      .populate("recipient", "username")
+      .populate("sender", "username")
+    if (!invitation) {
+      throw new CustomError("Invitation not found", 404)
+    }
+
+    const group = await Group.findById(invitation.groupId)
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
+
+    // Only recipient can accept
+    if (!invitation.recipient._id.equals(userId)) {
+      throw new CustomError("Not authorized to accept this invitation", 403)
+    }
+
+    if (invitation.status !== "pending") {
+      throw new CustomError("Invitation is not pending", 400)
+    }
+
+    const isRequestedToJoin = group.createdBy._id.equals(
+      invitation.recipient._id,
+    )
+    const newUser = isRequestedToJoin ? invitation.sender : invitation.recipient
+
+    // Add user to group members if not already a member
+    if (!group.members.some((member) => member._id.equals(newUser._id))) {
+      group.members.push(newUser._id)
+      group.lastActivity = new Date()
+      await group.save()
+    }
+
+    invitation.status = "accepted"
+    await invitation.save()
+
+    // Notify the sender about acceptance
+    await Notification.create({
+      user: invitation.sender,
+      message: isRequestedToJoin
+        ? `Your invitation to join group "${group.name}" was accepted`
+        : `${invitation.recipient.username} accepted your request to join group "${group.name}"`,
+      type: isRequestedToJoin
+        ? "group_request_accepted"
+        : "group_invite_accepted",
+      read: false,
+      link: `/community/groups/${group._id}`,
+    })
+  }
+
+  /**
+   * Reject a group invitation
+   */
+  async rejectGroupInvitation(invitationId: string, userId: string) {
+    const invitation = await GroupInvitation.findById(invitationId)
+    if (!invitation) {
+      throw new CustomError("Invitation not found", 404)
+    }
+
+    const group = await Group.findById(invitation.groupId)
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
+
+    // Only group admin can reject
+    if (!group.createdBy._id.equals(userId)) {
+      throw new CustomError("Only group admin can reject invitations", 403)
+    }
+
+    if (invitation.status !== "pending") {
+      throw new CustomError("Invitation is not pending", 400)
+    }
+
+    invitation.status = "rejected"
+    await invitation.save()
+
+    // Notify the sender about rejection
+    await Notification.create({
+      user: invitation.sender,
+      message: `Your invitation to join group "${group.name}" was rejected`,
+      type: "group_request_rejected",
+      read: false,
+      link: `/community/groups`,
+    })
   }
 }
 

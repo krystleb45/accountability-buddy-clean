@@ -4,6 +4,7 @@ import {
   JOIN_GROUP_ROOM,
   LEAVE_GROUP_ROOM,
   NEW_GROUP_MESSAGE,
+  USER_REMOVED_FROM_GROUP,
 } from "@ab/shared/socket-events"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -15,8 +16,9 @@ import {
   GlobeIcon,
   HexagonIcon,
   LockIcon,
-  MessageSquare,
+  MessagesSquare,
   SendIcon,
+  SettingsIcon,
   Users2,
   XCircle,
 } from "lucide-react"
@@ -24,6 +26,7 @@ import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -81,6 +84,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
   const { data: session, status } = useSession()
   const userId = session?.user?.id
   const queryClient = useQueryClient()
+  const router = useRouter()
 
   const [messages, setMessages] = useState<GroupMessage[]>([])
 
@@ -157,48 +161,83 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
     },
   })
 
-  const { socket, isConnected, joinRoom, leaveRoom } = useSocket()
+  const { socket, isConnected, joinedRooms, joinRoom, leaveRoom } = useSocket()
 
-  useEffect(() => {
-    if (!socket || !isConnected || !groupId) {
-      return
-    }
+  useEffect(
+    () => {
+      if (!socket || !isConnected || !groupId) {
+        return
+      }
 
-    // Join the group room
-    joinRoom(groupId, JOIN_GROUP_ROOM)
+      if (!joinedRooms.has(groupId)) {
+        joinRoom(groupId, JOIN_GROUP_ROOM)
+      }
 
-    // Listen for new messages
-    const handleNewMessage = (messageData: GroupMessage) => {
-      setMessages((prev) => {
-        // Avoid duplicate messages
-        if (prev.some((msg) => msg._id === messageData._id)) {
-          return prev
+      // Listen for new messages
+      const handleNewMessage = (messageData: GroupMessage) => {
+        setMessages((prev) => {
+          // Avoid duplicate messages
+          if (prev.some((msg) => msg._id === messageData._id)) {
+            return prev
+          }
+          return [...prev, messageData]
+        })
+      }
+
+      const handleSocketError = (error: any) => {
+        console.error("❌ Socket error:", error)
+        toast.error("Connection error. Please try again.", {
+          description:
+            error.message ||
+            "An unknown error occurred while connecting to chat",
+        })
+      }
+
+      const handleMemberRemoved = (data: { userId: string }) => {
+        if (data.userId === userId) {
+          toast.error("You have been removed from the group.", {
+            description:
+              "You can no longer send or receive messages in this group.",
+          })
+          router.push("/community/groups")
+          return
         }
-        return [...prev, messageData]
-      })
-    }
 
-    const handleSocketError = (error: any) => {
-      console.error("❌ Socket error:", error)
-      toast.error("Connection error. Please try again.", {
-        description:
-          error.message || "An unknown error occurred while connecting to chat",
-      })
-    }
+        const username =
+          members?.find((m) => m._id === data.userId)?.username || "A member"
+        toast.info(`${username} has been removed from the group.`)
+        queryClient.invalidateQueries({ queryKey: ["groupMembers", groupId] })
+      }
 
-    // Register event listeners
-    socket.on(NEW_GROUP_MESSAGE, handleNewMessage)
-    socket.on("error", handleSocketError)
+      // Register event listeners
+      socket.on(NEW_GROUP_MESSAGE, handleNewMessage)
+      socket.on(USER_REMOVED_FROM_GROUP, handleMemberRemoved)
+      socket.on("error", handleSocketError)
 
-    // Cleanup function
-    return () => {
-      socket.off(NEW_GROUP_MESSAGE, handleNewMessage)
-      socket.off("error", handleSocketError)
+      // Cleanup function
+      return () => {
+        socket.off(NEW_GROUP_MESSAGE, handleNewMessage)
+        socket.off(USER_REMOVED_FROM_GROUP, handleMemberRemoved)
+        socket.off("error", handleSocketError)
 
-      // Leave the room when component unmounts
-      leaveRoom(groupId, LEAVE_GROUP_ROOM)
-    }
-  }, [socket, isConnected, groupId, joinRoom, leaveRoom, queryClient])
+        // Leave the room when component unmounts
+        leaveRoom(groupId, LEAVE_GROUP_ROOM)
+      }
+    },
+    // @keep-sorted
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      groupId,
+      isConnected,
+      joinRoom,
+      leaveRoom,
+      members,
+      queryClient,
+      router,
+      socket,
+      userId,
+    ],
+  )
 
   const { mutate: sendMessageMutate, isPending: isSending } = useMutation({
     mutationFn: async (data: MessageFormData) => {
@@ -281,8 +320,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
               width={80}
               height={80}
               className={`
-                size-20 overflow-hidden rounded-full border border-muted
-                object-contain
+                size-20 shrink-0 overflow-hidden rounded-full border
+                border-muted object-contain
               `}
             />
           ) : (
@@ -330,6 +369,13 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
             </div>
           </div>
         </div>
+        {group.createdBy._id === userId && (
+          <Button variant="outline" asChild>
+            <Link href={`/community/groups/${groupId}/admin`}>
+              <SettingsIcon className="text-primary" /> Manage Group
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div
@@ -344,8 +390,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
             {/* Messages Header */}
             <CardHeader className="border-b">
               <CardTitle>
-                <MessageSquare className="mr-2 inline-block text-primary" />{" "}
-                Messages
+                <MessagesSquare className="mr-2 inline-block text-primary" />{" "}
+                Chat
               </CardTitle>
             </CardHeader>
 
@@ -456,7 +502,7 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" size="sm" disabled={isSending}>
+                  <Button type="submit" disabled={isSending}>
                     <SendIcon /> {isSending ? "Sending..." : "Send"}
                   </Button>
                 </form>

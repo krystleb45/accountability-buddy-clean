@@ -4,6 +4,9 @@ import {
   CalendarClock,
   Crown,
   DoorOpenIcon,
+  HexagonIcon,
+  LogInIcon,
+  MailPlusIcon,
   MessageSquare,
   UserCheck2Icon,
 } from "lucide-react"
@@ -37,6 +40,8 @@ interface GroupCardProps {
   group: GroupWithCreated
   index?: number
   isJoined?: boolean
+  isRequested?: boolean
+  isRejected?: boolean
   smallVersion?: boolean
 }
 
@@ -46,6 +51,8 @@ export function GroupCard({
   group,
   index = 0,
   isJoined,
+  isRequested,
+  isRejected,
   smallVersion,
 }: GroupCardProps) {
   const queryClient = useQueryClient()
@@ -66,21 +73,19 @@ export function GroupCard({
     },
   })
 
-  const {
-    mutate: requestInviteMutate,
-    isPending: isRequestingInvite,
-    isSuccess: isRequestSent,
-  } = useMutation({
-    mutationFn: async () => requestGroupInvite(group._id),
-    onSuccess: () => {
-      toast.success(`Requested to join ${group.name} successfully`)
-    },
-    onError: (error) => {
-      toast.error("Failed to request group invite", {
-        description: error.message,
-      })
-    },
-  })
+  const { mutate: requestInviteMutate, isPending: isRequestingInvite } =
+    useMutation({
+      mutationFn: async () => requestGroupInvite(group._id),
+      onSuccess: () => {
+        toast.success(`Requested to join ${group.name} successfully`)
+        queryClient.invalidateQueries({ queryKey: ["userGroupInvitations"] })
+      },
+      onError: (error) => {
+        toast.error("Failed to request group invite", {
+          description: error.message,
+        })
+      },
+    })
 
   const { mutate: leaveGroupMutate, isPending: isLeaving } = useMutation({
     mutationFn: async () => leaveGroup(group._id),
@@ -105,11 +110,28 @@ export function GroupCard({
       transition={{ delay: index * 0.1 }}
     >
       <CardHeader>
-        <CardTitle>{group.name}</CardTitle>
-        <CardDescription>
-          <span className="font-mono">{group.memberCount}</span>{" "}
-          {group.memberCount === 1 ? "member" : "members"}
-        </CardDescription>
+        <div className="flex items-center gap-2">
+          {group.avatar ? (
+            <Image
+              src={group.avatar}
+              alt={group.name}
+              className={`
+                size-12 rounded-full border-2 border-background object-cover
+              `}
+              width={48}
+              height={48}
+            />
+          ) : (
+            <HexagonIcon className="size-12 text-primary" />
+          )}
+          <div>
+            <CardTitle>{group.name}</CardTitle>
+            <CardDescription>
+              <span className="font-mono">{group.memberCount}</span>{" "}
+              {group.memberCount === 1 ? "member" : "members"}
+            </CardDescription>
+          </div>
+        </div>
         {isJoined && (
           <CardAction>
             <Badge>
@@ -212,18 +234,21 @@ export function GroupCard({
             onClick={() =>
               group.isPublic ? joinGroupMutate() : requestInviteMutate()
             }
-            disabled={isJoining || isRequestingInvite}
+            disabled={isJoining || isRequestingInvite || isRequested}
             className="w-full"
           >
+            {group.isPublic ? <LogInIcon /> : <MailPlusIcon />}
             {isJoining
               ? "Joining..."
               : isRequestingInvite
                 ? "Requesting..."
                 : group.isPublic
                   ? "Join Group"
-                  : isRequestSent
+                  : isRequested
                     ? "Invite Requested"
-                    : "Request Invite"}
+                    : isRejected
+                      ? "Request Rejected. Retry?"
+                      : "Request Invite"}
           </Button>
         )}
       </CardFooter>

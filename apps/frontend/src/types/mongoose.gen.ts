@@ -804,7 +804,7 @@ export type GroupInvitation = {
   groupId: Group["_id"] | Group
   sender: User["_id"] | User
   recipient: User["_id"] | User
-  status?: "pending" | "accepted" | "rejected"
+  status: "pending" | "accepted" | "rejected"
   _id: string
   createdAt?: string
   updatedAt?: string

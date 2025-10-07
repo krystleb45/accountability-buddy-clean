@@ -31,6 +31,7 @@ const GroupInvitationSchema: IGroupInvitationSchema = new Schema(
       type: String,
       enum: ["pending", "accepted", "rejected"],
       default: "pending",
+      required: true,
     },
   },
   {
@@ -41,7 +42,7 @@ const GroupInvitationSchema: IGroupInvitationSchema = new Schema(
 )
 
 // --- Indexes ---
-GroupInvitationSchema.index({ groupId: 1, recipient: 1 }, { unique: true })
+GroupInvitationSchema.index({ groupId: 1, recipient: 1 })
 GroupInvitationSchema.index({ sender: 1 })
 GroupInvitationSchema.index({ recipient: 1 })
 GroupInvitationSchema.index({ status: 1 })

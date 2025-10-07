@@ -1,6 +1,11 @@
 import type { CreateGroupFormData } from "@/app/(authenticated)/(non-admin)/community/groups/create/client"
 import type { Envelope } from "@/types"
-import type { Group, Message, User } from "@/types/mongoose.gen"
+import type {
+  Group,
+  GroupInvitation,
+  Message,
+  User,
+} from "@/types/mongoose.gen"
 
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
@@ -14,6 +19,20 @@ export type GroupMessage = Message & {
   receiverId: Pick<User, "_id" | "name" | "username" | "profileImage"> | null
 }
 
+export type GroupInvitationExtended = GroupInvitation & {
+  groupId: Pick<
+    Group,
+    | "_id"
+    | "name"
+    | "avatar"
+    | "isPublic"
+    | "memberCount"
+    | "description"
+    | "createdBy"
+  >
+  sender: Pick<User, "_id" | "name" | "username" | "profileImage">
+  recipient: Pick<User, "_id" | "name" | "username" | "profileImage">
+}
 /**
  * Fetch all available groups with optional filters
  * GET /api/groups?category=...&search=...
@@ -131,24 +150,14 @@ export async function leaveGroup(groupId: string) {
  */
 export async function updateGroup(
   groupId: string,
-  updates: Partial<Group>,
-): Promise<Group | null> {
-  if (!groupId) return null
+  updates: Partial<
+    Pick<Group, "name" | "description" | "category" | "tags" | "isPublic">
+  >,
+) {
   try {
-    console.log(`[API] Updating group: ${groupId}`)
-    const resp = await http.put(
-      `/groups/${encodeURIComponent(groupId)}`,
-      updates,
-    )
-
-    // Handle both Express response format and direct data
-    const group = resp.data?.data || resp.data
-    console.log(`[API] Updated group: ${group?.name}`)
-
-    return group || null
+    await http.put(`/groups/${encodeURIComponent(groupId)}`, updates)
   } catch (error) {
-    console.error(`[API] Error updating group ${groupId}:`, error)
-    return handleError("updateGroup", error, null)
+    throw new Error(getApiErrorMessage(error as Error))
   }
 }
 
@@ -225,21 +234,13 @@ export async function inviteMember(
  * Remove a member from group
  * DELETE /api/groups/:id/remove/:userId
  */
-export async function removeMember(
-  groupId: string,
-  userId: string,
-): Promise<boolean> {
-  if (!groupId || !userId) return false
+export async function removeMember(groupId: string, userId: string) {
   try {
-    console.log(`[API] Removing user ${userId} from group ${groupId}`)
     await http.delete(
       `/groups/${encodeURIComponent(groupId)}/remove/${encodeURIComponent(userId)}`,
     )
-    console.log(`[API] Successfully removed member`)
-    return true
   } catch (error) {
-    console.error(`[API] Error removing member:`, error)
-    return handleError("removeMember", error, false)
+    throw new Error(getApiErrorMessage(error as Error))
   }
 }
 
@@ -273,6 +274,85 @@ export async function sendGroupMessage(groupId: string, content: string) {
     await http.post(`/groups/${encodeURIComponent(groupId)}/messages`, {
       content: content.trim(),
     })
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
+ * Update group avatar image
+ * PUT /api/groups/:groupId/avatar
+ */
+export async function updateGroupAvatar(groupId: string, image: File) {
+  try {
+    const formData = new FormData()
+    formData.append("image", image)
+
+    await http.put(`/groups/${encodeURIComponent(groupId)}/avatar`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
+ * Get user's group invites (both sent and received)
+ * GET /api/groups/invitations
+ */
+export async function fetchUserGroupInvitations() {
+  try {
+    const resp = await http.get<
+      Envelope<{
+        invitations: GroupInvitationExtended[]
+      }>
+    >(`/groups/invitations`)
+    return resp.data.data.invitations
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
+ * Get group invitation request (admin only)
+ * GET /api/groups/:groupId/invitations
+ */
+export async function fetchGroupInvitations(groupId: string) {
+  try {
+    const resp = await http.get<
+      Envelope<{
+        invitations: GroupInvitationExtended[]
+      }>
+    >(`/groups/${encodeURIComponent(groupId)}/invitations`)
+    return resp.data.data.invitations
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
+ * Accept a group invitation
+ * POST /api/groups/invitations/:invitationId/accept
+ */
+export async function acceptGroupInvitation(invitationId: string) {
+  try {
+    await http.post(
+      `/groups/invitations/${encodeURIComponent(invitationId)}/accept`,
+    )
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
+ * Reject a group invitation
+ * DELETE /api/groups/invitations/:invitationId/reject
+ */
+export async function rejectGroupInvitation(invitationId: string) {
+  try {
+    await http.delete(
+      `/groups/invitations/${encodeURIComponent(invitationId)}/reject`,
+    )
   } catch (error) {
     throw new Error(getApiErrorMessage(error as Error))
   }

@@ -3768,19 +3768,19 @@ export type GroupQueries = {}
 export type GroupMethods = {
   addMember: (
     this: GroupDocument,
-    userId: Types.ObjectId
+    userId: mongoose.Types.ObjectId
   ) => Promise<GroupDocument>
   removeMember: (
     this: GroupDocument,
-    userId: Types.ObjectId
+    userId: mongoose.Types.ObjectId
   ) => Promise<GroupDocument>
   incrementUnread: (
     this: GroupDocument,
-    userId: Types.ObjectId
+    userId: mongoose.Types.ObjectId
   ) => Promise<GroupDocument>
   clearUnread: (
     this: GroupDocument,
-    userId: Types.ObjectId
+    userId: mongoose.Types.ObjectId
   ) => Promise<GroupDocument>
 }
 
@@ -3794,7 +3794,7 @@ export type GroupStatics = {
       GroupDocument
     > &
       mongoose.Document<
-        Types.ObjectId,
+        mongoose.Types.ObjectId,
         import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupQueries,
         any
       > &
@@ -3808,33 +3808,33 @@ export type GroupStatics = {
           | "lifestyle"
           | "creative"
           | "tech"
-        members: Types.Array<
-          | Types.ObjectId
+        members: mongoose.Types.Array<
+          | mongoose.Types.ObjectId
           | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
         >
         createdBy:
-          | Types.ObjectId
+          | mongoose.Types.ObjectId
           | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
         visibility?: "private" | "public"
         isActive?: boolean
         lastActivity?: Date
         avatar?: string
-        tags: Types.Array<string>
-        unreadMessages: Types.DocumentArray<
+        tags: mongoose.Types.Array<string>
+        unreadMessages: mongoose.Types.DocumentArray<
           import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupUnreadMessageDocument
         >
-        typingUsers: Types.Array<
-          | Types.ObjectId
+        typingUsers: mongoose.Types.Array<
+          | mongoose.Types.ObjectId
           | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
         >
         isPinned?: boolean
-        _id: Types.ObjectId
+        _id: mongoose.Types.ObjectId
         createdAt?: Date
         updatedAt?: Date
         memberCount: number
         typingCount: number
         isPublic: boolean
-      } & Required<{ _id: Types.ObjectId }>)[]
+      } & Required<{ _id: mongoose.Types.ObjectId }>)[]
   >
 }
 
@@ -3920,7 +3920,7 @@ export type GroupInvitation = {
   groupId: Group["_id"] | Group
   sender: User["_id"] | User
   recipient: User["_id"] | User
-  status?: "pending" | "accepted" | "rejected"
+  status: "pending" | "accepted" | "rejected"
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
@@ -4007,7 +4007,7 @@ export type GroupInvitationDocument = mongoose.Document<
     groupId: GroupDocument["_id"] | GroupDocument
     sender: UserDocument["_id"] | UserDocument
     recipient: UserDocument["_id"] | UserDocument
-    status?: "pending" | "accepted" | "rejected"
+    status: "pending" | "accepted" | "rejected"
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date

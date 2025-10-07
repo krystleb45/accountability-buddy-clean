@@ -8,6 +8,7 @@ import type {
   GetGroupsQueryParams,
   GroupMessagesQueryParams,
   SendGroupMessageBody,
+  UpdateGroupBody,
 } from "../routes/groups"
 
 import { CustomError } from "../middleware/errorHandler"
@@ -15,6 +16,8 @@ import { FileUploadService } from "../services/file-upload-service"
 import GroupService from "../services/group-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
+
+const getGroupAvatarKey = (groupId: string) => `${groupId}-avatar`
 
 /**
  * GET /api/groups - Get all groups with optional filters
@@ -71,7 +74,7 @@ export const createGroup = catchAsync(
       creatorId,
     })
 
-    const fileNameToSave = `${group._id}-avatar`
+    const fileNameToSave = getGroupAvatarKey(group._id.toString())
     const { key } = await FileUploadService.uploadToS3({
       buffer: req.file.buffer,
       name: fileNameToSave,
@@ -158,17 +161,17 @@ export const leaveGroup = catchAsync(
  */
 export const updateGroup = catchAsync(
   async (
-    req: AuthenticatedRequest<{ groupId: string }>,
+    req: AuthenticatedRequest<{ groupId: string }, unknown, UpdateGroupBody>,
     res: Response,
     _next: NextFunction,
   ) => {
     const { groupId } = req.params
-    const userId = req.user!.id
+    const userId = req.user.id
     const updates = req.body
 
     // Group existence and admin status already verified by middleware
-    const group = await GroupService.updateGroup(groupId, userId, updates)
-    sendResponse(res, 200, true, "Group updated successfully", group)
+    await GroupService.updateGroup(groupId, userId, updates)
+    sendResponse(res, 200, true, "Group updated successfully")
   },
 )
 
@@ -266,9 +269,8 @@ export const removeMember = catchAsync(
     _next: NextFunction,
   ) => {
     const { groupId, userId: memberToRemove } = req.params
-    const adminId = req.user!.id
+    const adminId = req.user.id
 
-    // Group existence and admin status already verified by middleware
     await GroupService.removeMember(
       groupId,
       memberToRemove,
@@ -335,19 +337,104 @@ export const sendGroupMessage = catchAsync(
   },
 )
 
-// Fixed export object
-export default {
-  getGroups,
-  createGroup,
-  getMyGroups, // Now properly defined above
-  getGroupDetails,
-  joinGroup,
-  leaveGroup,
-  updateGroup,
-  deleteGroup,
-  getGroupMembers,
-  inviteMember,
-  removeMember,
-  getGroupMessages,
-  sendGroupMessage,
-}
+export const updateGroupAvatar = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ groupId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { groupId } = req.params
+    const userId = req.user.id
+
+    if (!req.file) {
+      throw new CustomError("Avatar image file is required", 400)
+    }
+
+    const group = await GroupService.getGroupDetails(groupId, userId)
+
+    if (!group.createdBy._id.equals(userId)) {
+      throw new CustomError("Only group admins can update the avatar", 403)
+    }
+
+    const fileNameToSave = getGroupAvatarKey(groupId)
+    await FileUploadService.uploadToS3({
+      buffer: req.file.buffer,
+      name: fileNameToSave,
+      mimetype: req.file.mimetype,
+    })
+
+    sendResponse(res, 200, true, "Group avatar updated successfully")
+  },
+)
+
+/**
+ * GET /api/groups/invitations
+ * Get user's group invites (both sent and received)
+ */
+export const getUserGroupInvitations = catchAsync(
+  async (req: AuthenticatedRequest, res: Response, _next: NextFunction) => {
+    const userId = req.user.id
+
+    const invitations = await GroupService.getUserGroupInvitations(userId)
+
+    sendResponse(res, 200, true, "Group invitations retrieved successfully", {
+      invitations,
+    })
+  },
+)
+
+/**
+ * GET /api/groups/:groupId/invitations - Get group invitations (admin only)
+ */
+export const getGroupInvitations = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ groupId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { groupId } = req.params
+    const userId = req.user.id
+
+    const invitations = await GroupService.getGroupInvitations(groupId, userId)
+
+    sendResponse(res, 200, true, "Group invitations retrieved successfully", {
+      invitations,
+    })
+  },
+)
+
+/**
+ * POST /api/groups/invitations/:invitationId/accept - Accept a group invitation
+ */
+export const acceptGroupInvitation = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ invitationId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { invitationId } = req.params
+    const userId = req.user.id
+
+    await GroupService.acceptGroupInvitation(invitationId, userId)
+
+    sendResponse(res, 200, true, "Group invitation accepted successfully")
+  },
+)
+
+/**
+ * DELETE /api/groups/invitations/:invitationId/reject - Reject a group invitation
+ */
+export const rejectGroupInvitation = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ invitationId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { invitationId } = req.params
+    const userId = req.user.id
+
+    await GroupService.rejectGroupInvitation(invitationId, userId)
+
+    sendResponse(res, 200, true, "Group invitation rejected successfully")
+  },
+)

@@ -108,6 +108,7 @@ app.use(
 app.use(mongoSanitize())
 app.use(xssClean())
 app.use(hpp())
+app.set("trust proxy", 1) // if behind a proxy (e.g., Heroku, AWS ELB)
 app.use(
   rateLimit({
     windowMs: 15 * 60_000,

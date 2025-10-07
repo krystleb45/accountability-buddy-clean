@@ -36,11 +36,6 @@ export * from "./localStorageUtils"
 export * from "./numberUtils"
 export * from "./reportWebVitals"
 
-// —————————————————————————————————————————
-// Real-time socket helpers
-// —————————————————————————————————————————
-export { default as socket } from "./socket"
-
 export * from "./stringUtils"
 export * from "./taskHelpers"
 

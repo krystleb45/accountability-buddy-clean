@@ -16,6 +16,7 @@ import { io } from "socket.io-client"
 interface SocketContextType {
   socket: Socket | null
   isConnected: boolean
+  joinedRooms: Set<string>
   joinRoom: (roomId: string, event?: string) => void
   leaveRoom: (roomId: string, event?: string) => void
 }
@@ -23,6 +24,7 @@ interface SocketContextType {
 const SocketContext = createContext<SocketContextType>({
   socket: null,
   isConnected: false,
+  joinedRooms: new Set(),
   joinRoom: () => {},
   leaveRoom: () => {},
 })
@@ -43,6 +45,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const { data: session, status } = useSession()
   const [socket, setSocket] = useState<Socket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
+  const [joinedRooms, setJoinedRooms] = useState<Set<string>>(() => new Set())
 
   useEffect(() => {
     if (status !== "authenticated") {
@@ -86,6 +89,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const joinRoom = useCallback(
     (roomId: string, event = "joinRoom") => {
       if (socket && isConnected) {
+        setJoinedRooms((prev) => new Set(prev).add(roomId))
         socket.emit(event, { roomId })
       }
     },
@@ -95,6 +99,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const leaveRoom = useCallback(
     (roomId: string, event = "leaveRoom") => {
       if (socket && isConnected) {
+        setJoinedRooms((prev) => {
+          const updated = new Set(prev)
+          updated.delete(roomId)
+          return updated
+        })
         socket.emit(event, { roomId })
       }
     },
@@ -105,10 +114,11 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     () => ({
       socket,
       isConnected,
+      joinedRooms,
       joinRoom,
       leaveRoom,
     }),
-    [socket, isConnected, joinRoom, leaveRoom],
+    [socket, isConnected, joinedRooms, joinRoom, leaveRoom],
   )
 
   return <SocketContext value={contextValue}>{children}</SocketContext>

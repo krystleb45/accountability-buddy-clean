@@ -15,7 +15,7 @@ import { FileUploadService } from "../services/file-upload-service"
 const router = Router()
 const groupLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 50,
   message: "Too many group requests",
 })
 
@@ -54,6 +54,12 @@ router.post(
 router.get("/my-groups", protect, groupController.getMyGroups)
 
 /**
+ * GET /api/groups/invitations
+ * Get user's group invites (both sent and received)
+ */
+router.get("/invitations", protect, groupController.getUserGroupInvitations)
+
+/**
  * GET /api/groups/:groupId - Get group details
  */
 router.get(
@@ -82,26 +88,23 @@ router.post(
   groupController.leaveGroup,
 )
 
-// PUT /api/groups/:groupId - Update group (admin only)
+/**
+ * PUT /api/groups/:groupId - Update group (admin only)
+ */
+const updateGroupBodySchema = z.object({
+  name: z.string().min(3).max(50),
+  description: z.string().max(200).optional(),
+  category: z.enum(categories.map((cat) => cat.id)),
+  tags: z.array(z.string().max(20)).max(5),
+  isPublic: z.boolean(),
+})
+export type UpdateGroupBody = z.infer<typeof updateGroupBodySchema>
+
 router.put(
   "/:groupId",
   protect,
   groupLimiter,
-  checkGroupAdmin, // ✅ Check admin permissions
-  [
-    check("name", "Group name must be between 3 and 50 characters")
-      .optional()
-      .isLength({ min: 3, max: 50 }),
-    check("description", "Description must be between 10 and 200 characters")
-      .optional()
-      .isLength({ min: 10, max: 200 }),
-    check("category", "Invalid category")
-      .optional()
-      .isIn(["fitness", "study", "career", "lifestyle", "creative", "tech"]),
-    check("tags", "Tags must be an array").optional().isArray(),
-    check("isPublic", "isPublic must be a boolean").optional().isBoolean(),
-  ],
-  handleValidationErrors,
+  validate({ bodySchema: updateGroupBodySchema }),
   groupController.updateGroup,
 )
 
@@ -143,12 +146,13 @@ router.post(
   groupController.inviteMember,
 )
 
-// DELETE /api/groups/:groupId/remove/:userId - Remove member (admin only)
+/**
+ * DELETE /api/groups/:groupId/remove/:userId - Remove member from group (admin only)
+ */
 router.delete(
   "/:groupId/remove/:userId",
   protect,
   groupLimiter,
-  checkGroupAdmin, // ✅ Check admin permissions
   groupController.removeMember,
 )
 
@@ -194,6 +198,49 @@ router.post(
   groupLimiter,
   validate({ bodySchema: sendMessageBodySchema }),
   groupController.sendGroupMessage,
+)
+
+/**
+ * PUT /api/groups/:groupId/avatar - Update group avatar (admin only)
+ */
+router.put(
+  "/:groupId/avatar",
+  protect,
+  groupLimiter,
+  FileUploadService.multerUpload.single("image"),
+  groupController.updateGroupAvatar,
+)
+
+/**
+ * GET /api/groups/:groupId/invitations - Get group invitations (admin only)
+ */
+router.get(
+  "/:groupId/invitations",
+  protect,
+  groupLimiter,
+  groupController.getGroupInvitations,
+)
+
+/**
+ * POST /api/groups/invitations/:invitationId/accept
+ * Accept a group invitation
+ */
+router.post(
+  "/invitations/:invitationId/accept",
+  protect,
+  groupLimiter,
+  groupController.acceptGroupInvitation,
+)
+
+/**
+ * DELETE /api/groups/invitations/:invitationId/reject
+ * Reject a group invitation (admin only)
+ */
+router.delete(
+  "/invitations/:invitationId/reject",
+  protect,
+  groupLimiter,
+  groupController.rejectGroupInvitation,
 )
 
 export default router
