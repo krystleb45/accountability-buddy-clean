@@ -220,10 +220,10 @@ export function Pricing({
             sm:flex-row
           `}
         >
-          <div>
+          <span className="block">
             <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
             7-day money-back guarantee
-          </div>
+          </span>
           <span
             className={`
               hidden
@@ -232,10 +232,10 @@ export function Pricing({
           >
             •
           </span>
-          <div>
+          <span className="block">
             <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
             Cancel anytime
-          </div>
+          </span>
           <span
             className={`
               hidden
@@ -244,10 +244,10 @@ export function Pricing({
           >
             •
           </span>
-          <div>
+          <span className="block">
             <SquareCheckBig className="inline-flex text-primary" size={20} />{" "}
             Secure payment
-          </div>
+          </span>
         </p>
         <p className="text-sm text-muted-foreground">
           Join thousands of users achieving their goals with accountability
