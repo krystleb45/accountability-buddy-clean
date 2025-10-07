@@ -7,6 +7,11 @@ import { User } from "../models/User"
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
+export async function createStripeCustomer(email: string) {
+  const customer = await stripe.customers.create({ email })
+  return customer.id
+}
+
 function mapLookupKeyToPlan(key: string) {
   const [plan, cycle] = key.split("_")
   return { tier: plan, billingCycle: cycle }

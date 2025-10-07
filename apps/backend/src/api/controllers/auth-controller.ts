@@ -13,6 +13,7 @@ import { VerificationToken } from "../models/VerificationToken"
 import AuthService from "../services/AuthService"
 import { FileUploadService } from "../services/file-upload-service"
 import { StreakService } from "../services/streak-service"
+import { createStripeCustomer } from "../services/stripe-service"
 import {
   addSendResetPasswordEmailJob,
   addSendVerificationEmailJob,
@@ -39,6 +40,8 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
     )
   }
 
+  const stripeCustomerId = await createStripeCustomer(normalizedEmail)
+
   // Hash password - let the User model handle this in pre-save middleware
   const user = new User({
     name,
@@ -54,6 +57,7 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
           trial_end_date: addDays(new Date(), 14),
         }
       : {}),
+    stripeCustomerId,
   })
 
   await user.save()
