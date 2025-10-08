@@ -9,6 +9,8 @@ import { SessionProvider } from "next-auth/react"
 import { AuthProvider } from "@/context/auth/auth-context"
 import { SocketProvider } from "@/context/auth/socket-context"
 
+import { TooltipProvider } from "./ui/tooltip"
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -33,7 +35,9 @@ export function Providers({ children }: Props) {
       {/* Refetch every hour because access tokens expires in an hour */}
       <SessionProvider refetchInterval={60 * 60}>
         <AuthProvider>
-          <SocketProvider>{children}</SocketProvider>
+          <SocketProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </SocketProvider>
         </AuthProvider>
       </SessionProvider>
 

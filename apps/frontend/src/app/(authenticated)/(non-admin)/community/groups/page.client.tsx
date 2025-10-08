@@ -31,7 +31,6 @@ import { Separator } from "@/components/ui/separator"
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { getCategoriesWithCount } from "@/lib/categories"
@@ -163,29 +162,27 @@ function GroupsClient() {
         </div>
         <div className="flex items-center gap-4">
           {pendingInvitationsCount > 0 && (
-            <TooltipProvider>
-              <Tooltip>
-                <PendingUserGroupInvitationsDialog>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="border-chart-3 text-chart-3"
-                    >
-                      <BellDotIcon />
-                    </Button>
-                  </TooltipTrigger>
-                </PendingUserGroupInvitationsDialog>
+            <Tooltip>
+              <PendingUserGroupInvitationsDialog>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-chart-3 text-chart-3"
+                  >
+                    <BellDotIcon />
+                  </Button>
+                </TooltipTrigger>
+              </PendingUserGroupInvitationsDialog>
 
-                <TooltipContent
-                  className="bg-chart-3"
-                  arrowClassName="bg-chart-3 fill-chart-3"
-                >
-                  {pendingInvitationsCount} Pending Invitation
-                  {pendingInvitationsCount === 1 ? "" : "s"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+              <TooltipContent
+                className="bg-chart-3"
+                arrowClassName="bg-chart-3 fill-chart-3"
+              >
+                {pendingInvitationsCount} Pending Invitation
+                {pendingInvitationsCount === 1 ? "" : "s"}
+              </TooltipContent>
+            </Tooltip>
           )}
           <Button asChild>
             <Link href="/community/groups/create">

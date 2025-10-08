@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useSubscription } from "@/hooks/useSubscription"
@@ -93,29 +92,27 @@ export default function GoalsClient() {
             </div>
           )}
 
-          <TooltipProvider>
-            {canCreateGoal ? (
-              <Button asChild>
-                <Link href="/goals/create">
-                  <Plus /> Add Goal
-                </Link>
-              </Button>
-            ) : (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button asChild disabled={!canCreateGoal}>
-                    <Link href="/goals/create">
-                      <Plus /> Add Goal
-                    </Link>
-                  </Button>
-                </TooltipTrigger>
+          {canCreateGoal ? (
+            <Button asChild>
+              <Link href="/goals/create">
+                <Plus /> Add Goal
+              </Link>
+            </Button>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild disabled={!canCreateGoal}>
+                  <Link href="/goals/create">
+                    <Plus /> Add Goal
+                  </Link>
+                </Button>
+              </TooltipTrigger>
 
-                <TooltipContent>
-                  Goal limit reached ({activeGoalsCount}/{maxGoals})
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </TooltipProvider>
+              <TooltipContent>
+                Goal limit reached ({activeGoalsCount}/{maxGoals})
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
       </div>
 

@@ -61,7 +61,6 @@ import { Input } from "@/components/ui/input"
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useSocket } from "@/context/auth/socket-context"
@@ -333,7 +332,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                 {group.isPublic ? <GlobeIcon /> : <LockIcon />}{" "}
                 {group.isPublic ? "Public" : "Private"}
               </Badge>
-              <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link href={`/member/${group.createdBy.username}`}>
@@ -347,7 +345,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                     Created by @{group.createdBy.username}
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
               {group.createdAt && (
                 <Badge variant="secondary">
                   <CalendarPlus />
@@ -428,7 +425,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                             <p>{message.text}</p>
                           </CardContent>
                         </MotionCard>
-                        <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <p
@@ -454,7 +450,6 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                               {format(message.createdAt!, "PPp")}
                             </TooltipContent>
                           </Tooltip>
-                        </TooltipProvider>
                       </div>
                     </div>
                   )

@@ -3,12 +3,7 @@ import type { PropsWithChildren } from "react"
 import { Fragment } from "react"
 
 import { Badge } from "../ui/badge"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { Copyable } from "./copyable"
 
 interface IdBadgeProps {
@@ -26,15 +21,11 @@ interface TooltipWrapperProps extends PropsWithChildren {
 
 export function TooltipWrapper({ value, children }: TooltipWrapperProps) {
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
+    <Tooltip>
+      <TooltipTrigger>{children}</TooltipTrigger>
 
-        <TooltipContent className="font-mono font-medium">
-          {value}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+      <TooltipContent className="font-mono font-medium">{value}</TooltipContent>
+    </Tooltip>
   )
 }
 

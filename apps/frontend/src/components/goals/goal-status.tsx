@@ -4,12 +4,7 @@ import { Archive, CircleCheck, CircleDashed, CircleDot } from "lucide-react"
 
 import type { Goal } from "@/types/mongoose.gen"
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 interface GoalStatusProps {
   status: Goal["status"]
@@ -41,13 +36,11 @@ export function GoalStatus({ status, className }: GoalStatusProps) {
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger className={className}>{Icon}</TooltipTrigger>
-        <TooltipContent className="capitalize" collisionPadding={24}>
-          {status?.replaceAll("-", " ")}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger className={className}>{Icon}</TooltipTrigger>
+      <TooltipContent className="capitalize" collisionPadding={24}>
+        {status?.replaceAll("-", " ")}
+      </TooltipContent>
+    </Tooltip>
   )
 }

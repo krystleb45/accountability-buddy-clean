@@ -35,12 +35,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "../ui/item"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 interface PendingGroupInvitationsProps {
   // used as trigger
@@ -205,52 +200,50 @@ export function PendingGroupInvitationsDialog({
                   </ItemContent>
                   {isRequest && (
                     <ItemActions>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              disabled={isInProgress}
-                              onClick={() =>
-                                mutateAcceptInvitation(invitation._id)
-                              }
-                            >
-                              {isInProgress ? (
-                                <Loader className="animate-spin" />
-                              ) : (
-                                <CheckIcon />
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Accept Request</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="destructive"
-                              disabled={isInProgress}
-                              onClick={() =>
-                                mutateRejectInvitation(invitation._id)
-                              }
-                            >
-                              {isInProgress ? (
-                                <Loader className="animate-spin" />
-                              ) : (
-                                <XIcon />
-                              )}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            className={`
-                              bg-destructive text-destructive-foreground
-                            `}
-                            arrowClassName="bg-destructive fill-destructive"
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            disabled={isInProgress}
+                            onClick={() =>
+                              mutateAcceptInvitation(invitation._id)
+                            }
                           >
-                            Decline Request
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                            {isInProgress ? (
+                              <Loader className="animate-spin" />
+                            ) : (
+                              <CheckIcon />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Accept Request</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            disabled={isInProgress}
+                            onClick={() =>
+                              mutateRejectInvitation(invitation._id)
+                            }
+                          >
+                            {isInProgress ? (
+                              <Loader className="animate-spin" />
+                            ) : (
+                              <XIcon />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          className={`
+                            bg-destructive text-destructive-foreground
+                          `}
+                          arrowClassName="bg-destructive fill-destructive"
+                        >
+                          Decline Request
+                        </TooltipContent>
+                      </Tooltip>
                     </ItemActions>
                   )}
                   <ItemFooter>

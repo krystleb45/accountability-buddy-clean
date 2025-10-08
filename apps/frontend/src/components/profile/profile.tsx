@@ -23,12 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip"
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { AvatarCoverChangeDialog } from "./avatar-cover-change-dialog"
 import { EditBioForm } from "./edit-bio-form"
 import { EditInterestsForm } from "./edit-interests-form"
@@ -150,27 +145,25 @@ export function Profile() {
         <section>
           <div className="mb-2 flex items-center gap-2">
             <h2 className="text-sm font-bold">Bio</h2>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-6"
-                    onClick={() => setEditingBio((prev) => !prev)}
-                  >
-                    {editingBio ? (
-                      <X className="size-4" />
-                    ) : (
-                      <Pencil className="size-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {editingBio ? "Cancel" : "Edit Bio"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-6"
+                  onClick={() => setEditingBio((prev) => !prev)}
+                >
+                  {editingBio ? (
+                    <X className="size-4" />
+                  ) : (
+                    <Pencil className="size-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {editingBio ? "Cancel" : "Edit Bio"}
+              </TooltipContent>
+            </Tooltip>
           </div>
           {editingBio ? (
             <EditBioForm
@@ -188,27 +181,25 @@ export function Profile() {
         <section>
           <div className="mb-2 flex items-center gap-2">
             <h2 className="text-sm font-bold">Interests</h2>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-6"
-                    onClick={() => setEditingInterests((prev) => !prev)}
-                  >
-                    {editingInterests ? (
-                      <X className="size-4" />
-                    ) : (
-                      <Pencil className="size-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {editingInterests ? "Cancel" : "Edit Interests"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-6"
+                  onClick={() => setEditingInterests((prev) => !prev)}
+                >
+                  {editingInterests ? (
+                    <X className="size-4" />
+                  ) : (
+                    <Pencil className="size-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {editingInterests ? "Cancel" : "Edit Interests"}
+              </TooltipContent>
+            </Tooltip>
           </div>
           {editingInterests ? (
             <EditInterestsForm
@@ -248,27 +239,25 @@ export function Profile() {
         <section>
           <div className="mb-2 flex items-center gap-2">
             <h2 className="text-sm font-bold">Location</h2>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-6"
-                    onClick={() => setEditingLocation((prev) => !prev)}
-                  >
-                    {editingLocation ? (
-                      <X className="size-4" />
-                    ) : (
-                      <Pencil className="size-4" />
-                    )}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {editingLocation ? "Cancel" : "Edit Location"}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-6"
+                  onClick={() => setEditingLocation((prev) => !prev)}
+                >
+                  {editingLocation ? (
+                    <X className="size-4" />
+                  ) : (
+                    <Pencil className="size-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {editingLocation ? "Cancel" : "Edit Location"}
+              </TooltipContent>
+            </Tooltip>
           </div>
           {editingLocation ? (
             <EditLocationForm
