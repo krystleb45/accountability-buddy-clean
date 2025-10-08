@@ -307,7 +307,7 @@ class GroupService {
   async getGroupMembers(groupId: string, userId: string) {
     const group = await Group.findById(groupId).populate(
       "members",
-      "name username profileImage",
+      "name username profileImage location",
     )
 
     if (!group) {
@@ -329,6 +329,8 @@ class GroupService {
       }
 
       const memberData = member.toObject()
+
+      memberData.timezone = await member.getTimezone()
 
       membersData.push({
         ...memberData,

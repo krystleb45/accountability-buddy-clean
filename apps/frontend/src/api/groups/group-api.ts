@@ -187,7 +187,10 @@ export async function fetchGroupMembers(groupId: string) {
   try {
     const resp = await http.get<
       Envelope<{
-        members: Pick<User, "_id" | "name" | "username" | "profileImage">[]
+        members: Pick<
+          User,
+          "_id" | "name" | "username" | "profileImage" | "location"
+        >[]
       }>
     >(`/groups/${encodeURIComponent(groupId)}/members`)
     return resp.data.data.members

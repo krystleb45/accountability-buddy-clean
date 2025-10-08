@@ -40,6 +40,7 @@ import {
   fetchGroupMessages,
   sendGroupMessage,
 } from "@/api/groups/group-api"
+import { MemberCard } from "@/components/group/member-card"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -58,6 +59,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item"
 import {
   Tooltip,
   TooltipContent,
@@ -66,8 +68,7 @@ import {
 import { useSocket } from "@/context/auth/socket-context"
 import { cn } from "@/lib/utils"
 
-const MotionCard = motion.create(Card)
-const MotionLink = motion.create(Link)
+const MotionItem = motion.create(Item)
 
 interface GroupDetailClientProps {
   groupId: string
@@ -332,19 +333,19 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                 {group.isPublic ? <GlobeIcon /> : <LockIcon />}{" "}
                 {group.isPublic ? "Public" : "Private"}
               </Badge>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link href={`/member/${group.createdBy.username}`}>
-                      <Badge variant="secondary">
-                        <CrownIcon /> @{group.createdBy.username}
-                      </Badge>
-                    </Link>
-                  </TooltipTrigger>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href={`/member/${group.createdBy.username}`}>
+                    <Badge variant="secondary">
+                      <CrownIcon /> @{group.createdBy.username}
+                    </Badge>
+                  </Link>
+                </TooltipTrigger>
 
-                  <TooltipContent>
-                    Created by @{group.createdBy.username}
-                  </TooltipContent>
-                </Tooltip>
+                <TooltipContent>
+                  Created by @{group.createdBy.username}
+                </TooltipContent>
+              </Tooltip>
               {group.createdAt && (
                 <Badge variant="secondary">
                   <CalendarPlus />
@@ -398,17 +399,37 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                       })}
                     >
                       <div>
-                        <MotionCard
+                        <MotionItem
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className={cn("gap-0 py-2", {
+                          variant="outline"
+                          className={cn("items-start gap-2 py-2", {
                             "rounded-xl rounded-bl-none": !isUserMessage,
                             "rounded-xl rounded-br-none border-primary":
                               isUserMessage,
                           })}
                         >
-                          <CardHeader className="block">
-                            <CardTitle
+                          <ItemMedia variant="image">
+                            <Image
+                              src={
+                                message.senderId.profileImage ||
+                                "/default-avatar.svg"
+                              }
+                              alt={
+                                message.senderId.username ||
+                                message.senderId.name ||
+                                "User"
+                              }
+                              width={40}
+                              height={40}
+                              className={`
+                                size-10 rounded-full border border-muted
+                                object-cover
+                              `}
+                            />
+                          </ItemMedia>
+                          <ItemContent>
+                            <ItemTitle
                               className={`
                                 w-full text-xs font-medium text-muted-foreground
                                 hover:underline
@@ -419,37 +440,35 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                               >
                                 @{message.senderId.username}
                               </Link>
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
+                            </ItemTitle>
                             <p>{message.text}</p>
-                          </CardContent>
-                        </MotionCard>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <p
-                                className={cn(
-                                  `
-                                    mt-1 font-mono text-2xs
-                                    text-muted-foreground
-                                  `,
-                                  {
-                                    "text-right": isUserMessage,
-                                  },
-                                )}
-                              >
-                                {formatDistanceToNow(message.createdAt!, {
-                                  addSuffix: true,
-                                })}
-                              </p>
-                            </TooltipTrigger>
-                            <TooltipContent
-                              side="bottom"
-                              align={isUserMessage ? "end" : "start"}
+                          </ItemContent>
+                        </MotionItem>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <p
+                              className={cn(
+                                `
+                                  mt-1 w-fit font-mono text-2xs
+                                  text-muted-foreground
+                                `,
+                                {
+                                  "ml-auto text-right": isUserMessage,
+                                },
+                              )}
                             >
-                              {format(message.createdAt!, "PPp")}
-                            </TooltipContent>
-                          </Tooltip>
+                              {formatDistanceToNow(message.createdAt!, {
+                                addSuffix: true,
+                              })}
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="bottom"
+                            align={isUserMessage ? "end" : "start"}
+                          >
+                            {format(message.createdAt!, "PPp")}
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     </div>
                   )
@@ -513,34 +532,11 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
             <CardContent className="max-h-[75dvh] space-y-4 overflow-y-auto">
               {members && members.length > 0 ? (
                 members.map((member) => (
-                  <MotionLink
-                    href={`/member/${member.username}`}
+                  <MemberCard
                     key={member._id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className={`
-                      flex items-center gap-3 rounded-md p-2
-                      hover:bg-accent
-                    `}
-                  >
-                    <Image
-                      src={member.profileImage || "/default-avatar.svg"}
-                      alt={member.username || member.name || "User"}
-                      width={40}
-                      height={40}
-                      className={`
-                        size-10 rounded-full border border-muted object-cover
-                      `}
-                    />
-                    <div className="flex-1">
-                      <p className="font-medium">@{member.username}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {member._id === group.createdBy._id
-                          ? "Admin"
-                          : "Member"}
-                      </p>
-                    </div>
-                  </MotionLink>
+                    member={member}
+                    isAdmin={member._id === group.createdBy._id}
+                  />
                 ))
               ) : (
                 <p className="py-4 text-center text-muted-foreground">
