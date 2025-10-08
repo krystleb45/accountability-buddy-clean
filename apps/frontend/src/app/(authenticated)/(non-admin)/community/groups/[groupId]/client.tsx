@@ -224,19 +224,8 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
         leaveRoom(groupId, LEAVE_GROUP_ROOM)
       }
     },
-    // @keep-sorted
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      groupId,
-      isConnected,
-      joinRoom,
-      leaveRoom,
-      members,
-      queryClient,
-      router,
-      socket,
-      userId,
-    ],
+    [isConnected, groupId],
   )
 
   const { mutate: sendMessageMutate, isPending: isSending } = useMutation({

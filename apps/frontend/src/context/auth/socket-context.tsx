@@ -84,7 +84,8 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     return () => {
       newSocket.close()
     }
-  }, [session, status])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status])
 
   const joinRoom = useCallback(
     (roomId: string, event = "joinRoom") => {
