@@ -41,6 +41,7 @@ interface GroupCardProps {
   index?: number
   isJoined?: boolean
   isRequested?: boolean
+  isInvited?: boolean
   isRejected?: boolean
   smallVersion?: boolean
 }
@@ -52,6 +53,7 @@ export function GroupCard({
   index = 0,
   isJoined,
   isRequested,
+  isInvited,
   isRejected,
   smallVersion,
 }: GroupCardProps) {
@@ -234,7 +236,9 @@ export function GroupCard({
             onClick={() =>
               group.isPublic ? joinGroupMutate() : requestInviteMutate()
             }
-            disabled={isJoining || isRequestingInvite || isRequested}
+            disabled={
+              isJoining || isRequestingInvite || isRequested || isInvited
+            }
             className="w-full"
           >
             {group.isPublic ? <LogInIcon /> : <MailPlusIcon />}
@@ -246,9 +250,11 @@ export function GroupCard({
                   ? "Join Group"
                   : isRequested
                     ? "Invite Requested"
-                    : isRejected
-                      ? "Request Rejected. Retry?"
-                      : "Request Invite"}
+                    : isInvited
+                      ? "Invite Pending"
+                      : isRejected
+                        ? "Request Rejected. Retry?"
+                        : "Request Invite"}
           </Button>
         )}
       </CardFooter>

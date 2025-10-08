@@ -559,6 +559,13 @@ class GroupService {
             (invite.recipient as UserDocument).profileImage,
           )
       }
+
+      if ((invite.groupId as IGroup).avatar) {
+        ;(invite.groupId as IGroup).avatar =
+          await FileUploadService.generateSignedUrl(
+            (invite.groupId as IGroup).avatar,
+          )
+      }
     }
 
     return invitations
@@ -678,9 +685,9 @@ class GroupService {
       throw new CustomError("Group not found", 404)
     }
 
-    // Only group admin can reject
-    if (!group.createdBy._id.equals(userId)) {
-      throw new CustomError("Only group admin can reject invitations", 403)
+    // Only recipient can reject
+    if (!invitation.recipient._id.equals(userId)) {
+      throw new CustomError("Not authorized to reject this invitation", 403)
     }
 
     if (invitation.status !== "pending") {

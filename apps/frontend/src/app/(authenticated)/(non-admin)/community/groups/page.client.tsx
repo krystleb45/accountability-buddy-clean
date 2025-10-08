@@ -5,6 +5,7 @@ import type { Category } from "@ab/shared/categories"
 import { useQuery } from "@tanstack/react-query"
 import {
   ArrowLeft,
+  BellDotIcon,
   Hexagon,
   PlusIcon,
   SearchIcon,
@@ -22,10 +23,17 @@ import {
 } from "@/api/groups/group-api"
 import { CategoryFilterButton } from "@/components/category-filter-button"
 import { GroupCard } from "@/components/group/group-card"
+import { PendingUserGroupInvitationsDialog } from "@/components/group/pending-user-group-invitations-dialog"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { getCategoriesWithCount } from "@/lib/categories"
 
 function GroupsClient() {
@@ -61,10 +69,14 @@ function GroupsClient() {
     isPending: isLoadingUserGroupInvitations,
     error: userGroupInvitationsError,
   } = useQuery({
-    queryKey: ["userGroupInvitations", userId],
+    queryKey: ["userGroupInvitations"],
     queryFn: () => fetchUserGroupInvitations(),
     enabled: !!userId,
   })
+
+  const pendingInvitationsCount = userGroupInvitations
+    ? userGroupInvitations.filter((inv) => inv.status === "pending").length
+    : 0
 
   const isLoading =
     status === "loading" ||
@@ -149,12 +161,39 @@ function GroupsClient() {
             Join groups and connect with like-minded people
           </p>
         </div>
-        <Button asChild>
-          <Link href="/community/groups/create">
-            <PlusIcon />
-            Create Group
-          </Link>
-        </Button>
+        <div className="flex items-center gap-4">
+          {pendingInvitationsCount > 0 && (
+            <TooltipProvider>
+              <Tooltip>
+                <PendingUserGroupInvitationsDialog>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="border-chart-3 text-chart-3"
+                    >
+                      <BellDotIcon />
+                    </Button>
+                  </TooltipTrigger>
+                </PendingUserGroupInvitationsDialog>
+
+                <TooltipContent
+                  className="bg-chart-3"
+                  arrowClassName="bg-chart-3 fill-chart-3"
+                >
+                  {pendingInvitationsCount} Pending Invitation
+                  {pendingInvitationsCount === 1 ? "" : "s"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          <Button asChild>
+            <Link href="/community/groups/create">
+              <PlusIcon />
+              Create Group
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* My Groups Section */}
@@ -259,11 +298,22 @@ function GroupsClient() {
               const isJoined = myGroups.some((g) => g._id === group._id)
               const isRequested = userGroupInvitations.some(
                 (inv) =>
-                  inv.groupId._id === group._id && inv.status === "pending",
+                  inv.groupId._id === group._id &&
+                  inv.sender._id === userId &&
+                  inv.status === "pending",
               )
+              const isInvited = userGroupInvitations.some(
+                (inv) =>
+                  inv.groupId._id === group._id &&
+                  inv.recipient._id === userId &&
+                  inv.status === "pending",
+              )
+              // Consider "rejected" only if not currently invited
               const isRejected = userGroupInvitations.some(
                 (inv) =>
-                  inv.groupId._id === group._id && inv.status === "rejected",
+                  inv.groupId._id === group._id &&
+                  inv.sender._id === userId &&
+                  inv.status === "rejected",
               )
 
               return (
@@ -273,6 +323,7 @@ function GroupsClient() {
                   index={index}
                   isJoined={isJoined}
                   isRequested={isRequested}
+                  isInvited={isInvited}
                   isRejected={isRejected}
                 />
               )

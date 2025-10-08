@@ -167,9 +167,9 @@ export function FriendsClient() {
             <BellIcon className="size-8 text-chart-3" />
             <span
               className={`
-                absolute top-0 right-0 grid aspect-square min-w-5
-                translate-x-1/3 -translate-y-1/2 place-items-center rounded-full
-                bg-destructive text-xs font-bold
+                absolute top-0 right-0 grid h-5 min-w-5 translate-x-1/3
+                -translate-y-1/2 place-items-center rounded-full bg-destructive
+                text-xs font-bold
               `}
             >
               {requests.length}

@@ -2,16 +2,15 @@ import type { ReactNode } from "react"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
-import { CheckIcon, Loader, XCircle, XIcon } from "lucide-react"
+import { CheckIcon, HexagonIcon, Loader, XCircle, XIcon } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
-import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
 
 import {
   acceptGroupInvitation,
-  fetchGroupInvitations,
+  fetchUserGroupInvitations,
   rejectGroupInvitation,
 } from "@/api/groups/group-api"
 
@@ -30,7 +29,6 @@ import {
   ItemActions,
   ItemContent,
   ItemDescription,
-  ItemFooter,
   ItemGroup,
   ItemMedia,
   ItemTitle,
@@ -42,16 +40,14 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip"
 
-interface PendingGroupInvitationsProps {
+interface PendingUserGroupInvitationsDialogProps {
   // used as trigger
   children: ReactNode
-  groupId: string
 }
 
-export function PendingGroupInvitationsDialog({
+export function PendingUserGroupInvitationsDialog({
   children,
-  groupId,
-}: PendingGroupInvitationsProps) {
+}: PendingUserGroupInvitationsDialogProps) {
   const { status } = useSession()
   const [open, setOpen] = useState(false)
 
@@ -62,13 +58,14 @@ export function PendingGroupInvitationsDialog({
   const queryClient = useQueryClient()
 
   const {
-    data: groupInvitations,
-    isLoading: isLoadingGroupInvitations,
-    error: groupInvitationsError,
+    data: userGroupInvitations,
+    isPending: isLoadingUserGroupInvitations,
+    error: userGroupInvitationsError,
   } = useQuery({
-    queryKey: ["groupInvitations", groupId],
-    queryFn: async () => fetchGroupInvitations(groupId),
-    enabled: status === "authenticated" && !!groupId && open,
+    queryKey: ["userGroupInvitations"],
+    queryFn: () => fetchUserGroupInvitations(),
+    enabled: status === "authenticated" && open,
+    select: (data) => data.filter((inv) => inv.status === "pending"),
   })
 
   const { mutate: mutateAcceptInvitation } = useMutation({
@@ -84,13 +81,13 @@ export function PendingGroupInvitationsDialog({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["groupInvitations", groupId],
+        queryKey: ["userGroupInvitations"],
       })
-      queryClient.invalidateQueries({ queryKey: ["group", groupId] })
-      toast.success("Request accepted")
+      queryClient.invalidateQueries({ queryKey: ["myGroups"] })
+      toast.success("Invitation accepted")
     },
     onError: (error) => {
-      toast.error(`Error accepting request`, {
+      toast.error(`Error accepting invitation`, {
         description: error.message,
       })
     },
@@ -109,12 +106,12 @@ export function PendingGroupInvitationsDialog({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["groupInvitations", groupId],
+        queryKey: ["userGroupInvitations"],
       })
-      toast.success("Request rejected")
+      toast.success("Invitation rejected")
     },
     onError: (error) => {
-      toast.error(`Error rejecting request`, {
+      toast.error(`Error rejecting invitation`, {
         description: error.message,
       })
     },
@@ -131,11 +128,11 @@ export function PendingGroupInvitationsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {isLoadingGroupInvitations ? (
+        {isLoadingUserGroupInvitations ? (
           <div className="grid min-h-40 place-items-center">
             <LoadingSpinner />
           </div>
-        ) : groupInvitationsError ? (
+        ) : userGroupInvitationsError ? (
           <div className="grid min-h-40 place-items-center py-10">
             <div className="text-center">
               <XCircle size={60} className="mx-auto mb-6 text-destructive" />
@@ -143,13 +140,13 @@ export function PendingGroupInvitationsDialog({
                 There was an error loading the invitations.
               </p>
               <p className="text-sm text-muted-foreground">
-                {groupInvitationsError.message}
+                {userGroupInvitationsError.message}
               </p>
             </div>
           </div>
-        ) : groupInvitations && groupInvitations.length > 0 ? (
+        ) : userGroupInvitations && userGroupInvitations.length > 0 ? (
           <ItemGroup className="gap-4">
-            {groupInvitations.map((invitation) => {
+            {userGroupInvitations.map((invitation) => {
               const isRequest =
                 invitation.groupId.createdBy === invitation.recipient._id
               const isInProgress = inProgressInvitations.includes(
@@ -159,39 +156,33 @@ export function PendingGroupInvitationsDialog({
               return (
                 <Item variant="outline" key={invitation._id}>
                   <ItemMedia variant="image">
-                    <Image
-                      src={
-                        (isRequest
-                          ? invitation.sender.profileImage
-                          : invitation.recipient.profileImage) ??
-                        "/default-avatar.svg"
-                      }
-                      alt={
-                        isRequest
-                          ? (invitation.sender.name ?? "")
-                          : (invitation.recipient.name ?? "")
-                      }
-                      width={40}
-                      height={40}
-                      className="size-10 rounded-full object-cover"
-                    />
+                    {invitation.groupId.avatar ? (
+                      <Image
+                        src={invitation.groupId.avatar}
+                        alt={invitation.groupId.name}
+                        width={40}
+                        height={40}
+                        className="size-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <HexagonIcon className="size-10 text-primary" />
+                    )}
                   </ItemMedia>
                   <ItemContent>
                     <ItemTitle>
                       {isRequest ? (
                         <>
-                          Request to join from{" "}
+                          Requested to join{" "}
                           <span className="font-semibold text-primary">
-                            @{invitation.sender.username}
+                            {invitation.groupId.name}
                           </span>
                         </>
                       ) : (
                         <>
-                          Invited{" "}
+                          Invite to join{" "}
                           <span className="font-semibold text-primary">
-                            @{invitation.recipient.username}
-                          </span>{" "}
-                          to join
+                            {invitation.groupId.name}
+                          </span>
                         </>
                       )}
                     </ItemTitle>
@@ -203,7 +194,7 @@ export function PendingGroupInvitationsDialog({
                       </ItemDescription>
                     )}
                   </ItemContent>
-                  {isRequest && (
+                  {!isRequest && (
                     <ItemActions>
                       <TooltipProvider>
                         <Tooltip>
@@ -253,22 +244,13 @@ export function PendingGroupInvitationsDialog({
                       </TooltipProvider>
                     </ItemActions>
                   )}
-                  <ItemFooter>
-                    <Button asChild variant="link" size="sm" className="px-0">
-                      <Link
-                        href={`/member/${isRequest ? invitation.sender.username : invitation.recipient.username}`}
-                      >
-                        View Profile
-                      </Link>
-                    </Button>
-                  </ItemFooter>
                 </Item>
               )
             })}
           </ItemGroup>
         ) : (
           <div className="py-10 text-center text-muted-foreground">
-            No pending invitations. Send some invites!
+            No pending invitations.
           </div>
         )}
       </DialogContent>
