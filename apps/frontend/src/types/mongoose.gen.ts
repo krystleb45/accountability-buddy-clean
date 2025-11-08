@@ -430,19 +430,15 @@ export type ChatUnreadMessage = {
 export type Chat = {
   participants: (User["_id"] | User)[]
   messages: (Message["_id"] | Message)[]
-  chatType: "private" | "group"
-  groupName?: string | null
-  chatAvatar?: string | null
-  unreadMessages: ChatUnreadMessage[]
   lastMessage?: Message["_id"] | Message
+  chatType: "private" | "group"
+  groupId?: Group["_id"] | Group
+  unreadMessages: ChatUnreadMessage[]
   typingUsers: (User["_id"] | User)[]
-  isPinned?: boolean
-  admins: (User["_id"] | User)[]
   _id: string
   createdAt?: string
   updatedAt?: string
   participantCount: number
-  messageCount: number
 }
 
 /**
@@ -750,19 +746,6 @@ export type GoalMessage = {
 }
 
 /**
- * Lean version of GroupUnreadMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GroupDocument.toObject()`.
- * ```
- * const groupObject = group.toObject();
- * ```
- */
-export type GroupUnreadMessage = {
-  userId: User["_id"] | User
-  count?: number
-}
-
-/**
  * Lean version of GroupDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GroupDocument.toObject()`. To avoid conflicts with model names, use the type alias `GroupObject`.
@@ -781,14 +764,11 @@ export type Group = {
   lastActivity?: string
   avatar?: string | null
   tags: string[]
-  unreadMessages: GroupUnreadMessage[]
-  typingUsers: (User["_id"] | User)[]
   isPinned?: boolean
   _id: string
   createdAt?: string
   updatedAt?: string
   memberCount: number
-  typingCount: number
   isPublic: boolean
 }
 
@@ -1119,6 +1099,10 @@ export type Notification = {
     | "group_invite"
     | "blog_activity"
     | "goal_milestone"
+    | "group_request_rejected"
+    | "group_request_accepted"
+    | "group_invite_accepted"
+    | "group_invite_rejected"
   read?: boolean
   link?: string
   expiresAt?: string
@@ -1658,7 +1642,6 @@ export type User = {
   rewards: (Reward["_id"] | Reward)[]
   achievements: (Achievement["_id"] | Achievement)[]
   badges: (Badge["_id"] | Badge)[]
-  pinnedGoals: (Goal["_id"] | Goal)[]
   featuredAchievements: (Achievement["_id"] | Achievement)[]
   location: {
     country?: string

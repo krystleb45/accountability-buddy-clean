@@ -3804,7 +3804,6 @@ export type GroupStatics = {
         createdAt?: Date
         updatedAt?: Date
         memberCount: number
-        typingCount: number
         isPublic: boolean
       } & Required<{ _id: mongoose.Types.ObjectId }>)[]
   >
@@ -8311,6 +8310,8 @@ export type UserMethods = {
   ) => Promise<void>
   getGoalLimit: (this: UserDocument) => number
   getTimezone: (this: UserDocument) => Promise<any>
+  setOnline: (this: UserDocument) => any
+  setOffline: (this: UserDocument) => any
 }
 
 export type UserStatics = {}
