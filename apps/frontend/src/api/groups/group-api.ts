@@ -367,3 +367,23 @@ export async function deleteGroup(groupId: string) {
     throw new Error(getApiErrorMessage(error as Error))
   }
 }
+
+/**
+ * GET /api/groups/:groupId/members
+ * Get group members
+ */
+export async function getGroupMembers(groupId: string) {
+  try {
+    const resp = await http.get<
+      Envelope<{
+        members: Pick<
+          User,
+          "_id" | "name" | "username" | "profileImage" | "activeStatus"
+        >[]
+      }>
+    >(`/groups/${encodeURIComponent(groupId)}/members`)
+    return resp.data.data.members
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}

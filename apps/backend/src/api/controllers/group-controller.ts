@@ -439,3 +439,23 @@ export const getInviteRecommendations = catchAsync(
     )
   },
 )
+
+/**
+ * GET /api/groups/:groupId/members - Get group members
+ */
+export const getGroupMembers = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ groupId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { groupId } = req.params
+    const userId = req.user.id
+
+    const members = await GroupService.getGroupMembers(groupId, userId)
+
+    sendResponse(res, 200, true, "Group members retrieved successfully", {
+      members,
+    })
+  },
+)

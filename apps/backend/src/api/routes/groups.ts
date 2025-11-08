@@ -93,6 +93,11 @@ router.get(
 )
 
 /**
+ * GET /api/groups/:groupId/members - Get group members
+ */
+router.get("/:groupId/members", protect, groupController.getGroupMembers)
+
+/**
  * POST /api/groups/:groupId/join - Join a group
  */
 router.post("/:groupId/join", protect, groupLimiter, groupController.joinGroup)
