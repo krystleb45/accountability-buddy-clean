@@ -125,6 +125,11 @@ export const FileUploadService = {
         throw new Error("File key is required to generate a signed URL")
       }
 
+      if (fileKey.startsWith("http://") || fileKey.startsWith("https://")) {
+        // If the fileKey is already a URL, return it as is
+        return fileKey
+      }
+
       const bucketName = process.env.S3_BUCKET
 
       if (!bucketName) {
