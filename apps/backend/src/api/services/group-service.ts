@@ -68,13 +68,6 @@ class GroupService {
   /**
    * Create a new group (simplified signature)
    */
-  // Updated GroupService.createGroup method - replace the existing one
-
-  /**
-   * Create a new group with proper parameter handling
-   */
-  // In your GroupService.ts, update the createGroup method to ensure creator is properly added:
-
   async createGroup({
     name,
     description,
@@ -250,28 +243,20 @@ class GroupService {
   /**
    * Delete a group (only creator or system admin)
    */
-  async deleteGroup(
-    groupId: string,
-    requesterId: string,
-    isAdmin = false,
-  ): Promise<void> {
+  async deleteGroup(groupId: string, requesterId: string) {
     const group = await Group.findById(groupId)
     if (!group) {
-      throw new Error("Group not found")
+      throw new CustomError("Group not found", 404)
     }
 
-    if (!isAdmin && group.createdBy.toString() !== requesterId) {
-      throw new Error("Not authorized")
+    if (group.createdBy.toString() !== requesterId) {
+      throw new CustomError("Not authorized", 403)
     }
 
-    // Delete associated messages
-    await Message.deleteMany({
-      chatId: new mongoose.Types.ObjectId(groupId),
-      messageType: "group",
-    })
+    const chatId = (await ChatService.getGroupChat(groupId))._id.toString()
 
-    await group.deleteOne()
-    logger.info(`Group ${groupId} deleted by ${requesterId}`)
+    // Delete group chat
+    await ChatService.deleteChat(chatId)
   }
 
   /**
@@ -299,46 +284,6 @@ class GroupService {
     }
 
     return groups
-  }
-
-  /**
-   * Get group members
-   */
-  async getGroupMembers(groupId: string, userId: string) {
-    const group = await Group.findById(groupId).populate(
-      "members",
-      "name username profileImage location",
-    )
-
-    if (!group) {
-      throw new CustomError("Group not found", 404)
-    }
-
-    // Check if user is a member
-    const userObjectId = new mongoose.Types.ObjectId(userId)
-    if (!group.members.some((member) => member._id.equals(userObjectId))) {
-      throw new CustomError("Not a member of this group", 403)
-    }
-
-    const membersData: IUser[] = []
-
-    for (const member of group.members as UserDocument[]) {
-      let profileImage = member.profileImage
-      if (profileImage) {
-        profileImage = await FileUploadService.generateSignedUrl(profileImage)
-      }
-
-      const memberData = member.toObject()
-
-      memberData.timezone = await member.getTimezone()
-
-      membersData.push({
-        ...memberData,
-        profileImage,
-      })
-    }
-
-    return membersData
   }
 
   /**
@@ -498,36 +443,6 @@ class GroupService {
 
     // Notify the group
     io.in(groupId).emit(USER_REMOVED_FROM_GROUP, { userId: memberToRemove })
-  }
-
-  /**
-   * Legacy: Invite to group (keeping for backward compatibility)
-   */
-  async inviteToGroup(
-    groupId: string,
-    userId: string,
-    io: Server,
-  ): Promise<void> {
-    const group = await Group.findById(groupId)
-    if (!group) {
-      throw new Error("Group not found")
-    }
-
-    const notification = await Notification.create({
-      user: userId,
-      message: `You've been invited to join group "${group.name}"`,
-      type: "invitation",
-      read: false,
-      link: `/groups/${groupId}`,
-    })
-
-    // Emit to the user room
-    io.to(userId).emit("groupInvitation", {
-      groupId,
-      message: notification.message,
-    })
-
-    logger.info(`Invitation for group ${groupId} sent to ${userId}`)
   }
 
   /**

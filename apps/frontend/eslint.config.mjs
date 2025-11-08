@@ -25,15 +25,6 @@ export default combine(
   },
   {
     plugins: {
-      "@next/next": nextPlugin,
-    },
-    rules: {
-      ...nextPlugin.configs.recommended.rules,
-      ...nextPlugin.configs["core-web-vitals"].rules,
-    },
-  },
-  {
-    plugins: {
       cypress: cypressPlugin,
     },
     files: ["cypress/e2e/**/*.cy.{js,ts}"],

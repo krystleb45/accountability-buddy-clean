@@ -5,7 +5,6 @@ import z from "zod"
 
 import * as groupController from "../controllers/group-controller"
 import { protect } from "../middleware/auth-middleware"
-import { checkGroupAdmin } from "../middleware/groupMiddleware"
 import { validateSubscription } from "../middleware/subscription-validation"
 import validate from "../middleware/validation-middleware"
 import { FileUploadService } from "../services/file-upload-service"
@@ -129,18 +128,7 @@ router.put(
 )
 
 // DELETE /api/groups/:groupId - Delete group (admin only)
-router.delete(
-  "/:groupId",
-  protect,
-  groupLimiter,
-  checkGroupAdmin, // ✅ Check admin permissions
-  groupController.deleteGroup,
-)
-
-/**
- * GET /api/groups/:groupId/members - Get group members (members only)
- */
-router.get("/:groupId/members", protect, groupController.getGroupMembers)
+router.delete("/:groupId", protect, groupLimiter, groupController.deleteGroup)
 
 /**
  * POST /api/groups/:groupId/request-invite - Request invitation to private group
@@ -209,7 +197,7 @@ router.get(
 )
 
 /**
- * POST /api/groups/:groupId/messages - Send group message
+ * GET /api/groups/:groupId/messages - Send group message
  */
 const sendMessageBodySchema = z.object({
   content: z

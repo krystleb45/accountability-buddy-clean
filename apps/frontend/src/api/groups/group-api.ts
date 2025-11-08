@@ -161,23 +161,6 @@ export async function updateGroup(
   }
 }
 
-/**
- * Delete a group (admin only)
- * DELETE /api/groups/:groupId
- */
-export async function deleteGroup(groupId: string): Promise<boolean> {
-  if (!groupId) return false
-  try {
-    console.log(`[API] Deleting group: ${groupId}`)
-    await http.delete(`/groups/${encodeURIComponent(groupId)}`)
-    console.log(`[API] Successfully deleted group: ${groupId}`)
-    return true
-  } catch (error) {
-    console.error(`[API] Error deleting group ${groupId}:`, error)
-    return handleError("deleteGroup", error, false)
-  }
-}
-
 // Member Management Functions
 /**
  * Fetch group members
@@ -368,6 +351,18 @@ export async function fetchGroupRecommendations(groupId: string) {
       }>
     >(`/groups/${encodeURIComponent(groupId)}/invite-recommendations`)
     return resp.data.data.recommendations
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
+ * DELETE /api/groups/:groupId
+ * Delete a group (admin only)
+ */
+export async function deleteGroup(groupId: string) {
+  try {
+    await http.delete(`/groups/${encodeURIComponent(groupId)}`)
   } catch (error) {
     throw new Error(getApiErrorMessage(error as Error))
   }
