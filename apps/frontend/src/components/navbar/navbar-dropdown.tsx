@@ -13,6 +13,8 @@ import {
   User,
 } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useMemo } from "react"
 
 import { logout } from "@/api/auth/auth-api"
 
@@ -47,93 +49,98 @@ type NavbarDropdownItem = {
     }
 )
 
-// Consolidated Account dropdown items
-const accountItems: NavbarDropdownItem[] = [
-  // User Actions
-  {
-    id: "profile",
-    label: "Profile",
-    path: "/profile",
-    icon: User,
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    path: "/settings",
-    icon: Settings,
-  },
-  {
-    id: "subscription",
-    label: "Subscription",
-    path: "/subscription",
-    icon: CreditCard,
-  },
-
-  // Divider (handled specially in dropdown)
-  {
-    id: "divider",
-    label: "divider" as const,
-  },
-
-  // Help & Support
-  {
-    id: "faq",
-    label: "FAQ",
-    path: "/faq",
-    icon: CircleQuestionMark,
-    showForAdmin: true,
-  },
-  {
-    id: "about-us",
-    label: "About Us",
-    path: "/about-us",
-    icon: Info,
-    showForAdmin: true,
-  },
-  {
-    id: "contact-support",
-    label: "Contact Support",
-    path: "/contact-support",
-    icon: Mail,
-  },
-  {
-    id: "feedback",
-    label: "Feedback",
-    path: "/feedback",
-    icon: MessageCircleMore,
-  },
-  {
-    id: "privacy-policy",
-    label: "Privacy Policy",
-    path: "/privacy-policy",
-    icon: ShieldUser,
-    showForAdmin: true,
-  },
-
-  // Another divider
-  {
-    id: "divider-2",
-    label: "divider" as const,
-    showForAdmin: true,
-  },
-
-  // Logout
-  {
-    id: "logout",
-    label: "Logout",
-    onClick: (): void => {
-      logout()
-    },
-    icon: LogOut,
-    showForAdmin: true,
-  },
-]
-
 interface NavbarDropdownProps {
   isAdmin: boolean
 }
 
 export function NavbarDropdown({ isAdmin }: NavbarDropdownProps) {
+  const router = useRouter()
+
+  // Consolidated Account dropdown items
+  const accountItems: NavbarDropdownItem[] = useMemo(() => {
+    return [
+      // User Actions
+      {
+        id: "profile",
+        label: "Profile",
+        path: "/profile",
+        icon: User,
+      },
+      {
+        id: "settings",
+        label: "Settings",
+        path: "/settings",
+        icon: Settings,
+      },
+      {
+        id: "subscription",
+        label: "Subscription",
+        path: "/subscription",
+        icon: CreditCard,
+      },
+
+      // Divider (handled specially in dropdown)
+      {
+        id: "divider",
+        label: "divider" as const,
+      },
+
+      // Help & Support
+      {
+        id: "faq",
+        label: "FAQ",
+        path: "/faq",
+        icon: CircleQuestionMark,
+        showForAdmin: true,
+      },
+      {
+        id: "about-us",
+        label: "About Us",
+        path: "/about-us",
+        icon: Info,
+        showForAdmin: true,
+      },
+      {
+        id: "contact-support",
+        label: "Contact Support",
+        path: "/contact-support",
+        icon: Mail,
+      },
+      {
+        id: "feedback",
+        label: "Feedback",
+        path: "/feedback",
+        icon: MessageCircleMore,
+      },
+      {
+        id: "privacy-policy",
+        label: "Privacy Policy",
+        path: "/privacy-policy",
+        icon: ShieldUser,
+        showForAdmin: true,
+      },
+
+      // Another divider
+      {
+        id: "divider-2",
+        label: "divider" as const,
+        showForAdmin: true,
+      },
+
+      // Logout
+      {
+        id: "logout",
+        label: "Logout",
+        onClick: async () => {
+          const signOutResponse = await logout()
+          router.push(signOutResponse.url)
+        },
+        icon: LogOut,
+        showForAdmin: true,
+      },
+    ]
+  }, [router])
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -20,8 +20,8 @@ export function DeleteAccountCard() {
     },
     onSuccess: async () => {
       toast.success("Your account has been deleted.")
-      await logout()
-      router.push("/login")
+      const signOutResponse = await logout()
+      router.push(signOutResponse.url)
     },
     onError: (error) => {
       toast.error(

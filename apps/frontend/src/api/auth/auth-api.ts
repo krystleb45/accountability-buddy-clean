@@ -56,7 +56,10 @@ export async function logout() {
       type: "logout",
       description: "Logged out",
     })
-    await signOut()
+    return await signOut({
+      callbackUrl: "/login",
+      redirect: false,
+    })
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))
   }
