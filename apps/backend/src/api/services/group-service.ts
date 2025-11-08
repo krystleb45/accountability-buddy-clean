@@ -18,11 +18,10 @@ import { logger } from "../../utils/winstonLogger"
 import { CustomError } from "../middleware/errorHandler"
 import { Group } from "../models/Group"
 import { GroupInvitation } from "../models/GroupInvitation"
-import { Message } from "../models/Message"
 import Notification from "../models/Notification"
 import { User } from "../models/User"
+import { ChatService } from "./chat-service"
 import { FileUploadService } from "./file-upload-service"
-import MessageService from "./message-service"
 
 class GroupService {
   /**
@@ -309,7 +308,8 @@ class GroupService {
       throw new CustomError("Not authorized to view messages", 403)
     }
 
-    return await MessageService.getMessagesInThread(groupId, options)
+    const groupChatId = (await ChatService.getGroupChat(groupId))._id.toString()
+    return ChatService.fetchMessages(groupChatId, options)
   }
 
   /**
@@ -321,13 +321,13 @@ class GroupService {
     content: string,
     io: Server,
   ) {
-    const message = await MessageService.sendMessage(
-      userId,
-      undefined,
+    const chat = await ChatService.getGroupChat(groupId)
+
+    const message = await ChatService.sendMessage({
+      chatId: chat._id.toString(),
+      senderId: userId,
       content,
-      "group",
-      groupId,
-    )
+    })
 
     // Update group's last activity
     await Group.findByIdAndUpdate(groupId, { lastActivity: new Date() }).exec()
@@ -335,6 +335,7 @@ class GroupService {
     // Emit to group room
     io.in(groupId).emit(NEW_GROUP_MESSAGE, {
       ...message.toObject(),
+      text: content, // message has encrypted text, we send plain text here
       type: "message",
     })
   }

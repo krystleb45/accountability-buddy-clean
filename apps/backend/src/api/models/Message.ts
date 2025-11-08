@@ -33,7 +33,7 @@ const MessageSchema: IMessageSchema = new Schema(
     // equal to groupId for group messages
     chatId: { type: Schema.Types.ObjectId, ref: "Chat", required: true },
     senderId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    receiverId: { type: Schema.Types.ObjectId, ref: "User" },
+    receiverId: { type: Schema.Types.ObjectId, ref: "User" }, // null for group messages
     text: { type: String, trim: true },
     messageType: { type: String, enum: ["private", "group"], required: true },
     status: {

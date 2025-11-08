@@ -7,7 +7,8 @@ import type {
   UserDocument,
 } from "../../types/mongoose.gen"
 
-import { createError } from "../middleware/errorHandler"
+import { encryptMessage } from "../../utils/crypto-helper"
+import { createError, CustomError } from "../middleware/errorHandler"
 import { Message } from "../models/Message"
 import { User } from "../models/User"
 import { FileUploadService } from "./file-upload-service"
@@ -49,23 +50,33 @@ export interface MessageStats {
   groupMessages: number
 }
 
-export default class MessageService {
+export class MessageService {
   // =====================================================
   // EXISTING METHODS (Updated for new Message model)
   // =====================================================
 
   /**
-   * Send a new message (updated to support both private and group messages)
+   * Send a new message
    */
-  static async sendMessage(
-    senderId: string,
-    recipientId?: string,
-    content?: string,
-    messageType: string = "private",
-    groupId?: string,
-  ) {
+  static async sendMessage({
+    chatId,
+    senderId,
+    recipientId,
+    content,
+    messageType,
+  }: {
+    chatId: string
+    senderId: string
+    recipientId?: string
+    content: string
+    messageType: "private" | "group"
+  }) {
+    if (!Types.ObjectId.isValid(chatId)) {
+      throw new CustomError("Invalid chat ID", 400)
+    }
+
     if (!Types.ObjectId.isValid(senderId)) {
-      throw createError("Invalid sender ID", 400)
+      throw new CustomError("Invalid sender ID", 400)
     }
 
     // Validate based on message type
@@ -82,11 +93,6 @@ export default class MessageService {
       if (!receiver) {
         throw createError("Recipient not found", 404)
       }
-    } else if (
-      messageType === "group" &&
-      (!groupId || !Types.ObjectId.isValid(groupId))
-    ) {
-      throw createError("Invalid group ID for group message", 400)
     }
 
     const messageContent = content?.trim()
@@ -94,22 +100,14 @@ export default class MessageService {
       throw createError("Message content cannot be empty", 400)
     }
 
-    // Create or find chat ID (for now, use a combination approach)
-    let chatId: Types.ObjectId
-    if (messageType === "private") {
-      // For private messages, create a consistent chatId from user IDs
-      const ids = [senderId, recipientId!].sort()
-      chatId = new Types.ObjectId(ids.join("").slice(0, 24).padEnd(24, "0"))
-    } else {
-      // For group messages, use the groupId as chatId
-      chatId = new Types.ObjectId(groupId)
-    }
+    // encrypt messageContent before saving
+    const encryptedContent = await encryptMessage(messageContent)
 
     let message = await Message.create({
       chatId,
       senderId,
       receiverId: messageType === "private" ? recipientId : undefined,
-      text: messageContent,
+      text: encryptedContent,
       messageType,
       status: "sent",
     })
@@ -713,5 +711,16 @@ export default class MessageService {
       .populate("senderId", "username email profileImage")
       .populate("receiverId", "username email profileImage")
       .exec()
+  }
+
+  /**
+   * Delete messages by chat ID
+   */
+  static async deleteMessagesByChatId(chatId: string) {
+    if (!Types.ObjectId.isValid(chatId)) {
+      throw new CustomError("Invalid chat ID", 400)
+    }
+
+    await Message.deleteMany({ chatId: new Types.ObjectId(chatId) })
   }
 }

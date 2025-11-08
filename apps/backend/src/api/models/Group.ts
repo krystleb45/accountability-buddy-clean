@@ -8,15 +8,6 @@ import type {
   GroupSchema as IGroupSchema,
 } from "../../types/mongoose.gen"
 
-// --- Subschemas ---
-const UnreadSchema = new Schema(
-  {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    count: { type: Number, default: 0 },
-  },
-  { _id: false },
-)
-
 // --- Main Schema ---
 const GroupSchema: IGroupSchema = new Schema(
   {
@@ -39,8 +30,6 @@ const GroupSchema: IGroupSchema = new Schema(
     lastActivity: { type: Date, default: Date.now },
     avatar: { type: String, default: null },
     tags: { type: [String], default: [], maxlength: 5 },
-    unreadMessages: { type: [UnreadSchema], default: [] },
-    typingUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     isPinned: { type: Boolean, default: false },
   },
   {
@@ -62,10 +51,6 @@ GroupSchema.index({ "unreadMessages.userId": 1 })
 // --- Virtuals ---
 GroupSchema.virtual("memberCount").get(function (this): number {
   return this.members.length
-})
-
-GroupSchema.virtual("typingCount").get(function (this): number {
-  return this.typingUsers.length
 })
 
 GroupSchema.virtual("isPublic").get(function (this): boolean {
@@ -101,24 +86,6 @@ GroupSchema.methods = {
     this.members.pull(userId)
     this.lastActivity = new Date()
     await this.save()
-    return this
-  },
-  async incrementUnread(this, userId: mongoose.Types.ObjectId) {
-    const um = this.unreadMessages.find((u) => u.userId._id.equals(userId))
-    if (um) {
-      um.count += 1
-    } else {
-      this.unreadMessages.push({ userId, count: 1 })
-    }
-    await this.save()
-    return this
-  },
-  async clearUnread(this, userId: mongoose.Types.ObjectId) {
-    const um = this.unreadMessages.find((u) => u.userId._id.equals(userId))
-    if (um) {
-      um.count = 0
-      await this.save()
-    }
     return this
   },
 }
