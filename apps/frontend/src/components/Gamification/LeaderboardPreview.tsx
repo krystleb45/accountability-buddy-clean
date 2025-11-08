@@ -1,13 +1,13 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import Image from "next/image"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
 import { fetchLeaderboard } from "@/api/gamification/gamification-api"
 
 import { LoadingSpinner } from "../loading-spinner"
+import { UserAvatar } from "../profile/user-avatar"
 
 export interface UserPreview {
   id: string
@@ -57,15 +57,12 @@ export function LeaderboardPreview() {
                       ? "🥉"
                       : null}
               </span>
-              <Image
-                src={l.user.profileImage || "/default-avatar.svg"}
+              <UserAvatar
+                userId={l.user._id}
+                src={l.user.profileImage}
                 alt={l.user.username}
-                width={32}
-                height={32}
-                className={`
-                  size-8 overflow-hidden rounded-full border border-background
-                  object-cover
-                `}
+                status={l.user.activeStatus}
+                size="sm"
               />
               <span className="font-medium">{l.user.username}</span>
             </div>

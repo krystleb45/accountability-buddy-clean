@@ -16,7 +16,6 @@ import {
 } from "lucide-react"
 import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -29,6 +28,7 @@ import {
 } from "@/api/friends/friend-api"
 import { CategoryFilterButton } from "@/components/category-filter-button"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { UserAvatar } from "@/components/profile/user-avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -231,15 +231,13 @@ export function DiscoverClient() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="h-full text-center">
-                  <Image
-                    src={person.profileImage || "/default-avatar.svg"}
+                  <UserAvatar
+                    userId={person.id}
+                    src={person.profileImage}
                     alt={person.name}
-                    className={`
-                      mx-auto size-16 rounded-full border-2 border-background
-                      object-cover
-                    `}
-                    width={64}
-                    height={64}
+                    status={person.activeStatus}
+                    size="lg"
+                    containerClassName="mx-auto"
                   />
                   <CardHeader>
                     <CardTitle>{person.name}</CardTitle>

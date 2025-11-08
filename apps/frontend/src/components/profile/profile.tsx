@@ -28,6 +28,7 @@ import { AvatarCoverChangeDialog } from "./avatar-cover-change-dialog"
 import { EditBioForm } from "./edit-bio-form"
 import { EditInterestsForm } from "./edit-interests-form"
 import { EditLocationForm } from "./edit-location-form"
+import { UserAvatar } from "./user-avatar"
 
 const MotionCard = motion.create(Card)
 
@@ -117,16 +118,13 @@ export function Profile() {
       {/* Avatar */}
       <CardHeader>
         <div className="flex items-center gap-4">
-          <Image
-            height={64}
-            width={64}
-            src={profile.profileImage || "/default-avatar.svg"}
-            alt={profile.username || "Avatar"}
-            className={`
-              size-16 shrink-0 rounded-full border-2 border-background
-              object-cover
-            `}
+          <UserAvatar
+            userId={profile.id}
+            src={profile.profileImage}
+            alt={profile.name || profile.username}
+            status={profile.activeStatus}
             key={profile.profileImage}
+            size="lg"
           />
           <div>
             <CardTitle>{profile.name}</CardTitle>

@@ -164,6 +164,7 @@ export async function aiRecommendations(userId: string): Promise<
     similarityScore: number
     bio: string
     category: string
+    activeStatus: "online" | "offline"
   }>
 > {
   try {
@@ -427,6 +428,7 @@ export async function aiRecommendations(userId: string): Promise<
           mutualFriends: "$mutualFriendsCount",
           similarityScore: { $round: ["$similarityScore", 1] },
           bio: { $ifNull: ["$bio", ""] },
+          activeStatus: "$activeStatus",
           // Categorize based on strongest similarity factor
           category: {
             $switch: {
@@ -612,7 +614,7 @@ export async function aiRecommendations(userId: string): Promise<
         active: { $ne: false },
         role: { $ne: "admin" }, // Exclude admins
       })
-        .select("username email profileImage bio interests")
+        .select("username email profileImage bio interests activeStatus")
         .limit(5 - recommendations.length)
         .lean()
 
@@ -631,6 +633,7 @@ export async function aiRecommendations(userId: string): Promise<
           user.bio ||
           `Hello! I'm ${user.username || "a new user"} looking to connect with others.`,
         category: "general",
+        activeStatus: user.activeStatus,
       }))
 
       recommendations.push(...formattedAdditional)
@@ -665,7 +668,7 @@ export async function aiRecommendations(userId: string): Promise<
         active: { $ne: false },
         role: { $ne: "admin" }, // Exclude admins
       })
-        .select("username email profileImage bio interests")
+        .select("username email profileImage bio interests activeStatus")
         .limit(6)
         .lean()
 
@@ -683,6 +686,7 @@ export async function aiRecommendations(userId: string): Promise<
           user.bio ||
           `Hello! I'm ${user.username || "a new user"} looking to connect with others.`,
         category: "general",
+        activeStatus: user.activeStatus,
       }))
 
       // Process signed URLs for profile images

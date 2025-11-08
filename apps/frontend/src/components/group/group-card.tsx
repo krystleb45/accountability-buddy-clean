@@ -24,6 +24,7 @@ import {
   requestGroupInvite,
 } from "@/api/groups/group-api"
 
+import { UserAvatar } from "../profile/user-avatar"
 import { Badge } from "../ui/badge"
 import { Button } from "../ui/button"
 import {
@@ -175,14 +176,12 @@ export function GroupCard({
                   hover:bg-accent
                 `}
               >
-                <Image
-                  src={group.createdBy.profileImage || "/default-avatar.svg"}
+                <UserAvatar
+                  userId={group.createdBy._id}
+                  src={group.createdBy.profileImage}
                   alt={group.createdBy.username}
-                  className={`
-                    size-9 rounded-full border-2 border-background object-cover
-                  `}
-                  width={36}
-                  height={36}
+                  status={group.createdBy.activeStatus}
+                  size="sm"
                 />
                 <div className="flex-1">
                   <p className="text-sm font-bold">{group.createdBy.name}</p>

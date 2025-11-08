@@ -14,7 +14,10 @@ export async function fetchLeaderboard({
       Envelope<{
         entries: Array<
           Level & {
-            user: Pick<User, "_id" | "username" | "profileImage">
+            user: Pick<
+              User,
+              "_id" | "username" | "profileImage" | "activeStatus"
+            >
           }
         >
         pagination: {

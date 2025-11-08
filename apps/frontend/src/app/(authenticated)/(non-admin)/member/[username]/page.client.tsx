@@ -26,6 +26,7 @@ import { getMemberByUsername } from "@/api/users/user-api"
 import { BadgeCard } from "@/components/badge/badge-card"
 import { GoalCard } from "@/components/goals/goal-card"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { UserAvatar } from "@/components/profile/user-avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -181,16 +182,12 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
         {/* Avatar */}
         <CardHeader>
           <div className="flex items-center gap-4">
-            <Image
-              height={64}
-              width={64}
-              src={member.profileImage || "/default-avatar.svg"}
-              alt={member.username || "Avatar"}
-              className={`
-                size-16 shrink-0 rounded-full border-2 border-background
-                object-cover
-              `}
-              key={member.profileImage}
+            <UserAvatar
+              userId={member._id}
+              src={member.profileImage}
+              alt={member.username}
+              status={member.activeStatus}
+              size="lg"
             />
             <div>
               <CardTitle>{member.name}</CardTitle>
@@ -312,19 +309,24 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
                         <TooltipProvider key={friend._id}>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Image
-                                height={32}
-                                width={32}
-                                src={
-                                  friend.profileImage || "/default-avatar.svg"
-                                }
-                                alt={friend.username || "Avatar"}
-                                className={`
-                                  size-8 shrink-0 rounded-full border-2
-                                  border-background object-cover
-                                `}
-                                key={friend.profileImage}
-                              />
+                              <Link
+                                href={`/member/${friend.username}`}
+                                aria-label={friend.username}
+                              >
+                                <Image
+                                  height={32}
+                                  width={32}
+                                  src={
+                                    friend.profileImage || "/default-avatar.svg"
+                                  }
+                                  alt={friend.username || "Avatar"}
+                                  className={`
+                                    size-8 shrink-0 rounded-full border-2
+                                    border-background object-cover
+                                  `}
+                                  key={friend.profileImage}
+                                />
+                              </Link>
                             </TooltipTrigger>
 
                             <TooltipContent className="text-center">

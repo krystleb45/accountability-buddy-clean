@@ -274,6 +274,14 @@ UserSchema.methods = {
 
     return "UTC"
   },
+  setOnline() {
+    this.activeStatus = "online"
+    return this.save()
+  },
+  setOffline() {
+    this.activeStatus = "offline"
+    return this.save()
+  },
 }
 
 export const User: UserModel = mongoose.model<UserDocument, UserModel>(

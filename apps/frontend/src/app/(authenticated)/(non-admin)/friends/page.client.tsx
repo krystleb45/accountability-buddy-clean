@@ -16,7 +16,6 @@ import {
 } from "lucide-react"
 import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -28,6 +27,7 @@ import {
   fetchFriends,
 } from "@/api/friends/friend-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { UserAvatar } from "@/components/profile/user-avatar"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -203,15 +203,15 @@ export function FriendsClient() {
                     `}
                   >
                     <div className="flex items-center gap-2">
-                      <Image
-                        src={req.sender.profileImage || "/default-avatar.svg"}
-                        alt="Avatar"
-                        className={`
-                          size-12 rounded-full border-2 border-background
-                          object-cover
-                        `}
-                        width={48}
-                        height={48}
+                      <UserAvatar
+                        userId={req.sender._id}
+                        src={req.sender.profileImage}
+                        alt={req.sender.name}
+                        status={
+                          req.sender.activeStatus === "online"
+                            ? "online"
+                            : "offline"
+                        }
                       />
                       <div>
                         <p className="font-semibold">
@@ -322,15 +322,13 @@ export function FriendsClient() {
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-3">
-                    <Image
-                      src={friend.profileImage || "/default-avatar.svg"}
-                      alt={friend.username}
-                      className={`
-                        size-12 rounded-full border-2 border-background
-                        object-cover
-                      `}
-                      width={48}
-                      height={48}
+                    <UserAvatar
+                      userId={friend._id}
+                      src={friend.profileImage}
+                      alt={friend.name}
+                      status={
+                        friend.activeStatus === "online" ? "online" : "offline"
+                      }
                     />
                     <div className="flex-1">
                       <CardTitle>{friend.name}</CardTitle>
@@ -373,7 +371,7 @@ export function FriendsClient() {
         <Link href="/friends/discover" className="group">
           <Card
             className={`
-              text-center transition-colors
+              h-full text-center transition-colors
               group-hover:bg-muted
             `}
           >
@@ -390,7 +388,7 @@ export function FriendsClient() {
         <Link href="/community/groups" className="group">
           <Card
             className={`
-              text-center transition-colors
+              h-full text-center transition-colors
               group-hover:bg-muted
             `}
           >
@@ -407,7 +405,7 @@ export function FriendsClient() {
         <Link href="/messages" className="group">
           <Card
             className={`
-              text-center transition-colors
+              h-full text-center transition-colors
               group-hover:bg-muted
             `}
           >

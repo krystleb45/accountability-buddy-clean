@@ -42,6 +42,7 @@ import {
 } from "@/api/groups/group-api"
 import { MemberCard } from "@/components/group/member-card"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { UserAvatar } from "@/components/profile/user-avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -59,7 +60,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item"
+import { Item, ItemContent, ItemTitle } from "@/components/ui/item"
 import {
   Tooltip,
   TooltipContent,
@@ -409,25 +410,14 @@ export default function GroupDetailClient({ groupId }: GroupDetailClientProps) {
                               isUserMessage,
                           })}
                         >
-                          <ItemMedia variant="image">
-                            <Image
-                              src={
-                                message.senderId.profileImage ||
-                                "/default-avatar.svg"
-                              }
-                              alt={
-                                message.senderId.username ||
-                                message.senderId.name ||
-                                "User"
-                              }
-                              width={40}
-                              height={40}
-                              className={`
-                                size-10 rounded-full border border-muted
-                                object-cover
-                              `}
-                            />
-                          </ItemMedia>
+                          <UserAvatar
+                            userId={message.senderId._id}
+                            src={message.senderId.profileImage}
+                            alt={message.senderId.username}
+                            status={message.senderId.activeStatus}
+                            size="sm"
+                            containerClassName="self-center"
+                          />
                           <ItemContent>
                             <ItemTitle
                               className={`

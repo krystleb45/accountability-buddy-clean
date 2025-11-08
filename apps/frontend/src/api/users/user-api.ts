@@ -14,6 +14,7 @@ export type Member = Pick<
   | "coverImage"
   | "interests"
   | "settings"
+  | "activeStatus"
 > & {
   privacy: User["settings"]["privacy"]["profileVisibility"]
   timezone: string

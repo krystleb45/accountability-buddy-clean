@@ -43,7 +43,7 @@ class GroupService {
     }
 
     const groups = await Group.find(filter)
-      .populate("createdBy", "name profilePicture username")
+      .populate("createdBy", "name profilePicture username activeStatus")
       .sort({ lastActivity: -1 })
       .limit(20)
       .lean({ virtuals: true })
@@ -265,7 +265,7 @@ class GroupService {
     const userObjectId = new mongoose.Types.ObjectId(userId)
 
     const groups = await Group.find({ members: userObjectId, isActive: true })
-      .populate("createdBy", "name profilePicture username")
+      .populate("createdBy", "name profilePicture username activeStatus")
       .sort({ lastActivity: -1 })
       .lean({ virtuals: true })
 
@@ -458,8 +458,8 @@ class GroupService {
         "groupId",
         "name avatar memberCount description isPublic createdBy",
       )
-      .populate("sender", "name username profileImage")
-      .populate("recipient", "name username profileImage")
+      .populate("sender", "name username profileImage activeStatus")
+      .populate("recipient", "name username profileImage activeStatus")
       .sort({ createdAt: -1 })
       .lean()
 
@@ -511,8 +511,8 @@ class GroupService {
         "groupId",
         "name avatar memberCount description isPublic createdBy",
       )
-      .populate("sender", "name username profileImage")
-      .populate("recipient", "name username profileImage")
+      .populate("sender", "name username profileImage activeStatus")
+      .populate("recipient", "name username profileImage activeStatus")
       .sort({ createdAt: -1 })
       .lean()
 
@@ -721,7 +721,7 @@ class GroupService {
       const fallbackRecommendations = await User.find({
         _id: { $nin: [...excludedUserIds] },
       })
-        .select("name username profileImage")
+        .select("name username profileImage activeStatus")
         .limit(20)
         .lean()
 
@@ -781,6 +781,7 @@ class GroupService {
           name: "$user.name",
           username: "$user.username",
           profileImage: "$user.profileImage",
+          activeStatus: "$user.activeStatus",
           connectionCount: 1,
           connectedMembers: 1,
         },
@@ -813,7 +814,7 @@ class GroupService {
       },
       interests: { $in: memberInterests },
     })
-      .select("name username profileImage interests")
+      .select("name username profileImage interests activeStatus")
       .lean()
 
     return users.map((user) => {
@@ -886,7 +887,7 @@ class GroupService {
       $or: locationQueries,
       location: { $exists: true, $ne: null },
     })
-      .select("name username profileImage location")
+      .select("name username profileImage location activeStatus")
       .lean()
 
     return users.map((user) => {
@@ -984,7 +985,7 @@ class GroupService {
     const users = await User.find({
       _id: { $in: activeUserIds.map((id) => new mongoose.Types.ObjectId(id)) },
     })
-      .select("name username profileImage")
+      .select("name username profileImage activeStatus")
       .lean()
 
     return users.map((user) => ({
@@ -1026,6 +1027,7 @@ class GroupService {
           name: rec.name,
           username: rec.username,
           profileImage: rec.profileImage,
+          activeStatus: rec.activeStatus,
           score: rec.score,
           reasons: [...rec.reasons],
         })
@@ -1033,6 +1035,46 @@ class GroupService {
     }
 
     return Array.from(userMap.values())
+  }
+
+  /**
+   * Get group members
+   */
+  async getGroupMembers(groupId: string, userId: string) {
+    const group = await Group.findById(groupId).populate(
+      "members",
+      "name username profileImage location activeStatus",
+    )
+
+    if (!group) {
+      throw new CustomError("Group not found", 404)
+    }
+
+    // Check if user is a member
+    const userObjectId = new mongoose.Types.ObjectId(userId)
+    if (!group.members.some((member) => member._id.equals(userObjectId))) {
+      throw new CustomError("Not a member of this group", 403)
+    }
+
+    const membersData: IUser[] = []
+
+    for (const member of group.members as UserDocument[]) {
+      let profileImage = member.profileImage
+      if (profileImage) {
+        profileImage = await FileUploadService.generateSignedUrl(profileImage)
+      }
+
+      const memberData = member.toObject()
+
+      memberData.timezone = await member.getTimezone()
+
+      membersData.push({
+        ...memberData,
+        profileImage,
+      })
+    }
+
+    return membersData
   }
 }
 

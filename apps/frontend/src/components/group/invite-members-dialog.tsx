@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Loader, MailPlus, XCircle } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -8,6 +7,7 @@ import { toast } from "sonner"
 import { fetchGroupRecommendations, inviteMember } from "@/api/groups/group-api"
 
 import { LoadingSpinner } from "../loading-spinner"
+import { UserAvatar } from "../profile/user-avatar"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -103,12 +103,12 @@ export function InviteMembersDialog({
             {recommendations.map((user) => (
               <Item variant="outline" key={user._id}>
                 <ItemMedia variant="image">
-                  <Image
-                    src={user.profileImage || "/default-avatar.svg"}
+                  <UserAvatar
+                    userId={user._id}
+                    src={user.profileImage}
                     alt={user.name || user.username}
-                    width={32}
-                    height={32}
-                    className="size-8 rounded-full object-cover"
+                    status={user.activeStatus}
+                    size="sm"
                   />
                 </ItemMedia>
                 <ItemContent>

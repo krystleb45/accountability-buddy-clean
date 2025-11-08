@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { formatDistanceToNow } from "date-fns"
 import { CheckIcon, Loader, XCircle, XIcon } from "lucide-react"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -16,6 +15,7 @@ import {
 } from "@/api/groups/group-api"
 
 import { LoadingSpinner } from "../loading-spinner"
+import { UserAvatar } from "../profile/user-avatar"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -154,21 +154,24 @@ export function PendingGroupInvitationsDialog({
               return (
                 <Item variant="outline" key={invitation._id}>
                   <ItemMedia variant="image">
-                    <Image
+                    <UserAvatar
+                      userId={
+                        isRequest
+                          ? invitation.sender._id
+                          : invitation.recipient._id
+                      }
                       src={
-                        (isRequest
+                        isRequest
                           ? invitation.sender.profileImage
-                          : invitation.recipient.profileImage) ??
-                        "/default-avatar.svg"
+                          : invitation.recipient.profileImage
                       }
                       alt={
                         isRequest
-                          ? (invitation.sender.name ?? "")
-                          : (invitation.recipient.name ?? "")
+                          ? (invitation.sender.name ??
+                            invitation.sender.username)
+                          : (invitation.recipient.name ??
+                            invitation.recipient.username)
                       }
-                      width={40}
-                      height={40}
-                      className="size-10 rounded-full object-cover"
                     />
                   </ItemMedia>
                   <ItemContent>

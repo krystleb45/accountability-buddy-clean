@@ -36,6 +36,7 @@ import { GroupDetailsChangeDialog } from "@/components/group/group-details-chang
 import { InviteMembersDialog } from "@/components/group/invite-members-dialog"
 import { PendingGroupInvitationsDialog } from "@/components/group/pending-group-invitations-dialog"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { UserAvatar } from "@/components/profile/user-avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -366,15 +367,12 @@ export function GroupAdminClient({ groupId }: GroupAdminClientProps) {
                 <Card>
                   <CardHeader>
                     <div className="flex items-center gap-3">
-                      <Image
-                        src={member.profileImage || "/default-avatar.svg"}
+                      <UserAvatar
+                        userId={member._id}
+                        src={member.profileImage}
                         alt={member.username}
-                        className={`
-                          size-12 rounded-full border-2 border-background
-                          object-cover
-                        `}
-                        width={48}
-                        height={48}
+                        status={member.activeStatus}
+                        size="md"
                       />
                       <div className="flex-1">
                         <CardTitle>{member.name}</CardTitle>

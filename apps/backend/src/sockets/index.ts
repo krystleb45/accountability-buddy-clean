@@ -1,8 +1,10 @@
 import type { Server as HttpServer } from "node:http"
 import type { Socket } from "socket.io"
 
+import { USER_OFFLINE, USER_ONLINE } from "@ab/shared/socket-events"
 import { Server } from "socket.io"
 
+import { User } from "../api/models/User"
 import AuthService from "../api/services/AuthService"
 import { logger } from "../utils/winstonLogger"
 import dmSocket from "./dm"
@@ -52,13 +54,35 @@ function socketServer(server: HttpServer) {
   /**
    * @desc    Handles new socket connections (authenticated users only).
    */
-  io.on("connection", (socket: Socket) => {
+  io.on("connection", async (socket: Socket) => {
     const { id: userId } = socket.data.user as { id: string; role: string }
-    logger.info(`User connected: ${userId}`)
+    logger.info(`󰴽  User connected: ${userId}`)
+
+    // Set user as online
+    await User.findById(userId).then((user) => {
+      if (user) {
+        user.setOnline()
+      }
+    })
+
+    io.emit(USER_ONLINE, userId)
 
     // Set up socket handlers for different features
     groupSocket(io, socket)
     dmSocket(io, socket)
+
+    socket.on("disconnect", async (reason) => {
+      logger.info(`  User disconnected: ${userId}, Reason: ${reason}`)
+
+      // Set user as offline
+      await User.findById(userId).then((user) => {
+        if (user) {
+          user.setOffline()
+        }
+      })
+
+      socket.broadcast.emit(USER_OFFLINE, userId)
+    })
   })
 
   return { io }

@@ -48,7 +48,19 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [joinedRooms, setJoinedRooms] = useState<Set<string>>(() => new Set())
 
   useEffect(() => {
+    // Clean up existing socket first
+    if (socket) {
+      socket.close()
+    }
+
     if (status !== "authenticated") {
+      // If user is not authenticated or session is invalid, reset state
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+      setSocket(null)
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+      setIsConnected(false)
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+      setJoinedRooms(new Set())
       return
     }
 

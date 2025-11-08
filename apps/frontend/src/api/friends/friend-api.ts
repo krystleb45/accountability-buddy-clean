@@ -18,6 +18,7 @@ export interface UserRecommendation {
   similarityScore: number
   bio: string
   category: Category
+  activeStatus: NonNullable<User["activeStatus"]>
 }
 
 /**
@@ -107,8 +108,14 @@ export async function declineFriendRequest(requestId: string) {
 }
 
 export type DmMessage = Message & {
-  senderId: Pick<User, "_id" | "name" | "username" | "profileImage">
-  receiverId: Pick<User, "_id" | "name" | "username" | "profileImage"> | null
+  senderId: Pick<
+    User,
+    "_id" | "name" | "username" | "profileImage" | "activeStatus"
+  >
+  receiverId: Pick<
+    User,
+    "_id" | "name" | "username" | "profileImage" | "activeStatus"
+  > | null
 }
 
 /**

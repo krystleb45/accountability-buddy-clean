@@ -34,6 +34,7 @@ export class UserService {
       "friends",
       "interests",
       "settings",
+      "activeStatus",
     ]
     const user = await User.findOne({ username })
       .select(publicFields.join(" "))

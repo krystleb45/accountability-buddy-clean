@@ -19,7 +19,6 @@ import {
 } from "lucide-react"
 import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
@@ -36,6 +35,7 @@ import {
 } from "@/api/friends/friend-api"
 import { getMemberByUsername } from "@/api/users/user-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { UserAvatar } from "@/components/profile/user-avatar"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -343,15 +343,15 @@ export default function AdvancedMessagesClient() {
                 >
                   <Link href={`/messages?friend=${friend.username}`}>
                     <ItemMedia>
-                      <Image
-                        src={friend.profileImage || "/default-avatar.svg"}
-                        alt="Avatar"
-                        className={`
-                          size-12 rounded-full border-2 border-background
-                          object-cover
-                        `}
-                        width={48}
-                        height={48}
+                      <UserAvatar
+                        userId={friend._id}
+                        src={friend.profileImage}
+                        alt={friend.name}
+                        status={
+                          friend.activeStatus === "online"
+                            ? "online"
+                            : "offline"
+                        }
                       />
                     </ItemMedia>
                     <ItemContent>
@@ -434,15 +434,11 @@ export default function AdvancedMessagesClient() {
                   // prettier-ignore
                   className="flex flex-row items-center gap-4 border-b"
                 >
-                  <Image
-                    src={friend.profileImage || "/default-avatar.svg"}
-                    alt="Avatar"
-                    className={`
-                      size-12 rounded-full border-2 border-background
-                      object-cover
-                    `}
-                    width={48}
-                    height={48}
+                  <UserAvatar
+                    userId={friend._id}
+                    src={friend.profileImage}
+                    alt={friend.username}
+                    status={friend.activeStatus}
                   />
                   <div className="space-y-1">
                     <CardTitle>{friend.name}</CardTitle>

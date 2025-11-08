@@ -11,12 +11,21 @@ import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
 
 export type GroupWithCreated = Group & {
-  createdBy: Pick<User, "_id" | "name" | "username" | "profileImage">
+  createdBy: Pick<
+    User,
+    "_id" | "name" | "username" | "profileImage" | "activeStatus"
+  >
 }
 
 export type GroupMessage = Message & {
-  senderId: Pick<User, "_id" | "name" | "username" | "profileImage">
-  receiverId: Pick<User, "_id" | "name" | "username" | "profileImage"> | null
+  senderId: Pick<
+    User,
+    "_id" | "name" | "username" | "profileImage" | "activeStatus"
+  >
+  receiverId: Pick<
+    User,
+    "_id" | "name" | "username" | "profileImage" | "activeStatus"
+  > | null
 }
 
 export type GroupInvitationExtended = GroupInvitation & {
@@ -30,8 +39,14 @@ export type GroupInvitationExtended = GroupInvitation & {
     | "description"
     | "createdBy"
   >
-  sender: Pick<User, "_id" | "name" | "username" | "profileImage">
-  recipient: Pick<User, "_id" | "name" | "username" | "profileImage">
+  sender: Pick<
+    User,
+    "_id" | "name" | "username" | "profileImage" | "activeStatus"
+  >
+  recipient: Pick<
+    User,
+    "_id" | "name" | "username" | "profileImage" | "activeStatus"
+  >
 }
 /**
  * Fetch all available groups with optional filters
@@ -172,7 +187,12 @@ export async function fetchGroupMembers(groupId: string) {
       Envelope<{
         members: Pick<
           User,
-          "_id" | "name" | "username" | "profileImage" | "location"
+          | "_id"
+          | "name"
+          | "username"
+          | "profileImage"
+          | "location"
+          | "activeStatus"
         >[]
       }>
     >(`/groups/${encodeURIComponent(groupId)}/members`)
@@ -346,7 +366,7 @@ export async function fetchGroupRecommendations(groupId: string) {
       Envelope<{
         recommendations: (Pick<
           User,
-          "_id" | "name" | "username" | "profileImage"
+          "_id" | "name" | "username" | "profileImage" | "activeStatus"
         > & { score: number })[]
       }>
     >(`/groups/${encodeURIComponent(groupId)}/invite-recommendations`)

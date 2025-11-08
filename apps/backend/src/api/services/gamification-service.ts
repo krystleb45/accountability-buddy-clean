@@ -24,7 +24,7 @@ const GamificationService = {
         .sort({ level: -1, points: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("user", "username profileImage"),
+        .populate("user", "username profileImage activeStatus"),
       Level.countDocuments({ role: { $ne: "admin" } }),
     ])
 
@@ -44,6 +44,7 @@ const GamificationService = {
           profileImage: doc.user.profileImage
             ? await FileUploadService.generateSignedUrl(doc.user.profileImage)
             : null,
+          activeStatus: doc.user.activeStatus,
         },
       })
     }

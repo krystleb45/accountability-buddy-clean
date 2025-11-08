@@ -6,6 +6,7 @@ export function useProfile() {
   return {
     profile: user
       ? {
+          id: user._id,
           name: user.name,
           username: user.username,
           email: user.email,
@@ -15,6 +16,7 @@ export function useProfile() {
           coverImage: user.coverImage,
           location: user.location,
           timezone: user.timezone,
+          activeStatus: user.activeStatus,
         }
       : undefined,
     isLoading: loading,

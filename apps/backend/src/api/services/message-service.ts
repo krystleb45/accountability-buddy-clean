@@ -113,7 +113,10 @@ export class MessageService {
     })
 
     // Populate sender info before returning
-    message = await message.populate("senderId", "username email profileImage")
+    message = await message.populate(
+      "senderId",
+      "username email profileImage activeStatus",
+    )
 
     if ((message.senderId as UserDocument)?.profileImage) {
       ;(message.senderId as UserDocument).profileImage =
@@ -378,8 +381,8 @@ export class MessageService {
       .sort({ timestamp: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
-      .populate("senderId", "username email profileImage")
-      .populate("receiverId", "username email profileImage")
+      .populate("senderId", "username email profileImage activeStatus")
+      .populate("receiverId", "username email profileImage activeStatus")
       .exec()
 
     for (const msg of messages) {
