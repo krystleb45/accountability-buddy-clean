@@ -2028,19 +2028,15 @@ export type ChatUnreadMessage = {
 export type Chat = {
   participants: (User["_id"] | User)[]
   messages: (Message["_id"] | Message)[]
-  chatType: "private" | "group"
-  groupName?: string | null
-  chatAvatar?: string | null
-  unreadMessages: ChatUnreadMessage[]
   lastMessage?: Message["_id"] | Message
+  chatType: "private" | "group"
+  groupId?: Group["_id"] | Group
+  unreadMessages: ChatUnreadMessage[]
   typingUsers: (User["_id"] | User)[]
-  isPinned?: boolean
-  admins: (User["_id"] | User)[]
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
   participantCount: number
-  messageCount: number
 }
 
 /**
@@ -2072,17 +2068,28 @@ export type ChatQuery = mongoose.Query<any, ChatDocument, ChatQueries> &
 export type ChatQueries = {}
 
 export type ChatMethods = {
-  addMessage: (this: ChatDocument, ...args: any[]) => any
-  markRead: (this: ChatDocument, ...args: any[]) => any
-  addTypingUser: (this: ChatDocument, ...args: any[]) => any
-  removeTypingUser: (this: ChatDocument, ...args: any[]) => any
-  pin: (this: ChatDocument, ...args: any[]) => any
-  unpin: (this: ChatDocument, ...args: any[]) => any
+  addMessage: (
+    this: ChatDocument,
+    messageId: mongoose.Types.ObjectId,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<any>
+  markRead: (
+    this: ChatDocument,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<any>
+  addTypingUser: (
+    this: ChatDocument,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<any>
+  removeTypingUser: (
+    this: ChatDocument,
+    userId: mongoose.Types.ObjectId
+  ) => Promise<any>
 }
 
 export type ChatStatics = {
-  getUserChats: (this: ChatModel, ...args: any[]) => any
-  getGroupChats: (this: ChatModel, ...args: any[]) => any
+  getUserChats: (this: ChatModel, userId: mongoose.Types.ObjectId) => any
+  getGroupChats: (this: ChatModel) => any
 }
 
 /**
@@ -2137,19 +2144,15 @@ export type ChatDocument = mongoose.Document<
   ChatMethods & {
     participants: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     messages: mongoose.Types.Array<MessageDocument["_id"] | MessageDocument>
-    chatType: "private" | "group"
-    groupName?: string | null
-    chatAvatar?: string | null
-    unreadMessages: mongoose.Types.DocumentArray<ChatUnreadMessageDocument>
     lastMessage?: MessageDocument["_id"] | MessageDocument
+    chatType: "private" | "group"
+    groupId?: GroupDocument["_id"] | GroupDocument
+    unreadMessages: mongoose.Types.DocumentArray<ChatUnreadMessageDocument>
     typingUsers: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
-    isPinned?: boolean
-    admins: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
     participantCount: number
-    messageCount: number
   }
 
 /**
@@ -3695,19 +3698,6 @@ export type GoalMessageDocument = mongoose.Document<
   }
 
 /**
- * Lean version of GroupUnreadMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GroupDocument.toObject()`.
- * ```
- * const groupObject = group.toObject();
- * ```
- */
-export type GroupUnreadMessage = {
-  userId: User["_id"] | User
-  count?: number
-}
-
-/**
  * Lean version of GroupDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GroupDocument.toObject()`. To avoid conflicts with model names, use the type alias `GroupObject`.
@@ -3726,14 +3716,11 @@ export type Group = {
   lastActivity?: Date
   avatar?: string | null
   tags: string[]
-  unreadMessages: GroupUnreadMessage[]
-  typingUsers: (User["_id"] | User)[]
   isPinned?: boolean
   _id: mongoose.Types.ObjectId
   createdAt?: Date
   updatedAt?: Date
   memberCount: number
-  typingCount: number
   isPublic: boolean
 }
 
@@ -3774,14 +3761,6 @@ export type GroupMethods = {
     this: GroupDocument,
     userId: mongoose.Types.ObjectId
   ) => Promise<GroupDocument>
-  incrementUnread: (
-    this: GroupDocument,
-    userId: mongoose.Types.ObjectId
-  ) => Promise<GroupDocument>
-  clearUnread: (
-    this: GroupDocument,
-    userId: mongoose.Types.ObjectId
-  ) => Promise<GroupDocument>
 }
 
 export type GroupStatics = {
@@ -3815,18 +3794,11 @@ export type GroupStatics = {
         createdBy:
           | mongoose.Types.ObjectId
           | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
-        visibility?: "private" | "public"
+        visibility?: "public" | "private"
         isActive?: boolean
         lastActivity?: Date
         avatar?: string
         tags: mongoose.Types.Array<string>
-        unreadMessages: mongoose.Types.DocumentArray<
-          import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupUnreadMessageDocument
-        >
-        typingUsers: mongoose.Types.Array<
-          | mongoose.Types.ObjectId
-          | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
-        >
         isPinned?: boolean
         _id: mongoose.Types.ObjectId
         createdAt?: Date
@@ -3865,16 +3837,6 @@ export type GroupSchema = mongoose.Schema<
 >
 
 /**
- * Mongoose Subdocument type
- *
- * Type of `GroupDocument["unreadMessages"]` element.
- */
-export type GroupUnreadMessageDocument = mongoose.Types.Subdocument<any> & {
-  userId: UserDocument["_id"] | UserDocument
-  count?: number
-}
-
-/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -3897,14 +3859,11 @@ export type GroupDocument = mongoose.Document<
     lastActivity?: Date
     avatar?: string | null
     tags: mongoose.Types.Array<string>
-    unreadMessages: mongoose.Types.DocumentArray<GroupUnreadMessageDocument>
-    typingUsers: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     isPinned?: boolean
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
     memberCount: number
-    typingCount: number
     isPublic: boolean
   }
 
@@ -5568,6 +5527,10 @@ export type Notification = {
     | "group_invite"
     | "blog_activity"
     | "goal_milestone"
+    | "group_request_rejected"
+    | "group_request_accepted"
+    | "group_invite_accepted"
+    | "group_invite_rejected"
   read?: boolean
   link?: string
   expiresAt?: Date
@@ -5671,6 +5634,10 @@ export type NotificationDocument = mongoose.Document<
       | "group_invite"
       | "blog_activity"
       | "goal_milestone"
+      | "group_request_rejected"
+      | "group_request_accepted"
+      | "group_invite_accepted"
+      | "group_invite_rejected"
     read?: boolean
     link?: string
     expiresAt?: Date
@@ -8264,7 +8231,6 @@ export type User = {
   rewards: (Reward["_id"] | Reward)[]
   achievements: (Achievement["_id"] | Achievement)[]
   badges: (Badge["_id"] | Badge)[]
-  pinnedGoals: (Goal["_id"] | Goal)[]
   featuredAchievements: (Achievement["_id"] | Achievement)[]
   location: {
     country?: string
@@ -8420,7 +8386,6 @@ export type UserDocument = mongoose.Document<
       AchievementDocument["_id"] | AchievementDocument
     >
     badges: mongoose.Types.Array<BadgeDocument["_id"] | BadgeDocument>
-    pinnedGoals: mongoose.Types.Array<GoalDocument["_id"] | GoalDocument>
     featuredAchievements: mongoose.Types.Array<
       AchievementDocument["_id"] | AchievementDocument
     >
