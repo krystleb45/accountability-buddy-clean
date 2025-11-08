@@ -1,75 +1,46 @@
-// 2. FIXED: src/app/military-support/layout.tsx
-"use client"
-
-import Link from "next/link"
 import React from "react"
+
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 const MilitarySupportLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Military Support Header - Calming Navy & Sage Green */}
-      <header className="bg-slate-700 text-white shadow-sm">
-        <div className="mx-auto max-w-7xl p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/"
-                className={`
-                  text-xl font-bold transition-colors
-                  hover:text-slate-200
-                `}
-              >
-                Accountability Buddy
-              </Link>
-              <span className="text-slate-300">|</span>
-              <h1 className="text-xl font-semibold">Military Support</h1>
-            </div>
+    <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-10 p-6">
+      {/* Military Support Header */}
+      <header className="flex flex-col gap-6">
+        <h1 className="flex items-center gap-2 self-center text-3xl font-bold">
+          Military Support
+        </h1>
 
-            {/* Optional Login Link - Subtle */}
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/login"
-                className={`
-                  rounded-lg bg-slate-600 px-4 py-2 text-sm transition-colors
-                  hover:bg-slate-500
-                `}
-              >
-                Member Login
-              </Link>
-            </div>
-          </div>
-
-          {/* Crisis Hotline Banner - Calming but Visible */}
-          <div className="mt-4 rounded-lg bg-blue-700 p-3 text-center">
-            <p className="font-semibold text-blue-100">
-              Crisis Support: 988 (Press 1) • Text: 838255
-            </p>
-            <p className="text-sm text-blue-200">
-              Veterans Crisis Line - 24/7 confidential support
-            </p>
-          </div>
+        {/* Crisis Hotline Banner */}
+        <div className="rounded-lg bg-chart-2 p-4 text-center text-background">
+          <p className="font-semibold">
+            Crisis Support: 988 (Press 1) • Text: 838255
+          </p>
+          <p className="text-sm">
+            Veterans Crisis Line - 24/7 confidential support
+          </p>
         </div>
       </header>
 
       {/* Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8">
-        {/* REMOVED: Context providers that might not be needed for anonymous access */}
-        {children}
-      </main>
+      <main>{children}</main>
 
-      {/* Footer - Warm and Reassuring */}
-      <footer className="mt-12 bg-slate-600 py-8 text-slate-200">
-        <div className="mx-auto max-w-7xl px-4 text-center">
-          <p className="mb-2 text-slate-100">
-            This service is free and always will be.
-          </p>
-          <p className="text-sm text-slate-300">
+      {/* Footer */}
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle>This service is free and always will be.</CardTitle>
+          <CardDescription>
             Not affiliated with the Department of Defense or Veterans Affairs
-          </p>
-        </div>
-      </footer>
+          </CardDescription>
+        </CardHeader>
+      </Card>
     </div>
   )
 }

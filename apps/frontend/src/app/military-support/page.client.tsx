@@ -15,7 +15,7 @@ import {
   Users,
 } from "lucide-react"
 import Link from "next/link"
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 import type {
   Disclaimer,
@@ -35,6 +35,21 @@ import {
 import { moodCheckInApi } from "@/api/military-support/moodCheckInApi"
 import CommunityMoodWidget from "@/components/MilitarySupport/CommunityMoodWidget"
 import MoodCheckInModal from "@/components/MilitarySupport/MoodCheckInModal"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty"
 
 // Emergency contacts with calming presentation
 const CRISIS_RESOURCES = [
@@ -176,289 +191,272 @@ export default function MilitarySupportPageClient() {
     : resources.slice(0, 6)
 
   return (
-    <div className="space-y-6">
+    <div className="-mb-4 space-y-6">
       {/* Compact Hero Section */}
-      <div
-        className={`
-          rounded-lg border-t-4 border-emerald-500 bg-white p-6 text-center
-          shadow-sm
-        `}
-      >
-        <h1 className="mb-3 text-3xl font-bold text-slate-800">
-          Military Support Center
-        </h1>
-        <p className="mx-auto max-w-2xl text-lg text-slate-600">
+      <div>
+        <h2 className="text-2xl font-bold">Military Support Center</h2>
+        <p className="max-w-prose text-muted-foreground">
           A safe space for service members, veterans, and families. You're not
           alone.
         </p>
       </div>
 
-      {/* NEW: Community Mood Widget */}
-      <CommunityMoodWidget
-        key={`mood-${hasCheckedMoodToday}-${moodSubmissionTime}`}
-        className="mx-auto max-w-md"
-      />
+      <div
+        className={`
+          grid grid-cols-1 gap-6
+          lg:grid-cols-2
+        `}
+      >
+        {/* NEW: Community Mood Widget */}
+        <CommunityMoodWidget
+          key={`mood-${hasCheckedMoodToday}-${moodSubmissionTime}`}
+        />
 
-      {/* Compact Crisis Resources */}
-      <section className="rounded-lg border-l-4 border-blue-400 bg-blue-50 p-6">
-        <div className="mb-4 text-center">
-          <div className="mb-3 flex items-center justify-center">
-            <Phone className="mr-2 size-5 text-blue-600" />
-            <h2 className="text-xl font-bold text-blue-800">
-              Need Someone to Talk To?
-            </h2>
-          </div>
-        </div>
+        {/* Compact Crisis Resources */}
+        <section>
+          <Card className="h-full border-chart-2 bg-chart-2/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Phone className="size-5 text-chart-2" />
+                <span>Need Someone to Talk To?</span>
+              </CardTitle>
+            </CardHeader>
 
-        <div
-          className={`
-            mb-4 grid gap-4
-            md:grid-cols-3
-          `}
-        >
-          {CRISIS_RESOURCES.map((resource, index) => (
-            <div
-              key={index}
+            <CardContent
               className={`
-                rounded-lg border border-blue-200 bg-white p-4 text-center
+                grid gap-3
+                md:grid-cols-3
               `}
             >
-              <h3 className="mb-2 text-sm font-semibold text-blue-800">
-                {resource.title}
-              </h3>
-              <p className="mb-1 text-xl font-bold text-blue-700">
-                {resource.phone}
-              </p>
-              {resource.text && (
-                <p className="mb-2 text-sm font-semibold text-blue-600">
-                  {resource.text}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
+              {CRISIS_RESOURCES.map((resource) => (
+                <Card key={resource.title} className="gap-2 bg-chart-2/10">
+                  <CardHeader>
+                    <CardTitle className="text-sm text-balance text-chart-2">
+                      {resource.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-xl font-bold">{resource.phone}</p>
+                  </CardContent>
+                  <CardFooter>
+                    {resource.text && (
+                      <p className="text-sm font-semibold text-chart-2/50">
+                        {resource.text}
+                      </p>
+                    )}
+                  </CardFooter>
+                </Card>
+              ))}
+            </CardContent>
 
-        <div className="text-center">
-          <p className="text-sm font-medium text-blue-700">
-            Staffed by people who understand military life
-          </p>
-        </div>
-      </section>
+            <CardFooter className="mt-auto">
+              <p className="text-sm font-medium text-muted-foreground">
+                Staffed by people who understand military life
+              </p>
+            </CardFooter>
+          </Card>
+        </section>
+      </div>
 
       {/* Disclaimer - Compact */}
       {disclaimer && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <div className="flex items-start">
-            <AlertTriangle
-              className={`
-              mt-0.5 mr-2 size-4 shrink-0 text-amber-500
-            `}
-            />
-            <p className="text-sm text-amber-800">
+        <Card className="border-chart-3 bg-chart-3/10 py-4">
+          <CardContent className="flex items-center gap-3">
+            <AlertTriangle className="shrink-0 text-chart-3" />
+            <p className="text-sm text-pretty text-chart-3">
               <strong>Please note:</strong> {disclaimer.disclaimer}
             </p>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Compact Additional Resources */}
       {!loading && (
-        <section className="rounded-lg bg-white p-6 shadow-sm">
-          <div className="mb-6 text-center">
-            <div className="mb-3 flex items-center justify-center">
-              <CheckCircle className="mr-2 size-5 text-emerald-600" />
-              <h2 className="text-xl font-bold text-slate-800">
-                Additional Resources
-              </h2>
-            </div>
-          </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="size-5 text-primary" />
+              <h2>Additional Resources</h2>
+            </CardTitle>
+          </CardHeader>
 
-          {resources.length === 0 ? (
-            <div className="py-6 text-center">
-              <p className="mb-2 text-slate-500">
-                No additional resources available at this time.
-              </p>
-              <p className="text-sm text-slate-400">
-                Crisis support above is always available
-              </p>
-            </div>
-          ) : (
-            <>
-              <div
-                className={`
-                  mb-4 grid gap-4
-                  md:grid-cols-2
-                  lg:grid-cols-3
-                `}
-              >
-                {displayedResources.map((resource) => (
-                  <div
-                    key={resource._id}
-                    className={`
-                      rounded-lg border border-slate-200 p-4 transition-all
-                      hover:border-emerald-300 hover:shadow-md
-                    `}
-                  >
+          <CardContent>
+            {resources.length === 0 ? (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>
+                    No additional resources available at this time.
+                  </EmptyTitle>
+                  <EmptyDescription>
+                    Crisis support above is always available
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            ) : (
+              <>
+                <div
+                  className={`
+                    mb-6 grid gap-4
+                    md:grid-cols-2
+                    lg:grid-cols-3
+                  `}
+                >
+                  {displayedResources.map((resource) => (
                     <a
                       href={resource.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-center"
+                      className="block"
+                      key={resource._id}
                     >
-                      <h3
+                      <Card
                         className={`
-                          mb-2 text-base font-semibold text-emerald-700
-                          hover:text-emerald-800
+                          gap-2 py-4 transition-all
+                          hover:border-primary
                         `}
                       >
-                        {resource.title}
-                      </h3>
-                      <p className="mb-3 line-clamp-2 text-sm text-slate-600">
-                        {resource.description}
-                      </p>
-                      <div
-                        className={`
-                          flex items-center justify-center text-sm font-medium
-                          text-emerald-600
-                        `}
-                      >
-                        <span>Learn more</span>
-                        <ExternalLink className="ml-1 size-3" />
-                      </div>
+                        <CardHeader>
+                          <CardTitle
+                            // prettier-ignore
+                            className="text-base text-balance text-primary"
+                          >
+                            {resource.title}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">
+                            {resource.description}
+                          </p>
+                        </CardContent>
+                        <CardFooter className="justify-center">
+                          <Button variant="link" size="sm" asChild>
+                            <span>
+                              <span>Learn more</span>
+                              <ExternalLink />
+                            </span>
+                          </Button>
+                        </CardFooter>
+                      </Card>
                     </a>
-                  </div>
-                ))}
-              </div>
-
-              {/* Show More/Less Button */}
-              {resources.length > 6 && (
-                <div className="text-center">
-                  <button
-                    onClick={() => setShowAllResources(!showAllResources)}
-                    className={`
-                      inline-flex items-center rounded-lg bg-slate-100 px-4 py-2
-                      text-slate-700 transition-colors
-                      hover:bg-slate-200
-                    `}
-                  >
-                    {showAllResources ? (
-                      <>
-                        <ChevronUp className="mr-2 size-4" />
-                        Show Less Resources
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown className="mr-2 size-4" />
-                        Show More Resources ({resources.length - 6} more)
-                      </>
-                    )}
-                  </button>
+                  ))}
                 </div>
-              )}
-            </>
-          )}
-        </section>
+
+                {/* Show More/Less Button */}
+                {resources.length > 6 && (
+                  <div className="text-center">
+                    <Button
+                      onClick={() => setShowAllResources(!showAllResources)}
+                      variant="secondary"
+                    >
+                      {showAllResources ? (
+                        <>
+                          <ChevronUp />
+                          Show Less Resources
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown />
+                          Show More Resources ({resources.length - 6} more)
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+          </CardContent>
+        </Card>
       )}
 
       {/* Compact Anonymous Peer Support Section */}
-      <section
-        className={`
-          rounded-lg border-t-4 border-emerald-500 bg-emerald-50 p-6 shadow-sm
-        `}
-      >
-        <div className="mb-6 text-center">
-          <div className="mb-3 flex items-center justify-center">
-            <Users className="mr-2 size-5 text-emerald-600" />
-            <h2 className="text-xl font-bold text-emerald-800">
-              Connect with Fellow Service Members
-            </h2>
-          </div>
-          <p className="mx-auto max-w-2xl text-emerald-700">
-            Sometimes talking to someone who's been there helps. Connect
-            anonymously in a safe, supportive environment.
-          </p>
-        </div>
+      <section>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="size-5 text-primary" />
+              <h2>Connect with Fellow Service Members</h2>
+            </CardTitle>
+            <CardDescription>
+              Sometimes talking to someone who's been there helps. Connect
+              anonymously in a safe, supportive environment.
+            </CardDescription>
+          </CardHeader>
 
-        {/* Compact Feature highlights */}
-        <div
-          className={`
-            mb-6 grid gap-4
-            md:grid-cols-3
-          `}
-        >
-          <div
-            className={`
-              rounded-lg border border-emerald-200 bg-white p-4 text-center
-            `}
-          >
-            <Shield className="mx-auto mb-2 size-6 text-emerald-600" />
-            <h3 className="mb-1 text-sm font-semibold text-emerald-800">
-              Anonymous
-            </h3>
-            <p className="text-xs text-emerald-700">No registration required</p>
-          </div>
-
-          <div
-            className={`
-              rounded-lg border border-emerald-200 bg-white p-4 text-center
-            `}
-          >
-            <Heart className="mx-auto mb-2 size-6 text-emerald-600" />
-            <h3 className="mb-1 text-sm font-semibold text-emerald-800">
-              Peer Support
-            </h3>
-            <p className="text-xs text-emerald-700">
-              Connect with others who understand
-            </p>
-          </div>
-
-          <div
-            className={`
-              rounded-lg border border-emerald-200 bg-white p-4 text-center
-            `}
-          >
-            <MessageSquare className="mx-auto mb-2 size-6 text-emerald-600" />
-            <h3 className="mb-1 text-sm font-semibold text-emerald-800">
-              Safe Space
-            </h3>
-            <p className="text-xs text-emerald-700">Moderated environment</p>
-          </div>
-        </div>
-
-        {/* Chat Button */}
-        <div className="text-center">
-          <Link
-            href="/military-support/chat"
-            className={`
-              inline-flex items-center rounded-lg bg-emerald-600 px-6 py-3
-              font-semibold text-white shadow-sm transition-all
-              hover:bg-emerald-700 hover:shadow-md
-            `}
-          >
-            <MessageSquare className="mr-2 size-4" />
-            Join Anonymous Chat Rooms
-          </Link>
-
-          <p className="mx-auto mt-3 max-w-md text-xs text-emerald-600">
-            By joining, you acknowledge this is peer support, not professional
-            counseling. For crisis situations, please use the hotlines above.
-          </p>
-        </div>
-
-        {/* NEW: Manual Mood Check-in Button */}
-        {hasCheckedMoodToday && (
-          <div className="mt-4 border-t border-emerald-200 pt-4 text-center">
-            <button
-              onClick={() => setShowMoodModal(true)}
+          {/* Compact Feature highlights */}
+          <CardContent>
+            <div
               className={`
-                text-sm text-emerald-600 underline
-                hover:text-emerald-700
+                grid gap-4
+                md:grid-cols-3
               `}
             >
-              Update my daily mood check-in
-            </button>
-          </div>
-        )}
+              <Card className="gap-4 bg-primary/10 text-center">
+                <Shield className="mx-auto size-8 text-primary" />
+                <CardHeader>
+                  <CardTitle>Anonymous</CardTitle>
+                  <p className="text-xs text-primary">
+                    No registration required
+                  </p>
+                </CardHeader>
+              </Card>
+
+              <Card className="gap-4 bg-primary/10 text-center">
+                <Heart className="mx-auto size-8 text-primary" />
+                <CardHeader>
+                  <CardTitle>Peer Support</CardTitle>
+                  <p className="text-xs text-primary">
+                    Connect with others who understand
+                  </p>
+                </CardHeader>
+              </Card>
+
+              <Card className="gap-4 bg-primary/10 text-center">
+                <MessageSquare className="mx-auto size-8 text-primary" />
+                <CardHeader>
+                  <CardTitle>Safe Space</CardTitle>
+                  <p className="text-xs text-primary">Moderated environment</p>
+                </CardHeader>
+              </Card>
+            </div>
+
+            {/* Chat Button */}
+            <div className="mt-6 text-center">
+              <Button asChild size="lg">
+                <Link href="/military-support/chat">
+                  <MessageSquare className="mr-2 size-4" />
+                  Join Anonymous Chat Rooms
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+
+          <CardFooter>
+            <p
+              className={`
+                mx-auto max-w-prose text-center text-xs text-pretty
+                text-muted-foreground
+              `}
+            >
+              By joining, you acknowledge this is peer support, not professional
+              counseling. For crisis situations, please use the hotlines above.
+            </p>
+          </CardFooter>
+
+          {/* NEW: Manual Mood Check-in Button */}
+          {hasCheckedMoodToday && (
+            <div className="mt-4 border-t border-emerald-200 pt-4 text-center">
+              <Button
+                onClick={() => setShowMoodModal(true)}
+                className={`
+                  text-sm text-emerald-600 underline
+                  hover:text-emerald-700
+                `}
+              >
+                Update my daily mood check-in
+              </Button>
+            </div>
+          )}
+        </Card>
       </section>
 
       {/* NEW: Mood Check-In Modal */}

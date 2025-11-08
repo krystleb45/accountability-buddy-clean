@@ -9,11 +9,86 @@ import type {
 } from "@/api/military-support/moodCheckInApi"
 
 import { moodCheckInApi } from "@/api/military-support/moodCheckInApi"
+import { cn } from "@/lib/utils"
+
+import { Button } from "../ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card"
 
 interface Props {
   className?: string
 }
 
+/**
+ * Determines the most common mood emoji based on mood distribution data
+ */
+function getMostCommonMoodEmoji(moodDistribution: {
+  mood1: number
+  mood2: number
+  mood3: number
+  mood4: number
+  mood5: number
+}): string {
+  const maxCount = Math.max(
+    moodDistribution.mood1,
+    moodDistribution.mood2,
+    moodDistribution.mood3,
+    moodDistribution.mood4,
+    moodDistribution.mood5,
+  )
+
+  if (maxCount === moodDistribution.mood5) return "😄"
+  if (maxCount === moodDistribution.mood4) return "😊"
+  if (maxCount === moodDistribution.mood3) return "😐"
+  if (maxCount === moodDistribution.mood2) return "😕"
+  return "😞"
+}
+
+function getMoodEmoji(averageMood: number): string {
+  if (averageMood >= 4.5) return "😄"
+  if (averageMood >= 3.5) return "😊"
+  if (averageMood >= 2.5) return "😐"
+  if (averageMood >= 1.5) return "😕"
+  return "😞"
+}
+
+function getMoodColor(averageMood: number): string {
+  if (averageMood >= 4.5) {
+    return "text-primary"
+  }
+  if (averageMood >= 3.5) {
+    return "text-accent"
+  }
+  if (averageMood >= 2.5) {
+    return "text-chart-3"
+  }
+  if (averageMood >= 1.5) {
+    return "text-orange-600"
+  }
+  return "text-destructive"
+}
+
+function getBackgroundColor(averageMood: number): string {
+  if (averageMood >= 4.5) {
+    return "bg-primary/10 border-primary"
+  }
+  if (averageMood >= 3.5) {
+    return "bg-accent/10 border-accent"
+  }
+  if (averageMood >= 2.5) {
+    return "bg-chart-3/10 border-chart-3"
+  }
+  if (averageMood >= 1.5) {
+    return "bg-orange-25 border-orange-200"
+  }
+  return "bg-destructive/10 border-destructive"
+}
 export default function CommunityMoodWidget({ className = "" }: Props) {
   const [moodData, setMoodData] = useState<CommunityMoodData | null>(null)
   const [trends, setTrends] = useState<MoodTrend[]>([])
@@ -49,30 +124,6 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
     return () => clearInterval(interval)
   }, [])
 
-  const getMoodEmoji = (averageMood: number): string => {
-    if (averageMood >= 4.5) return "😄"
-    if (averageMood >= 3.5) return "😊"
-    if (averageMood >= 2.5) return "😐"
-    if (averageMood >= 1.5) return "😕"
-    return "😞"
-  }
-
-  const getMoodColor = (averageMood: number): string => {
-    if (averageMood >= 4.5) return "text-emerald-600"
-    if (averageMood >= 3.5) return "text-green-600"
-    if (averageMood >= 2.5) return "text-yellow-600"
-    if (averageMood >= 1.5) return "text-orange-600"
-    return "text-red-600"
-  }
-
-  const getBackgroundColor = (averageMood: number): string => {
-    if (averageMood >= 4.5) return "bg-emerald-50 border-emerald-200"
-    if (averageMood >= 3.5) return "bg-green-50 border-green-200"
-    if (averageMood >= 2.5) return "bg-yellow-50 border-yellow-200"
-    if (averageMood >= 1.5) return "bg-orange-50 border-orange-200"
-    return "bg-red-50 border-red-200"
-  }
-
   if (loading) {
     return (
       <div
@@ -105,7 +156,7 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
           <p className="mb-3 text-gray-500">
             {error || "No mood data available"}
           </p>
-          <button
+          <Button
             onClick={loadMoodData}
             className={`
               mx-auto flex items-center space-x-1 text-sm text-blue-600
@@ -114,7 +165,7 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
           >
             <RefreshCw className="size-4" />
             <span>Try Again</span>
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -128,104 +179,93 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
       : 0
 
   return (
-    <div
+    <Card
       className={`
-        rounded-lg border-2 bg-white
         ${getBackgroundColor(averageMood)}
         ${className}
       `}
     >
-      <div className="p-6">
-        {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Heart className="size-6 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-800">
-              Community Pulse
-            </h3>
-          </div>
-
-          <button
-            onClick={loadMoodData}
-            className={`
-              text-gray-400 transition-colors
-              hover:text-gray-600
-            `}
-            title="Refresh data"
-          >
-            <RefreshCw className="size-4" />
-          </button>
+      {/* Header */}
+      <CardHeader>
+        <div className="flex items-center space-x-3">
+          <Heart className={cn("size-6", getMoodColor(averageMood))} />
+          <CardTitle>Community Pulse</CardTitle>
         </div>
 
-        {/* Main Mood Display */}
-        <div className="mb-6 text-center">
-          <div className="mb-2 flex items-center justify-center space-x-3">
-            <span className="text-4xl">{getMoodEmoji(averageMood)}</span>
-            <div className="text-left">
-              <div
-                className={`
-                  text-2xl font-bold
-                  ${getMoodColor(averageMood)}
-                `}
-              >
-                {averageMood.toFixed(1)}/5
-              </div>
-              <div className="text-sm text-gray-600">
-                {recentTrend > 0 && (
-                  <span className="flex items-center text-green-600">
-                    <TrendingUp className="mr-1 size-3" />
-                    Improving
-                  </span>
-                )}
-                {recentTrend < 0 && (
-                  <span className="text-orange-600">Trending down</span>
-                )}
-                {recentTrend === 0 && (
-                  <span className="text-gray-500">Stable</span>
-                )}
-              </div>
+        <CardAction>
+          <Button
+            onClick={loadMoodData}
+            variant="outline"
+            title="Refresh data"
+            size="sm"
+          >
+            <RefreshCw className="size-4" />
+          </Button>
+        </CardAction>
+      </CardHeader>
+
+      {/* Main Mood Display */}
+      <CardContent className="flex flex-col gap-6 text-center">
+        <div className="flex items-center justify-center space-x-2">
+          <span className="text-4xl">{getMoodEmoji(averageMood)}</span>
+          <div className="text-left">
+            <div
+              className={`
+                text-xl font-bold
+                ${getMoodColor(averageMood)}
+              `}
+            >
+              {averageMood.toFixed(1)} / 5
+            </div>
+            <div className="text-sm">
+              {recentTrend > 0 && (
+                <span className="flex items-center text-primary">
+                  <TrendingUp className="mr-1 size-3" />
+                  Improving
+                </span>
+              )}
+              {recentTrend < 0 && (
+                <span className="text-destructive">Trending down</span>
+              )}
+              {recentTrend === 0 && <span>Stable</span>}
             </div>
           </div>
-
-          <p className="mb-1 font-medium text-gray-700">
-            {moodData.encouragementMessage}
-          </p>
         </div>
 
         {/* Stats */}
-        <div className="mb-4 grid grid-cols-2 gap-4">
-          <div className="rounded-lg bg-white/50 p-3 text-center">
-            <div className="mb-1 flex items-center justify-center space-x-1">
-              <Users className="size-4 text-gray-600" />
-              <span className="text-sm text-gray-600">Check-ins</span>
-            </div>
-            <div className="text-xl font-bold text-gray-800">
-              {moodData.totalCheckIns}
-            </div>
-            <div className="text-xs text-gray-500">today</div>
-          </div>
-
-          <div className="rounded-lg bg-white/50 p-3 text-center">
-            <div className="mb-1 text-sm text-gray-600">Most common</div>
-            <div className="text-xl font-bold text-gray-800">
-              {(() => {
-                const maxCount = Math.max(
-                  moodData.moodDistribution.mood1,
-                  moodData.moodDistribution.mood2,
-                  moodData.moodDistribution.mood3,
-                  moodData.moodDistribution.mood4,
-                  moodData.moodDistribution.mood5,
-                )
-
-                if (maxCount === moodData.moodDistribution.mood5) return "😄"
-                if (maxCount === moodData.moodDistribution.mood4) return "😊"
-                if (maxCount === moodData.moodDistribution.mood3) return "😐"
-                if (maxCount === moodData.moodDistribution.mood2) return "😕"
-                return "😞"
-              })()}
-            </div>
-            <div className="text-xs text-gray-500">mood</div>
-          </div>
+        <div className="grid grid-cols-2 gap-4 text-left">
+          <Card
+            className={cn(
+              "gap-2",
+              getBackgroundColor(averageMood),
+              `border-foreground/25`,
+            )}
+          >
+            <CardHeader>
+              <CardTitle className="flex flex-row items-center gap-2">
+                <Users className="size-4" strokeWidth={3} />
+                <span className="text-sm">Check-ins</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-3xl font-bold">
+              {moodData.totalCheckIns}{" "}
+              <span className="text-sm font-normal">today</span>
+            </CardContent>
+          </Card>
+          <Card
+            className={cn(
+              "gap-2",
+              getBackgroundColor(averageMood),
+              `border-foreground/25`,
+            )}
+          >
+            <CardHeader>
+              <CardTitle className="text-sm">Most Common Mood</CardTitle>
+            </CardHeader>
+            <CardContent className="text-3xl font-bold">
+              {getMostCommonMoodEmoji(moodData.moodDistribution)}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Mood Distribution Bar */}
@@ -260,16 +300,16 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
             </div>
           </div>
         )}
+      </CardContent>
 
-        {/* Last Updated */}
-        <div className="text-center text-xs text-gray-500">
-          Updated{" "}
-          {lastRefresh.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </div>
-      </div>
-    </div>
+      {/* Last Updated */}
+      <CardFooter className="text-xs text-muted-foreground">
+        Updated{" "}
+        {lastRefresh.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </CardFooter>
+    </Card>
   )
 }
