@@ -7,7 +7,7 @@ import type {
   UserDocument,
 } from "../../types/mongoose.gen"
 
-import { encryptMessage } from "../../utils/crypto-helper"
+import { decryptMessage, encryptMessage } from "../../utils/crypto-helper"
 import { createError, CustomError } from "../middleware/errorHandler"
 import { Message } from "../models/Message"
 import { User } from "../models/User"
@@ -383,6 +383,9 @@ export class MessageService {
       .exec()
 
     for (const msg of messages) {
+      // decrypt message content before returning
+      msg.text = await decryptMessage(msg.text)
+
       if (msg.senderId?.profileImage) {
         msg.senderId.profileImage = await FileUploadService.generateSignedUrl(
           msg.senderId.profileImage,

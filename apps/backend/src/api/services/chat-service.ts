@@ -90,29 +90,29 @@ export class ChatService {
     await Chat.findByIdAndDelete(chatId)
   }
 
-  // /**
-  //  * Get existing private chat between two users, or create one.
-  //  */
-  // static async getOrCreatePrivateChat(
-  //   userA: string,
-  //   userB: string,
-  // ): Promise<IChat> {
-  //   const a = new Types.ObjectId(userA)
-  //   const b = new Types.ObjectId(userB)
-  //   let chat = await Chat.findOne({
-  //     chatType: "private",
-  //     participants: { $all: [a, b] },
-  //   }).exec()
-  //   if (!chat) {
-  //     chat = await Chat.create({
-  //       chatType: "private",
-  //       participants: [a, b],
-  //       messages: [],
-  //       unreadMessages: [],
-  //     })
-  //   }
-  //   return chat
-  // }
+  /**
+   * Get existing private chat between two users, or create one.
+   */
+  static async getOrCreatePrivateChat(userA: string, userB: string) {
+    const a = new mongoose.Types.ObjectId(userA)
+    const b = new mongoose.Types.ObjectId(userB)
+
+    const chat = await Chat.findOne({
+      chatType: "private",
+      participants: { $all: [a, b] },
+    }).exec()
+
+    if (!chat) {
+      return await Chat.create({
+        chatType: "private",
+        participants: [a, b],
+        messages: [],
+        unreadMessages: [],
+      })
+    }
+
+    return chat
+  }
 
   /**
    * Send message in a chat

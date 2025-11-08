@@ -24,6 +24,7 @@ interface LeaderboardOpts {
 export class UserService {
   static async getMemberByUsername(username: string, currentUserId: string) {
     const publicFields: (keyof IUser)[] = [
+      "_id",
       "username",
       "profileImage",
       "name",
@@ -45,6 +46,7 @@ export class UserService {
     if (user.settings.privacy.profileVisibility === "private") {
       // return only basic public info
       return {
+        _id: user._id,
         username: user.username,
         profileImage: user.profileImage,
         name: user.name,
@@ -58,6 +60,7 @@ export class UserService {
     ) {
       // return only basic public info
       return {
+        _id: user._id,
         username: user.username,
         profileImage: user.profileImage,
         name: user.name,
@@ -97,6 +100,28 @@ export class UserService {
     }
 
     return userData
+  }
+
+  static async canSendMessage(
+    senderId: string,
+    recipientId: string,
+  ): Promise<boolean> {
+    const sender = await User.findById(senderId)
+    const recipient = await User.findById(recipientId)
+
+    if (!sender || !recipient) {
+      throw new CustomError("User not found", 404)
+    }
+
+    // Check if both users have DM messaging enabled
+    if (
+      !sender.hasFeatureAccess("dmMessaging") ||
+      !recipient.hasFeatureAccess("dmMessaging")
+    ) {
+      return false
+    }
+
+    return true
   }
 
   static async getUserById(userId: string) {

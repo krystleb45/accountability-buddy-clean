@@ -201,7 +201,7 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
           <CardAction>
             {isFriend ? (
               <Button asChild variant="outline">
-                <Link href={`/messages?friendId=${member._id}`}>
+                <Link href={`/messages?friend=${member.username}`}>
                   <MessageSquare />
                   Chat
                 </Link>

@@ -20,7 +20,7 @@ const s3 = new S3Client({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
   },
   ...(appConfig.environment === "development" && {
-    endpoint: "http://localhost:9000",
+    endpoint: "http://anaam-dev:9000",
     forcePathStyle: true,
   }),
 })

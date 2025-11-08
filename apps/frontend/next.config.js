@@ -62,6 +62,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "localhost",
       },
+      {
+        protocol: "http",
+        hostname: "anaam-dev",
+      },
     ],
   },
   typedRoutes: true,

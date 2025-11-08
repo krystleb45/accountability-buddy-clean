@@ -1,12 +1,14 @@
 import { Router } from "express"
-import { param } from "express-validator"
 import { isMongoId } from "validator"
 import z from "zod"
 
-import friendshipController from "../controllers/FriendshipController"
+import * as friendController from "../controllers/friend-controller"
 import { protect } from "../middleware/auth-middleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
 import { isVerified } from "../middleware/is-verified-middleware"
+import {
+  validateFeatureAccess,
+  validateSubscription,
+} from "../middleware/subscription-validation"
 import validate from "../middleware/validation-middleware"
 
 const router = Router()
@@ -31,7 +33,7 @@ router.post(
       recipientId: z.string().min(1, "Recipient ID is required"),
     }),
   }),
-  friendshipController.sendFriendRequest,
+  friendController.sendFriendRequest,
 )
 
 /**
@@ -50,7 +52,7 @@ router.post(
         .refine((val) => isMongoId(val), { message: "Invalid Request ID" }),
     }),
   }),
-  friendshipController.acceptFriendRequest,
+  friendController.acceptFriendRequest,
 )
 
 /**
@@ -69,49 +71,20 @@ router.post(
         .refine((val) => isMongoId(val), { message: "Invalid Request ID" }),
     }),
   }),
-  friendshipController.declineFriendRequest,
-)
-
-/**
- * DELETE /api/friends/remove/:friendId
- * Remove a friend
- */
-router.delete(
-  "/remove/:friendId",
-  protect,
-  [param("friendId", "Friend ID must be a valid Mongo ID").isMongoId()],
-  handleValidationErrors,
-  friendshipController.removeFriend,
+  friendController.declineFriendRequest,
 )
 
 /**
  * GET /api/friends
  * Get user's friend list
  */
-router.get("/", protect, friendshipController.getFriendsList)
-
-/**
- * GET /api/friends/online
- * Get user's online friends
- */
-const onlineFriendsQuerySchema = z.object({
-  limit: z.coerce.number().min(1).max(50).default(5),
-})
-
-export type OnlineFriendsQuery = z.infer<typeof onlineFriendsQuerySchema>
-
-router.get(
-  "/online",
-  protect,
-  validate({ querySchema: onlineFriendsQuerySchema }),
-  friendshipController.getOnlineFriends,
-)
+router.get("/", protect, friendController.getFriendsList)
 
 /**
  * GET /api/friends/requests
  * Get all pending friend requests
  */
-router.get("/requests", protect, friendshipController.getPendingFriendRequests)
+router.get("/requests", protect, friendController.getPendingFriendRequests)
 
 /**
  * GET /api/friends/recommendations
@@ -120,19 +93,62 @@ router.get("/requests", protect, friendshipController.getPendingFriendRequests)
 router.get(
   "/recommendations",
   protect,
-  friendshipController.getAIRecommendedFriends,
+  friendController.getAIRecommendedFriends,
 )
 
 /**
- * DELETE /api/friends/cancel/:requestId
- * Cancel a sent friend request
+ * POST /api/friends/:friendId/message
+ * Send a message to a friend
  */
-router.delete(
-  "/cancel/:requestId",
+router.post(
+  "/:friendId/message",
   protect,
-  [param("requestId", "Request ID must be a valid Mongo ID").isMongoId()],
-  handleValidationErrors,
-  friendshipController.cancelFriendRequest,
+  isVerified,
+  validateSubscription,
+  validateFeatureAccess("dmMessaging"),
+  validate({
+    paramsSchema: z.object({
+      friendId: z
+        .string()
+        .min(1, "Friend ID is required")
+        .refine((val) => isMongoId(val), { message: "Invalid Friend ID" }),
+    }),
+    bodySchema: z.object({
+      message: z.string().min(1, "Message cannot be empty"),
+    }),
+  }),
+  friendController.sendMessageToFriend,
+)
+
+/**
+ * GET /api/friends/:friendId/messages
+ * Get chat messages with a friend
+ */
+const querySchema = z.object({
+  page: z.number().min(1, "Page must be at least 1").default(1),
+  limit: z
+    .number()
+    .min(1, "Limit must be at least 1")
+    .max(100, "Limit cannot exceed 100")
+    .default(50),
+})
+
+export type GetMessagesQuery = z.infer<typeof querySchema>
+
+router.get(
+  "/:friendId/messages",
+  protect,
+  isVerified,
+  validate({
+    paramsSchema: z.object({
+      friendId: z
+        .string()
+        .min(1, "Friend ID is required")
+        .refine((val) => isMongoId(val), { message: "Invalid Friend ID" }),
+    }),
+    querySchema,
+  }),
+  friendController.getMessagesWithFriend,
 )
 
 export default router

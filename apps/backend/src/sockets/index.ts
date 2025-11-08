@@ -5,6 +5,7 @@ import { Server } from "socket.io"
 
 import AuthService from "../api/services/AuthService"
 import { logger } from "../utils/winstonLogger"
+import dmSocket from "./dm"
 import groupSocket from "./groups"
 
 function socketServer(server: HttpServer) {
@@ -57,6 +58,7 @@ function socketServer(server: HttpServer) {
 
     // Set up socket handlers for different features
     groupSocket(io, socket)
+    dmSocket(io, socket)
   })
 
   return { io }

@@ -351,7 +351,7 @@ export function FriendsClient() {
                     </Link>
                   </Button>
                   <Button asChild>
-                    <Link href={`/messages?friendId=${friend._id}`}>
+                    <Link href={`/messages?friend=${friend.username}`}>
                       <MessageSquare />
                       Chat
                     </Link>

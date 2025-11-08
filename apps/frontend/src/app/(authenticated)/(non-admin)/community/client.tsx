@@ -21,7 +21,6 @@ import Link from "next/link"
 
 import {
   fetchCommunityStats,
-  fetchOnlineFriends,
   fetchRecentMessages,
 } from "@/api/community/community-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
@@ -59,23 +58,21 @@ export function CommunityClient() {
     enabled: status === "authenticated",
   })
 
-  const {
-    data: onlineFriends,
-    isPending: isFriendsPending,
-    error: friendsError,
-  } = useQuery({
-    queryKey: ["onlineFriends", 5],
-    queryFn: () => fetchOnlineFriends(5),
-    enabled: status === "authenticated",
-  })
+  // const {
+  //   data: onlineFriends,
+  //   isPending: isFriendsPending,
+  //   error: friendsError,
+  // } = useQuery({
+  //   queryKey: ["onlineFriends", 5],
+  //   queryFn: () => fetchOnlineFriends(5),
+  //   enabled: status === "authenticated",
+  // })
 
   const isLoading =
-    (status === "authenticated" &&
-      (isStatsPending || isMessagesPending || isFriendsPending)) ||
+    (status === "authenticated" && (isStatsPending || isMessagesPending)) ||
     status === "loading"
 
-  const error =
-    statsError?.message || messagesError?.message || friendsError?.message
+  const error = statsError?.message || messagesError?.message
 
   if (isLoading) {
     return (
@@ -97,7 +94,7 @@ export function CommunityClient() {
     )
   }
 
-  if (!stats || !recentMessages || !onlineFriends) {
+  if (!stats || !recentMessages) {
     return null
   }
 
@@ -326,7 +323,7 @@ export function CommunityClient() {
         </motion.div>
 
         {/* Online Friends */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
         >
@@ -407,7 +404,7 @@ export function CommunityClient() {
               </Button>
             </CardFooter>
           </Card>
-        </motion.div>
+        </motion.div> */}
       </div>
     </main>
   )
