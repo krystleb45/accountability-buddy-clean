@@ -1,4 +1,3 @@
-// src/api/routes/militarySupportRoutes.ts
 import type { NextFunction, Request, Response } from "express"
 
 import { Router } from "express"
@@ -13,32 +12,16 @@ const router = Router()
 
 /**
  * GET /api/military-support/resources
- * Get external military support resources (PUBLIC - no auth required)
+ * Get external military support resources
  * These are crisis resources that should be available to everyone
  */
-router.get(
-  "/resources",
-  // REMOVED: protect, militaryAuth - now public for crisis support
-  catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await militarySupportController.getResources(req, res, next)
-    },
-  ),
-)
+router.get("/resources", militarySupportController.getResources)
 
 /**
  * GET /api/military-support/disclaimer
- * Get military support disclaimer (PUBLIC - no auth required)
+ * Get military support disclaimer
  */
-router.get(
-  "/disclaimer",
-  // Already public - no auth middleware
-  catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await militarySupportController.getDisclaimer(req, res, next)
-    },
-  ),
-)
+router.get("/disclaimer", militarySupportController.getDisclaimer)
 
 // ========================================
 // AUTHENTICATED ROUTES (for members with accounts)

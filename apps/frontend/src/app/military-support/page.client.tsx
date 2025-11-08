@@ -1,7 +1,6 @@
-// src/app/military-support/page.client.tsx - WITH MOOD CHECK-IN
-
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import {
   AlertTriangle,
   CheckCircle,
@@ -16,22 +15,12 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-
-import type {
-  Disclaimer,
-  SupportResource,
-} from "@/api/military-support/militarySupportApi"
+import { toast } from "sonner"
 
 import {
   fetchDisclaimer,
   fetchResources,
-} from "@/api/military-support/militarySupportApi"
-import {
-  DEFAULT_DISCLAIMER,
-  DEFAULT_MILITARY_RESOURCES,
-} from "@/data/defaultMilitaryResources"
-
-// NEW IMPORTS
+} from "@/api/military-support/military-support-api"
 import { moodCheckInApi } from "@/api/military-support/moodCheckInApi"
 import CommunityMoodWidget from "@/components/MilitarySupport/CommunityMoodWidget"
 import MoodCheckInModal from "@/components/MilitarySupport/MoodCheckInModal"
@@ -76,10 +65,6 @@ const CRISIS_RESOURCES = [
 ]
 
 export default function MilitarySupportPageClient() {
-  const [resources, setResources] = useState<SupportResource[]>([])
-  const [disclaimer, setDisclaimer] = useState<Disclaimer | null>(null)
-  const [loading, setLoading] = useState(true)
-  // Removed unused error state
   const [showAllResources, setShowAllResources] = useState(false)
 
   // NEW MOOD CHECK-IN STATE
@@ -94,7 +79,7 @@ export default function MilitarySupportPageClient() {
       // Get or create session ID for mood tracking (must start with "anon_" for middleware)
       let sessionId = localStorage.getItem("military-mood-session")
       if (!sessionId || !sessionId.startsWith("anon_")) {
-        sessionId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        sessionId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
         localStorage.setItem("military-mood-session", sessionId)
       }
       setMoodSessionId(sessionId)
@@ -128,37 +113,25 @@ export default function MilitarySupportPageClient() {
     }
   }
 
+  const {
+    data: disclaimer,
+    isLoading: isLoadingDisclaimer,
+    error: errorDisclaimer,
+  } = useQuery({
+    queryKey: ["military-support", "disclaimer"],
+    queryFn: fetchDisclaimer,
+  })
+
+  const {
+    data: resources,
+    isLoading: isLoadingResources,
+    error: errorResources,
+  } = useQuery({
+    queryKey: ["military-support", "resources"],
+    queryFn: fetchResources,
+  })
+
   useEffect(() => {
-    ;(async () => {
-      try {
-        setLoading(true)
-
-        const [disclaimerResult, resourcesResult] = await Promise.all([
-          fetchDisclaimer(),
-          fetchResources(),
-        ])
-
-        if (disclaimerResult) {
-          setDisclaimer(disclaimerResult)
-        } else {
-          setDisclaimer(DEFAULT_DISCLAIMER)
-        }
-
-        if (resourcesResult && resourcesResult.length > 0) {
-          setResources(resourcesResult)
-        } else {
-          setResources(DEFAULT_MILITARY_RESOURCES)
-        }
-      } catch (err) {
-        console.error("Error loading military support:", err)
-        setDisclaimer(DEFAULT_DISCLAIMER)
-        setResources(DEFAULT_MILITARY_RESOURCES)
-        // Removed setError since error is not used
-      } finally {
-        setLoading(false)
-      }
-    })()
-
     // NEW: Initialize mood check-in system
     initializeMoodCheckIn()
   }, [])
@@ -185,10 +158,21 @@ export default function MilitarySupportPageClient() {
     }
   }
 
+  const loading = isLoadingDisclaimer || isLoadingResources
+  const error = errorDisclaimer || errorResources
+
+  useEffect(() => {
+    if (error) {
+      toast.error(
+        "Failed to load military support data. Please try again later.",
+      )
+    }
+  }, [error])
+
   // Show only first 6 resources initially
   const displayedResources = showAllResources
     ? resources
-    : resources.slice(0, 6)
+    : resources?.slice(0, 6)
 
   return (
     <div className="-mb-4 space-y-6">
@@ -264,7 +248,7 @@ export default function MilitarySupportPageClient() {
           <CardContent className="flex items-center gap-3">
             <AlertTriangle className="shrink-0 text-chart-3" />
             <p className="text-sm text-pretty text-chart-3">
-              <strong>Please note:</strong> {disclaimer.disclaimer}
+              <strong>Please note:</strong> {disclaimer}
             </p>
           </CardContent>
         </Card>
@@ -281,7 +265,7 @@ export default function MilitarySupportPageClient() {
           </CardHeader>
 
           <CardContent>
-            {resources.length === 0 ? (
+            {resources && resources.length === 0 ? (
               <Empty>
                 <EmptyHeader>
                   <EmptyTitle>
@@ -301,7 +285,7 @@ export default function MilitarySupportPageClient() {
                     lg:grid-cols-3
                   `}
                 >
-                  {displayedResources.map((resource) => (
+                  {displayedResources?.map((resource) => (
                     <a
                       href={resource.url}
                       target="_blank"
@@ -342,7 +326,7 @@ export default function MilitarySupportPageClient() {
                 </div>
 
                 {/* Show More/Less Button */}
-                {resources.length > 6 && (
+                {resources && resources.length > 6 && (
                   <div className="text-center">
                     <Button
                       onClick={() => setShowAllResources(!showAllResources)}

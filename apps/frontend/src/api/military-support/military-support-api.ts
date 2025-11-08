@@ -2,7 +2,10 @@
 
 import axios from "axios"
 
+import type { Envelope } from "@/types"
+
 import { http } from "@/lib/http"
+import { getApiErrorMessage } from "@/utils"
 
 export interface SupportResource {
   _id: string
@@ -72,37 +75,29 @@ function logErr(fn: string, error: unknown): void {
   }
 }
 
-/** GET /military-support/resources - FIXED: Now public, no auth required */
+/** GET /api/military-support/resources */
 export async function fetchResources(): Promise<SupportResource[]> {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050/api"}/military-support/resources`
-    console.log("🔍 [fetchResources] Making request to:", url)
-    console.log(
-      "🔍 [fetchResources] NEXT_PUBLIC_API_URL:",
-      process.env.NEXT_PUBLIC_API_URL,
+    const resp = await http.get<Envelope<{ resources: SupportResource[] }>>(
+      `/military-support/resources`,
     )
 
-    const resp =
-      await axios.get<ApiResponse<{ resources: SupportResource[] }>>(url)
-    console.log("✅ [fetchResources] Success:", resp.status, resp.data)
     return resp.data.data.resources
   } catch (err) {
-    logErr("fetchResources", err)
-    return []
+    throw new Error(getApiErrorMessage(err as Error))
   }
 }
 
-/** GET /military-support/disclaimer - FIXED: Now public, no auth required */
-export async function fetchDisclaimer(): Promise<Disclaimer | null> {
+/** GET /api/military-support/disclaimer */
+export async function fetchDisclaimer() {
   try {
     // ✅ FIXED: Remove extra /api/ since NEXT_PUBLIC_API_URL already includes it
-    const resp = await axios.get<ApiResponse<Disclaimer>>(
-      `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5050/api"}/military-support/disclaimer`,
+    const resp = await http.get<Envelope<Disclaimer>>(
+      `/military-support/disclaimer`,
     )
-    return resp.data.data
+    return resp.data.data.disclaimer
   } catch (err) {
-    logErr("fetchDisclaimer", err)
-    return null
+    throw new Error(getApiErrorMessage(err as Error))
   }
 }
 
