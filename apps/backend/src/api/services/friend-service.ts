@@ -245,24 +245,36 @@ const FriendService = {
     }
 
     return populatedRequests
-  },
+}
 
-  async aiRecommendations(userId: string) {
+export async function aiRecommendations(userId: string): Promise<
+  Array<{
+    id: string
+    _id: string
+    name: string
+    email: string
+    username: string
+    profileImage: string
+    interests: string[]
+    mutualFriends: number
+    similarityScore: number
+    bio: string
+    category: string
+  }>
+> {
     try {
       // Step 1: Get current user data
       const currentUser = await User.findById(userId)
-        .select(
-          "username email profileImage friends goals interests location preferences",
-        )
+      .select("username email profileImage friends goals interests location")
         .lean()
 
       if (!currentUser) {
-        throw createError("User not found", 404)
+      throw new CustomError("User not found", 404)
       }
 
       // Get current user's friend IDs as strings for exclusion
-      const currentFriendIds = currentUser.friends.map((friend) =>
-        friend._id.toString(),
+    const currentFriendIds = currentUser.friends.map(
+      (friend) => friend._id?.toString() || friend.toString(),
       )
 
       // Step 2: Get all pending/sent friend requests to exclude them
@@ -290,8 +302,8 @@ const FriendService = {
                 (id) => new Types.ObjectId(id),
               ),
             },
-            // Only include active users (check both fields for compatibility)
-            $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
+          // Only include active users
+          active: { $ne: false },
             role: {
               $ne: "admin", // Exclude admins
             },
@@ -348,8 +360,7 @@ const FriendService = {
                                         $setUnion: [
                                           "$interests",
                                           {
-                                            $literal:
-                                              currentUser.interests || [],
+                                          $literal: currentUser.interests || [],
                                           },
                                         ],
                                       },
@@ -369,83 +380,7 @@ const FriendService = {
                   ],
                 },
 
-                // Goal category similarity (30% weight)
-                {
-                  $multiply: [
-                    {
-                      $cond: {
-                        if: {
-                          $and: [
-                            { $isArray: "$goals" },
-                            {
-                              $gt: [{ $size: { $ifNull: ["$goals", []] } }, 0],
-                            },
-                          ],
-                        },
-                        then: {
-                          $cond: {
-                            if: {
-                              $gt: [
-                                {
-                                  $size: { $literal: currentUser.goals || [] },
-                                },
-                                0,
-                              ],
-                            },
-                            then: {
-                              $let: {
-                                vars: {
-                                  userGoalCategories: {
-                                    $literal: (currentUser.goals || []).map(
-                                      (g: any) => g.category,
-                                    ),
-                                  },
-                                  candidateGoalCategories: {
-                                    $map: {
-                                      input: "$goals",
-                                      as: "goal",
-                                      in: "$$goal.category",
-                                    },
-                                  },
-                                },
-                                in: {
-                                  $divide: [
-                                    {
-                                      $size: {
-                                        $setIntersection: [
-                                          "$$userGoalCategories",
-                                          "$$candidateGoalCategories",
-                                        ],
-                                      },
-                                    },
-                                    {
-                                      $max: [
-                                        {
-                                          $size: {
-                                            $setUnion: [
-                                              "$$userGoalCategories",
-                                              "$$candidateGoalCategories",
-                                            ],
-                                          },
-                                        },
-                                        1,
-                                      ],
-                                    },
-                                  ],
-                                },
-                              },
-                            },
-                            else: 0,
-                          },
-                        },
-                        else: 0,
-                      },
-                    },
-                    30,
-                  ],
-                },
-
-                // Location proximity (20% weight)
+              // Location proximity (30% weight)
                 {
                   $multiply: [
                     {
@@ -493,11 +428,11 @@ const FriendService = {
                         },
                       },
                     },
-                    20,
+                  30,
                   ],
                 },
 
-                // Mutual friends boost (10% weight)
+              // Mutual friends boost (30% weight)
                 {
                   $multiply: [
                     {
@@ -513,15 +448,7 @@ const FriendService = {
                                       "$friends",
                                       {
                                         $literal: currentFriendIds.map(
-                                          (
-                                            id:
-                                              | string
-                                              | number
-                                              | mongoose.mongo.BSON.ObjectId
-                                              | Uint8Array<ArrayBufferLike>
-                                              | mongoose.mongo.BSON.ObjectIdLike
-                                              | undefined,
-                                          ) => new Types.ObjectId(id),
+                                        (id) => new Types.ObjectId(id),
                                         ),
                                       },
                                     ],
@@ -536,7 +463,7 @@ const FriendService = {
                         else: 0,
                       },
                     },
-                    10,
+                  30,
                   ],
                 },
               ],
@@ -564,7 +491,7 @@ const FriendService = {
           },
         },
 
-        // Only include users with some similarity (lowered for more results)
+      // Only include users with some similarity
         {
           $match: {
             similarityScore: { $gte: 0 },
@@ -590,10 +517,7 @@ const FriendService = {
             email: 1,
             username: 1,
             profileImage: {
-              $ifNull: [
-                { $ifNull: ["$profileImage", "$profileImage"] },
-                "/default-avatar.svg",
-              ],
+            $ifNull: ["$profileImage", "/default-avatar.svg"],
             },
             interests: { $ifNull: ["$interests", []] },
             mutualFriends: "$mutualFriendsCount",
@@ -735,84 +659,6 @@ const FriendService = {
                                   },
                                   // @keep-sorted
                                   [
-                                    "cooking",
-                                    "games",
-                                    "gardening",
-                                    "hobbies",
-                                    "lifestyle",
-                                    "movies",
-                                    "music",
-                                    "social",
-                                    "sports",
-                                    "travel",
-                                  ],
-                                ],
-                              },
-                              [],
-                            ],
-                          },
-                        },
-                        0,
-                      ],
-                    },
-                    then: "lifestyle",
-                  },
-                  {
-                    case: {
-                      $gt: [
-                        {
-                          $size: {
-                            $ifNull: [
-                              {
-                                $setIntersection: [
-                                  {
-                                    $map: {
-                                      input: { $ifNull: ["$interests", []] },
-                                      as: "interest",
-                                      in: { $toLower: "$$interest" },
-                                    },
-                                  },
-                                  // @keep-sorted
-                                  [
-                                    "artistic",
-                                    "arts",
-                                    "crafts",
-                                    "creative",
-                                    "creativity",
-                                    "design",
-                                    "drawing",
-                                    "painting",
-                                    "photography",
-                                    "writing",
-                                  ],
-                                ],
-                              },
-                              [],
-                            ],
-                          },
-                        },
-                        0,
-                      ],
-                    },
-                    then: "creative",
-                  },
-                  {
-                    case: {
-                      $gt: [
-                        {
-                          $size: {
-                            $ifNull: [
-                              {
-                                $setIntersection: [
-                                  {
-                                    $map: {
-                                      input: { $ifNull: ["$interests", []] },
-                                      as: "interest",
-                                      in: { $toLower: "$$interest" },
-                                    },
-                                  },
-                                  // @keep-sorted
-                                  [
                                     "ai",
                                     "coding",
                                     "computer",
@@ -848,21 +694,21 @@ const FriendService = {
 
       // If we have fewer than 5 recommendations, fill with random active users
       if (recommendations.length < 5) {
-        // console.log("🔄 Adding random users to reach minimum recommendations");
+      logger.info(
+        `Adding random users to reach minimum recommendations. Current: ${recommendations.length}`,
+      )
 
         const additionalUsers = await User.find({
           _id: {
             $nin: [
-              ...Array.from(excludedUserIds).map(
-                (id) => new Types.ObjectId(id),
-              ),
+            ...Array.from(excludedUserIds).map((id) => new Types.ObjectId(id)),
               ...recommendations.map((r) => new Types.ObjectId(r._id)),
             ],
           },
-          $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
+        active: { $ne: false },
           role: { $ne: "admin" }, // Exclude admins
         })
-          .select("username email profileImage profileImage interests bio")
+        .select("username email profileImage bio interests")
           .limit(5 - recommendations.length)
           .lean()
 
@@ -873,8 +719,7 @@ const FriendService = {
           name: user.username || user.email,
           email: user.email,
           username: user.username,
-          profileImage:
-            user.profileImage || user.profileImage || "/default-avatar.svg",
+        profileImage: user.profileImage || "/default-avatar.svg",
           interests: user.interests || [],
           mutualFriends: 0,
           similarityScore: 1,
@@ -887,12 +732,20 @@ const FriendService = {
         recommendations.push(...formattedAdditional)
       }
 
-      // fetch signed URLs for profile images
+    // Process signed URLs for profile images
       for (const rec of recommendations) {
         if (rec.profileImage && !rec.profileImage.startsWith("http")) {
+        try {
           rec.profileImage = await FileUploadService.generateSignedUrl(
             rec.profileImage,
           )
+        } catch (imageError) {
+          logger.warn(
+            `Failed to generate signed URL for profile image: ${rec.profileImage}`,
+            imageError,
+          )
+          rec.profileImage = "/default-avatar.svg"
+        }
         }
       }
 
@@ -902,14 +755,15 @@ const FriendService = {
 
       // Fallback to basic recommendations in case of error
       try {
-        const fallbackUsers = (await User.find({
-          _id: { $ne: userId },
-          $or: [{ isActive: { $ne: false } }, { active: { $ne: false } }],
+      logger.info("🔄 Attempting fallback recommendations")
+      const fallbackUsers = await User.find({
+        _id: { $ne: userId },
+        active: { $ne: false },
           role: { $ne: "admin" }, // Exclude admins
         })
-          .select("username email profileImage profileImage interests bio")
+        .select("username email profileImage bio interests")
           .limit(6)
-          .lean()) as any[]
+        .lean()
 
         const formattedFallbackUsers = fallbackUsers.map((user) => ({
           id: user._id.toString(),
@@ -917,8 +771,7 @@ const FriendService = {
           name: user.username || user.email,
           email: user.email,
           username: user.username,
-          profileImage:
-            user.profileImage || user.profileImage || "/default-avatar.svg",
+        profileImage: user.profileImage || "/default-avatar.svg",
           interests: user.interests || [],
           mutualFriends: 0,
           similarityScore: 1,
@@ -928,18 +781,26 @@ const FriendService = {
           category: "general",
         }))
 
-        // fetch signed URLs for profile images
+      // Process signed URLs for profile images
         for (const rec of formattedFallbackUsers) {
           if (rec.profileImage && !rec.profileImage.startsWith("http")) {
+          try {
             rec.profileImage = await FileUploadService.generateSignedUrl(
               rec.profileImage,
             )
+          } catch (imageError) {
+            logger.warn(
+              `Failed to generate signed URL for profile image in fallback: ${rec.profileImage}`,
+              imageError,
+            )
+            rec.profileImage = "/default-avatar.svg"
+          }
           }
         }
 
         return formattedFallbackUsers
       } catch (fallbackError) {
-        console.error("❌ Error in fallback recommendations:", fallbackError)
+      logger.error("❌ Error in fallback recommendations:", fallbackError)
         return []
       }
     }
