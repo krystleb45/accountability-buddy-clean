@@ -4,7 +4,7 @@ import type { IAggregatedMoodData } from "../models/AnonymousMoodCheckIn"
 
 import { logger } from "../../utils/winstonLogger"
 import { createError } from "../middleware/errorHandler"
-import AnonymousMoodCheckIn from "../models/AnonymousMoodCheckIn"
+import { AnonymousMoodCheckIn } from "../models/AnonymousMoodCheckIn"
 
 export interface MoodCheckInResult {
   checkInId: string
@@ -45,23 +45,10 @@ class AnonymousMoodService {
     userAgent?: string,
   ): Promise<MoodCheckInResult> {
     try {
-      // Validate mood value
-      if (!Number.isInteger(mood) || mood < 1 || mood > 5) {
-        throw createError("Mood must be an integer between 1 and 5", 400)
-      }
-
-      // Validate session ID
-      if (!sessionId || sessionId.trim().length === 0) {
-        throw createError("Session ID is required", 400)
-      }
-
       // Clean and validate note
       let cleanNote: string | undefined = note?.trim()
       if (cleanNote && cleanNote.length === 0) {
         cleanNote = undefined
-      }
-      if (cleanNote && cleanNote.length > 500) {
-        throw createError("Note cannot exceed 500 characters", 400)
       }
 
       // Check if already submitted today
@@ -119,10 +106,6 @@ class AnonymousMoodService {
    */
   static async getMoodTrends(days: number = 7): Promise<MoodTrendResult[]> {
     try {
-      if (days < 1 || days > 30) {
-        throw createError("Days must be between 1 and 30", 400)
-      }
-
       const trendsData = await AnonymousMoodCheckIn.getMoodTrends(days)
 
       return trendsData.map((trend: IAggregatedMoodData) => ({
@@ -139,12 +122,8 @@ class AnonymousMoodService {
   /**
    * Check if session has submitted mood today
    */
-  static async hasSubmittedToday(sessionId: string): Promise<boolean> {
+  static async hasSubmittedToday(sessionId: string) {
     try {
-      if (!sessionId || sessionId.trim().length === 0) {
-        return false
-      }
-
       return await AnonymousMoodCheckIn.hasSubmittedToday(sessionId.trim())
     } catch (error) {
       logger.error(`Error checking daily submission for ${sessionId}:`, error)

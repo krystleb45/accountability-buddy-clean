@@ -1,13 +1,18 @@
-// src/api/controllers/anonymousMoodController.ts
-
 import type { Request, Response } from "express"
 
+import { formatISO, sub } from "date-fns"
+
+import type {
+  MoodCheckInBody,
+  MoodTrendQuery,
+} from "../routes/anonymous-military-chat-routes"
+
 import { createError } from "../middleware/errorHandler"
-import AnonymousMoodService from "../services/AnonymousMoodService"
+import AnonymousMoodService from "../services/anonymous-mood-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
-interface AnonymousRequest extends Request {
+type AnonymousRequest<P = any, B = any, Q = any> = Request<P, any, B, Q> & {
   anonymousUser?: {
     sessionId: string
     displayName: string
@@ -22,21 +27,12 @@ interface AnonymousRequest extends Request {
  * @access  Anonymous (with session)
  */
 export const submitMoodCheckIn = catchAsync(
-  async (req: AnonymousRequest, res: Response) => {
+  async (req: AnonymousRequest<unknown, MoodCheckInBody>, res: Response) => {
     const { mood, note } = req.body
     const { anonymousUser } = req
 
-    if (!anonymousUser?.sessionId) {
-      throw createError("Anonymous session required", 400)
-    }
-
-    // Validate required fields
-    if (mood === undefined || mood === null) {
-      throw createError("Mood is required", 400)
-    }
-
     // Get client information for analytics (optional)
-    const ipAddress = req.ip || req.connection.remoteAddress
+    const ipAddress = req.ip || req.socket.remoteAddress
     const userAgent = req.get("User-Agent")
 
     const result = await AnonymousMoodService.submitMoodCheckIn(
@@ -74,42 +70,34 @@ export const getCommunityMoodData = catchAsync(
  * @route   GET /api/anonymous-military-chat/mood-trends/history?days=7
  * @access  Public
  */
-export const getMoodTrends = catchAsync(async (req: Request, res: Response) => {
-  const days = Number.parseInt(req.query.days as string) || 7
+export const getMoodTrends = catchAsync(
+  async (
+    req: Request<unknown, unknown, unknown, MoodTrendQuery>,
+    res: Response,
+  ) => {
+    const days = req.query.days
 
-  // Validate days parameter
-  if (days < 1 || days > 30) {
-    throw createError("Days parameter must be between 1 and 30", 400)
-  }
+    const trends = await AnonymousMoodService.getMoodTrends(days)
 
-  const trends = await AnonymousMoodService.getMoodTrends(days)
-
-  sendResponse(res, 200, true, "Mood trends retrieved", {
-    trends,
-    days,
-    startDate: new Date(Date.now() - days * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
-    endDate: new Date().toISOString().split("T")[0],
-  })
-})
+    sendResponse(res, 200, true, "Mood trends retrieved", {
+      trends,
+      days,
+      startDate: formatISO(sub(new Date(), { days }), {
+        representation: "date",
+      }),
+      endDate: formatISO(new Date(), { representation: "date" }),
+    })
+  },
+)
 
 /**
  * @desc    Check if session has submitted mood today
- * @route   GET /api/anonymous-military-chat/mood-checkin/today
+ * @route   GET `/api/anonymous-military-chat/mood-checkin/today`
  * @access  Anonymous (with session)
  */
 export const hasSubmittedToday = catchAsync(
   async (req: AnonymousRequest, res: Response) => {
     const { anonymousUser } = req
-
-    if (!anonymousUser?.sessionId) {
-      // If no session, assume they haven't submitted
-      sendResponse(res, 200, true, "Daily submission status", {
-        hasSubmitted: false,
-      })
-      return
-    }
 
     const hasSubmitted = await AnonymousMoodService.hasSubmittedToday(
       anonymousUser.sessionId,

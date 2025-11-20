@@ -1,8 +1,4 @@
-// src/data/defaultMilitaryResources.ts
-import type {
-  Disclaimer,
-  SupportResource,
-} from "@/api/military-support/militarySupportApi"
+import type { SupportResource } from "@/api/military-support/military-support-api"
 
 export const DEFAULT_MILITARY_RESOURCES: SupportResource[] = [
   // Mental Health & Wellness
@@ -160,7 +156,5 @@ export const DEFAULT_MILITARY_RESOURCES: SupportResource[] = [
 ]
 
 // Fallback disclaimer if API fails
-export const DEFAULT_DISCLAIMER: Disclaimer = {
-  disclaimer:
-    "This service provides peer support and resource information only. It is not a substitute for professional medical care, mental health treatment, or crisis intervention. If you are experiencing a mental health emergency, please call 988 or go to your nearest emergency room.",
-}
+export const DEFAULT_DISCLAIMER =
+  "This service provides peer support and resource information only. It is not a substitute for professional medical care, mental health treatment, or crisis intervention. If you are experiencing a mental health emergency, please call 988 or go to your nearest emergency room."

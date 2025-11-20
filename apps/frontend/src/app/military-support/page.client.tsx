@@ -1,6 +1,6 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import {
   AlertTriangle,
   CheckCircle,
@@ -21,9 +21,9 @@ import {
   fetchDisclaimer,
   fetchResources,
 } from "@/api/military-support/military-support-api"
-import { moodCheckInApi } from "@/api/military-support/moodCheckInApi"
-import CommunityMoodWidget from "@/components/MilitarySupport/CommunityMoodWidget"
-import MoodCheckInModal from "@/components/MilitarySupport/MoodCheckInModal"
+import * as moodCheckInApi from "@/api/military-support/mood-check-in-api"
+import { CommunityMoodWidget } from "@/components/MilitarySupport/community-mood-widget"
+import { MoodCheckInDialog } from "@/components/MilitarySupport/mood-check-in-dialog"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -44,7 +44,7 @@ import {
 const CRISIS_RESOURCES = [
   {
     title: "Veterans Crisis Line",
-    phone: "988 (Press 1)",
+    phone: { text: "988 (Press 1)", href: "tel:988" },
     text: "Text 838255",
     description:
       "24/7 free, confidential crisis support for veterans and their families",
@@ -52,13 +52,13 @@ const CRISIS_RESOURCES = [
   },
   {
     title: "Military Crisis Line",
-    phone: "1-800-273-8255",
+    phone: { text: "1-800-273-8255", href: "tel:1-800-273-8255" },
     description: "24/7 support for active duty, National Guard, and Reserve",
     urgent: true,
   },
   {
     title: "National Suicide Prevention Lifeline",
-    phone: "988",
+    phone: { text: "988", href: "tel:988" },
     description: "24/7 crisis counseling and suicide prevention",
     urgent: true,
   },
@@ -67,51 +67,25 @@ const CRISIS_RESOURCES = [
 export default function MilitarySupportPageClient() {
   const [showAllResources, setShowAllResources] = useState(false)
 
-  // NEW MOOD CHECK-IN STATE
   const [showMoodModal, setShowMoodModal] = useState(false)
   const [moodSessionId, setMoodSessionId] = useState<string>("")
-  const [hasCheckedMoodToday, setHasCheckedMoodToday] = useState(false)
-  const [moodSubmissionTime, setMoodSubmissionTime] = useState(0) // NEW: To force widget refresh
+  const [moodSubmissionTime, setMoodSubmissionTime] = useState(0) // To force widget refresh
 
-  // NEW: Mood check-in initialization
-  const initializeMoodCheckIn = async () => {
-    try {
-      // Get or create session ID for mood tracking (must start with "anon_" for middleware)
-      let sessionId = localStorage.getItem("military-mood-session")
-      if (!sessionId || !sessionId.startsWith("anon_")) {
-        sessionId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
-        localStorage.setItem("military-mood-session", sessionId)
-      }
-      setMoodSessionId(sessionId)
-
-      // Check if user has already submitted mood today
-      try {
-        const hasSubmitted = await moodCheckInApi.hasSubmittedToday(sessionId)
-        setHasCheckedMoodToday(hasSubmitted)
-
-        // Show modal if they haven't checked in today (after a brief delay)
-        if (!hasSubmitted) {
-          setTimeout(() => {
-            setShowMoodModal(true)
-          }, 2000) // 2 second delay so they can see the page first
-        }
-      } catch (apiError) {
-        console.warn(
-          "Could not check daily mood status, assuming not submitted:",
-          apiError,
-        )
-        // If API fails, show the modal anyway (better to show than hide)
-        setTimeout(() => {
-          setShowMoodModal(true)
-        }, 2000)
-      }
-    } catch (error) {
-      console.error("Error initializing mood check-in:", error)
-      // Still create session ID even if API fails (must start with "anon_")
-      const sessionId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-      setMoodSessionId(sessionId)
+  const initializeAnonymousSessionId = async () => {
+    let sessionId = localStorage.getItem("ab_military-mood-session")
+    if (!sessionId || !sessionId.startsWith("anon_")) {
+      sessionId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
+      localStorage.setItem("ab_military-mood-session", sessionId)
     }
+    setMoodSessionId(sessionId)
   }
+
+  const { data: hasCheckedMoodToday, isFetched: isMoodStatusFetched } =
+    useQuery({
+      queryKey: ["military-support", "mood-checkin-status"],
+      queryFn: () => moodCheckInApi.hasSubmittedToday(moodSessionId),
+      enabled: moodSessionId.length > 0,
+    })
 
   const {
     data: disclaimer,
@@ -132,31 +106,30 @@ export default function MilitarySupportPageClient() {
   })
 
   useEffect(() => {
-    // NEW: Initialize mood check-in system
-    initializeMoodCheckIn()
+    initializeAnonymousSessionId()
   }, [])
 
-  // NEW: Handle mood check-in submission
-  const handleMoodSubmit = async (mood: number, note?: string) => {
-    try {
-      const result = await moodCheckInApi.submitMoodCheckIn(
-        mood,
-        note,
-        moodSessionId,
-      )
-      if (result.success) {
-        setHasCheckedMoodToday(true)
-        console.log("✅ Mood check-in submitted successfully")
-
-        // Force refresh the community mood widget by updating its key
-        setMoodSubmissionTime(Date.now())
-      } else {
-        console.error("Failed to submit mood check-in:", result.message)
-      }
-    } catch (error) {
-      console.error("Error submitting mood check-in:", error)
+  useEffect(() => {
+    let timer: NodeJS.Timeout
+    if (isMoodStatusFetched && !hasCheckedMoodToday) {
+      timer = setTimeout(() => {
+        setShowMoodModal(true)
+      }, 2000)
     }
-  }
+
+    return () => clearTimeout(timer)
+  }, [isMoodStatusFetched, hasCheckedMoodToday])
+
+  const { mutate: handleMoodSubmit, isPending } = useMutation({
+    mutationFn: ({ mood, note }: { mood: number; note?: string }) =>
+      moodCheckInApi.submitMoodCheckIn(mood, note, moodSessionId),
+    onSuccess: () => {
+      toast.success("Mood check-in submitted successfully")
+      setShowMoodModal(false)
+      // Force refresh the community mood widget by updating its key
+      setMoodSubmissionTime(Date.now())
+    },
+  })
 
   const loading = isLoadingDisclaimer || isLoadingResources
   const error = errorDisclaimer || errorResources
@@ -220,7 +193,15 @@ export default function MilitarySupportPageClient() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-xl font-bold">{resource.phone}</p>
+                    <p className="text-xl font-bold">
+                      <a
+                        href={resource.phone.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {resource.phone.text}
+                      </a>
+                    </p>
                   </CardContent>
                   <CardFooter>
                     {resource.text && (
@@ -414,7 +395,7 @@ export default function MilitarySupportPageClient() {
             </div>
           </CardContent>
 
-          <CardFooter>
+          <CardFooter className="block">
             <p
               className={`
                 mx-auto max-w-prose text-center text-xs text-pretty
@@ -424,30 +405,25 @@ export default function MilitarySupportPageClient() {
               By joining, you acknowledge this is peer support, not professional
               counseling. For crisis situations, please use the hotlines above.
             </p>
-          </CardFooter>
 
-          {/* NEW: Manual Mood Check-in Button */}
-          {hasCheckedMoodToday && (
-            <div className="mt-4 border-t border-emerald-200 pt-4 text-center">
-              <Button
-                onClick={() => setShowMoodModal(true)}
-                className={`
-                  text-sm text-emerald-600 underline
-                  hover:text-emerald-700
-                `}
-              >
-                Update my daily mood check-in
-              </Button>
-            </div>
-          )}
+            {/* Manual Mood Check-in Button */}
+            {isMoodStatusFetched && !hasCheckedMoodToday && (
+              <div className="mt-4 border-t pt-4 text-center">
+                <Button onClick={() => setShowMoodModal(true)}>
+                  Daily Mood Check-In
+                </Button>
+              </div>
+            )}
+          </CardFooter>
         </Card>
       </section>
 
       {/* NEW: Mood Check-In Modal */}
-      <MoodCheckInModal
+      <MoodCheckInDialog
         isOpen={showMoodModal}
-        onClose={() => setShowMoodModal(false)}
-        onSubmit={handleMoodSubmit}
+        onOpenChange={(open) => setShowMoodModal(open)}
+        onSubmit={(mood, note) => handleMoodSubmit({ mood, note })}
+        isSubmitting={isPending}
         sessionId={moodSessionId}
       />
     </div>

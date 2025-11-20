@@ -772,11 +772,40 @@ export type AnonymousMoodCheckInMethods = {}
 
 export type AnonymousMoodCheckInStatics = {
   getTodaysMoodDistribution: (
+    this: AnonymousMoodCheckInModel
+  ) => Promise<{
+    date: string
+    averageMood: number
+    totalCheckIns: any
+    moodDistribution: {
+      mood1: any
+      mood2: any
+      mood3: any
+      mood4: any
+      mood5: any
+    }
+  }>
+  getMoodTrends: (
     this: AnonymousMoodCheckInModel,
-    ...args: any[]
-  ) => any
-  getMoodTrends: (this: AnonymousMoodCheckInModel, ...args: any[]) => any
-  hasSubmittedToday: (this: AnonymousMoodCheckInModel, ...args: any[]) => any
+    days?: any
+  ) => Promise<
+    {
+      date: string
+      averageMood: number
+      totalCheckIns: any
+      moodDistribution: {
+        mood1: any
+        mood2: any
+        mood3: any
+        mood4: any
+        mood5: any
+      }
+    }[]
+  >
+  hasSubmittedToday: (
+    this: AnonymousMoodCheckInModel,
+    sessionId: string
+  ) => Promise<boolean>
 }
 
 /**
@@ -5078,13 +5107,16 @@ export type ExternalSupportResourceQuery = mongoose.Query<
 export type ExternalSupportResourceQueries = {}
 
 export type ExternalSupportResourceMethods = {
-  deactivate: (this: ExternalSupportResourceDocument, ...args: any[]) => any
-  activate: (this: ExternalSupportResourceDocument, ...args: any[]) => any
+  deactivate: (this: ExternalSupportResourceDocument) => Promise<any>
+  activate: (this: ExternalSupportResourceDocument) => Promise<any>
 }
 
 export type ExternalSupportResourceStatics = {
-  findByCategory: (this: ExternalSupportResourceModel, ...args: any[]) => any
-  searchByTitle: (this: ExternalSupportResourceModel, ...args: any[]) => any
+  findByCategory: (
+    this: ExternalSupportResourceModel,
+    category: ResourceCategory
+  ) => any
+  searchByTitle: (this: ExternalSupportResourceModel, text: string) => any
 }
 
 /**

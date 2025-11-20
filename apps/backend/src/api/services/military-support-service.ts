@@ -1,15 +1,11 @@
-// src/api/services/MilitarySupportService.ts - FIXED: Corrected import path
-
+import type { ExternalSupportResource as IExternalSupportResource } from "../../types/mongoose.gen"
 import type { IMilitaryMessage } from "../models/MilitaryMessage"
-import type {
-  IExternalSupportResource,
-  ResourceCategory,
-} from "../models/MilitaryResource"
+import type { ResourceCategory } from "../models/MilitaryResource"
 import type { IMilitarySupportChatroom } from "../models/MilitarySupportChatroom"
 
 import { createError } from "../middleware/errorHandler"
 import MilitaryMessage from "../models/MilitaryMessage"
-import { ExternalSupportResource } from "../models/MilitaryResource" // FIXED: Changed from MilitaryResource
+import { ExternalSupportResource } from "../models/MilitaryResource"
 import MilitarySupportChatroom from "../models/MilitarySupportChatroom"
 import LoggingService from "./LoggingService"
 
@@ -20,22 +16,21 @@ const DISCLAIMER_TEXT = `
 `.trim()
 
 class MilitarySupportService {
-  // —— Resource methods —— //
-
   /** List all active resources, most recent first. */
-  static async listResources(): Promise<IExternalSupportResource[]> {
-    const resources = await ExternalSupportResource.find({ isActive: true }) // ADDED: Only active resources
+  static async listResources() {
+    const resources = await ExternalSupportResource.find({ isActive: true })
       .sort({ createdAt: -1 })
       .exec()
+
     if (resources.length === 0) {
-      throw createError("No military resources found", 404)
+      throw createError("No military support resources found", 404)
     }
-    void LoggingService.logInfo(`Fetched ${resources.length} resources`)
+
     return resources
   }
 
   /** Get disclaimer text. */
-  static getDisclaimer(): string {
+  static getDisclaimer() {
     return DISCLAIMER_TEXT
   }
 

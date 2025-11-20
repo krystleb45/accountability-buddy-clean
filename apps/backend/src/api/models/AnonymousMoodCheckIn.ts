@@ -1,18 +1,11 @@
-// src/api/models/AnonymousMoodCheckIn.ts
+import type {
+  AnonymousMoodCheckInDocument,
+  AnonymousMoodCheckInModel,
+  AnonymousMoodCheckInSchema as IAnonymousMoodCheckInSchema,
+} from "src/types/mongoose.gen"
 
-import type { Document, Model } from "mongoose"
-
+import { endOfToday, startOfToday, sub } from "date-fns"
 import mongoose, { Schema } from "mongoose"
-
-export interface IAnonymousMoodCheckIn extends Document {
-  sessionId: string
-  mood: number // 1-5 scale
-  note?: string
-  ipAddress?: string
-  userAgent?: string
-  createdAt: Date
-  updatedAt: Date
-}
 
 // Interface for aggregated mood data
 export interface IAggregatedMoodData {
@@ -28,15 +21,7 @@ export interface IAggregatedMoodData {
   }
 }
 
-// Interface for the model with static methods
-export interface IAnonymousMoodCheckInModel
-  extends Model<IAnonymousMoodCheckIn> {
-  getTodaysMoodDistribution: () => Promise<IAggregatedMoodData>
-  getMoodTrends: (days: number) => Promise<IAggregatedMoodData[]>
-  hasSubmittedToday: (sessionId: string) => Promise<boolean>
-}
-
-const AnonymousMoodCheckInSchema = new Schema<IAnonymousMoodCheckIn>(
+const AnonymousMoodCheckInSchema: IAnonymousMoodCheckInSchema = new Schema(
   {
     sessionId: {
       type: String,
@@ -78,7 +63,6 @@ const AnonymousMoodCheckInSchema = new Schema<IAnonymousMoodCheckIn>(
   },
   {
     timestamps: true,
-    collection: "anonymous_mood_checkins",
   },
 )
 
@@ -87,29 +71,12 @@ AnonymousMoodCheckInSchema.index({ sessionId: 1, createdAt: -1 })
 AnonymousMoodCheckInSchema.index({ createdAt: -1 })
 AnonymousMoodCheckInSchema.index({ mood: 1 })
 
-// Compound index for daily check validation
-AnonymousMoodCheckInSchema.index(
-  {
-    sessionId: 1,
-    createdAt: -1,
-  },
-  {
-    partialFilterExpression: {
-      createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-    },
-  },
-)
-
 // Static method to get today's mood distribution
-AnonymousMoodCheckInSchema.statics.getTodaysMoodDistribution =
-  async function (): Promise<IAggregatedMoodData> {
+AnonymousMoodCheckInSchema.statics = {
+  async getTodaysMoodDistribution() {
     const today = new Date()
-    const startOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-    )
-    const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
+    const startOfDay = startOfToday()
+    const endOfDay = endOfToday()
 
     const pipeline = [
       {
@@ -132,7 +99,7 @@ AnonymousMoodCheckInSchema.statics.getTodaysMoodDistribution =
           mood5: { $sum: { $cond: [{ $eq: ["$mood", 5] }, 1, 0] } },
         },
       },
-    ] as any[]
+    ]
 
     const result = await this.aggregate(pipeline)
 
@@ -164,90 +131,81 @@ AnonymousMoodCheckInSchema.statics.getTodaysMoodDistribution =
         mood5: data.mood5,
       },
     }
-  }
+  },
+  // Static method to get mood trends over time
+  async getMoodTrends(days = 7) {
+    const endDate = new Date()
+    const startDate = sub(endDate, { days })
 
-// Static method to get mood trends over time
-AnonymousMoodCheckInSchema.statics.getMoodTrends = async function (
-  days: number = 7,
-): Promise<IAggregatedMoodData[]> {
-  const endDate = new Date()
-  const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000)
-
-  const pipeline = [
-    {
-      $match: {
-        createdAt: {
-          $gte: startDate,
-          $lte: endDate,
+    const pipeline = [
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
         },
       },
-    },
-    {
-      $group: {
-        _id: {
-          year: { $year: "$createdAt" },
-          month: { $month: "$createdAt" },
-          day: { $dayOfMonth: "$createdAt" },
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+            day: { $dayOfMonth: "$createdAt" },
+          },
+          averageMood: { $avg: "$mood" },
+          totalCheckIns: { $sum: 1 },
+          mood1: { $sum: { $cond: [{ $eq: ["$mood", 1] }, 1, 0] } },
+          mood2: { $sum: { $cond: [{ $eq: ["$mood", 2] }, 1, 0] } },
+          mood3: { $sum: { $cond: [{ $eq: ["$mood", 3] }, 1, 0] } },
+          mood4: { $sum: { $cond: [{ $eq: ["$mood", 4] }, 1, 0] } },
+          mood5: { $sum: { $cond: [{ $eq: ["$mood", 5] }, 1, 0] } },
         },
-        averageMood: { $avg: "$mood" },
-        totalCheckIns: { $sum: 1 },
-        mood1: { $sum: { $cond: [{ $eq: ["$mood", 1] }, 1, 0] } },
-        mood2: { $sum: { $cond: [{ $eq: ["$mood", 2] }, 1, 0] } },
-        mood3: { $sum: { $cond: [{ $eq: ["$mood", 3] }, 1, 0] } },
-        mood4: { $sum: { $cond: [{ $eq: ["$mood", 4] }, 1, 0] } },
-        mood5: { $sum: { $cond: [{ $eq: ["$mood", 5] }, 1, 0] } },
       },
-    },
-    {
-      $sort: {
-        "_id.year": 1 as const,
-        "_id.month": 1 as const,
-        "_id.day": 1 as const,
+      {
+        $sort: {
+          "_id.year": 1 as const,
+          "_id.month": 1 as const,
+          "_id.day": 1 as const,
+        },
       },
-    },
-  ] as any[]
+    ]
 
-  const results = await this.aggregate(pipeline)
+    const results = await this.aggregate(pipeline)
 
-  return results.map((item: any) => ({
-    date: `${item._id.year}-${String(item._id.month).padStart(2, "0")}-${String(item._id.day).padStart(2, "0")}`,
-    averageMood: Math.round(item.averageMood * 10) / 10,
-    totalCheckIns: item.totalCheckIns,
-    moodDistribution: {
-      mood1: item.mood1,
-      mood2: item.mood2,
-      mood3: item.mood3,
-      mood4: item.mood4,
-      mood5: item.mood5,
-    },
-  }))
-}
+    return results.map((item: any) => ({
+      date: `${item._id.year}-${String(item._id.month).padStart(2, "0")}-${String(item._id.day).padStart(2, "0")}`,
+      averageMood: Math.round(item.averageMood * 10) / 10, // Round to 1 decimal
+      totalCheckIns: item.totalCheckIns,
+      moodDistribution: {
+        mood1: item.mood1,
+        mood2: item.mood2,
+        mood3: item.mood3,
+        mood4: item.mood4,
+        mood5: item.mood5,
+      },
+    }))
+  },
 
-// Static method to check if session has submitted today
-AnonymousMoodCheckInSchema.statics.hasSubmittedToday = async function (
-  sessionId: string,
-): Promise<boolean> {
-  const today = new Date()
-  const startOfDay = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  )
-  const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000)
+  // Static method to check if session has submitted today
+  async hasSubmittedToday(sessionId: string) {
+    const startOfDay = startOfToday()
+    const endOfDay = endOfToday()
 
-  const count = await this.countDocuments({
-    sessionId,
-    createdAt: {
-      $gte: startOfDay,
-      $lt: endOfDay,
-    },
-  })
+    const count = await this.countDocuments({
+      sessionId,
+      createdAt: {
+        $gte: startOfDay,
+        $lt: endOfDay,
+      },
+    })
 
-  return count > 0
+    return count > 0
+  },
 }
 
 // Pre-save middleware to clean up data
-AnonymousMoodCheckInSchema.pre("save", function (next): void {
+AnonymousMoodCheckInSchema.pre("save", function (next) {
   // Clean up note field
   if (this.note) {
     this.note = this.note.trim()
@@ -260,9 +218,7 @@ AnonymousMoodCheckInSchema.pre("save", function (next): void {
 })
 
 // Export the model
-const AnonymousMoodCheckIn: IAnonymousMoodCheckInModel = mongoose.model<
-  IAnonymousMoodCheckIn,
-  IAnonymousMoodCheckInModel
+export const AnonymousMoodCheckIn: AnonymousMoodCheckInModel = mongoose.model<
+  AnonymousMoodCheckInDocument,
+  AnonymousMoodCheckInModel
 >("AnonymousMoodCheckIn", AnonymousMoodCheckInSchema)
-
-export default AnonymousMoodCheckIn

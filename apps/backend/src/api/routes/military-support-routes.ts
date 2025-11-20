@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express"
 import { Router } from "express"
 import { check } from "express-validator"
 
-import * as militarySupportController from "../controllers/militarySupportController"
+import * as militarySupportController from "../controllers/military-support-controller"
 import { militaryAuth, protect } from "../middleware/auth-middleware"
 import handleValidationErrors from "../middleware/handleValidationErrors"
 import catchAsync from "../utils/catchAsync"

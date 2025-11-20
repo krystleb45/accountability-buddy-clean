@@ -1,10 +1,10 @@
-// src/api/middleware/anonymousAuth.ts
-
 import type { NextFunction, Request, Response } from "express"
+
+import { CustomError } from "./errorHandler"
 
 interface AnonymousUser {
   sessionId: string
-  displayName: string
+  displayName?: string
   room: string
   joinedAt: Date
 }
@@ -21,21 +21,15 @@ export function anonymousAuth(
   const sessionId = req.headers["x-anonymous-session"] as string
   const displayName = req.headers["x-anonymous-name"] as string
 
-  if (!sessionId || !displayName) {
-    res.status(400).json({
-      success: false,
-      error: "Anonymous session ID and display name required",
-    })
-    return // Add explicit return
+  if (!sessionId) {
+    next(new CustomError("Anonymous session ID is required", 400))
+    return
   }
 
   // Validate session format
   if (!sessionId.startsWith("anon_") || sessionId.length < 20) {
-    res.status(400).json({
-      success: false,
-      error: "Invalid session ID format",
-    })
-    return // Add explicit return
+    next(new CustomError("Invalid anonymous session ID format", 400))
+    return
   }
 
   req.anonymousUser = {
@@ -46,5 +40,4 @@ export function anonymousAuth(
   }
 
   next()
-  // Add explicit return (optional but good practice)
 }

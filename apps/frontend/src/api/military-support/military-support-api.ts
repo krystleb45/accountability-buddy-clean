@@ -1,11 +1,12 @@
-// FIXED: src/military-support/militarySupportApi.ts
-
 import axios from "axios"
 
 import type { Envelope } from "@/types"
 
+import {
+  DEFAULT_DISCLAIMER,
+  DEFAULT_MILITARY_RESOURCES,
+} from "@/data/default-military-resources"
 import { http } from "@/lib/http"
-import { getApiErrorMessage } from "@/utils"
 
 export interface SupportResource {
   _id: string
@@ -83,8 +84,9 @@ export async function fetchResources(): Promise<SupportResource[]> {
     )
 
     return resp.data.data.resources
+    // eslint-disable-next-line unused-imports/no-unused-vars
   } catch (err) {
-    throw new Error(getApiErrorMessage(err as Error))
+    return DEFAULT_MILITARY_RESOURCES
   }
 }
 
@@ -96,8 +98,9 @@ export async function fetchDisclaimer() {
       `/military-support/disclaimer`,
     )
     return resp.data.data.disclaimer
+    // eslint-disable-next-line unused-imports/no-unused-vars
   } catch (err) {
-    throw new Error(getApiErrorMessage(err as Error))
+    return DEFAULT_DISCLAIMER
   }
 }
 

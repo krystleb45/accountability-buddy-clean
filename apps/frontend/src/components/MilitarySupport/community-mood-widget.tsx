@@ -1,16 +1,12 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import { Heart, RefreshCw, TrendingUp, Users } from "lucide-react"
-import React, { useEffect, useState } from "react"
 
-import type {
-  CommunityMoodData,
-  MoodTrend,
-} from "@/api/military-support/moodCheckInApi"
-
-import { moodCheckInApi } from "@/api/military-support/moodCheckInApi"
+import * as moodCheckInApi from "@/api/military-support/mood-check-in-api"
 import { cn } from "@/lib/utils"
 
+import { LoadingSpinner } from "../loading-spinner"
 import { Button } from "../ui/button"
 import {
   Card,
@@ -43,18 +39,34 @@ function getMostCommonMoodEmoji(moodDistribution: {
     moodDistribution.mood5,
   )
 
-  if (maxCount === moodDistribution.mood5) return "😄"
-  if (maxCount === moodDistribution.mood4) return "😊"
-  if (maxCount === moodDistribution.mood3) return "😐"
-  if (maxCount === moodDistribution.mood2) return "😕"
+  if (maxCount === moodDistribution.mood5) {
+    return "😄"
+  }
+  if (maxCount === moodDistribution.mood4) {
+    return "😊"
+  }
+  if (maxCount === moodDistribution.mood3) {
+    return "😐"
+  }
+  if (maxCount === moodDistribution.mood2) {
+    return "😕"
+  }
   return "😞"
 }
 
 function getMoodEmoji(averageMood: number): string {
-  if (averageMood >= 4.5) return "😄"
-  if (averageMood >= 3.5) return "😊"
-  if (averageMood >= 2.5) return "😐"
-  if (averageMood >= 1.5) return "😕"
+  if (averageMood >= 4.5) {
+    return "😄"
+  }
+  if (averageMood >= 3.5) {
+    return "😊"
+  }
+  if (averageMood >= 2.5) {
+    return "😐"
+  }
+  if (averageMood >= 1.5) {
+    return "😕"
+  }
   return "😞"
 }
 
@@ -76,104 +88,103 @@ function getMoodColor(averageMood: number): string {
 
 function getBackgroundColor(averageMood: number): string {
   if (averageMood >= 4.5) {
-    return "bg-primary/10 border-primary"
+    return "bg-primary/10"
   }
   if (averageMood >= 3.5) {
-    return "bg-accent/10 border-accent"
+    return "bg-accent/10"
   }
   if (averageMood >= 2.5) {
-    return "bg-chart-3/10 border-chart-3"
+    return "bg-chart-3/10"
   }
   if (averageMood >= 1.5) {
-    return "bg-orange-25 border-orange-200"
+    return "bg-orange-500/10"
   }
-  return "bg-destructive/10 border-destructive"
+  return "bg-destructive/10"
 }
-export default function CommunityMoodWidget({ className = "" }: Props) {
-  const [moodData, setMoodData] = useState<CommunityMoodData | null>(null)
-  const [trends, setTrends] = useState<MoodTrend[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [lastRefresh, setLastRefresh] = useState<Date>(() => new Date())
 
-  const loadMoodData = async () => {
-    try {
-      setError(null)
+function getBorderColor(averageMood: number): string {
+  if (averageMood >= 4.5) {
+    return "border-primary"
+  }
+  if (averageMood >= 3.5) {
+    return "border-accent"
+  }
+  if (averageMood >= 2.5) {
+    return "border-chart-3"
+  }
+  if (averageMood >= 1.5) {
+    return "border-orange-500"
+  }
+  return "border-destructive"
+}
 
-      const [communityData, trendsData] = await Promise.all([
-        moodCheckInApi.getCommunityMoodData(),
-        moodCheckInApi.getMoodTrends(7),
-      ])
+export function CommunityMoodWidget({ className = "" }: Props) {
+  const {
+    data: moodData,
+    isPending: isMoodDataPending,
+    error: moodDataError,
+    isFetching: isMoodDataFetching,
+    refetch: refetchMoodData,
+    dataUpdatedAt: moodDataLastUpdated,
+  } = useQuery({
+    queryKey: ["military-support", "community-mood"],
+    queryFn: moodCheckInApi.getCommunityMoodData,
+    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
+  })
 
-      setMoodData(communityData)
-      setTrends(trendsData)
-      setLastRefresh(new Date())
-    } catch (err) {
-      console.error("Failed to load mood data:", err)
-      setError("Unable to load community mood data")
-    } finally {
-      setLoading(false)
-    }
+  const {
+    data: trends,
+    isPending: isTrendsPending,
+    isFetching: isTrendsFetching,
+    refetch: refetchTrends,
+    dataUpdatedAt: trendsLastUpdated,
+  } = useQuery({
+    queryKey: ["military-support", "mood-trends"],
+    queryFn: () => moodCheckInApi.getMoodTrends(7),
+    refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
+  })
+
+  const loadMoodData = () => {
+    refetchMoodData()
+    refetchTrends()
   }
 
-  useEffect(() => {
-    loadMoodData()
+  const lastRefresh = new Date(
+    Math.max(moodDataLastUpdated || 0, trendsLastUpdated || 0),
+  )
 
-    // Refresh data every 5 minutes
-    const interval = setInterval(loadMoodData, 5 * 60 * 1000)
-    return () => clearInterval(interval)
-  }, [])
+  const loading = isMoodDataPending || isTrendsPending
+  const fetching = isMoodDataFetching || isTrendsFetching
 
   if (loading) {
     return (
-      <div
-        className={`
-          rounded-lg border-2 border-gray-200 bg-white p-6
-          ${className}
-        `}
-      >
-        <div className="animate-pulse">
-          <div className="mb-4 flex items-center space-x-3">
-            <div className="size-6 rounded bg-gray-300"></div>
-            <div className="h-5 w-32 rounded bg-gray-300"></div>
-          </div>
-          <div className="mb-2 h-12 w-24 rounded bg-gray-300"></div>
-          <div className="h-4 w-full rounded bg-gray-300"></div>
-        </div>
-      </div>
+      <Card className={className}>
+        <CardContent className="grid flex-1 place-items-center">
+          <LoadingSpinner />
+        </CardContent>
+      </Card>
     )
   }
 
-  if (error || !moodData) {
+  if (moodDataError || !moodData) {
     return (
-      <div
-        className={`
-          rounded-lg border-2 border-gray-200 bg-gray-50 p-6
-          ${className}
-        `}
-      >
-        <div className="text-center">
-          <p className="mb-3 text-gray-500">
-            {error || "No mood data available"}
+      <Card className={cn("justify-center", className)}>
+        <CardContent className="text-center">
+          <p className="mb-3 text-muted-foreground">
+            {moodDataError.message || "No mood data available"}
           </p>
-          <Button
-            onClick={loadMoodData}
-            className={`
-              mx-auto flex items-center space-x-1 text-sm text-blue-600
-              hover:text-blue-700
-            `}
-          >
-            <RefreshCw className="size-4" />
+          <Button onClick={loadMoodData}>
+            <RefreshCw />
             <span>Try Again</span>
           </Button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     )
   }
 
   const averageMood = moodData.averageMood
   const recentTrend =
-    trends.length >= 2
+    trends && trends.length >= 2
       ? (trends[trends.length - 1]?.averageMood || 0) -
         (trends[trends.length - 2]?.averageMood || 0)
       : 0
@@ -182,6 +193,7 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
     <Card
       className={`
         ${getBackgroundColor(averageMood)}
+        ${getBorderColor(averageMood)}
         ${className}
       `}
     >
@@ -198,8 +210,13 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
             variant="outline"
             title="Refresh data"
             size="sm"
+            disabled={fetching}
           >
-            <RefreshCw className="size-4" />
+            <RefreshCw
+              className={cn({
+                "animate-spin": fetching,
+              })}
+            />
           </Button>
         </CardAction>
       </CardHeader>
@@ -271,17 +288,19 @@ export default function CommunityMoodWidget({ className = "" }: Props) {
         {/* Mood Distribution Bar */}
         {moodData.totalCheckIns > 0 && (
           <div className="mb-4">
-            <div className="mb-2 text-xs text-gray-600">Mood distribution</div>
-            <div className="flex h-2 overflow-hidden rounded-full bg-gray-200">
+            <div className="mb-2 text-xs text-muted-foreground">
+              Mood distribution
+            </div>
+            <div className="flex h-2 overflow-hidden rounded-full bg-muted">
               {Object.entries(moodData.moodDistribution).map(
                 ([moodKey, count], index) => {
                   const percentage = (count / moodData.totalCheckIns) * 100
                   const colors = [
-                    "bg-red-400",
-                    "bg-orange-400",
-                    "bg-yellow-400",
-                    "bg-green-400",
-                    "bg-emerald-400",
+                    "bg-destructive",
+                    "bg-orange-500",
+                    "bg-chart-3",
+                    "bg-accent",
+                    "bg-primary",
                   ]
 
                   return percentage > 0 ? (

@@ -1,10 +1,10 @@
-import mongoose, { Schema } from "mongoose"
-
 import type {
   ExternalSupportResourceDocument,
   ExternalSupportResourceModel,
   ExternalSupportResourceSchema as IExternalSupportResourceSchema,
-} from "../../types/mongoose.gen"
+} from "src/types/mongoose.gen"
+
+import mongoose, { Schema } from "mongoose"
 
 // --- Category Union ---
 export type ResourceCategory =

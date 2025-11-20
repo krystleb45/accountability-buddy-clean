@@ -1,6 +1,5 @@
-// src/api/controllers/MilitarySupportController.ts
 import { createError } from "../middleware/errorHandler"
-import MilitarySupportService from "../services/MilitarySupportService"
+import MilitarySupportService from "../services/military-support-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
