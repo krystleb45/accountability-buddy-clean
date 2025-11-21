@@ -5,7 +5,7 @@ import type {
   UpdateTicketDTO,
 } from "../services/SupportTicketService"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import SupportTicketService from "../services/SupportTicketService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"

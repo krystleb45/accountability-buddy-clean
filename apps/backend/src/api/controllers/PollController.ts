@@ -4,7 +4,7 @@ import { Types } from "mongoose"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import Poll from "../models/Poll" // only used for listByGroup
 import PollService from "../services/PollService" // ← default import
 import catchAsync from "../utils/catchAsync"

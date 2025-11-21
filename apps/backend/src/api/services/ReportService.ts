@@ -2,7 +2,7 @@
 
 import type { IReport } from "../models/Report"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import Report from "../models/Report"
 

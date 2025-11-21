@@ -4,7 +4,7 @@ import type { NextFunction, Request, Response, Router } from "express"
 import express from "express"
 import rateLimit from "express-rate-limit"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { validateReminder } from "../../validators/reminderValidation"
 import {
   createCustomReminder,

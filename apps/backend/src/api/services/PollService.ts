@@ -2,7 +2,7 @@ import { Types } from "mongoose"
 
 import type { IPoll } from "../models/Poll"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import Group from "../models/Group"
 import Poll from "../models/Poll"

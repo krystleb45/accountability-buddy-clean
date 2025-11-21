@@ -1,7 +1,7 @@
 // src/api/services/integrationService.ts
 import type { IIntegration, IntegrationSettings } from "../models/Integration"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import Integration from "../models/Integration"
 

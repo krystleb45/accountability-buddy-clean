@@ -3,7 +3,7 @@ import type { ZodObject } from "zod"
 
 import { ZodError } from "zod"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "./errorHandler"
 
 interface Schema {

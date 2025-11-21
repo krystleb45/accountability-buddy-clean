@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 // ✅ Extend Express Request to Include `lang`
 interface RequestWithLang extends Request {

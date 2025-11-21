@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/node"
 
-import { logger } from "../../utils/winstonLogger" // Assuming you have a logger utility
+import { logger } from "../../utils/winston-logger" // Assuming you have a logger utility
 
 // Initialize Sentry
 Sentry.init({ dsn: process.env.SENTRY_DSN || "your-sentry-dsn-here" })

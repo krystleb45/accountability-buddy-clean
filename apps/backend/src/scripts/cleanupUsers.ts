@@ -5,7 +5,7 @@ import mongoose from "mongoose"
 
 import { User } from "../api/models/User"
 import { loadEnvironment } from "../utils/loadEnv"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 // Load .env and any additional env logic
 loadEnvironment()

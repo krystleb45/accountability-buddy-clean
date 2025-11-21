@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express"
 
 import { decryptMessage, encryptMessage } from "../../utils/encryption" // Import encryption utilities
-import { logger } from "../../utils/winstonLogger" // Logger for monitoring and debugging
+import { logger } from "../../utils/winston-logger" // Logger for monitoring and debugging
 
 // A static encryption key for this example (replace with a secure solution in production)
 const encryptionKey = Buffer.from(

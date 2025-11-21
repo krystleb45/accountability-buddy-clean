@@ -1,10 +1,8 @@
 import type { ExternalSupportResource as IExternalSupportResource } from "../../types/mongoose.gen"
-import type { IMilitaryMessage } from "../models/MilitaryMessage"
 import type { ResourceCategory } from "../models/MilitaryResource"
 import type { IMilitarySupportChatroom } from "../models/MilitarySupportChatroom"
 
 import { createError } from "../middleware/errorHandler"
-import MilitaryMessage from "../models/MilitaryMessage"
 import { ExternalSupportResource } from "../models/MilitaryResource"
 import MilitarySupportChatroom from "../models/MilitarySupportChatroom"
 import LoggingService from "./LoggingService"
@@ -119,63 +117,63 @@ class MilitarySupportService {
    * Send a message into a chatroom.
    * Returns the saved message.
    */
-  static async sendMessage(
-    chatroomId: string,
-    userId: string,
-    text: string,
-  ): Promise<IMilitaryMessage> {
-    // ensure room exists and is active
-    const room = await MilitarySupportChatroom.findOne({
-      _id: chatroomId,
-      isActive: true,
-    })
-    if (!room) throw createError("Chatroom not found or inactive", 404)
+  // static async sendMessage(
+  //   chatroomId: string,
+  //   userId: string,
+  //   text: string,
+  // ): Promise<IMilitaryMessage> {
+  //   // ensure room exists and is active
+  //   const room = await MilitarySupportChatroom.findOne({
+  //     _id: chatroomId,
+  //     isActive: true,
+  //   })
+  //   if (!room) throw createError("Chatroom not found or inactive", 404)
 
-    // Check if user is a member of the room
-    if (!room.members.includes(userId as any)) {
-      throw createError("User is not a member of this chatroom", 403)
-    }
+  //   // Check if user is a member of the room
+  //   if (!room.members.includes(userId as any)) {
+  //     throw createError("User is not a member of this chatroom", 403)
+  //   }
 
-    const msg = await MilitaryMessage.create({
-      chatroom: chatroomId,
-      user: userId,
-      text,
-      timestamp: new Date(),
-    })
-    void LoggingService.logInfo(
-      `Message ${msg._id} sent in room ${chatroomId} by ${userId}`,
-    )
-    return msg
-  }
+  //   const msg = await MilitaryMessage.create({
+  //     chatroom: chatroomId,
+  //     user: userId,
+  //     text,
+  //     timestamp: new Date(),
+  //   })
+  //   void LoggingService.logInfo(
+  //     `Message ${msg._id} sent in room ${chatroomId} by ${userId}`,
+  //   )
+  //   return msg
+  // }
 
   /**
    * Get messages for a chatroom.
    * Only for members of the room.
    */
-  static async getChatroomMessages(
-    chatroomId: string,
-    userId: string,
-    limit = 50,
-  ): Promise<IMilitaryMessage[]> {
-    // Verify user is member of room
-    const room = await MilitarySupportChatroom.findOne({
-      _id: chatroomId,
-      isActive: true,
-      members: userId,
-    })
-    if (!room) {
-      throw createError("Chatroom not found or access denied", 404)
-    }
+  // static async getChatroomMessages(
+  //   chatroomId: string,
+  //   userId: string,
+  //   limit = 50,
+  // ): Promise<IMilitaryMessage[]> {
+  //   // Verify user is member of room
+  //   const room = await MilitarySupportChatroom.findOne({
+  //     _id: chatroomId,
+  //     isActive: true,
+  //     members: userId,
+  //   })
+  //   if (!room) {
+  //     throw createError("Chatroom not found or access denied", 404)
+  //   }
 
-    const messages = await MilitaryMessage.getByChatroom(
-      chatroomId as any,
-      limit,
-    )
-    void LoggingService.logInfo(
-      `Fetched ${messages.length} messages for room ${chatroomId}`,
-    )
-    return messages
-  }
+  //   const messages = await MilitaryMessage.getByChatroom(
+  //     chatroomId as any,
+  //     limit,
+  //   )
+  //   void LoggingService.logInfo(
+  //     `Fetched ${messages.length} messages for room ${chatroomId}`,
+  //   )
+  //   return messages
+  // }
 
   /**
    * Join a chatroom.

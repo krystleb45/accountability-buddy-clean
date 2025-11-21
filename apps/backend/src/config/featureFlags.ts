@@ -1,7 +1,7 @@
 import fs from "node:fs"
 import path from "node:path"
 
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 /**
  * Feature flags allow for toggling features on/off dynamically.
  * This module supports environment-based and runtime overrides.

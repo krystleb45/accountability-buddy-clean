@@ -9,7 +9,7 @@ import type {
   CreateCheckoutSessionBody,
 } from "../routes/subscription"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import { GoalService } from "../services/goal-service"

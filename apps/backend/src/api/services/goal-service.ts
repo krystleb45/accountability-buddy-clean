@@ -5,7 +5,7 @@ import status from "http-status"
 import mongoose from "mongoose"
 import { uniqueWith } from "remeda"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { CustomError } from "../middleware/errorHandler"
 import { Goal } from "../models/Goal"
 import { User } from "../models/User"

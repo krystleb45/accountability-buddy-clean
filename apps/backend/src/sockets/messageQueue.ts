@@ -1,7 +1,7 @@
 // src/sockets/messageQueue.ts - UPDATED: Optional RabbitMQ with fallbacks
 import type { Channel, ChannelModel, ConsumeMessage } from "amqplib"
 
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 // Check if message queue is disabled
 const isMessageQueueDisabled =

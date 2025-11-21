@@ -3,7 +3,7 @@ import fs from "node:fs"
 import path from "node:path"
 import sanitizeFilename from "sanitize-filename"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 const UPLOAD_DIR = path.resolve(__dirname, "../uploads")
 

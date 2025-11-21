@@ -10,7 +10,7 @@ import { differenceInDays, isBefore } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
 import { hashPassword } from "../../utils/hashHelper"
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { FileUploadService } from "../services/file-upload-service"
 import { GeocodingService } from "../services/geocoding-service"
 import { Activity } from "./Activity"

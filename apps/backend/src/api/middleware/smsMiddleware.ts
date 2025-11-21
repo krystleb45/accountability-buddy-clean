@@ -3,7 +3,7 @@ import type { Twilio } from "twilio"
 
 import twilio from "twilio"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 // Twilio configuration
 const accountSid = process.env.TWILIO_ACCOUNT_SID || "your_account_sid"
 const authToken = process.env.TWILIO_AUTH_TOKEN || "your_auth_token"

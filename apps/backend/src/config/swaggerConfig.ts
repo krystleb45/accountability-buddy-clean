@@ -6,7 +6,7 @@ import path from "node:path"
 import swaggerJSDoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
 
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 const env = process.env.NODE_ENV || "development"
 

@@ -3,7 +3,7 @@ import type { RequestHandler } from "express"
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 import type { Activity } from "../../types/mongoose.gen"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import ActivityService from "../services/activity-service"
 
 export function logActivity(

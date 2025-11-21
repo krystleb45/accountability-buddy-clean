@@ -2,7 +2,7 @@ import type { RequestHandler } from "express"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 /**
  * Middleware for Role-Based Access Control (RBAC)

@@ -2,7 +2,7 @@ import type { Server, Socket } from "socket.io"
 
 import { User } from "../api/models/User"
 import redisClientDefault from "../config/redisClient"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 // Check if Redis is disabled
 const isRedisDisabled =

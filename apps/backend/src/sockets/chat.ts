@@ -4,7 +4,7 @@ import type { Server, Socket } from "socket.io"
 import Chat from "../api/models/Chat"
 import Group from "../api/models/Group" // ← fixed import
 import { User } from "../api/models/User"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 interface JoinRoomData {
   roomId: string

@@ -5,7 +5,7 @@ import status from "http-status"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { User } from "../models/User"
 import sendResponse from "../utils/sendResponse"
 import { createError } from "./errorHandler"

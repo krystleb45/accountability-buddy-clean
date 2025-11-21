@@ -4,7 +4,7 @@ import type { CallbackError, Document, Model, Types } from "mongoose"
 import mongoose, { Schema } from "mongoose"
 import validator from "validator"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 // --- Types & Interfaces ---
 export type EntityType = "User" | "Goal" | "Task" | "Subscription" | "Payment"

@@ -1,6 +1,6 @@
 import mailchimp from "@mailchimp/mailchimp_transactional"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 const mailchimpClient = mailchimp(process.env.MAILCHIMP_TRANSACTIONAL_API_KEY)
 

@@ -4,7 +4,7 @@ import { Types } from "mongoose"
 
 import type { BadgeCreateInput } from "../routes/badge"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { Badge } from "../models/Badge"
 import { BadgeType } from "../models/BadgeType"
 import { User } from "../models/User"

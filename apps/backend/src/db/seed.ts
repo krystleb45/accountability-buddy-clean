@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 
 import MilitaryResource from "../api/models/MilitaryResource" // Import your MilitaryResource model
 import MilitarySupportChatroom from "../api/models/MilitarySupportChatroom"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 // Load environment variables
 dotenv.config()

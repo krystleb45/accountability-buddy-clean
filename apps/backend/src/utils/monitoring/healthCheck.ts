@@ -2,7 +2,7 @@ import type { Request, Response } from "express"
 
 import { MongoClient } from "mongodb"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../winston-logger"
 
 // Database connection check (you can adjust this to match your actual DB configuration)
 async function checkDatabaseConnection(): Promise<boolean> {

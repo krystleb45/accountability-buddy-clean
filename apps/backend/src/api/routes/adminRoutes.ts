@@ -6,7 +6,7 @@ import { check, validationResult } from "express-validator"
 import type { AdminAuthenticatedRequest } from "../../types/AdminAuthenticatedRequest"
 
 import { PERMISSIONS } from "../../constants/roles"
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import {
   deleteUserAccount,
   getAllUsers,

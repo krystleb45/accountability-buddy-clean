@@ -3,7 +3,7 @@ import type { Server, Socket } from "socket.io"
 import { Types } from "mongoose"
 
 import Poll from "../api/models/Poll"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 // Function to handle WebSocket connections related to polls
 export function pollSocketHandler(io: Server, socket: Socket): void {

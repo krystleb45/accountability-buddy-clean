@@ -1,6 +1,6 @@
 import { format, parse } from "date-fns"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 export const DataProcessingService = {
   /**

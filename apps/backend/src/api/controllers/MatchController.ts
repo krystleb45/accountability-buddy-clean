@@ -1,7 +1,7 @@
 // src/api/controllers/MatchController.ts
 import type { Request, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import MatchService from "../services/MatchService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"

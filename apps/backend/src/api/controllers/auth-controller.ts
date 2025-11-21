@@ -6,7 +6,7 @@ import { addDays } from "date-fns"
 
 import type { RegisterBody } from "../routes/auth"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import { VerificationToken } from "../models/VerificationToken"

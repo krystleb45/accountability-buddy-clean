@@ -10,7 +10,7 @@ import morgan from "morgan"
 import path from "node:path"
 import xssClean from "xss-clean"
 
-import { logger } from "./utils/winstonLogger"
+import { logger } from "./utils/winston-logger"
 
 // ─── Public route imports ─────────────────────────────────────
 import anonymousMilitaryChatRoutes from "./api/routes/anonymous-military-chat-routes"

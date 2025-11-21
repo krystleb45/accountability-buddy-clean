@@ -5,7 +5,7 @@ import mongoose from "mongoose"
 
 import AuditLog from "../api/models/AuditLog"
 import { loadEnvironment } from "../utils/loadEnv"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 loadEnvironment()
 dotenv.config()

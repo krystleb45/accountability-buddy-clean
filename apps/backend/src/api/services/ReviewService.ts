@@ -4,7 +4,7 @@ import { Types } from "mongoose"
 
 import type { IReview } from "../models/Review"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import Review from "../models/Review"
 import { User } from "../models/User"

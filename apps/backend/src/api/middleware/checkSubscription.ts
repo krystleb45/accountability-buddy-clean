@@ -1,6 +1,6 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger" // ✅ Logging for better debugging
+import { logger } from "../../utils/winston-logger" // ✅ Logging for better debugging
 import { User } from "../models/User"
 
 /**

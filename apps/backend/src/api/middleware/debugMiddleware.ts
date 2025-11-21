@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express-serve-static-core"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 /**
  * Debug Middleware
  * Logs detailed information about incoming requests, outgoing responses, and execution time.

@@ -1,5 +1,5 @@
 // src/api/services/AnalyticsService.ts
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import Challenge from "../models/Challenge"
 import Goal from "../models/Goal"
 import { User } from "../models/User" // User model to track subscription data

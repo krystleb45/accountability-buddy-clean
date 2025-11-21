@@ -7,7 +7,7 @@ import type { INotification } from "../api/models/Notification"
 
 import Notification from "../api/models/Notification"
 import AuthService from "../api/services/AuthService" // for verifyToken
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 import chatSocket from "./chat" // Chat event handlers
 
 interface DecodedToken {

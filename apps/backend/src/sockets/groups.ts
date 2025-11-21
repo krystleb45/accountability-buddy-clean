@@ -8,7 +8,7 @@ import {
 } from "@ab/shared/socket-events"
 
 import { User } from "../api/models/User"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 function groupSocket(io: Server, socket: Socket): void {
   socket.on(JOIN_GROUP_ROOM, async (data: { roomId: string }) => {

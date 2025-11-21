@@ -1,4 +1,4 @@
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 // Create a single client variable that will be exported
 let rClient: any

@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express-serve-static-core"
 
 import { v4 as uuidv4 } from "uuid"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 // Extend the Express Request interface to include the custom property
 declare module "express-serve-static-core" {
   interface Request {

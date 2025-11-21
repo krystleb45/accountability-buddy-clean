@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express"
 
 import status from "http-status"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import Newsletter from "../models/Newsletter"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"

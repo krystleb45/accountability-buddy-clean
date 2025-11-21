@@ -1,4 +1,4 @@
-import { logger } from "./winstonLogger"
+import { logger } from "./winston-logger"
 
 const requiredEnvVars: string[] = [
   "MONGO_URI",

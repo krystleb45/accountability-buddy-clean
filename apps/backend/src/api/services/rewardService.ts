@@ -4,7 +4,7 @@ import { Types } from "mongoose"
 import type { IReward } from "../models/Reward"
 import type { IUser } from "../models/User"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import Redemption from "../models/Redemption"
 import { Reward } from "../models/Reward"

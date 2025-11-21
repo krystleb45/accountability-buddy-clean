@@ -2,7 +2,7 @@ import mongoose from "mongoose"
 
 import type { Streak as IStreak } from "../../types/mongoose.gen"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { Streak } from "../models/Streak"
 import GamificationService from "./gamification-service"
 

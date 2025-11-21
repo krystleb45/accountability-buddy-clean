@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 /**
  * @desc Custom Error Class to handle error responses in a structured way.

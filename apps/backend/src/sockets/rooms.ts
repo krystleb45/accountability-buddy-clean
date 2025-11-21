@@ -3,7 +3,7 @@ import type { Server, Socket } from "socket.io"
 import mongoose from "mongoose"
 
 import Room from "../api/models/Room" // Room model for database operations
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 interface RoomData {
   roomId?: string

@@ -2,7 +2,7 @@ import type { User as IUser } from "src/types/mongoose.gen"
 
 import Stripe from "stripe"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { User } from "../models/User"
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)

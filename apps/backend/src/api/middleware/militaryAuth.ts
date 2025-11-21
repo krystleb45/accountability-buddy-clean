@@ -2,7 +2,7 @@ import type { NextFunction, Response } from "express"
 
 import type { IMilitaryUser, MilitaryRequest } from "../../types/CustomRequest" // Import the required types
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import MilitaryUser from "../models/MilitarySupport"
 
 /**

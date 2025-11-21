@@ -3,7 +3,7 @@ import type mongoose from "mongoose"
 import Badge from "../api/models/Badge"
 import Goal from "../api/models/Goal"
 import Leaderboard from "../api/models/Leaderboard"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "./winston-logger"
 
 // Utility function to update leaderboard in bulk
 export async function updateLeaderboardInBulk(

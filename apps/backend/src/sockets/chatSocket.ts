@@ -1,6 +1,6 @@
 import type { Server, Socket } from "socket.io"
 
-import { logger } from "../utils/winstonLogger" // Assuming you have logging utility
+import { logger } from "../utils/winston-logger" // Assuming you have logging utility
 
 // Function to handle WebSocket connections
 export function chatSocketHandler(io: Server, socket: Socket): void {

@@ -14,7 +14,7 @@ import type {
 } from "../../types/mongoose.gen"
 import type { UpdateGroupBody } from "../routes/groups"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { CustomError } from "../middleware/errorHandler"
 import { Group } from "../models/Group"
 import { GroupInvitation } from "../models/GroupInvitation"

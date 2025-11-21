@@ -1,7 +1,7 @@
 // src/api/services/RoleService.ts
 import type { IRole } from "../models/Role"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import Role from "../models/Role"
 

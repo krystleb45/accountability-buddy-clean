@@ -5,7 +5,7 @@ import mongoose from "mongoose"
 
 import Role from "../api/models/Role" // Adjust path if needed
 import { loadEnvironment } from "../utils/loadEnv"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 loadEnvironment()
 dotenv.config()

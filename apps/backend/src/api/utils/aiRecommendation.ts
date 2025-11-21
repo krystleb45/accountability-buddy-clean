@@ -1,4 +1,4 @@
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { User } from "../models/User"
 
 /**

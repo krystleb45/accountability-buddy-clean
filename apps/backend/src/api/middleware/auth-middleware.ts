@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { User } from "../models/User"
 import catchAsync from "../utils/catchAsync"
 import { createError } from "./errorHandler"

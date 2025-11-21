@@ -4,7 +4,7 @@ import type { User as IUser, UserDocument } from "src/types/mongoose.gen"
 import { NEW_DM_MESSAGE } from "@ab/shared/socket-events"
 import mongoose, { Types } from "mongoose"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { CustomError } from "../middleware/errorHandler"
 import { FriendRequest } from "../models/FriendRequest"
 import Notification from "../models/Notification"

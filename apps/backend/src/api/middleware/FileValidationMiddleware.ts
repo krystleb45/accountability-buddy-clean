@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express"
 
 import fs from "node:fs"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 // File size limit (e.g., 10MB)
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB

@@ -3,7 +3,7 @@ import type { Request, Response } from "express"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import CollaborationService from "../services/collaboration-goal-service"

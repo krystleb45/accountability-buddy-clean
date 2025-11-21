@@ -8,7 +8,7 @@ import { createServer } from "node:http"
 
 import { loadSecretsFromAWS } from "./utils/loadSecrets"
 import { validateEnv } from "./utils/validate-env"
-import { logger } from "./utils/winstonLogger"
+import { logger } from "./utils/winston-logger"
 
 // ─── Crash Guards ───────────────────────────────────────────────
 process.on("uncaughtException", (err) => {

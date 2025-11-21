@@ -2,7 +2,7 @@
 
 import type { IAggregatedMoodData } from "../models/AnonymousMoodCheckIn"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import { AnonymousMoodCheckIn } from "../models/AnonymousMoodCheckIn"
 

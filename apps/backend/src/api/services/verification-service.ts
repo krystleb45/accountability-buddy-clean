@@ -3,7 +3,7 @@ import type mongoose from "mongoose"
 import { getVerifyEmailTemplate } from "@ab/transactional"
 
 import appConfig from "../../config/appConfig"
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 import { VerificationToken } from "../models/VerificationToken"
 import jobQueue from "./job-queue-service"
 

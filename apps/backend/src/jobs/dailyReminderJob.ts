@@ -6,7 +6,7 @@ import cron from "node-cron"
 import { User } from "../api/models/User"
 import NotificationTriggerService from "../api/services/NotificationTriggerService"
 import { loadEnvironment } from "../utils/loadEnv"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 loadEnvironment()
 dotenv.config()

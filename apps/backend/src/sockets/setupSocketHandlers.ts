@@ -1,6 +1,6 @@
 import type { Server, Socket } from "socket.io"
 
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
 
 interface FriendRequestPayload {
   senderId: string

@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-import { logger } from "../utils/winstonLogger" // Assuming you're using winston logger
+import { logger } from "../utils/winston-logger" // Assuming you're using winston logger
 import config from "./config" // Import configuration settings
 
 // Connect to MongoDB using the URI from the config file

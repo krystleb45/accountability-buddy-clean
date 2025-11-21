@@ -3,7 +3,7 @@ import type { ConnectOptions } from "mongoose"
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 
-import { logger } from "../utils/winstonLogger" // ✅ Correct import for logger
+import { logger } from "../utils/winston-logger" // ✅ Correct import for logger
 
 dotenv.config()
 

@@ -2,7 +2,7 @@
 
 import type { NextFunction, Request, Response } from "express"
 
-import { logger } from "../../utils/winstonLogger"
+import { logger } from "../../utils/winston-logger"
 
 /**
  * Middleware for handling 404 (Not Found) errors.
