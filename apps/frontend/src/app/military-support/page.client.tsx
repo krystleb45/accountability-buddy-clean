@@ -72,10 +72,10 @@ export default function MilitarySupportPageClient() {
   const [moodSubmissionTime, setMoodSubmissionTime] = useState(0) // To force widget refresh
 
   const initializeAnonymousSessionId = async () => {
-    let sessionId = localStorage.getItem("ab_military-mood-session")
+    let sessionId = localStorage.getItem("ab_military-session")
     if (!sessionId || !sessionId.startsWith("anon_")) {
       sessionId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
-      localStorage.setItem("ab_military-mood-session", sessionId)
+      localStorage.setItem("ab_military-session", sessionId)
     }
     setMoodSessionId(sessionId)
   }
@@ -388,7 +388,7 @@ export default function MilitarySupportPageClient() {
             <div className="mt-6 text-center">
               <Button asChild size="lg">
                 <Link href="/military-support/chat">
-                  <MessageSquare className="mr-2 size-4" />
+                  <MessageSquare />
                   Join Anonymous Chat Rooms
                 </Link>
               </Button>

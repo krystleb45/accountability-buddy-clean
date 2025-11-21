@@ -1,31 +1,11 @@
-// src/api/services/AnonymousMilitaryChatService.ts - FIXED: Added return types
+import { ROOM_DETAILS, VALID_ROOMS } from "@ab/shared/military-chat-rooms"
+import { sub } from "date-fns"
 
 import { createError } from "../middleware/errorHandler"
 import {
   AnonymousMilitaryMessage,
   AnonymousSession,
 } from "../models/AnonymousMilitaryChat"
-
-const VALID_ROOMS = ["veterans-support", "active-duty", "family-members"]
-
-const ROOM_DETAILS = {
-  "veterans-support": {
-    name: "Veterans Support",
-    description:
-      "Connect with fellow veterans for peer support and shared experiences",
-    icon: "🎖️",
-  },
-  "active-duty": {
-    name: "Active Duty",
-    description: "Support for currently serving military personnel",
-    icon: "⚡",
-  },
-  "family-members": {
-    name: "Family Members",
-    description: "Support for military families and loved ones",
-    icon: "👥",
-  },
-}
 
 // Crisis keywords that trigger resource display
 const CRISIS_KEYWORDS = [
@@ -76,22 +56,20 @@ class AnonymousMilitaryChatService {
    * Get all available anonymous chat rooms with member counts
    */
   static async getRooms(): Promise<ChatRoom[]> {
-    const rooms = await Promise.all(
+    return await Promise.all(
       VALID_ROOMS.map(async (roomId) => {
         const memberCount = await AnonymousSession.countDocuments({
           room: roomId,
-          lastActive: { $gte: new Date(Date.now() - 5 * 60 * 1000) }, // Active in last 5 minutes
+          lastActive: { $gte: sub(new Date(), { minutes: 5 }) }, // Active in last 5 minutes
         })
 
         return {
           id: roomId,
-          ...ROOM_DETAILS[roomId as keyof typeof ROOM_DETAILS],
+          ...ROOM_DETAILS[roomId],
           memberCount: `${memberCount} online`,
         }
       }),
     )
-
-    return rooms
   }
 
   /**
@@ -138,15 +116,15 @@ class AnonymousMilitaryChatService {
   /**
    * Get recent messages for a room
    */
-  static async getMessages(roomId: string, limit = 50): Promise<any[]> {
-    if (!VALID_ROOMS.includes(roomId)) {
+  static async getMessages(roomId: string, limit = 50) {
+    if (!VALID_ROOMS.includes(roomId as (typeof VALID_ROOMS)[number])) {
       throw createError("Invalid room ID", 400)
     }
 
     const messages = await AnonymousMilitaryMessage.find({ room: roomId })
       .sort({ createdAt: -1 })
       .limit(limit)
-      .select("displayName message createdAt isFlagged -_id")
+      .select("-anonymousSessionId -room")
 
     return messages.reverse() // Return oldest first for chat display
   }

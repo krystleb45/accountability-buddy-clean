@@ -10,7 +10,8 @@
     "./categories": "./src/categories.ts",
     "./message": "./src/message.ts",
     "./friends": "./src/friends.ts",
-    "./socket-events": "./src/socket-events/index.ts"
+    "./socket-events": "./src/socket-events/index.ts",
+    "./military-chat-rooms": "./src/military-chat-rooms.ts"
   },
   "scripts": {
     "lint": "eslint --fix",

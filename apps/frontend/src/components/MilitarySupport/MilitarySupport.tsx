@@ -6,9 +6,9 @@ import { ArrowLeft, Loader2, MessageCircle, Shield, Users } from "lucide-react"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
 
-import type { AnonymousChatRoom } from "@/api/military-support/anonymousMilitaryChatApi"
+import type { AnonymousChatRoom } from "@/api/military-support/anonymous-military-chat-api"
 
-import { anonymousMilitaryChatApi } from "@/api/military-support/anonymousMilitaryChatApi"
+import { anonymousMilitaryChatApi } from "@/api/military-support/anonymous-military-chat-api"
 
 export default function AnonymousChatSelector() {
   const [rooms, setRooms] = useState<AnonymousChatRoom[]>([])

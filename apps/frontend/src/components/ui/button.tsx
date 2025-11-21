@@ -1,7 +1,7 @@
-import type {VariantProps} from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority"
 
 import { Slot } from "@radix-ui/react-slot"
-import { cva  } from "class-variance-authority"
+import { cva } from "class-variance-authority"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -25,29 +25,25 @@ const buttonVariants = cva(
           bg-primary text-primary-foreground
           hover:bg-primary/90
         `,
-        destructive:
-          `
-            bg-destructive text-white
-            hover:bg-destructive/90
-            focus-visible:ring-destructive/20
-            dark:bg-destructive/60 dark:focus-visible:ring-destructive/40
-          `,
-        outline:
-          `
-            border bg-background shadow-xs
-            hover:bg-accent hover:text-accent-foreground
-            dark:border-input dark:bg-input/30 dark:hover:bg-input/50
-          `,
-        secondary:
-          `
-            bg-secondary text-secondary-foreground
-            hover:bg-secondary/80
-          `,
-        ghost:
-          `
-            hover:bg-accent hover:text-accent-foreground
-            dark:hover:bg-accent/50
-          `,
+        destructive: `
+          bg-destructive text-white
+          hover:bg-destructive/90
+          focus-visible:ring-destructive/20
+          dark:bg-destructive/60 dark:focus-visible:ring-destructive/40
+        `,
+        outline: `
+          border bg-background shadow-xs
+          hover:bg-accent hover:text-accent-foreground
+          dark:border-input dark:bg-input/30 dark:hover:bg-input/50
+        `,
+        secondary: `
+          bg-secondary text-secondary-foreground
+          hover:bg-secondary/80
+        `,
+        ghost: `
+          hover:bg-accent hover:text-accent-foreground
+          dark:hover:bg-accent/50
+        `,
         link: `
           text-primary underline-offset-4
           hover:underline
@@ -63,8 +59,9 @@ const buttonVariants = cva(
           has-[>svg]:px-2.5
         `,
         lg: `
-          h-12 rounded-md px-8 text-xl
+          h-auto min-h-12 rounded-md px-8 text-xl whitespace-pre-wrap
           has-[>svg]:px-6
+          [&_svg:not([class*='size-'])]:size-5
         `,
         icon: "size-9",
       },
@@ -73,7 +70,7 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
+  },
 )
 
 function Button({

@@ -1,0 +1,8 @@
+export const JOIN_ROOM = "join-room"
+export const USER_JOINED = "user-joined"
+export const JOINED_SUCCESSFULLY = "joined-successfully"
+export const LEAVE_ROOM = "leave-room"
+export const USER_LEFT = "user-left"
+export const SEND_MESSAGE = "send-message"
+export const NEW_MESSAGE = "new-message"
+export const CRISIS_ALERT = "crisis-alert"

@@ -970,27 +970,6 @@ export type Milestone = {
 }
 
 /**
- * Lean version of MilitaryMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `MilitaryMessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `MilitaryMessageObject`.
- * ```
- * const militarymessageObject = militarymessage.toObject();
- * ```
- */
-export type MilitaryMessage = {
-  chatroom: MilitarySupportChatroom["_id"] | MilitarySupportChatroom
-  user: User["_id"] | User
-  text: string
-  timestamp?: string
-  isDeleted?: boolean
-  attachments: string[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  attachmentCount: number
-}
-
-/**
  * Lean version of ExternalSupportResourceDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `ExternalSupportResourceDocument.toObject()`. To avoid conflicts with model names, use the type alias `ExternalSupportResourceObject`.

@@ -663,7 +663,12 @@ export type AnonymousSessionQueries = {}
 
 export type AnonymousSessionMethods = {}
 
-export type AnonymousSessionStatics = {}
+export type AnonymousSessionStatics = {
+  getActiveSessionsInRoom: (
+    this: AnonymousSessionModel,
+    room: string
+  ) => Promise<any>
+}
 
 /**
  * Mongoose Model type
@@ -787,21 +792,8 @@ export type AnonymousMoodCheckInStatics = {
   }>
   getMoodTrends: (
     this: AnonymousMoodCheckInModel,
-    days?: any
-  ) => Promise<
-    {
-      date: string
-      averageMood: number
-      totalCheckIns: any
-      moodDistribution: {
-        mood1: any
-        mood2: any
-        mood3: any
-        mood4: any
-        mood5: any
-      }
-    }[]
-  >
+    days?: number
+  ) => Promise<any>
   hasSubmittedToday: (
     this: AnonymousMoodCheckInModel,
     sessionId: string
@@ -4933,125 +4925,6 @@ export type MilestoneDocument = mongoose.Document<
     _id: mongoose.Types.ObjectId
     createdAt?: Date
     updatedAt?: Date
-  }
-
-/**
- * Lean version of MilitaryMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `MilitaryMessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `MilitaryMessageObject`.
- * ```
- * const militarymessageObject = militarymessage.toObject();
- * ```
- */
-export type MilitaryMessage = {
-  chatroom: MilitarySupportChatroom["_id"] | MilitarySupportChatroom
-  user: User["_id"] | User
-  text: string
-  timestamp?: Date
-  isDeleted?: boolean
-  attachments: string[]
-  _id: mongoose.Types.ObjectId
-  createdAt?: Date
-  updatedAt?: Date
-  attachmentCount: number
-}
-
-/**
- * Lean version of MilitaryMessageDocument (type alias of `MilitaryMessage`)
- *
- * Use this type alias to avoid conflicts with model names:
- * ```
- * import { MilitaryMessage } from "../models"
- * import { MilitaryMessageObject } from "../interfaces/mongoose.gen.ts"
- *
- * const militarymessageObject: MilitaryMessageObject = militarymessage.toObject();
- * ```
- */
-export type MilitaryMessageObject = MilitaryMessage
-
-/**
- * Mongoose Query type
- *
- * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
- */
-export type MilitaryMessageQuery = mongoose.Query<
-  any,
-  MilitaryMessageDocument,
-  MilitaryMessageQueries
-> &
-  MilitaryMessageQueries
-
-/**
- * Mongoose Query helper types
- *
- * This type represents `MilitaryMessageSchema.query`. For most use cases, you should not need to use this type explicitly.
- */
-export type MilitaryMessageQueries = {}
-
-export type MilitaryMessageMethods = {
-  softDelete: (this: MilitaryMessageDocument, ...args: any[]) => any
-  addAttachment: (this: MilitaryMessageDocument, ...args: any[]) => any
-}
-
-export type MilitaryMessageStatics = {
-  getByChatroom: (this: MilitaryMessageModel, ...args: any[]) => any
-  searchText: (this: MilitaryMessageModel, ...args: any[]) => any
-}
-
-/**
- * Mongoose Model type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const MilitaryMessage = mongoose.model<MilitaryMessageDocument, MilitaryMessageModel>("MilitaryMessage", MilitaryMessageSchema);
- * ```
- */
-export type MilitaryMessageModel = mongoose.Model<
-  MilitaryMessageDocument,
-  MilitaryMessageQueries
-> &
-  MilitaryMessageStatics
-
-/**
- * Mongoose Schema type
- *
- * Assign this type to new MilitaryMessage schema instances:
- * ```
- * const MilitaryMessageSchema: MilitaryMessageSchema = new mongoose.Schema({ ... })
- * ```
- */
-export type MilitaryMessageSchema = mongoose.Schema<
-  MilitaryMessageDocument,
-  MilitaryMessageModel,
-  MilitaryMessageMethods,
-  MilitaryMessageQueries
->
-
-/**
- * Mongoose Document type
- *
- * Pass this type to the Mongoose Model constructor:
- * ```
- * const MilitaryMessage = mongoose.model<MilitaryMessageDocument, MilitaryMessageModel>("MilitaryMessage", MilitaryMessageSchema);
- * ```
- */
-export type MilitaryMessageDocument = mongoose.Document<
-  mongoose.Types.ObjectId,
-  MilitaryMessageQueries
-> &
-  MilitaryMessageMethods & {
-    chatroom:
-      | MilitarySupportChatroomDocument["_id"]
-      | MilitarySupportChatroomDocument
-    user: UserDocument["_id"] | UserDocument
-    text: string
-    timestamp?: Date
-    isDeleted?: boolean
-    attachments: mongoose.Types.Array<string>
-    _id: mongoose.Types.ObjectId
-    createdAt?: Date
-    updatedAt?: Date
-    attachmentCount: number
   }
 
 /**

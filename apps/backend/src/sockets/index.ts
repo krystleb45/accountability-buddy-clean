@@ -6,7 +6,8 @@ import { Server } from "socket.io"
 
 import { User } from "../api/models/User"
 import AuthService from "../api/services/AuthService"
-import { logger } from "../utils/winstonLogger"
+import { logger } from "../utils/winston-logger"
+import { setupAnonymousMilitaryChat } from "./anonymous-military-chat"
 import dmSocket from "./dm"
 import groupSocket from "./groups"
 
@@ -18,6 +19,8 @@ function socketServer(server: HttpServer) {
       credentials: true,
     },
   })
+
+  setupAnonymousMilitaryChat(io)
 
   /**
    * @desc    Middleware to authenticate WebSocket connections using JWT.

@@ -1,8 +1,10 @@
-// src/api/routes/anonymousMilitaryChatRoutes.ts - UPDATED with mood routes
-
 import { Router } from "express"
 import z from "zod"
 
+import {
+  getMessages,
+  getRooms,
+} from "../controllers/anonymous-military-chat-controller"
 import {
   getCommunityMoodData,
   getMoodEncouragement,
@@ -11,14 +13,6 @@ import {
   hasSubmittedToday,
   submitMoodCheckIn,
 } from "../controllers/anonymous-mood-controller"
-import {
-  getMessages,
-  getRoomMemberCount,
-  getRooms,
-  joinRoom,
-  leaveRoom,
-  sendMessage,
-} from "../controllers/anonymousMilitaryChatController"
 import { anonymousAuth } from "../middleware/anonymous-auth"
 import validate from "../middleware/validation-middleware"
 
@@ -28,13 +22,18 @@ const router = Router()
 
 // Public chat routes - no authentication required
 router.get("/rooms", getRooms)
-router.get("/rooms/:roomId/messages", getMessages)
-router.get("/rooms/:roomId/members", getRoomMemberCount)
-
-// Anonymous session chat routes
-router.post("/rooms/:roomId/join", anonymousAuth, joinRoom)
-router.post("/rooms/:roomId/message", anonymousAuth, sendMessage)
-router.post("/rooms/:roomId/leave", anonymousAuth, leaveRoom)
+router.get(
+  "/rooms/:roomId/messages",
+  validate({
+    paramsSchema: z.object({
+      roomId: z.string().nonempty(),
+    }),
+    querySchema: z.object({
+      limit: z.coerce.number().min(1).optional(),
+    }),
+  }),
+  getMessages,
+)
 
 // ===== MOOD CHECK-IN ROUTES =====
 

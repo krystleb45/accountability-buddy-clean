@@ -1,66 +1,56 @@
-// src/api/models/AnonymousMilitaryChat.ts
+import type {
+  AnonymousMilitaryMessageDocument,
+  AnonymousMilitaryMessageModel,
+  AnonymousSessionDocument,
+  AnonymousSessionModel,
+  AnonymousMilitaryMessageSchema as IAnonymousMilitaryMessageSchema,
+  AnonymousSessionSchema as IAnonymousSessionSchema,
+} from "src/types/mongoose.gen"
 
-import type { Document } from "mongoose"
-
+import { subMinutes } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
-export interface IAnonymousMilitaryMessage extends Document {
-  room: string // 'veterans-support', 'active-duty', 'family-members'
-  anonymousSessionId: string // Temporary session ID
-  displayName: string // Generated anonymous name
-  message: string // Message content
-  isFlagged: boolean // Crisis/inappropriate content detection
-  createdAt: Date
-}
-
-export interface IAnonymousSession extends Document {
-  sessionId: string // Unique session identifier
-  displayName: string // Generated name
-  room: string // Current room
-  lastActive: Date // For cleanup
-  joinedAt: Date
-}
-
 // Anonymous Message Schema (24-hour auto-deletion for privacy)
-const AnonymousMilitaryMessageSchema = new Schema(
-  {
-    room: {
-      type: String,
-      required: true,
-      enum: ["veterans-support", "active-duty", "family-members"],
+const AnonymousMilitaryMessageSchema: IAnonymousMilitaryMessageSchema =
+  new Schema(
+    {
+      room: {
+        type: String,
+        required: true,
+        enum: ["veterans-support", "active-duty", "family-members"],
+      },
+      anonymousSessionId: {
+        type: String,
+        required: true,
+        index: true,
+      },
+      displayName: {
+        type: String,
+        required: true,
+        maxlength: 50,
+      },
+      message: {
+        type: String,
+        required: true,
+        maxlength: 500,
+      },
+      isFlagged: {
+        type: Boolean,
+        default: false,
+      },
     },
-    anonymousSessionId: {
-      type: String,
-      required: true,
-      index: true,
+    {
+      timestamps: true,
+      // Auto-delete after 24 hours for privacy
+      expires: 86400,
     },
-    displayName: {
-      type: String,
-      required: true,
-      maxlength: 50,
-    },
-    message: {
-      type: String,
-      required: true,
-      maxlength: 500,
-    },
-    isFlagged: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    timestamps: true,
-    // Auto-delete after 24 hours for privacy
-    expires: 86400,
-  },
-)
+  )
 
 // Index for efficient queries
 AnonymousMilitaryMessageSchema.index({ room: 1, createdAt: -1 })
 
 // Anonymous Session Schema (1-hour auto-cleanup)
-const AnonymousSessionSchema = new Schema(
+const AnonymousSessionSchema: IAnonymousSessionSchema = new Schema(
   {
     sessionId: {
       type: String,
@@ -95,12 +85,27 @@ const AnonymousSessionSchema = new Schema(
   },
 )
 
-export const AnonymousMilitaryMessage =
-  mongoose.model<IAnonymousMilitaryMessage>(
-    "AnonymousMilitaryMessage",
-    AnonymousMilitaryMessageSchema,
-  )
-export const AnonymousSession = mongoose.model<IAnonymousSession>(
-  "AnonymousSession",
-  AnonymousSessionSchema,
-)
+AnonymousSessionSchema.index({ sessionId: 1 })
+AnonymousSessionSchema.index({ room: 1 })
+AnonymousSessionSchema.index({ room: 1, lastActive: -1 })
+
+AnonymousSessionSchema.statics = {
+  async getActiveSessionsInRoom(room: string) {
+    // lastActive in the past 5 minutes
+    const fiveMinutesAgo = subMinutes(new Date(), 5)
+    return this.countDocuments({
+      room,
+      lastActive: { $gte: fiveMinutesAgo },
+    }).exec()
+  },
+}
+
+export const AnonymousMilitaryMessage: AnonymousMilitaryMessageModel =
+  mongoose.model<
+    AnonymousMilitaryMessageDocument,
+    AnonymousMilitaryMessageModel
+  >("AnonymousMilitaryMessage", AnonymousMilitaryMessageSchema)
+export const AnonymousSession: AnonymousSessionModel = mongoose.model<
+  AnonymousSessionDocument,
+  AnonymousSessionModel
+>("AnonymousSession", AnonymousSessionSchema)
