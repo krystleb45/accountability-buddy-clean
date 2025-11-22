@@ -7,7 +7,7 @@ import type {
 import mongoose, { Schema } from "mongoose"
 
 // --- Category Union ---
-export type ResourceCategory =
+type ResourceCategory =
   | "hotline"
   | "website"
   | "forum"

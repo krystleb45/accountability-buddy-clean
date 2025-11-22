@@ -193,12 +193,3 @@ export async function handleCheckoutCompleted(
     logger.error("❌ Error handling checkout completed:", error)
   }
 }
-
-export default {
-  stripe,
-  handleInvoicePaymentSucceeded,
-  handleInvoicePaymentFailed,
-  handleSubscriptionDeleted,
-  handleSubscriptionUpdated,
-  handleCheckoutCompleted,
-}

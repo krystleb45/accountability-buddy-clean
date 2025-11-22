@@ -18,27 +18,6 @@ export async function emailServiceHealthCheck(): Promise<boolean> {
   return res === "PONG!"
 }
 
-export async function sendEmail(
-  to: string,
-  subject: string,
-  text: string,
-  options: Partial<Omit<mailchimp.MessagesSendRequest, "message">> = {},
-): Promise<void> {
-  if (!to || !subject) {
-    throw new Error("Recipient email and subject are required")
-  }
-
-  await mailchimpClient.messages.send({
-    message: {
-      from_email: process.env.EMAIL_USER!,
-      to: [{ email: to }],
-      subject,
-      text,
-    },
-    ...options,
-  })
-}
-
 /**
  * Sends an email with HTML content.
  * @param to - Recipient email address.

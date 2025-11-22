@@ -25,7 +25,7 @@ export interface IFeedback extends Document {
   markAsReviewed: () => Promise<IFeedback>
 }
 
-export interface IFeedbackModel extends Model<IFeedback> {
+interface IFeedbackModel extends Model<IFeedback> {
   getFeedbackByType: (feedbackType: FeedbackType) => Promise<IFeedback[]>
 }
 
@@ -101,4 +101,3 @@ export const Feedback = mongoose.model<IFeedback, IFeedbackModel>(
   "Feedback",
   FeedbackSchema,
 )
-export default Feedback

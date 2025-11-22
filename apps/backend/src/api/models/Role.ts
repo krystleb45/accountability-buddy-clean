@@ -5,7 +5,7 @@ import type { Document, Model } from "mongoose"
 import mongoose, { Schema } from "mongoose"
 
 // --- Role Document Interface ---
-export interface IRole extends Document {
+interface IRole extends Document {
   roleName: string // Unique name of the role
   permissions: string[] // List of permission identifiers
   description?: string // Optional human-readable description
@@ -19,7 +19,7 @@ export interface IRole extends Document {
 }
 
 // --- Role Model Static Interface ---
-export interface IRoleModel extends Model<IRole> {
+interface IRoleModel extends Model<IRole> {
   findByName: (name: string) => Promise<IRole | null>
   getRolesWithPermission: (permission: string) => Promise<IRole[]>
 }

@@ -1,13 +1,12 @@
-// src/api/controllers/FeedbackController.ts
-import type { NextFunction, Request, Response } from "express"
+import type { NextFunction, Response } from "express"
+
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { FeedbackType } from "../models/Feedback"
 
 import { createError } from "../middleware/errorHandler"
 import FeedbackService from "../services/FeedbackService"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
-
-// Import the existing FeedbackType from your model
-import type { FeedbackType } from "../models/Feedback"
 
 // Define the valid feedback types (adjust these to match your actual FeedbackType values)
 const VALID_FEEDBACK_TYPES = [
@@ -30,7 +29,11 @@ function isValidFeedbackType(type: string): type is FeedbackType {
  * @access  Private
  */
 export const submitFeedback = catchAsync(
-  async (req: Request, res: Response, _next: NextFunction): Promise<void> => {
+  async (
+    req: AuthenticatedRequest,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> => {
     const userId = req.user?.id
     if (!userId) {
       throw createError("Unauthorized", 401)
@@ -70,9 +73,11 @@ export const submitFeedback = catchAsync(
  * @access  Private
  */
 export const getUserFeedback = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const userId = req.user?.id
-    if (!userId) throw createError("Unauthorized", 401)
+    if (!userId) {
+      throw createError("Unauthorized", 401)
+    }
 
     const list = await FeedbackService.getUserFeedback(userId)
     sendResponse(res, 200, true, "User feedback retrieved successfully", {
@@ -88,11 +93,13 @@ export const getUserFeedback = catchAsync(
  */
 export const deleteFeedback = catchAsync(
   async (
-    req: Request<{ feedbackId: string }>,
+    req: AuthenticatedRequest<{ feedbackId: string }>,
     res: Response,
   ): Promise<void> => {
     const userId = req.user?.id
-    if (!userId) throw createError("Unauthorized", 401)
+    if (!userId) {
+      throw createError("Unauthorized", 401)
+    }
 
     const { feedbackId } = req.params
 

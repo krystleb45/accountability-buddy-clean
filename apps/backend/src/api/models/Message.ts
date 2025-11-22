@@ -1,4 +1,3 @@
-import type { Types } from "mongoose"
 import type {
   MessageSchema as IMessageSchema,
   MessageDocument,
@@ -71,12 +70,12 @@ MessageSchema.pre("save", function (next): void {
 
 // --- Instance Methods ---
 MessageSchema.methods = {
-  async addReaction(this, userId: Types.ObjectId, emoji: string) {
+  async addReaction(this, userId: mongoose.Types.ObjectId, emoji: string) {
     this.reactions.push({ userId, emoji, reactedAt: new Date() })
     await this.save()
     return this
   },
-  async removeReaction(this, userId: Types.ObjectId) {
+  async removeReaction(this, userId: mongoose.Types.ObjectId) {
     this.reactions.pull({ userId })
     await this.save()
     return this
@@ -96,7 +95,7 @@ MessageSchema.methods = {
 
 // --- Static Methods ---
 MessageSchema.statics = {
-  getByChat(this, chatId: Types.ObjectId, limit = 50) {
+  getByChat(this, chatId: mongoose.Types.ObjectId, limit = 50) {
     return this.find({ chatId })
       .sort({ timestamp: -1 })
       .limit(limit)
@@ -104,7 +103,7 @@ MessageSchema.statics = {
       .populate("reactions.userId", "username")
       .exec()
   },
-  getUserMessages(this, userId: Types.ObjectId, limit = 50) {
+  getUserMessages(this, userId: mongoose.Types.ObjectId, limit = 50) {
     return this.find({ $or: [{ senderId: userId }, { receiverId: userId }] })
       .sort({ timestamp: -1 })
       .limit(limit)

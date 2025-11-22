@@ -1,12 +1,6 @@
-import type { NextFunction, Request, Response } from "express"
-
 import { Router } from "express"
-import { check } from "express-validator"
 
 import * as militarySupportController from "../controllers/military-support-controller"
-import { militaryAuth, protect } from "../middleware/auth-middleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
-import catchAsync from "../utils/catchAsync"
 
 const router = Router()
 
@@ -22,67 +16,5 @@ router.get("/resources", militarySupportController.getResources)
  * Get military support disclaimer
  */
 router.get("/disclaimer", militarySupportController.getDisclaimer)
-
-// ========================================
-// AUTHENTICATED ROUTES (for members with accounts)
-// ========================================
-
-/**
- * POST /api/military-support/chat/send
- * Send a message in military support chatroom (military members only)
- */
-router.post(
-  "/chat/send",
-  protect,
-  militaryAuth,
-  [
-    check(
-      "chatroomId",
-      "chatroomId is required and must be a valid ID",
-    ).isMongoId(),
-    check("message", "Message text is required").notEmpty(),
-  ],
-  handleValidationErrors,
-  catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await militarySupportController.sendMessage(req, res, next)
-    },
-  ),
-)
-
-/**
- * GET /api/military-support/chatrooms
- * Get military support chatrooms (military members only)
- */
-router.get(
-  "/chatrooms",
-  protect,
-  militaryAuth,
-  catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await militarySupportController.getChatrooms(req, res, next)
-    },
-  ),
-)
-
-/**
- * POST /api/military-support/chatrooms
- * Create a military chatroom (military members only)
- */
-router.post(
-  "/chatrooms",
-  protect,
-  militaryAuth,
-  [
-    check("name", "Chatroom name is required").notEmpty(),
-    check("topic", "Chatroom topic is required").notEmpty(),
-  ],
-  handleValidationErrors,
-  catchAsync(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await militarySupportController.createChatroom(req, res, next)
-    },
-  ),
-)
 
 export default router

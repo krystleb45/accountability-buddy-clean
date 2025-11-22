@@ -122,25 +122,3 @@ export function restrictTo(
     next()
   }
 }
-
-/**
- * Military-only access
- */
-export const militaryAuth: RequestHandler = catchAsync(
-  async (req, _res, next) => {
-    const authReq = req as AuthenticatedRequest
-
-    if (!authReq.user) {
-      return next(createError("Unauthorized: No user attached", 401))
-    }
-
-    if (authReq.user.role !== "military") {
-      logger.warn(`🔒 Military-only access attempted by ${authReq.user.email}`)
-      return next(
-        createError("Forbidden: Access restricted to military members", 403),
-      )
-    }
-
-    next()
-  },
-)

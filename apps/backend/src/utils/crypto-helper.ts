@@ -103,30 +103,3 @@ export async function decryptMessage(encryptedData: string): Promise<string> {
     )
   }
 }
-
-/**
- * Encrypts sensitive data for database storage
- * @param data - The data to encrypt (will be JSON stringified)
- * @returns Promise<string> - Encrypted data as base64 string
- */
-export async function encryptSensitiveData(data: any): Promise<string> {
-  const jsonString = typeof data === "string" ? data : JSON.stringify(data)
-  return encryptMessage(jsonString)
-}
-
-/**
- * Decrypts sensitive data from database storage
- * @param encryptedData - Base64 encoded encrypted data
- * @returns Promise<any> - The decrypted and parsed data
- */
-export async function decryptSensitiveData(
-  encryptedData: string,
-): Promise<any> {
-  const decrypted = await decryptMessage(encryptedData)
-  try {
-    return JSON.parse(decrypted)
-  } catch {
-    // If it's not valid JSON, return as string
-    return decrypted
-  }
-}

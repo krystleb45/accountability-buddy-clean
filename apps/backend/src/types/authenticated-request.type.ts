@@ -18,19 +18,3 @@ export interface AuthenticatedRequest<
   }
   params: P // Properly typed params
 }
-
-// Specific interfaces for common param patterns
-export interface AuthenticatedRequestWithUserId
-  extends AuthenticatedRequest<{ userId: string }> {}
-
-export interface AuthenticatedRequestWithTaskId
-  extends AuthenticatedRequest<{ taskId: string }> {}
-
-export interface AuthenticatedRequestWithGoalId
-  extends AuthenticatedRequest<{ goalId: string }> {}
-
-export interface AnalyticsRequestBody {
-  startDate: string
-  endDate: string
-  metric: string
-}

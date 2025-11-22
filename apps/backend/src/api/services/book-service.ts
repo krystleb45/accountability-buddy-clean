@@ -114,14 +114,3 @@ export async function removeBookCommentService(
 
   return book
 }
-export default {
-  addBookService,
-  getAllBooksService,
-  getBookByIdService,
-  updateBookService,
-  deleteBookService,
-  likeBookService,
-  unlikeBookService,
-  addBookCommentService,
-  removeBookCommentService,
-}

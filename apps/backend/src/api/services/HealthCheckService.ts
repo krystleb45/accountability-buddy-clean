@@ -1,7 +1,7 @@
 // src/api/services/HealthCheckService.ts - Enhanced with Redis status
 import mongoose from "mongoose"
 
-export interface HealthReport {
+interface HealthReport {
   server: "running"
   database: "connected" | "disconnected"
   uptime: number

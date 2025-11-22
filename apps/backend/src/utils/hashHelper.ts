@@ -51,26 +51,3 @@ export async function comparePassword(
     throw new Error(`Failed to compare passwords: ${(error as Error).message}`)
   }
 }
-
-/**
- * Checks if a password meets security requirements.
- * @param {string} password - The plain text password.
- * @returns {boolean} - True if the password is strong enough, otherwise false.
- */
-export function isPasswordStrong(password: string): boolean {
-  if (!password || typeof password !== "string") {
-    return false
-  }
-
-  // Strong password requirements: at least 8 characters, 1 letter, 1 number, 1 special character
-  const strongPasswordPattern =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Z\d@$!%*?&#]{8,}$/i
-
-  return strongPasswordPattern.test(password)
-}
-
-export default {
-  hashPassword,
-  comparePassword,
-  isPasswordStrong,
-}

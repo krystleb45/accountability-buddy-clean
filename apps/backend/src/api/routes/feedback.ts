@@ -1,4 +1,3 @@
-// src/api/routes/feedback.ts
 import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"

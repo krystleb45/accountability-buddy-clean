@@ -132,9 +132,6 @@ router.put(
   groupController.updateGroup,
 )
 
-// DELETE /api/groups/:groupId - Delete group (admin only)
-router.delete("/:groupId", protect, groupLimiter, groupController.deleteGroup)
-
 /**
  * POST /api/groups/:groupId/request-invite - Request invitation to private group
  */

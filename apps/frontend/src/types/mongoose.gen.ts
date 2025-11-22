@@ -22,24 +22,6 @@ export type AccountabilityPartnership = {
 }
 
 /**
- * Lean version of AchievementDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `AchievementDocument.toObject()`. To avoid conflicts with model names, use the type alias `AchievementObject`.
- * ```
- * const achievementObject = achievement.toObject();
- * ```
- */
-export type Achievement = {
-  name: string
-  description: string
-  requirements: number
-  badgeUrl?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of ActivityDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `ActivityDocument.toObject()`. To avoid conflicts with model names, use the type alias `ActivityObject`.
@@ -69,36 +51,6 @@ export type Activity = {
   _id: string
   createdAt?: string
   updatedAt?: string
-}
-
-/**
- * Lean version of AdminActionLogDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `AdminActionLogDocument.toObject()`. To avoid conflicts with model names, use the type alias `AdminActionLogObject`.
- * ```
- * const adminactionlogObject = adminactionlog.toObject();
- * ```
- */
-export type AdminActionLog = {
-  admin: User["_id"] | User
-  action:
-    | "create_user"
-    | "delete_user"
-    | "update_user_role"
-    | "suspend_user"
-    | "create_goal"
-    | "delete_goal"
-    | "modify_subscription"
-    | "view_reports"
-    | "other"
-  description?: string
-  target?: User["_id"] | User | null
-  details?: Map<string, string>
-  ipAddress?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  actionType: string
 }
 
 /**
@@ -159,47 +111,6 @@ export type AnonymousMoodCheckIn = {
 }
 
 /**
- * Lean version of APIKeyDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `APIKeyDocument.toObject()`. To avoid conflicts with model names, use the type alias `APIKeyObject`.
- * ```
- * const apikeyObject = apikey.toObject();
- * ```
- */
-export type APIKey = {
-  key: string
-  owner: User["_id"] | User
-  permissions: ("read" | "write" | "delete" | "admin")[]
-  isActive?: boolean
-  expiresAt: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  status: string
-}
-
-/**
- * Lean version of AuditTrailDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `AuditTrailDocument.toObject()`. To avoid conflicts with model names, use the type alias `AuditTrailObject`.
- * ```
- * const audittrailObject = audittrail.toObject();
- * ```
- */
-export type AuditTrail = {
-  userId?: User["_id"] | User | null
-  entityType: "User" | "Goal" | "Task" | "Subscription" | "Payment"
-  entityId: string
-  action: string
-  description?: string
-  ipAddress?: string
-  userAgent?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of BadgeDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `BadgeDocument.toObject()`. To avoid conflicts with model names, use the type alias `BadgeObject`.
@@ -246,44 +157,6 @@ export type BadgeType = {
 }
 
 /**
- * Lean version of BlogPostCommentDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `BlogPostDocument.toObject()`.
- * ```
- * const blogpostObject = blogpost.toObject();
- * ```
- */
-export type BlogPostComment = {
-  user: User["_id"] | User
-  text: string
-  createdAt?: string
-  _id: string
-}
-
-/**
- * Lean version of BlogPostDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `BlogPostDocument.toObject()`. To avoid conflicts with model names, use the type alias `BlogPostObject`.
- * ```
- * const blogpostObject = blogpost.toObject();
- * ```
- */
-export type BlogPost = {
-  title: string
-  content: string
-  category: string
-  imageUrl?: string
-  author: User["_id"] | User
-  likes: (User["_id"] | User)[]
-  comments: BlogPostComment[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  likeCount: any
-  commentCount: number
-}
-
-/**
  * Lean version of BookCommentDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `BookDocument.toObject()`.
@@ -320,89 +193,6 @@ export type Book = {
   updatedAt?: string
   likeCount: number
   commentCount: number
-}
-
-/**
- * Lean version of ChallengeParticipantDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`.
- * ```
- * const challengeObject = challenge.toObject();
- * ```
- */
-export type ChallengeParticipant = {
-  user: User["_id"] | User
-  progress?: number
-  joinedAt?: string
-  _id: string
-}
-
-/**
- * Lean version of ChallengeDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeDocument.toObject()`. To avoid conflicts with model names, use the type alias `ChallengeObject`.
- * ```
- * const challengeObject = challenge.toObject();
- * ```
- */
-export type Challenge = {
-  title: string
-  description?: string
-  goal: string
-  startDate?: string
-  endDate: string
-  creator: User["_id"] | User
-  participants: ChallengeParticipant[]
-  rewards: (Reward["_id"] | Reward)[]
-  status?: "ongoing" | "completed" | "canceled"
-  visibility?: "public" | "private"
-  progressTracking?: "individual" | "team" | "both"
-  milestones: (Milestone["_id"] | Milestone)[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  participantCount: any
-  isActive: boolean
-}
-
-/**
- * Lean version of ChallengeMilestoneDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeMilestoneDocument.toObject()`. To avoid conflicts with model names, use the type alias `ChallengeMilestoneObject`.
- * ```
- * const challengemilestoneObject = challengemilestone.toObject();
- * ```
- */
-export type ChallengeMilestone = {
-  challenge: Challenge["_id"] | Challenge
-  title: string
-  dueDate: string
-  completed?: boolean
-  achievedBy: (User["_id"] | User)[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  isOverdue: boolean
-}
-
-/**
- * Lean version of ChallengeParticipationDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ChallengeParticipationDocument.toObject()`. To avoid conflicts with model names, use the type alias `ChallengeParticipationObject`.
- * ```
- * const challengeparticipationObject = challengeparticipation.toObject();
- * ```
- */
-export type ChallengeParticipation = {
-  user: User["_id"] | User
-  challenge: Challenge["_id"] | Challenge
-  joinedAt?: string
-  progress?: number
-  completed?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  progressPercent: number
 }
 
 /**
@@ -482,102 +272,6 @@ export type CollaborationGoal = {
 }
 
 /**
- * Lean version of CommentDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `CommentDocument.toObject()`. To avoid conflicts with model names, use the type alias `CommentObject`.
- * ```
- * const commentObject = comment.toObject();
- * ```
- */
-export type Comment = {
-  author: User["_id"] | User
-  text: string
-  entityType: "BlogPost" | "FeedPost" | "Book" | "Event" | "Message"
-  entityId: string
-  parentComment?: Comment["_id"] | Comment | null
-  likes: (User["_id"] | User)[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  likeCount: number
-}
-
-/**
- * Lean version of CustomReminderDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `CustomReminderDocument.toObject()`. To avoid conflicts with model names, use the type alias `CustomReminderObject`.
- * ```
- * const customreminderObject = customreminder.toObject();
- * ```
- */
-export type CustomReminder = {
-  user: User["_id"] | User
-  reminderMessage: string
-  remindAt: string
-  recurrence?: string | null
-  disabled?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of EventParticipantDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `EventDocument.toObject()`.
- * ```
- * const eventObject = event.toObject();
- * ```
- */
-export type EventParticipant = {
-  user: User["_id"] | User
-  joinedAt?: string
-  status?: "invited" | "accepted" | "declined" | "interested"
-}
-
-/**
- * Lean version of EventReminderDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `EventDocument.toObject()`.
- * ```
- * const eventObject = event.toObject();
- * ```
- */
-export type EventReminder = {
-  message: string
-  scheduledTime: string
-  sent?: boolean
-}
-
-/**
- * Lean version of EventDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `EventDocument.toObject()`. To avoid conflicts with model names, use the type alias `EventObject`.
- * ```
- * const eventObject = event.toObject();
- * ```
- */
-export type Event = {
-  title: string
-  description?: string
-  location?: string
-  startDate: string
-  endDate: string
-  createdBy: User["_id"] | User
-  participants: EventParticipant[]
-  progress?: number
-  recurrence?: "none" | "daily" | "weekly" | "monthly" | "yearly"
-  status?: "upcoming" | "ongoing" | "completed" | "canceled"
-  isPublic?: boolean
-  reminders: EventReminder[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  participantCount: number
-  activeReminderCount: number
-}
-
-/**
  * Lean version of FaqDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `FaqDocument.toObject()`. To avoid conflicts with model names, use the type alias `FaqObject`.
@@ -615,57 +309,6 @@ export type Feedback = {
 }
 
 /**
- * Lean version of FeedPostCommentDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `FeedPostDocument.toObject()`.
- * ```
- * const feedpostObject = feedpost.toObject();
- * ```
- */
-export type FeedPostComment = {
-  user: User["_id"] | User
-  text: string
-  createdAt?: string
-  _id: string
-}
-
-/**
- * Lean version of FeedPostDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `FeedPostDocument.toObject()`. To avoid conflicts with model names, use the type alias `FeedPostObject`.
- * ```
- * const feedpostObject = feedpost.toObject();
- * ```
- */
-export type FeedPost = {
-  user: User["_id"] | User
-  content: string
-  likes: (User["_id"] | User)[]
-  comments: FeedPostComment[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  likeCount: number
-  commentCount: number
-}
-
-/**
- * Lean version of FollowDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `FollowDocument.toObject()`. To avoid conflicts with model names, use the type alias `FollowObject`.
- * ```
- * const followObject = follow.toObject();
- * ```
- */
-export type Follow = {
-  follower: User["_id"] | User
-  following: User["_id"] | User
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of FriendRequestDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `FriendRequestDocument.toObject()`. To avoid conflicts with model names, use the type alias `FriendRequestObject`.
@@ -680,21 +323,6 @@ export type FriendRequest = {
   _id: string
   createdAt?: string
   updatedAt?: string
-}
-
-/**
- * Lean version of FriendshipDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `FriendshipDocument.toObject()`. To avoid conflicts with model names, use the type alias `FriendshipObject`.
- * ```
- * const friendshipObject = friendship.toObject();
- * ```
- */
-export type Friendship = {
-  user1: User["_id"] | User
-  user2: User["_id"] | User
-  _id: string
-  createdAt?: string
 }
 
 /**
@@ -725,24 +353,6 @@ export type Goal = {
   createdAt?: string
   updatedAt?: string
   isActive: boolean
-}
-
-/**
- * Lean version of GoalMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `GoalMessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `GoalMessageObject`.
- * ```
- * const goalmessageObject = goalmessage.toObject();
- * ```
- */
-export type GoalMessage = {
-  goal: Goal["_id"] | Goal
-  sender: User["_id"] | User
-  message: string
-  isDeleted?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
 }
 
 /**
@@ -791,60 +401,6 @@ export type GroupInvitation = {
 }
 
 /**
- * Lean version of HistoryDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `HistoryDocument.toObject()`. To avoid conflicts with model names, use the type alias `HistoryObject`.
- * ```
- * const historyObject = history.toObject();
- * ```
- */
-export type History = {
-  entity: string
-  action: string
-  details?: string
-  user?: User["_id"] | User
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of IntegrationDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `IntegrationDocument.toObject()`. To avoid conflicts with model names, use the type alias `IntegrationObject`.
- * ```
- * const integrationObject = integration.toObject();
- * ```
- */
-export type Integration = {
-  user: User["_id"] | User
-  type: "webhook" | "api" | "slack" | "google_calendar" | "github" | "custom"
-  settings: any
-  isActive?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of InvitationDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `InvitationDocument.toObject()`. To avoid conflicts with model names, use the type alias `InvitationObject`.
- * ```
- * const invitationObject = invitation.toObject();
- * ```
- */
-export type Invitation = {
-  groupId: Group["_id"] | Group
-  sender: User["_id"] | User
-  recipient: User["_id"] | User
-  status: "pending" | "accepted" | "rejected"
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of LevelDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `LevelDocument.toObject()`. To avoid conflicts with model names, use the type alias `LevelObject`.
@@ -863,23 +419,6 @@ export type Level = {
   createdAt?: string
   updatedAt?: string
   totalRewards: any
-}
-
-/**
- * Lean version of MatchDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `MatchDocument.toObject()`. To avoid conflicts with model names, use the type alias `MatchObject`.
- * ```
- * const matchObject = match.toObject();
- * ```
- */
-export type Match = {
-  user1: User["_id"] | User
-  user2: User["_id"] | User
-  status?: "pending" | "active" | "rejected" | "completed"
-  _id: string
-  createdAt?: string
-  updatedAt?: string
 }
 
 /**
@@ -935,23 +474,6 @@ export type Message = {
 }
 
 /**
- * Lean version of MessageReactionDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `MessageReactionDocument.toObject()`. To avoid conflicts with model names, use the type alias `MessageReactionObject`.
- * ```
- * const messagereactionObject = messagereaction.toObject();
- * ```
- */
-export type MessageReaction = {
-  messageId: Message["_id"] | Message
-  userId: User["_id"] | User
-  reaction: "like" | "love" | "haha" | "sad" | "angry" | "wow"
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of MilestoneDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `MilestoneDocument.toObject()`. To avoid conflicts with model names, use the type alias `MilestoneObject`.
@@ -990,77 +512,6 @@ export type ExternalSupportResource = {
 }
 
 /**
- * Lean version of MilitaryUserMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `MilitaryUserDocument.toObject()`.
- * ```
- * const militaryuserObject = militaryuser.toObject();
- * ```
- */
-export type MilitaryUserMessage = {
-  sender: User["_id"] | User
-  content: string
-  timestamp?: string
-  _id: string
-}
-
-/**
- * Lean version of MilitaryUserDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `MilitaryUserDocument.toObject()`. To avoid conflicts with model names, use the type alias `MilitaryUserObject`.
- * ```
- * const militaryuserObject = militaryuser.toObject();
- * ```
- */
-export type MilitaryUser = {
-  userId: User["_id"] | User
-  isMilitary?: boolean
-  messages: MilitaryUserMessage[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  messageCount: number
-}
-
-/**
- * Lean version of MilitarySupportChatroomDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `MilitarySupportChatroomDocument.toObject()`. To avoid conflicts with model names, use the type alias `MilitarySupportChatroomObject`.
- * ```
- * const militarysupportchatroomObject = militarysupportchatroom.toObject();
- * ```
- */
-export type MilitarySupportChatroom = {
-  name: string
-  description?: string
-  members: (User["_id"] | User)[]
-  visibility?: "public" | "private"
-  isActive?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  memberCount: number
-}
-
-/**
- * Lean version of NewsletterDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `NewsletterDocument.toObject()`. To avoid conflicts with model names, use the type alias `NewsletterObject`.
- * ```
- * const newsletterObject = newsletter.toObject();
- * ```
- */
-export type Newsletter = {
-  email: string
-  subscribedAt?: string
-  status?: "subscribed" | "unsubscribed"
-  unsubscribeToken: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of NotificationDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `NotificationDocument.toObject()`. To avoid conflicts with model names, use the type alias `NotificationObject`.
@@ -1092,240 +543,6 @@ export type Notification = {
 }
 
 /**
- * Lean version of PaymentDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PaymentDocument.toObject()`. To avoid conflicts with model names, use the type alias `PaymentObject`.
- * ```
- * const paymentObject = payment.toObject();
- * ```
- */
-export type Payment = {
-  userId: User["_id"] | User
-  paymentId: string
-  amount: number
-  currency: string
-  status?: "pending" | "completed" | "failed" | "refunded"
-  method: "card" | "paypal" | "bank_transfer"
-  description?: string
-  receiptUrl?: string
-  paymentDate?: string
-  expiresAt?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  isExpired: boolean
-}
-
-/**
- * Lean version of PaymentTransactionDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PaymentTransactionDocument.toObject()`. To avoid conflicts with model names, use the type alias `PaymentTransactionObject`.
- * ```
- * const paymenttransactionObject = paymenttransaction.toObject();
- * ```
- */
-export type PaymentTransaction = {
-  userId: User["_id"] | User
-  transactionId: string
-  paymentMethod: "card" | "paypal" | "bank_transfer" | "crypto"
-  amount: number
-  currency: string
-  status?: "initiated" | "processing" | "completed" | "failed" | "refunded"
-  description?: string
-  initiatedAt?: string
-  completedAt?: string
-  paymentGatewayResponse?: any | null
-  isRefundable?: boolean
-  refundReason?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  isCompleted: boolean
-}
-
-/**
- * Lean version of PointRedemptionDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PointDocument.toObject()`.
- * ```
- * const pointObject = point.toObject();
- * ```
- */
-export type PointRedemption = {
-  reward: string
-  pointsSpent: number
-  redemptionDate?: string
-  _id: string
-}
-
-/**
- * Lean version of PointDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PointDocument.toObject()`. To avoid conflicts with model names, use the type alias `PointObject`.
- * ```
- * const pointObject = point.toObject();
- * ```
- */
-export type Point = {
-  user: User["_id"] | User
-  points?: number
-  redemptions: PointRedemption[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of PollOptionDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PollDocument.toObject()`.
- * ```
- * const pollObject = poll.toObject();
- * ```
- */
-export type PollOption = {
-  option: string
-  votes: (User["_id"] | User)[]
-  _id: string
-}
-
-/**
- * Lean version of PollDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PollDocument.toObject()`. To avoid conflicts with model names, use the type alias `PollObject`.
- * ```
- * const pollObject = poll.toObject();
- * ```
- */
-export type Poll = {
-  groupId: Group["_id"] | Group
-  question: string
-  options: PollOption[]
-  expirationDate: string
-  status?: "active" | "expired"
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  isExpired: boolean
-  totalVotes: number
-}
-
-/**
- * Lean version of PollResultDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PollResultDocument.toObject()`. To avoid conflicts with model names, use the type alias `PollResultObject`.
- * ```
- * const pollresultObject = pollresult.toObject();
- * ```
- */
-export type PollResult = {
-  pollId: Poll["_id"] | Poll
-  optionId: Poll["_id"] | Poll
-  votesCount?: number
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of PostDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PostDocument.toObject()`. To avoid conflicts with model names, use the type alias `PostObject`.
- * ```
- * const postObject = post.toObject();
- * ```
- */
-export type Post = {
-  user: User["_id"] | User
-  content: string
-  likes: (User["_id"] | User)[]
-  comments: (Comment["_id"] | Comment)[]
-  isDeleted?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  likeCount: number
-  commentCount: number
-}
-
-/**
- * Lean version of PrivateMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `PrivateMessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `PrivateMessageObject`.
- * ```
- * const privatemessageObject = privatemessage.toObject();
- * ```
- */
-export type PrivateMessage = {
-  sender: User["_id"] | User
-  receiver: User["_id"] | User
-  content: string
-  isRead?: boolean
-  isDeleted?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  isUnread: boolean
-}
-
-/**
- * Lean version of ProfileDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ProfileDocument.toObject()`. To avoid conflicts with model names, use the type alias `ProfileObject`.
- * ```
- * const profileObject = profile.toObject();
- * ```
- */
-export type Profile = {
-  user: User["_id"] | User
-  name: string
-  email: string
-  bio?: string
-  profileImage?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of RedemptionDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `RedemptionDocument.toObject()`. To avoid conflicts with model names, use the type alias `RedemptionObject`.
- * ```
- * const redemptionObject = redemption.toObject();
- * ```
- */
-export type Redemption = {
-  user: User["_id"] | User
-  pointsUsed: number
-  item: string
-  redemptionDate?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of RefreshTokenDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `RefreshTokenDocument.toObject()`. To avoid conflicts with model names, use the type alias `RefreshTokenObject`.
- * ```
- * const refreshtokenObject = refreshtoken.toObject();
- * ```
- */
-export type RefreshToken = {
-  user: User["_id"] | User
-  token: string
-  expiresAt: string
-  revoked?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  isExpired: boolean
-  isActive: boolean
-}
-
-/**
  * Lean version of ReminderDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `ReminderDocument.toObject()`. To avoid conflicts with model names, use the type alias `ReminderObject`.
@@ -1349,47 +566,6 @@ export type Reminder = {
   createdAt?: string
   updatedAt?: string
   isRecurring: boolean
-}
-
-/**
- * Lean version of ReportDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ReportDocument.toObject()`. To avoid conflicts with model names, use the type alias `ReportObject`.
- * ```
- * const reportObject = report.toObject();
- * ```
- */
-export type Report = {
-  userId: User["_id"] | User
-  reportedId: string
-  reportType: "post" | "comment" | "user"
-  reason: string
-  status?: "pending" | "resolved"
-  resolvedBy?: User["_id"] | User
-  resolvedAt?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of ReviewDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `ReviewDocument.toObject()`. To avoid conflicts with model names, use the type alias `ReviewObject`.
- * ```
- * const reviewObject = review.toObject();
- * ```
- */
-export type Review = {
-  user: User["_id"] | User
-  reviewedUser: User["_id"] | User
-  rating: number
-  comment?: string
-  isAnonymous?: boolean
-  flagged?: boolean
-  _id: string
-  createdAt?: string
-  updatedAt?: string
 }
 
 /**
@@ -1429,68 +605,6 @@ export type Role = {
 }
 
 /**
- * Lean version of RoomDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `RoomDocument.toObject()`. To avoid conflicts with model names, use the type alias `RoomObject`.
- * ```
- * const roomObject = room.toObject();
- * ```
- */
-export type Room = {
-  name: string
-  description?: string
-  isPrivate?: boolean
-  createdBy: User["_id"] | User
-  members: (User["_id"] | User)[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of SessionDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `SessionDocument.toObject()`. To avoid conflicts with model names, use the type alias `SessionObject`.
- * ```
- * const sessionObject = session.toObject();
- * ```
- */
-export type Session = {
-  user: User["_id"] | User
-  token: string
-  ipAddress?: string
-  device?: string
-  userAgent?: string
-  isActive?: boolean
-  expiresAt: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-  isExpired: boolean
-}
-
-/**
- * Lean version of StatisticsDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `StatisticsDocument.toObject()`. To avoid conflicts with model names, use the type alias `StatisticsObject`.
- * ```
- * const statisticsObject = statistics.toObject();
- * ```
- */
-export type Statistics = {
-  user: User["_id"] | User
-  goalsCompleted?: number
-  currentStreak?: number
-  longestStreak?: number
-  totalPoints?: number
-  weeklyActivity?: Map<string, number>
-  lastUpdated?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
  * Lean version of StreakDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `StreakDocument.toObject()`. To avoid conflicts with model names, use the type alias `StreakObject`.
@@ -1504,78 +618,6 @@ export type Streak = {
   lastCheckIn?: string | null
   longestStreak?: number
   checkInDates: string[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of SupportTicketMessageDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `SupportTicketDocument.toObject()`.
- * ```
- * const supportticketObject = supportticket.toObject();
- * ```
- */
-export type SupportTicketMessage = {
-  sender: string
-  content: string
-  timestamp?: string
-}
-
-/**
- * Lean version of SupportTicketDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `SupportTicketDocument.toObject()`. To avoid conflicts with model names, use the type alias `SupportTicketObject`.
- * ```
- * const supportticketObject = supportticket.toObject();
- * ```
- */
-export type SupportTicket = {
-  name: string
-  email: string
-  subject: string
-  message: string
-  priority?: "low" | "normal" | "high"
-  status?: "open" | "pending" | "closed"
-  messages: SupportTicketMessage[]
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of TaskDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `TaskDocument.toObject()`. To avoid conflicts with model names, use the type alias `TaskObject`.
- * ```
- * const taskObject = task.toObject();
- * ```
- */
-export type Task = {
-  user: User["_id"] | User
-  title: string
-  description?: string
-  status?: "not-started" | "in-progress" | "completed" | "archived"
-  dueDate?: string
-  completedAt?: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of TrackerDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `TrackerDocument.toObject()`. To avoid conflicts with model names, use the type alias `TrackerObject`.
- * ```
- * const trackerObject = tracker.toObject();
- * ```
- */
-export type Tracker = {
-  user: User["_id"] | User
-  name: string
-  progress: number
   _id: string
   createdAt?: string
   updatedAt?: string
@@ -1619,9 +661,7 @@ export type User = {
   followers: (User["_id"] | User)[]
   following: (User["_id"] | User)[]
   rewards: (Reward["_id"] | Reward)[]
-  achievements: (Achievement["_id"] | Achievement)[]
   badges: (Badge["_id"] | Badge)[]
-  featuredAchievements: (Achievement["_id"] | Achievement)[]
   location: {
     country?: string
     state?: string
@@ -1659,25 +699,6 @@ export type User = {
 }
 
 /**
- * Lean version of UserProgressLogDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `UserProgressLogDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserProgressLogObject`.
- * ```
- * const userprogresslogObject = userprogresslog.toObject();
- * ```
- */
-export type UserProgressLog = {
-  user: User["_id"] | User
-  targetType: "goal" | "task" | "tracker"
-  targetId: string
-  before: number
-  after: number
-  note?: string
-  _id: string
-  createdAt?: string
-}
-
-/**
  * Lean version of VerificationTokenDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `VerificationTokenDocument.toObject()`. To avoid conflicts with model names, use the type alias `VerificationTokenObject`.
@@ -1689,24 +710,6 @@ export type VerificationToken = {
   user: User["_id"] | User
   token: string
   expiresAt: string
-  _id: string
-  createdAt?: string
-  updatedAt?: string
-}
-
-/**
- * Lean version of XpHistoryDocument
- *
- * This has all Mongoose getters & functions removed. This type will be returned from `XpHistoryDocument.toObject()`. To avoid conflicts with model names, use the type alias `XpHistoryObject`.
- * ```
- * const xphistoryObject = xphistory.toObject();
- * ```
- */
-export type XpHistory = {
-  userId: User["_id"] | User
-  xp: number
-  date: string
-  reason: string
   _id: string
   createdAt?: string
   updatedAt?: string

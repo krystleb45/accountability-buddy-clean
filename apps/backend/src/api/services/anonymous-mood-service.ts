@@ -6,14 +6,14 @@ import { logger } from "../../utils/winston-logger"
 import { createError } from "../middleware/errorHandler"
 import { AnonymousMoodCheckIn } from "../models/AnonymousMoodCheckIn"
 
-export interface MoodCheckInResult {
+interface MoodCheckInResult {
   checkInId: string
   mood: number
   encouragementMessage: string
   isFirstTimeToday: boolean
 }
 
-export interface CommunityMoodResult {
+interface CommunityMoodResult {
   averageMood: number
   totalCheckIns: number
   moodDistribution: {
@@ -27,7 +27,7 @@ export interface CommunityMoodResult {
   encouragementMessage: string
 }
 
-export interface MoodTrendResult {
+interface MoodTrendResult {
   date: string
   averageMood: number
   checkInCount: number

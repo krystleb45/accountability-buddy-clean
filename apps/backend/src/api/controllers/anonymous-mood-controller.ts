@@ -7,7 +7,6 @@ import type {
   MoodTrendQuery,
 } from "../routes/anonymous-military-chat-routes"
 
-import { createError } from "../middleware/errorHandler"
 import AnonymousMoodService from "../services/anonymous-mood-service"
 import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
@@ -106,58 +105,6 @@ export const hasSubmittedToday = catchAsync(
     sendResponse(res, 200, true, "Daily submission status retrieved", {
       hasSubmitted,
       sessionId: anonymousUser.sessionId,
-    })
-  },
-)
-
-/**
- * @desc    Get mood statistics (for admin/analytics)
- * @route   GET /api/anonymous-military-chat/mood-stats?days=30
- * @access  Public (could be restricted to admin in the future)
- */
-export const getMoodStatistics = catchAsync(
-  async (req: Request, res: Response) => {
-    const days = Number.parseInt(req.query.days as string) || 30
-
-    // Validate days parameter
-    if (days < 1 || days > 90) {
-      throw createError("Days parameter must be between 1 and 90", 400)
-    }
-
-    const statistics = await AnonymousMoodService.getMoodStatistics(days)
-
-    sendResponse(res, 200, true, "Mood statistics retrieved", {
-      ...statistics,
-      period: {
-        days,
-        startDate: new Date(Date.now() - days * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split("T")[0],
-        endDate: new Date().toISOString().split("T")[0],
-      },
-    })
-  },
-)
-
-/**
- * @desc    Get mood encouragement message (utility endpoint)
- * @route   GET /api/anonymous-military-chat/mood-encouragement/:mood
- * @access  Public
- */
-export const getMoodEncouragement = catchAsync(
-  async (req: Request, res: Response) => {
-    const mood = Number.parseInt(req.params.mood)
-
-    if (!Number.isInteger(mood) || mood < 1 || mood > 5) {
-      throw createError("Mood must be an integer between 1 and 5", 400)
-    }
-
-    const encouragementMessage =
-      AnonymousMoodService.getEncouragementMessage(mood)
-
-    sendResponse(res, 200, true, "Encouragement message retrieved", {
-      mood,
-      encouragementMessage,
     })
   },
 )

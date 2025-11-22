@@ -1,4 +1,6 @@
-import type { Request, Response } from "express"
+import type { Response } from "express"
+
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import GamificationService from "../services/gamification-service"
 import ProgressService from "../services/ProgressService"
@@ -6,7 +8,7 @@ import catchAsync from "../utils/catchAsync"
 import sendResponse from "../utils/sendResponse"
 
 export const getProgressDashboard = catchAsync(
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     const userId = req.user!.id
 
     const [dashboardData, gamification] = await Promise.all([
@@ -28,33 +30,3 @@ export const getProgressDashboard = catchAsync(
     )
   },
 )
-
-export const getProgress = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user!.id
-  const goals = await ProgressService.getProgress(userId)
-  sendResponse(res, 200, true, "Progress fetched successfully", { goals })
-})
-
-export const updateProgress = catchAsync(
-  async (
-    req: Request<unknown, unknown, { goalId: string; progress: number }>,
-    res: Response,
-  ) => {
-    const userId = req.user!.id
-    const { goalId, progress } = req.body
-    const updated = await ProgressService.updateProgress(
-      userId,
-      goalId,
-      progress,
-    )
-    sendResponse(res, 200, true, "Progress updated successfully", {
-      goal: updated,
-    })
-  },
-)
-
-export const resetProgress = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user!.id
-  const result = await ProgressService.resetProgress(userId)
-  sendResponse(res, 200, true, "Progress reset successfully", result)
-})

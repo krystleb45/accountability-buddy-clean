@@ -4,17 +4,6 @@ import { comparePassword } from "../../utils/hashHelper"
 import { createError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 
-export interface NotificationPrefs {
-  email: boolean
-  sms: boolean
-  push: boolean
-}
-
-/**
- * Incoming update may include any subset of notification prefs.
- */
-export type NotificationPrefsInput = Partial<NotificationPrefs>
-
 class SettingsService {
   /**
    * Fetch a user's settings.

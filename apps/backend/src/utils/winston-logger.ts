@@ -55,24 +55,6 @@ const logger: Logger = createLogger({
   ],
 })
 
-// ✅ Add `logStructured` function separately
-function logStructured(infoObject: object): void {
-  logger.info(JSON.stringify(infoObject, null, 2))
-}
-
-// ✅ Add console transport for development environments
-if (process.env.NODE_ENV !== "production") {
-  logger.add(
-    new transports.Console({
-      format: format.combine(
-        format.colorize(),
-        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-        customLogFormat,
-      ),
-    }),
-  )
-}
-
 // ✅ Handle uncaught exceptions and rejections
 logger.exceptions.handle(
   new transports.File({ filename: path.join(logDir, "exceptions.log") }),
@@ -87,4 +69,4 @@ logger.on("error", (err) => {
   logger.error("Logger error:", err)
 })
 
-export { logger, logStructured }
+export { logger }

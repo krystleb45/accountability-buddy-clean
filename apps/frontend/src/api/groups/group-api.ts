@@ -304,7 +304,7 @@ export async function fetchUserGroupInvitations() {
       Envelope<{
         invitations: GroupInvitationExtended[]
       }>
-    >(`/groups/invitations`)
+    >("/groups/invitations")
     return resp.data.data.invitations
   } catch (error) {
     throw new Error(getApiErrorMessage(error as Error))

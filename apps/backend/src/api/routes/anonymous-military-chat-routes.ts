@@ -7,8 +7,6 @@ import {
 } from "../controllers/anonymous-military-chat-controller"
 import {
   getCommunityMoodData,
-  getMoodEncouragement,
-  getMoodStatistics,
   getMoodTrends,
   hasSubmittedToday,
   submitMoodCheckIn,
@@ -53,8 +51,6 @@ router.get(
   }),
   getMoodTrends,
 )
-router.get("/mood-stats", getMoodStatistics)
-router.get("/mood-encouragement/:mood", getMoodEncouragement)
 
 // Anonymous session mood routes - require session ID
 const moodCheckInBodySchema = z.object({

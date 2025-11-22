@@ -47,13 +47,7 @@ const UserSchema: IUserSchema = new Schema(
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     rewards: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reward" }],
-    achievements: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Achievement" },
-    ],
     badges: [{ type: mongoose.Schema.Types.ObjectId, ref: "Badge" }],
-    featuredAchievements: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Achievement" },
-    ],
 
     location: {
       country: { type: String },

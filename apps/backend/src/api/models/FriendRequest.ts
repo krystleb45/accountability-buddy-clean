@@ -1,5 +1,4 @@
 import type { FriendRequestStatus } from "@ab/shared/friends"
-import type { Types } from "mongoose"
 import type {
   FriendRequestDocument,
   FriendRequestModel,
@@ -43,14 +42,20 @@ FriendRequestSchema.index({ sender: 1 })
 
 // --- Static Methods ---
 FriendRequestSchema.statics = {
-  async sendRequest(sender: Types.ObjectId, recipient: Types.ObjectId) {
+  async sendRequest(
+    sender: mongoose.Types.ObjectId,
+    recipient: mongoose.Types.ObjectId,
+  ) {
     const existing = await this.findOne({ sender, recipient })
     if (existing) {
       throw new Error("Friend request already exists")
     }
     return this.create({ sender, recipient })
   },
-  async respondRequest(requestId: Types.ObjectId, status: FriendRequestStatus) {
+  async respondRequest(
+    requestId: mongoose.Types.ObjectId,
+    status: FriendRequestStatus,
+  ) {
     const req = await this.findById(requestId)
     if (!req) {
       return null
@@ -59,7 +64,10 @@ FriendRequestSchema.statics = {
     await req.save()
     return req
   },
-  getRequestsForUser(userId: Types.ObjectId, status?: FriendRequestStatus) {
+  getRequestsForUser(
+    userId: mongoose.Types.ObjectId,
+    status?: FriendRequestStatus,
+  ) {
     const filter: Record<string, unknown> = { recipient: userId }
     if (status) {
       filter.status = status

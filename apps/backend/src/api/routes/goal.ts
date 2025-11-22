@@ -62,13 +62,6 @@ router.post(
 )
 
 /**
- * GET /api/goals/public
- * List goals that are publicly visible
- * No subscription required (public feature)
- */
-router.get("/public", goalController.getPublicGoals)
-
-/**
  * GET /api/goals/streak-dates
  * Get the user's streak dates for goals
  * Basic subscription required + trial prompt for analytics

@@ -13,7 +13,7 @@ import { Message } from "../models/Message"
 import { User } from "../models/User"
 import { FileUploadService } from "./file-upload-service"
 
-export interface MessagePage {
+interface MessagePage {
   messages: IMessage[]
   pagination: {
     totalMessages: number
@@ -22,7 +22,7 @@ export interface MessagePage {
   }
 }
 
-export interface MessageThread {
+interface MessageThread {
   _id: string
   participants: Array<{
     _id: string
@@ -42,7 +42,7 @@ export interface MessageThread {
   updatedAt: string
 }
 
-export interface MessageStats {
+interface MessageStats {
   totalMessages: number
   unreadMessages: number
   totalThreads: number

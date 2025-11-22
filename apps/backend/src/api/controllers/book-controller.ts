@@ -1,7 +1,8 @@
-// src/api/controllers/bookController.ts
-import type { Request, Response } from "express"
+import type { Response } from "express"
 
 import mongoose from "mongoose"
+
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
 
 import * as bookService from "../services/book-service"
 import catchAsync from "../utils/catchAsync"
@@ -11,7 +12,7 @@ import sendResponse from "../utils/sendResponse"
 const isValidId = (id: string): boolean => mongoose.Types.ObjectId.isValid(id)
 
 export const addBook = catchAsync(
-  async (req: Request, res: Response): Promise<void> => {
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const userId = req.user?.id
     if (!userId) {
       sendResponse(res, 401, false, "Unauthorized")
@@ -34,14 +35,17 @@ export const addBook = catchAsync(
 )
 
 export const getAllBooks = catchAsync(
-  async (_: Request, res: Response): Promise<void> => {
+  async (_: AuthenticatedRequest, res: Response): Promise<void> => {
     const books = await bookService.getAllBooksService()
     sendResponse(res, 200, true, "Books retrieved", { books })
   },
 )
 
 export const getBookById = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     const { id } = req.params
     if (!isValidId(id)) {
       sendResponse(res, 400, false, "Invalid book ID")
@@ -53,7 +57,10 @@ export const getBookById = catchAsync(
 )
 
 export const editBook = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     const userId = req.user?.id
     if (!userId) {
       sendResponse(res, 401, false, "Unauthorized")
@@ -71,7 +78,10 @@ export const editBook = catchAsync(
 )
 
 export const deleteBook = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     const { id } = req.params
     if (!isValidId(id)) {
       sendResponse(res, 400, false, "Invalid book ID")
@@ -83,7 +93,10 @@ export const deleteBook = catchAsync(
 )
 
 export const likeBook = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     const userId = req.user?.id
     if (!userId) {
       sendResponse(res, 401, false, "Unauthorized")
@@ -100,7 +113,10 @@ export const likeBook = catchAsync(
 )
 
 export const unlikeBook = catchAsync(
-  async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+  async (
+    req: AuthenticatedRequest<{ id: string }>,
+    res: Response,
+  ): Promise<void> => {
     const userId = req.user?.id
     if (!userId) {
       sendResponse(res, 401, false, "Unauthorized")
@@ -118,7 +134,7 @@ export const unlikeBook = catchAsync(
 
 export const addComment = catchAsync(
   async (
-    req: Request<{ id: string }, unknown, { text: string }>,
+    req: AuthenticatedRequest<{ id: string }, unknown, { text: string }>,
     res: Response,
   ): Promise<void> => {
     const userId = req.user?.id
@@ -143,7 +159,7 @@ export const addComment = catchAsync(
 
 export const removeComment = catchAsync(
   async (
-    req: Request<{ id: string; commentId: string }>,
+    req: AuthenticatedRequest<{ id: string; commentId: string }>,
     res: Response,
   ): Promise<void> => {
     const userId = req.user?.id
@@ -160,15 +176,3 @@ export const removeComment = catchAsync(
     sendResponse(res, 200, true, "Comment removed", { book })
   },
 )
-
-export default {
-  addBook,
-  getAllBooks,
-  getBookById,
-  editBook,
-  deleteBook,
-  likeBook,
-  unlikeBook,
-  addComment,
-  removeComment,
-}

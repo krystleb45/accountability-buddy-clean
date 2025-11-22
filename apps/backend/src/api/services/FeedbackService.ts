@@ -1,5 +1,3 @@
-// src/api/services/FeedbackService.ts
-
 import { Types } from "mongoose"
 
 import type {
@@ -10,7 +8,7 @@ import type {
 } from "../models/Feedback"
 
 import { createError } from "../middleware/errorHandler"
-import Feedback from "../models/Feedback"
+import { Feedback } from "../models/Feedback"
 import LoggingService from "./LoggingService"
 
 export default class FeedbackService {

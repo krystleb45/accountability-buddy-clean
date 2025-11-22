@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/server.ts",
+    "src/scripts/**/*.ts"
+  ],
+  "ignore": [
+    "src/types/mongoose.gen.ts"
+  ],
+  "tags": [
+    "-lintignore"
+  ]
+}

@@ -1,24 +1,10 @@
-import type {
-  AccountabilityPartnership as IAccountabilityPartnership,
-  Goal as IGoal,
-} from "src/types/mongoose.gen"
+import type { Goal as IGoal } from "src/types/mongoose.gen"
 
 import { Types } from "mongoose"
 
 import { createError } from "../middleware/errorHandler"
 import { AccountabilityPartnership } from "../models/AccountabilityPartnership"
 import { Goal } from "../models/Goal"
-
-export interface ProgressDashboard {
-  goals: Pick<
-    IGoal,
-    "title" | "description" | "dueDate" | "status" | "milestones" | "progress"
-  >[]
-  partnerships: (IAccountabilityPartnership & {
-    user1: { _id: string; username: string; profileImage?: string }
-    user2: { _id: string; username: string; profileImage?: string }
-  })[]
-}
 
 class ProgressService {
   /**

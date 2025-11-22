@@ -6,15 +6,6 @@ import { logger } from "../../utils/winston-logger"
 import { Streak } from "../models/Streak"
 import GamificationService from "./gamification-service"
 
-export interface LeaderboardResult {
-  streaks: IStreak[]
-  pagination: {
-    totalEntries: number
-    currentPage: number
-    totalPages: number
-  }
-}
-
 export async function getUserStreak(userId: string) {
   if (!mongoose.isValidObjectId(userId)) {
     throw new Error("Invalid User ID format.")
@@ -61,45 +52,7 @@ export async function logDailyCheckIn(userId: string): Promise<IStreak> {
   return newStreak
 }
 
-export async function resetUserStreak(userId: string): Promise<void> {
-  if (!mongoose.isValidObjectId(userId)) {
-    throw new Error("Invalid User ID format.")
-  }
-  const streak = await Streak.findOne({ user: userId })
-  if (!streak) {
-    throw new Error("No streak found for this user.")
-  }
-  streak.streakCount = 0
-  streak.lastCheckIn = null
-  await streak.save()
-  logger.info(`✅ Streak reset for user: ${userId}`)
-}
-
-export async function getStreakLeaderboard(
-  limit: number,
-  page: number,
-): Promise<LeaderboardResult> {
-  const skip = (page - 1) * limit
-  const [streaks, totalEntries] = await Promise.all([
-    Streak.find()
-      .sort({ streakCount: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate("user", "username profileImage")
-      .lean()
-      .exec(),
-    Streak.countDocuments(),
-  ])
-  const totalPages = Math.ceil(totalEntries / limit)
-  return {
-    streaks,
-    pagination: { totalEntries, currentPage: page, totalPages },
-  }
-}
-
 export const StreakService = {
   getUserStreak,
   logDailyCheckIn,
-  resetUserStreak,
-  getStreakLeaderboard,
 }

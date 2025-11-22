@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express"
+import type { NextFunction, Response } from "express"
 import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 import type { Goal } from "src/types/mongoose.gen"
 
@@ -133,16 +133,6 @@ export const getStreakDates = catchAsync(
   },
 )
 
-// Export all your other existing methods unchanged
-export const getPublicGoals = catchAsync(
-  async (_req: Request, res: Response): Promise<void> => {
-    const goals = await GoalService.getPublicGoals()
-    sendResponse(res, 200, true, "Public goals retrieved successfully", {
-      goals,
-    })
-  },
-)
-
 export const updateGoalProgress = catchAsync(
   async (
     req: AuthenticatedRequest<
@@ -189,24 +179,6 @@ export const getGoalById = catchAsync(
     sendResponse(res, 200, true, "Goal retrieved successfully", {
       goal: goalObj,
     })
-  },
-)
-
-export const completeGoal = catchAsync(
-  async (
-    req: AuthenticatedRequest<{ goalId: string }>,
-    res: Response,
-    next: NextFunction,
-  ): Promise<void> => {
-    const { goalId } = req.params
-    if (!mongoose.isValidObjectId(goalId)) {
-      return next(createError("Invalid goal ID", 400))
-    }
-
-    const userId = req.user!.id!
-
-    const goal = await GoalService.completeGoal(goalId, userId)
-    sendResponse(res, 200, true, "Goal marked as complete", { goal })
   },
 )
 

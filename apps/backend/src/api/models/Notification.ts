@@ -4,7 +4,7 @@ import type { Document, Model, Types, UpdateWriteOpResult } from "mongoose"
 import mongoose, { Schema } from "mongoose"
 
 // --- Notification Types ---
-export type NotificationType =
+type NotificationType =
   | "friend_request"
   | "message"
   | "group_invite"
@@ -12,7 +12,7 @@ export type NotificationType =
   | "goal_milestone"
 
 // --- Interface for Notification Document ---
-export interface INotification extends Document {
+interface INotification extends Document {
   user: Types.ObjectId // Receiver of the notification
   sender?: Types.ObjectId // Optional sender
   message: string // Notification message
@@ -32,7 +32,7 @@ export interface INotification extends Document {
 }
 
 // --- Model Interface for Statics ---
-export interface INotificationModel extends Model<INotification> {
+interface INotificationModel extends Model<INotification> {
   findByUser: (
     userId: Types.ObjectId,
     unreadOnly?: boolean,
