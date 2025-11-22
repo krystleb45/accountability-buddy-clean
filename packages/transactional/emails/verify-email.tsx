@@ -1,5 +1,3 @@
-import type { CSSProperties } from "react"
-
 import {
   Body,
   Button,
@@ -28,7 +26,7 @@ const container = {
   textAlign: "center" as const,
 }
 
-const logoContainer: CSSProperties = {
+const logoContainer = {
   marginTop: "32px",
 }
 
@@ -48,7 +46,7 @@ const heroText = {
   color: colors.foreground,
 }
 
-const buttonSection: CSSProperties = {
+const buttonSection = {
   margin: "48px 0",
 }
 

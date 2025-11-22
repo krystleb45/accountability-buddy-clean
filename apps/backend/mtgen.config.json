@@ -1,0 +1,6 @@
+{
+  "imports": [
+    "import type { FriendRequestStatus } from \"@ab/shared/friends\"",
+    "import type { Category as ResourceCategory } from \"@ab/shared/categories\""
+  ]
+}

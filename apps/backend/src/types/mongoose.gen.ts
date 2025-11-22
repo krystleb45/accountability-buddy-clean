@@ -6,6 +6,8 @@
 // NOTE: ANY CHANGES MADE WILL BE OVERWRITTEN ON SUBSEQUENT EXECUTIONS OF MONGOOSE-TSGEN.
 
 import mongoose from "mongoose"
+import type { FriendRequestStatus } from "@ab/shared/friends"
+import type { Category as ResourceCategory } from "@ab/shared/categories"
 
 /**
  * Lean version of AccountabilityPartnershipDocument
