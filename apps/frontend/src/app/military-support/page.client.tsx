@@ -39,6 +39,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { STORAGE_KEYS } from "@/constants/storageKeys"
 
 // Emergency contacts with calming presentation
 const CRISIS_RESOURCES = [
@@ -72,10 +73,10 @@ export default function MilitarySupportPageClient() {
   const [moodSubmissionTime, setMoodSubmissionTime] = useState(0) // To force widget refresh
 
   const initializeAnonymousSessionId = async () => {
-    let sessionId = localStorage.getItem("ab_military-session")
+    let sessionId = localStorage.getItem(STORAGE_KEYS.MILITARY_CHAT_SESSION_ID)
     if (!sessionId || !sessionId.startsWith("anon_")) {
       sessionId = `anon_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
-      localStorage.setItem("ab_military-session", sessionId)
+      localStorage.setItem(STORAGE_KEYS.MILITARY_CHAT_SESSION_ID, sessionId)
     }
     setMoodSessionId(sessionId)
   }

@@ -27,7 +27,7 @@ import { getAdvancedAnalytics } from "@/api/analytics/analytics-api"
 import { fetchDashboardStats } from "@/api/dashboard/dashboard-api"
 import { fetchUserStreak } from "@/api/streaks/streak-api"
 import { DashboardStatCard } from "@/components/dashboard"
-import { StreakCalendar } from "@/components/Gamification/streak-calendar"
+import { StreakCalendar } from "@/components/gamification/streak-calendar"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { Button } from "@/components/ui/button"
 import {

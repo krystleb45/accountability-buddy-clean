@@ -4,7 +4,7 @@ import axios from "axios"
 import { http } from "@/lib/http"
 
 // FAQ type
-export interface Faq {
+interface Faq {
   question: string
   answer: string
 }

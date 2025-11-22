@@ -2,14 +2,7 @@ import type { Envelope } from "@/types"
 
 import { getApiErrorMessage, http } from "@/utils"
 
-export interface MoodCheckIn {
-  mood: number // 1-5 scale
-  note?: string
-  sessionId: string
-  timestamp: Date
-}
-
-export interface CommunityMoodData {
+interface CommunityMoodData {
   averageMood: number
   totalCheckIns: number
   moodDistribution: {
@@ -23,7 +16,7 @@ export interface CommunityMoodData {
   encouragementMessage: string
 }
 
-export interface MoodTrend {
+interface MoodTrend {
   date: string
   averageMood: number
   checkInCount: number

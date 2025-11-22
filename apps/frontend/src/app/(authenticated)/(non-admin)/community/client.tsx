@@ -7,15 +7,10 @@ import {
   Handshake,
   HexagonIcon,
   MessageSquareDotIcon,
-  MessageSquareIcon,
-  MessageSquareOff,
-  UserRoundCheckIcon,
   Users2,
   UserSearchIcon,
-  UsersRoundIcon,
   XCircle,
 } from "lucide-react"
-import { motion } from "motion/react"
 import { useSession } from "next-auth/react"
 import Link from "next/link"
 
@@ -24,7 +19,6 @@ import {
   fetchRecentMessages,
 } from "@/api/community/community-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -227,185 +221,185 @@ export function CommunityClient() {
           </CardFooter>
         </Card>
       </div>
-
-      {/* Recent Activity Section */}
-      <div
-        className={`
-          grid grid-cols-1 gap-6
-          lg:grid-cols-2
-        `}
-      >
-        {/* Recent Messages */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquareIcon className="text-chart-4" /> Recent Messages
-              </CardTitle>
-              {stats.unreadMessages > 0 && (
-                <CardAction>
-                  <Badge
-                    variant="destructive"
-                    className="h-5 min-w-5 rounded-full px-1 tabular-nums"
-                  >
-                    {stats.unreadMessages}
-                  </Badge>
-                </CardAction>
-              )}
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {recentMessages.length > 0 ? (
-                  recentMessages.map((message) => (
-                    <div
-                      key={message._id}
-                      className={`
-                        flex items-center space-x-3 rounded-lg bg-gray-700 p-3
-                      `}
-                    >
-                      <div
-                        className={`
-                          flex size-8 items-center justify-center rounded-full
-                          bg-blue-500 text-sm font-bold
-                        `}
-                      >
-                        {message.senderId.profileImage ? (
-                          <img
-                            src={message.senderId.profileImage}
-                            alt={message.senderId.name}
-                            className="size-8 rounded-full"
-                          />
-                        ) : (
-                          (message.senderId.name || "U").charAt(0).toUpperCase()
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium">
-                          {message.messageType === "private" &&
-                          message.senderId.name
-                            ? message.senderId.name
-                            : null}
-                        </div>
-                        <div className="truncate text-xs text-gray-400">
-                          {message.text}
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        {new Date(message.updatedAt).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-8 text-center text-muted-foreground">
-                    <div className="mb-2">
-                      <MessageSquareOff className="mx-auto size-10" />
-                    </div>
-                    <p>No recent messages</p>
-                    <p className="mt-1 text-sm">Start chatting with friends!</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="secondary" asChild size="sm">
-                <Link href="/messages">
-                  View All Messages <ArrowRight className="text-chart-4" />
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </motion.div>
-
-        {/* Online Friends */}
-        {/* <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserRoundCheckIcon className="text-primary" /> Online Friends
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {onlineFriends.count > 0 ? (
-                  onlineFriends.friends.map((friend) => (
-                    <div
-                      key={friend._id}
-                      className={`
-                        flex items-center space-x-3 rounded-lg bg-gray-700 p-3
-                      `}
-                    >
-                      <div className="relative">
-                        <div
-                          className={`
-                            flex size-8 items-center justify-center rounded-full
-                            bg-purple-500 text-sm font-bold
-                          `}
-                        >
-                          {friend.avatar ? (
-                            <img
-                              src={friend.avatar}
-                              alt={friend.name || "Friend"}
-                              className="size-8 rounded-full"
-                            />
-                          ) : (
-                            (friend.name || "U").charAt(0).toUpperCase()
-                          )}
-                        </div>
-                        <div
-                          className={`
-                            absolute -right-1 -bottom-1 size-3 rounded-full
-                            border-2 border-gray-700 bg-green-400
-                          `}
-                        ></div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium">
-                          {friend.name || "Unknown User"}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {friend.status || "Online"}
-                        </div>
-                      </div>
-                      <button
-                        className={`
-                          rounded-full bg-blue-600 px-3 py-1 text-xs
-                          hover:bg-blue-700
-                        `}
-                      >
-                        Chat
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-8 text-center text-muted-foreground">
-                    <div className="mb-2">
-                      <UsersRoundIcon className="mx-auto size-10" />
-                    </div>
-                    <p>No friends online</p>
-                    <p className="mt-1 text-sm">Invite friends to join!</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="secondary" asChild size="sm">
-                <Link href="/friends">
-                  View All Friends <ArrowRight className="text-chart-1" />
-                </Link>
-              </Button>
-            </CardFooter>
-          </Card>
-        </motion.div> */}
-      </div>
     </main>
   )
 }
+
+// {/* Recent Activity Section */}
+// <div
+//   className={`
+//     grid grid-cols-1 gap-6
+//     lg:grid-cols-2
+//   `}
+// >
+//   {/* Recent Messages */}
+//   <motion.div
+//     initial={{ opacity: 0, x: -20 }}
+//     animate={{ opacity: 1, x: 0 }}
+//   >
+//     <Card>
+//       <CardHeader>
+//         <CardTitle className="flex items-center gap-2">
+//           <MessageSquareIcon className="text-chart-4" /> Recent Messages
+//         </CardTitle>
+//         {stats.unreadMessages > 0 && (
+//           <CardAction>
+//             <Badge
+//               variant="destructive"
+//               className="h-5 min-w-5 rounded-full px-1 tabular-nums"
+//             >
+//               {stats.unreadMessages}
+//             </Badge>
+//           </CardAction>
+//         )}
+//       </CardHeader>
+//       <CardContent>
+//         <div className="space-y-3">
+//           {recentMessages.length > 0 ? (
+//             recentMessages.map((message) => (
+//               <div
+//                 key={message._id}
+//                 className={`
+//                   flex items-center space-x-3 rounded-lg bg-gray-700 p-3
+//                 `}
+//               >
+//                 <div
+//                   className={`
+//                     flex size-8 items-center justify-center rounded-full
+//                     bg-blue-500 text-sm font-bold
+//                   `}
+//                 >
+//                   {message.senderId.profileImage ? (
+//                     <img
+//                       src={message.senderId.profileImage}
+//                       alt={message.senderId.name}
+//                       className="size-8 rounded-full"
+//                     />
+//                   ) : (
+//                     (message.senderId.name || "U").charAt(0).toUpperCase()
+//                   )}
+//                 </div>
+//                 <div className="flex-1">
+//                   <div className="text-sm font-medium">
+//                     {message.messageType === "private" &&
+//                     message.senderId.name
+//                       ? message.senderId.name
+//                       : null}
+//                   </div>
+//                   <div className="truncate text-xs text-gray-400">
+//                     {message.text}
+//                   </div>
+//                 </div>
+//                 <div className="text-xs text-gray-400">
+//                   {new Date(message.updatedAt).toLocaleTimeString([], {
+//                     hour: "2-digit",
+//                     minute: "2-digit",
+//                   })}
+//                 </div>
+//               </div>
+//             ))
+//           ) : (
+//             <div className="py-8 text-center text-muted-foreground">
+//               <div className="mb-2">
+//                 <MessageSquareOff className="mx-auto size-10" />
+//               </div>
+//               <p>No recent messages</p>
+//               <p className="mt-1 text-sm">Start chatting with friends!</p>
+//             </div>
+//           )}
+//         </div>
+//       </CardContent>
+//       <CardFooter>
+//         <Button variant="secondary" asChild size="sm">
+//           <Link href="/messages">
+//             View All Messages <ArrowRight className="text-chart-4" />
+//           </Link>
+//         </Button>
+//       </CardFooter>
+//     </Card>
+//   </motion.div>
+
+//   {/* Online Friends */}
+//   {/* <motion.div
+//     initial={{ opacity: 0, x: 20 }}
+//     animate={{ opacity: 1, x: 0 }}
+//   >
+//     <Card>
+//       <CardHeader>
+//         <CardTitle className="flex items-center gap-2">
+//           <UserRoundCheckIcon className="text-primary" /> Online Friends
+//         </CardTitle>
+//       </CardHeader>
+//       <CardContent>
+//         <div className="space-y-3">
+//           {onlineFriends.count > 0 ? (
+//             onlineFriends.friends.map((friend) => (
+//               <div
+//                 key={friend._id}
+//                 className={`
+//                   flex items-center space-x-3 rounded-lg bg-gray-700 p-3
+//                 `}
+//               >
+//                 <div className="relative">
+//                   <div
+//                     className={`
+//                       flex size-8 items-center justify-center rounded-full
+//                       bg-purple-500 text-sm font-bold
+//                     `}
+//                   >
+//                     {friend.avatar ? (
+//                       <img
+//                         src={friend.avatar}
+//                         alt={friend.name || "Friend"}
+//                         className="size-8 rounded-full"
+//                       />
+//                     ) : (
+//                       (friend.name || "U").charAt(0).toUpperCase()
+//                     )}
+//                   </div>
+//                   <div
+//                     className={`
+//                       absolute -right-1 -bottom-1 size-3 rounded-full
+//                       border-2 border-gray-700 bg-green-400
+//                     `}
+//                   ></div>
+//                 </div>
+//                 <div className="flex-1">
+//                   <div className="text-sm font-medium">
+//                     {friend.name || "Unknown User"}
+//                   </div>
+//                   <div className="text-xs text-gray-400">
+//                     {friend.status || "Online"}
+//                   </div>
+//                 </div>
+//                 <button
+//                   className={`
+//                     rounded-full bg-blue-600 px-3 py-1 text-xs
+//                     hover:bg-blue-700
+//                   `}
+//                 >
+//                   Chat
+//                 </button>
+//               </div>
+//             ))
+//           ) : (
+//             <div className="py-8 text-center text-muted-foreground">
+//               <div className="mb-2">
+//                 <UsersRoundIcon className="mx-auto size-10" />
+//               </div>
+//               <p>No friends online</p>
+//               <p className="mt-1 text-sm">Invite friends to join!</p>
+//             </div>
+//           )}
+//         </div>
+//       </CardContent>
+//       <CardFooter>
+//         <Button variant="secondary" asChild size="sm">
+//           <Link href="/friends">
+//             View All Friends <ArrowRight className="text-chart-1" />
+//           </Link>
+//         </Button>
+//       </CardFooter>
+//     </Card>
+//   </motion.div> */}
+// </div>

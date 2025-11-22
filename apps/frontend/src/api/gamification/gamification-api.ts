@@ -32,21 +32,3 @@ export async function fetchLeaderboard({
     throw new Error(getApiErrorMessage(error as Error))
   }
 }
-
-// Award or add points
-export async function addPoints(
-  userId: string,
-  points: number,
-): Promise<boolean> {
-  try {
-    await http.post("/gamification/add-points", { userId, points })
-    return true
-  } catch (error) {
-    throw new Error(getApiErrorMessage(error as Error))
-  }
-}
-
-export default {
-  fetchLeaderboard,
-  addPoints,
-}

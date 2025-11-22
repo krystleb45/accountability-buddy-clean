@@ -1,4 +1,3 @@
-import axios from "axios"
 import { randomInteger, sample } from "remeda"
 
 import type { Envelope } from "@/types"
@@ -6,7 +5,7 @@ import type { AnonymousMilitaryMessage } from "@/types/mongoose.gen"
 
 import { getApiErrorMessage, http } from "@/utils"
 
-export interface AnonymousChatRoom {
+interface AnonymousChatRoom {
   id: string
   name: string
   description: string
@@ -22,36 +21,6 @@ export type AnonymousMessage = Omit<
 export interface AnonymousUser {
   sessionId: string
   displayName: string
-}
-
-// Response wrapper for anonymous chat API
-interface AnonymousApiResponse<T> {
-  success: boolean
-  message: string
-  data: T
-}
-
-// ✅ FIXED: Remove extra /api/ since NEXT_PUBLIC_API_URL already includes it
-const ANONYMOUS_API_BASE = process.env.NEXT_PUBLIC_API_URL
-  ? `${process.env.NEXT_PUBLIC_API_URL}/anonymous-military-chat`
-  : "http://localhost:5050/api/anonymous-military-chat"
-
-function logAnonymousErr(fn: string, error: unknown): void {
-  if (axios.isAxiosError(error)) {
-    console.error(
-      `❌ [anonymousMilitaryChatApi::${fn}] Status: ${error.response?.status}`,
-      {
-        url: error.config?.url,
-        method: error.config?.method,
-        data: error.response?.data,
-        message: error.message,
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-      },
-    )
-  } else {
-    console.error(`❌ [anonymousMilitaryChatApi::${fn}]`, error)
-  }
 }
 
 /** GET /anonymous-military-chat/rooms - Get all available chat rooms */
@@ -77,39 +46,6 @@ export async function getAnonymousMessages(roomId: string) {
     return resp.data.data.messages
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))
-  }
-}
-
-/** POST /anonymous-military-chat/rooms/:roomId/message - Send a message */
-export async function sendAnonymousMessage(
-  roomId: string,
-  message: string,
-  user: AnonymousUser,
-): Promise<{ messageId: string; isFlagged: boolean } | null> {
-  if (!message.trim()) {
-    console.error(
-      "[anonymousMilitaryChatApi::sendAnonymousMessage] message is required",
-    )
-    return null
-  }
-
-  try {
-    const resp = await axios.post<
-      AnonymousApiResponse<{ messageId: string; isFlagged: boolean }>
-    >(
-      `${ANONYMOUS_API_BASE}/rooms/${roomId}/message`,
-      { message: message.trim() },
-      {
-        headers: {
-          "X-Anonymous-Session": user.sessionId,
-          "X-Anonymous-Name": user.displayName,
-        },
-      },
-    )
-    return resp.data.data
-  } catch (err) {
-    logAnonymousErr("sendAnonymousMessage", err)
-    return null
   }
 }
 

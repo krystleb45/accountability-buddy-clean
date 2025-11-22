@@ -6,7 +6,7 @@ import { combineClassNames, generateCardId } from "@/utils/CardUtils"
 
 import styles from "./Card.module.css"
 
-export interface CardProps {
+interface CardProps {
   children: React.ReactNode
   className?: string
   onClick?: () => void

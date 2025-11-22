@@ -4,7 +4,7 @@ import React from "react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 
-export interface DashboardStatCardProps {
+interface DashboardStatCardProps {
   title: string
   value: string | number
   /** Optional icon as React node (e.g., Lucide, emoji or SVG) */

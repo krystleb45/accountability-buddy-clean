@@ -4,7 +4,7 @@ import type { User } from "@/types/mongoose.gen"
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
 
-export interface ProfileData {
+interface ProfileData {
   username: string
   email: string
   bio?: string
@@ -51,10 +51,4 @@ export async function uploadCoverImage(file: File) {
   } catch (error) {
     throw new Error(getApiErrorMessage(error as Error))
   }
-}
-
-export default {
-  updateProfile,
-  uploadAvatarImage,
-  uploadCoverImage,
 }

@@ -18,7 +18,7 @@ export async function cancelSubscription() {
   }
 }
 
-export interface UserLimits {
+interface UserLimits {
   hasUnlimitedGoals: boolean
   maxGoals: number
   hasStreakTracker: boolean
@@ -96,10 +96,4 @@ export async function changeSubscriptionPlan(
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))
   }
-}
-
-export default {
-  cancelSubscription,
-  changeSubscriptionPlan,
-  getUserLimits,
 }

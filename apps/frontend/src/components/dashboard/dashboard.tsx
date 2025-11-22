@@ -28,7 +28,7 @@ import type { StreakData } from "@/api/goal/goal-api"
 import type { DashboardProgress } from "@/api/progress/progress-api"
 import type { Activity } from "@/types/mongoose.gen"
 
-import { LeaderboardPreview } from "@/components/Gamification/LeaderboardPreview"
+import { LeaderboardPreview } from "@/components/gamification/leaderboard-preview"
 import { cn } from "@/lib/utils"
 
 import { BadgeCard } from "../badge/badge-card"
@@ -63,7 +63,7 @@ type ICard = {
     }
 )
 
-export interface DashboardProps {
+interface DashboardProps {
   userName: string
   userStats: {
     totalGoals: number

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "src/app/**/*.tsx"
+  ],
+  "ignore": [
+    "src/types/mongoose.gen.ts"
+  ],
+  "ignoreIssues": {
+    "src/components/ui/**/*.tsx": [
+      "exports"
+    ]
+  },
+  "tags": [
+    "-lintignore"
+  ]
+}

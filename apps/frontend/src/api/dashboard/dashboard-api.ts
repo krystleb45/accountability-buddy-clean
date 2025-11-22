@@ -4,7 +4,7 @@ import type { User } from "@/types/mongoose.gen"
 import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
 
-export interface SubscriptionInfo {
+interface SubscriptionInfo {
   tier: User["subscriptionTier"]
   status: User["subscription_status"]
   isInTrial: boolean
@@ -26,14 +26,14 @@ export interface SubscriptionInfo {
   }
 }
 
-export interface UpgradePrompt {
+interface UpgradePrompt {
   type: "trial_ending" | "trial_reminder" | "goal_limit"
   message: string
   action: "upgrade"
   priority: "high" | "medium" | "low"
 }
 
-export interface DashboardStats {
+interface DashboardStats {
   totalGoals: number
   completedGoals: number
   collaborations: number

@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { ROOM_DETAILS, VALID_ROOMS } from "@ab/shared/military-chat-rooms"
 import { notFound } from "next/navigation"
 
-import MilitaryChatRoom from "../../../../components/MilitarySupport/MilitaryChatRoom"
+import { MilitaryChatRoom } from "@/components/MilitarySupport/military-chat-room"
 
 interface PageProps {
   params: Promise<{

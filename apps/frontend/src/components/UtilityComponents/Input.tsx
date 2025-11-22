@@ -1,8 +1,7 @@
 import clsx from "clsx"
 import React, { useId } from "react"
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string
 }
 

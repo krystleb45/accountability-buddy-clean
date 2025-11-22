@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-export interface TextareaProps
+interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   className?: string
 }

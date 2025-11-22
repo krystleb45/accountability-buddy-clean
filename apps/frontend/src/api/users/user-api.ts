@@ -3,7 +3,7 @@ import type { User } from "@/types/mongoose.gen"
 
 import { getApiErrorMessage, http } from "@/utils"
 
-export type Member = Pick<
+type Member = Pick<
   User,
   | "_id"
   | "username"

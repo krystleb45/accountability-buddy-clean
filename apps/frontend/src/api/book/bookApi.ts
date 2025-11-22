@@ -1,8 +1,7 @@
-// src/book/bookApi.ts
 /**
  * Book data model
  */
-export interface Book {
+interface Book {
   id: number
   title: string
   author: string
@@ -42,8 +41,4 @@ export async function fetchBooks(): Promise<Book[]> {
     console.error("❌ [bookApi::fetchBooks]", err)
     return []
   }
-}
-
-export default {
-  fetchBooks,
 }

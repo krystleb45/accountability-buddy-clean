@@ -11,7 +11,7 @@ import type { User } from "@/types/mongoose.gen"
 
 import { fetchMe } from "@/api/auth/auth-api"
 
-export interface AuthContextType {
+interface AuthContextType {
   user: (User & { timezone: string }) | null
   loading: boolean
   refetchUser: () => Promise<void>

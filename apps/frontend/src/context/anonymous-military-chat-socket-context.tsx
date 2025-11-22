@@ -16,6 +16,7 @@ import { io } from "socket.io-client"
 import type { AnonymousUser } from "@/api/military-support/anonymous-military-chat-api"
 
 import { generateAnonymousUser } from "@/api/military-support/anonymous-military-chat-api"
+import { STORAGE_KEYS } from "@/constants/storageKeys"
 
 interface AnonymousMilitaryChatSocketContextType {
   socket: Socket | null
@@ -67,14 +68,21 @@ export const AnonymousMilitaryChatSocketProvider: React.FC<
       socket.close()
     }
 
-    const sessionId = localStorage.getItem("ab_military-session")
-    const displayName = localStorage.getItem("ab_military-display-name")
+    const sessionId = localStorage.getItem(
+      STORAGE_KEYS.MILITARY_CHAT_SESSION_ID,
+    )
+    const displayName = localStorage.getItem(
+      STORAGE_KEYS.MILITARY_CHAT_DISPLAY_NAME,
+    )
     const user = generateAnonymousUser(
       sessionId || undefined,
       displayName || undefined,
     )
-    localStorage.setItem("ab_military-session", user.sessionId)
-    localStorage.setItem("ab_military-display-name", user.displayName)
+    localStorage.setItem(STORAGE_KEYS.MILITARY_CHAT_SESSION_ID, user.sessionId)
+    localStorage.setItem(
+      STORAGE_KEYS.MILITARY_CHAT_DISPLAY_NAME,
+      user.displayName,
+    )
 
     // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setUser(user)
