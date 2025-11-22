@@ -1,7 +1,8 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalEnv": [
-    "NEXT_PUBLIC_BACKEND_URL",
+    "NEXTAUTH_URL",
+    "BACKEND_URL",
     "NEXTAUTH_SECRET",
     "MONGO_URI",
     "JWT_SECRET",
