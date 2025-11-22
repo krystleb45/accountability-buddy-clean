@@ -1,484 +1,610 @@
-# 🛠️ Setup Guide - Accountability Buddy
+# 🛠️ Detailed Setup Guide
 
-Comprehensive setup instructions for developers to get the Accountability Buddy platform running locally.
+This guide provides comprehensive instructions for setting up the Accountability Buddy platform in different environments.
 
-## 📋 Prerequisites
+## 📋 Table of Contents
 
-### **Required Software**
-
-- **Node.js**: Version 18.0.0 or higher
-
-  ```bash
-  node --version  # Should show v18+
-  npm --version   # Should show v9+
-  ```
-
-- **MongoDB**: Local installation or cloud instance
-- **Git**: For version control
-- **Code Editor**: VS Code recommended
-
-### **Optional but Recommended**
-
-- **MongoDB Compass**: GUI for MongoDB
-- **Postman**: For API testing
-- **Docker**: For containerized MongoDB (alternative)
+- [Prerequisites](#-prerequisites)
+- [Quick Development Setup](#-quick-development-setup)
+- [Docker Development Setup](#-docker-development-setup)
+- [Environment Configuration](#️-environment-configuration)
+- [Database Setup](#-database-setup)
+- [Running the Application](#-running-the-application)
+- [Development Tools](#-development-tools)
+- [Troubleshooting](#-troubleshooting)
+- [Production Deployment](#-production-deployment)
 
 ---
 
-## 🚀 Quick Start (5 Minutes)
+## 🔧 Prerequisites
 
-### **1. Clone and Install**
+### Required Software
+
+- **Node.js 22+** (Current: v22.20.0)
+
+  ```bash
+  # Check version
+  node --version
+  npm --version
+  
+  # Install using nvm (recommended)
+  nvm install 22
+  nvm use 22
+  ```
+
+- **Git** (Latest version)
+
+  ```bash
+  git --version
+  ```
+
+- **MongoDB** (Community Edition 7.0+)
+  - Option 1: [Local Installation](https://docs.mongodb.com/manual/installation/)
+  - Option 2: [MongoDB Atlas](https://www.mongodb.com/atlas) (Cloud)
+  - Option 3: Docker (see [Docker Setup](#-docker-development-setup))
+
+### Optional Tools
+
+- **Docker** & **Docker Compose** (for containerized development)
+- **MongoDB Compass** (GUI for MongoDB)
+- **Postman** or **Insomnia** (API testing)
+- **VS Code** with recommended extensions:
+  - TypeScript and JavaScript Language Features
+  - ES7+ React/Redux/React-Native snippets
+  - Tailwind CSS IntelliSense
+  - MongoDB for VS Code
+
+---
+
+## ⚡ Quick Development Setup
+
+### 1. Clone Repository
 
 ```bash
-# Clone the repository
-git clone https://github.com/krystleb45/accountability-buddy-clean.git
-cd accountability-buddy-clean
+git clone https://github.com/krystleb45/accountability-buddy.git
+cd accountability-buddy
+```
 
-# Install dependencies
+### 2. Install Dependencies
+
+```bash
+# Install Turborepo globally (optional)
+npm install -g turbo
+
+# Install all workspace dependencies
 npm install
 ```
 
-### **2. Environment Setup**
+### 3. Setup Environment Files
 
 ```bash
-# Backend environment
-cd apps/backend
-cp .env.example .env.development
-# Edit .env.development with your values
-
 # Frontend environment
-cd ../frontend
+cd apps/frontend
 cp .env.example .env.local
-# Edit .env.local with your values
+
+# Backend environment
+cd ../backend
+cp .env.example .env.development
 ```
 
-### **3. Start Development Servers**
+### 4. Configure Environment Variables
+
+**Frontend (.env.local):**
 
 ```bash
+# Minimal required configuration
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=$(openssl rand -base64 32)
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5050
+```
+
+**Backend (.env.development):**
+
+```bash
+# Minimal required configuration
+NODE_ENV=development
+PORT=5050
+MONGO_URI=mongodb://localhost:27017/accountability-buddy
+JWT_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+FRONTEND_URL=http://localhost:3000
+```
+
+### 5. Start Development Servers
+
+```bash
+# From project root
 turbo dev
 ```
 
-### **4. Verify Setup**
+**Access Points:**
 
 - Frontend: <http://localhost:3000>
 - Backend API: <http://localhost:5050>
-- API Docs: <http://localhost:5050/api-docs>
+- API Documentation: <http://localhost:5050/api-docs>
 
 ---
 
-## 📊 Database Setup
+## 🐳 Docker Development Setup
 
-### **Option 1: Local MongoDB**
+Use Docker Compose for a complete development environment with all services.
+
+### 1. Start Services
 
 ```bash
-# Install MongoDB locally
-# macOS with Homebrew:
-brew tap mongodb/brew
-brew install mongodb-community
+# Start core services (MongoDB, Redis, MinIO)
+docker-compose up -d
 
-# Start MongoDB service
-brew services start mongodb/brew/mongodb-community
-
-# Verify connection
-mongosh  # Should connect to mongodb://localhost:27017
+# Or start with admin tools included
+docker-compose --profile tools up -d
 ```
 
-### **Option 2: MongoDB Atlas (Cloud)**
-
-1. Create free account at [MongoDB Atlas](https://www.mongodb.com/atlas)
-2. Create new cluster
-3. Get connection string
-4. Add to your `.env.development`:
-
-   ```bash
-   MONGO_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@your-cluster.mongodb.net/accountability-buddy
-   ```
-
-### **Option 3: Docker MongoDB**
+### 2. Verify Services
 
 ```bash
-# Run MongoDB in Docker
-docker run -d \
-  --name accountability-mongo \
-  -p 27017:27017 \
-  -e MONGO_INITDB_ROOT_USERNAME=admin \
-  -e MONGO_INITDB_ROOT_PASSWORD=password \
-  mongo:latest
+docker-compose ps
+```
 
-# Connection string for Docker setup:
+### 3. Configure Backend for Docker
+
+Update `apps/backend/.env.development`:
+
+```bash
 MONGO_URI=mongodb://admin:password@localhost:27017/accountability-buddy?authSource=admin
+REDIS_HOST=localhost
+REDIS_PORT=6379
+AWS_ACCESS_KEY_ID=admin
+AWS_SECRET_ACCESS_KEY=password123
+AWS_ENDPOINT=http://localhost:9000
+S3_BUCKET=accountability-uploads
 ```
+
+### 4. Access Admin Tools
+
+- **MongoDB Admin**: <http://localhost:8081> (admin/password)
+- **Redis Admin**: <http://localhost:8082>
+- **MinIO Console**: <http://localhost:9001> (admin/password123)
+
+See [DOCKER_SETUP.md](./DOCKER_SETUP.md) for detailed Docker configuration.
 
 ---
 
-## ⚙️ Environment Variables Setup
+## ⚙️ Environment Configuration
 
-### **Backend (.env.development)**
+### Frontend Environment Variables
 
 ```bash
-# ======================
-# Server Configuration
-# ======================
-PORT=5050
-NODE_ENV=development
+# apps/frontend/.env.local
 
-# ======================
-# Database
-# ======================
-# Local MongoDB
+# ========================
+# 🔐 Authentication (Required)
+# ========================
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-here  # Generate: openssl rand -base64 32
+
+# ========================
+# 🚀 API Configuration (Required)
+# ========================
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5050
+
+# ========================
+# 📊 Optional Services
+# ========================
+NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=GA-XXXXXXXXX
+NEXT_PUBLIC_SENTRY_DSN=https://example@sentry.io/project
+
+# ========================
+# 🎨 App Configuration
+# ========================
+NEXT_PUBLIC_APP_NAME=AccountabilityBuddy
+NEXT_PUBLIC_APP_VERSION=1.0.0
+NEXT_PUBLIC_THEME_MODE=dark
+```
+
+### Backend Environment Variables
+
+```bash
+# apps/backend/.env.development
+
+# ========================
+# 🌍 Environment
+# ========================
+NODE_ENV=development
+PORT=5050
+
+# ========================
+# 🗄️ Database (Required)
+# ========================
 MONGO_URI=mongodb://localhost:27017/accountability-buddy
 
-# OR Atlas (cloud)
-# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/accountability-buddy
-
-# ======================
-# Authentication
-# ======================
-JWT_SECRET=your-super-secret-jwt-key-min-32-chars
+# ========================
+# 🔐 JWT Secrets (Required)
+# ========================
+JWT_SECRET=your-jwt-secret-32-chars-min
+ACCESS_TOKEN_SECRET=your-access-token-secret-64-chars-min
+REFRESH_TOKEN_SECRET=your-refresh-token-secret-64-chars-min
 JWT_EXPIRES_IN=7d
 
-# ======================
-# CORS Configuration
-# ======================
+# ========================
+# 🌐 CORS (Required)
+# ========================
 CORS_ORIGINS=http://localhost:3000
+FRONTEND_URL=http://localhost:3000
 
-# ======================
-# Optional Services
-# ======================
-# Email (for notifications)
-EMAIL_SERVICE=gmail
-EMAIL_USER=your-email@gmail.com
-EMAIL_PASS=your-app-password
+# ========================
+# 💳 Payment Processing (Optional)
+# ========================
+STRIPE_SECRET_KEY=sk_test_your_stripe_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 
-# Stripe (for payments)
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+# ========================
+# 📧 Email Service (Optional)
+# ========================
+MAILCHIMP_TRANSACTIONAL_API_KEY=your-mailchimp-key
 
-# Socket.IO
-SOCKET_IO_CORS_ORIGIN=http://localhost:3000
+# ========================
+# 🗃️ File Storage (Optional)
+# ========================
+AWS_ACCESS_KEY_ID=your-aws-key
+AWS_SECRET_ACCESS_KEY=your-aws-secret
+S3_BUCKET=your-bucket-name
+
+# ========================
+# 📊 Subscription Plans
+# ========================
+DEFAULT_TRIAL_DAYS=14
+BASIC_MONTHLY_PRICE=5.00
+PRO_MONTHLY_PRICE=15.00
+ELITE_MONTHLY_PRICE=30.00
 ```
 
-### **Frontend (.env.local)**
+### Generating Secure Secrets
 
 ```bash
-# ======================
-# NextAuth Configuration
-# ======================
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-nextauth-secret-min-32-chars
-
-# ======================
-# API Configuration
-# ======================
-# CRITICAL: Point to Next.js proxy routes, NOT Express directly
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-
-# Backend URL for server-side proxy forwarding
-BACKEND_URL=http://localhost:5050
-EXPRESS_API_URL=http://localhost:5050
-
-# ======================
-# Stripe (Public Keys)
-# ======================
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key
-
-# ======================
-# App Configuration
-# ======================
-NEXT_PUBLIC_APP_NAME=AccountabilityBuddy
-NEXT_PUBLIC_APP_VERSION=1.0.0-dev
-NEXT_PUBLIC_DEBUG=true
-```
-
----
-
-## 🔧 Detailed Setup Steps
-
-### **Step 1: Backend Setup**
-
-```bash
-cd apps/backend
-
-# Setup environment
-cp .env.example .env.development
-# Edit .env.development with your MongoDB URI and JWT secret
-
-# Generate JWT Secret (minimum 32 characters)
+# JWT Secret (32+ characters)
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
-# Start development server
-turbo dev
-
-# Verify backend is running
-curl http://localhost:5050/api/health
-```
-
-### **Step 2: Frontend Setup**
-
-```bash
-cd apps/frontend
-
-# Setup environment
-cp .env.example .env.local
-# Edit .env.local with your configuration
-
-# Generate NextAuth Secret
+# NextAuth Secret
 openssl rand -base64 32
 
-# Start development server
-turbo dev
-
-# Verify frontend is running
-open http://localhost:3000
-```
-
-### **Step 3: Database Initialization**
-
-```bash
-# The app will create collections automatically
-# But you can verify connection by checking logs:
-
-# Backend logs should show:
-# ✅ Connected to MongoDB
-# 🚀 Server listening on port 5050
+# Session Secret
+openssl rand -hex 32
 ```
 
 ---
 
-## 🧪 Testing the Setup
+## 🗄️ Database Setup
 
-### **1. Backend API Test**
+### Local MongoDB Setup
+
+1. **Install MongoDB Community Edition**
+   - [macOS](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
+   - [Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+   - [Windows](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
+
+2. **Start MongoDB Service**
+
+   ```bash
+   # macOS (Homebrew)
+   brew services start mongodb-community
+   
+   # Ubuntu/Debian
+   sudo systemctl start mongod
+   
+   # Windows
+   net start MongoDB
+   ```
+
+3. **Verify Connection**
+
+   ```bash
+   mongosh mongodb://localhost:27017/accountability-buddy
+   ```
+
+### Database Seeding
 
 ```bash
-# Health check
-curl http://localhost:5050/api/health
+# Navigate to backend directory
+cd apps/backend
 
-# Register test user
-curl -X POST http://localhost:5050/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"username":"testuser","email":"test@example.com","password":"password123"}'
+# Seed roles (required)
+npm run seed:roles
 
-# Check Swagger docs
-open http://localhost:5050/api-docs
+# Seed test users (optional)
+npm run seed:users
+
+# Create admin user
+npm run create:admin
+
+# Seed complete development data
+npm run seed:dev
 ```
 
-### **2. Frontend Test**
+### Database Management Scripts
 
-1. Open <http://localhost:3000>
-2. Try registration/login
-3. Navigate to dashboard
-4. Create a test group
-5. Check military support section
+```bash
+# Cleanup and reset
+npm run cleanup:all    # Remove all test data
+npm run reset:dev     # Complete reset for development
 
-### **3. Full Stack Test**
-
-1. Register new user on frontend
-2. Create a goal
-3. Join/create a group
-4. Test military support chat
+# Individual operations
+npm run cleanup:users
+npm run cleanup:roles
+npm run seed:test     # Test environment data
+```
 
 ---
 
-## 🚨 Troubleshooting
+## 🏃 Running the Application
 
-### **Common Issues & Solutions**
-
-#### **Port Already in Use**
+### Development Mode
 
 ```bash
-# Find process using port 3000 or 5050
-lsof -i :3000
-lsof -i :5050
-
-# Kill process
-kill -9 <PID>
-
-# Or use different ports in your .env files
-```
-
-#### **MongoDB Connection Failed**
-
-```bash
-# Check if MongoDB is running
-brew services list | grep mongodb
-
-# Start MongoDB service
-brew services start mongodb/brew/mongodb-community
-
-# Check connection
-mongosh mongodb://localhost:27017
-```
-
-#### **Environment Variables Not Loading**
-
-```bash
-# Ensure file names are correct:
-# backend/.env.development  (NOT .env.dev)
-# frontend/.env.local       (NOT .env)
-
-# Restart development servers after changing .env files
-```
-
-#### **Authentication Issues (401 Errors)**
-
-```bash
-# Verify NEXT_PUBLIC_API_URL points to Next.js, not Express:
-# ✅ NEXT_PUBLIC_API_URL=http://localhost:3000/api
-# ❌ NEXT_PUBLIC_API_URL=http://localhost:5050/api
-
-# Check JWT secret is set in backend
-# Check NEXTAUTH_SECRET is set in frontend
-```
-
-#### **CORS Errors**
-
-```bash
-# Ensure CORS_ORIGINS in backend includes frontend URL:
-CORS_ORIGINS=http://localhost:3000
-
-# Check browser network tab for preflight requests
-```
-
-### **Database Issues**
-
-```bash
-# Reset database (development only)
-mongosh
-use accountability-buddy
-db.dropDatabase()
-
-# Check database collections
-mongosh
-use accountability-buddy
-show collections
-```
-
-### **Build Errors**
-
-```bash
-# Clear Next.js cache
-cd apps/frontend
-rm -rf .next
+# Start all services
 turbo dev
 
-# Clear node_modules if needed
+# Start individual services
+cd apps/frontend && npm run dev
+cd apps/backend && npm run dev
+```
+
+### Build for Production
+
+```bash
+# Build all applications
+turbo build
+
+# Build individual apps
+cd apps/frontend && npm run build
+cd apps/backend && npm run build
+```
+
+### Testing
+
+```bash
+# Run all tests
+turbo test
+
+# Frontend tests
+cd apps/frontend && npm test
+
+# Backend tests
+cd apps/backend && npm test
+```
+
+---
+
+## 🛠️ Development Tools
+
+### Type Generation
+
+```bash
+# Generate TypeScript types from Mongoose models
+npm run generate-mongoose-types
+```
+
+### Code Quality
+
+```bash
+# Lint all code
+turbo lint
+
+# Format all code
+turbo format
+
+# Type checking
+turbo check-types
+```
+
+### Email Development
+
+```bash
+# Start email preview server
+cd packages/transactional
+npm run dev
+# Access: http://localhost:3001
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Port Already in Use
+
+```bash
+# Check what's using the port
+lsof -i :3000  # Frontend
+lsof -i :5050  # Backend
+lsof -i :27017 # MongoDB
+
+# Kill process using port
+kill -9 $(lsof -t -i:3000)
+```
+
+#### MongoDB Connection Failed
+
+```bash
+# Check MongoDB status
+mongosh --eval "db.adminCommand('ping')"
+
+# Check connection string format
+mongodb://[username:password@]host[:port][/database][?options]
+
+# For Docker MongoDB
+mongodb://admin:password@localhost:27017/accountability-buddy?authSource=admin
+```
+
+#### Build Failures
+
+```bash
+# Clear all caches
 rm -rf node_modules
+rm -rf apps/*/node_modules
+rm -rf packages/*/node_modules
+rm -rf .turbo
+
+# Reinstall
 npm install
 ```
 
----
-
-## 🔍 Development Tools
-
-### **Recommended VS Code Extensions**
-
-- ES7+ React/Redux/React-Native snippets
-- TypeScript Importer
-- Tailwind CSS IntelliSense
-- MongoDB for VS Code
-- GitLens
-- Prettier - Code formatter
-- ESLint
-
-### **Browser Development Tools**
-
-- React Developer Tools
-- Redux DevTools (if using Redux)
-- MongoDB Compass for database management
-
-### **API Testing**
+#### Environment Variables Not Loading
 
 ```bash
-# Test with curl
-curl -X GET http://localhost:5050/api/health
+# Check file names and locations
+ls -la apps/frontend/.env*
+ls -la apps/backend/.env*
 
-# Or use Postman collection (if available)
-# Import: docs/postman_collection.json
+# Verify no syntax errors
+cat apps/frontend/.env.local
+```
+
+### Debug Mode
+
+#### Frontend Debug
+
+```bash
+# Enable Next.js debug mode
+NEXT_PUBLIC_DEBUG=true npm run dev
+
+# Check browser console for detailed logs
+```
+
+#### Backend Debug
+
+```bash
+# Enable debug logging
+LOG_LEVEL=debug npm run dev
+
+# Check logs directory
+tail -f apps/backend/logs/combined.log
+```
+
+### Performance Issues
+
+#### Slow Database Queries
+
+```bash
+# Enable MongoDB profiling
+mongosh --eval "db.setProfilingLevel(2)"
+
+# Check slow queries
+mongosh --eval "db.system.profile.find().sort({ts:-1}).limit(5)"
+```
+
+#### Memory Issues
+
+```bash
+# Increase Node.js memory limit
+NODE_OPTIONS="--max-old-space-size=4096" npm run dev
 ```
 
 ---
 
-## 📱 Mobile Development (Future)
+## 🚀 Production Deployment
 
-### **React Native Setup (Planned)**
+### Environment Preparation
+
+1. **Secure Environment Variables**
+
+   ```bash
+   # Generate production secrets
+   JWT_SECRET=$(openssl rand -hex 32)
+   NEXTAUTH_SECRET=$(openssl rand -base64 32)
+   ```
+
+2. **Database Configuration**
+   - Use MongoDB Atlas or dedicated MongoDB instance
+   - Enable authentication and SSL
+   - Configure backup strategy
+
+3. **Redis Configuration**
+   - Use Redis Cloud or dedicated Redis instance
+   - Enable authentication and SSL
+
+### Build Process
 
 ```bash
-# For future mobile app development
-npm install -g @react-native-community/cli
-npx react-native init AccountabilityBuddyMobile
+# Production build
+turbo build
+
+# Test production build locally
+cd apps/frontend && npm start
+cd apps/backend && npm run start
 ```
 
----
+### Deployment Platforms
 
-## ☁️ Deployment Setup
-
-### **Vercel (Frontend)**
+#### Vercel (Frontend)
 
 ```bash
 # Install Vercel CLI
 npm i -g vercel
 
 # Deploy
-vercel
-
-# Add environment variables in Vercel dashboard
+cd apps/frontend
+vercel --prod
 ```
 
-### **Railway (Backend)**
+#### Railway (Backend)
 
 ```bash
 # Install Railway CLI
-cd apps/backend
-npm install -g @railway/cli
+npm i -g @railway/cli
 
-# Login and deploy
+# Deploy
+cd apps/backend
 railway login
-railway init
+railway link
 railway up
 ```
 
-### **Environment Variables for Production**
-
-Remember to set all environment variables in your deployment platforms:
-
-- Vercel: Add all `NEXT_PUBLIC_*` variables
-- Railway: Add all backend environment variables
-- Use production MongoDB URI and API keys
-
----
-
-## 📞 Getting Help
-
-### **If Setup Fails**
-
-1. **Check the logs** in both terminal windows
-2. **Verify environment variables** are correct
-3. **Ensure MongoDB is running** and accessible
-4. **Check port availability** (3000, 5050)
-5. **Review this troubleshooting section**
-
-### **Common Log Messages**
+#### Docker Production
 
 ```bash
-# ✅ Good logs to see:
-"🚀 Server listening on port 5050"
-"✅ Connected to MongoDB"
-"✨ Ready on http://localhost:3000"
+# Build backend image
+docker build -f backend.Dockerfile -t accountability-backend .
 
-# ❌ Error logs to investigate:
-"EADDRINUSE: address already in use"
-"MongooseError: Connection failed"
-"404 - API route not found"
+# Run with production environment
+docker run -d \
+  --name accountability-backend \
+  --env-file apps/backend/.env.production \
+  -p 5050:5050 \
+  accountability-backend
 ```
 
-### **Support Channels**
+### Health Monitoring
 
-- **GitHub Issues**: For bugs and feature requests
-- **Documentation**: Check [docs/](../docs/) folder
-- **Code Review**: Submit PRs for improvements
+```bash
+# Backend health endpoint
+curl http://localhost:5050/health
+
+# Database connection check
+curl http://localhost:5050/api/health/db
+```
 
 ---
 
-**Last Updated**: July 30, 2025
-**Setup Time**: ~15-30 minutes for experienced developers
-**Difficulty**: Intermediate (requires Node.js and MongoDB knowledge)
+## 📚 Additional Resources
+
+- **API Documentation**: <http://localhost:5050/api-docs>
+- **Docker Setup**: [DOCKER_SETUP.md](./DOCKER_SETUP.md)
+- **MongoDB Documentation**: <https://docs.mongodb.com/>
+- **Next.js Documentation**: <https://nextjs.org/docs>
+- **Turborepo Documentation**: <https://turbo.build/repo/docs>
+
+---
+
+**Need Help?**
+
+- Create an issue: [GitHub Issues](https://github.com/krystleb45/accountability-buddy/issues)
+- Check existing documentation in the `docs/` folder
+- Review example environment files in each app directory
+
+---
+
+*Last updated: November 22, 2025*

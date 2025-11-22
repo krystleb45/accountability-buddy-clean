@@ -4,18 +4,29 @@
 
 ## 📌 Table of Contents
 
-- [🚀 Features](#-features)
-- [🛠 Tech Stack](#-tech-stack)
-- [📂 Project Structure](#-project-structure)
-- [📥 Installation](#-installation)
-- [⚙️ Environment Variables](#️-environment-variables)
-- [🏃 Running the Project](#-running-the-project)
-- [🛡️ Authentication & Security](#️-authentication--security)
-- [🛠️ API Documentation](#️-api-documentation)
-- [🚧 Current Status](#-current-status)
-- [🐛 Known Issues](#-known-issues)
-- [🤝 Contributing](#-contributing)
-- [📞 Support](#-support)
+- [🎯 Accountability Buddy](#-accountability-buddy)
+  - [📌 Table of Contents](#-table-of-contents)
+  - [🚀 Features](#-features)
+    - [**Core Features**](#core-features)
+    - [**Military Support Features**](#military-support-features)
+    - [**Subscription \& Monetization**](#subscription--monetization)
+  - [🛠 Tech Stack](#-tech-stack)
+    - [**Frontend**](#frontend)
+    - [**Backend**](#backend)
+    - [**Development Tools**](#development-tools)
+  - [📂 Project Structure](#-project-structure)
+  - [📥 Installation](#-installation)
+    - [**Prerequisites**](#prerequisites)
+    - [**Quick Start**](#quick-start)
+  - [⚙️ Environment Variables](#️-environment-variables)
+    - [**Frontend (.env.local)**](#frontend-envlocal)
+    - [**Backend (.env.development)**](#backend-envdevelopment)
+  - [🏃 Running the Project](#-running-the-project)
+    - [**Development**](#development)
+    - [**Production Build**](#production-build)
+    - [**Available Scripts**](#available-scripts)
+  - [🛡️ Authentication \& Security](#️-authentication--security)
+  - [🛠️ API Documentation](#️-api-documentation)
 
 ---
 
@@ -49,61 +60,67 @@
 
 ### **Frontend**
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-- **Language**: TypeScript
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Language**: TypeScript 5.9+
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) + [Radix UI](https://www.radix-ui.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
+- **State Management**: [TanStack Query](https://tanstack.com/query) (React Query)
+- **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **Real-time**: Socket.IO Client
+- **Charts**: [Recharts](https://recharts.org/)
 - **Deployment**: [Vercel](https://vercel.com/)
 
 ### **Backend**
 
-- **Runtime**: [Node.js](https://nodejs.org/)
+- **Runtime**: [Node.js 22+](https://nodejs.org/)
 - **Framework**: [Express.js](https://expressjs.com/)
-- **Database**: [MongoDB](https://www.mongodb.com/) with Mongoose
+- **Database**: [MongoDB](https://www.mongodb.com/) with [Mongoose 7](https://mongoosejs.com/)
 - **Authentication**: JSON Web Tokens (JWT)
+- **Validation**: [Zod](https://zod.dev/) + [Express Validator](https://express-validator.github.io/)
 - **Real-time**: [Socket.IO](https://socket.io/)
+- **Job Queues**: [BullMQ](https://docs.bullmq.io/)
+- **Email**: [Mailchimp Transactional](https://mailchimp.com/features/transactional-email/)
+- **File Storage**: [AWS S3](https://aws.amazon.com/s3/)
+- **Security**: Helmet, Rate Limiting, CORS, XSS Protection
+- **Logging**: [Winston](https://github.com/winstonjs/winston)
 - **Deployment**: [Railway](https://railway.app/)
 
 ### **Development Tools**
 
-- **Language**: TypeScript
-- **Code Quality**: ESLint + Prettier
-- **Version Control**: Git + GitHub
-- **Environment**: Local development + cloud deployment
+- **Language**: TypeScript 5.9+
 - **Workspace Management**: [Turborepo](https://turborepo.com/)
+- **Code Quality**: [ESLint](https://eslint.org/) + [Prettier](https://prettier.io/)
+- **Type Generation**: [mongoose-tsgen](https://github.com/francescov1/mongoose-tsgen)
+- **Testing**: [Jest](https://jestjs.io/) + [Cypress](https://www.cypress.io/)
+- **Git Hooks**: [Husky](https://typicode.github.io/husky/) + [lint-staged](https://github.com/okonet/lint-staged)
+- **Containerization**: [Docker](https://www.docker.com/) + Docker Compose
+- **Version Control**: Git + GitHub
 
 ---
 
 ## 📂 Project Structure
 
 ```sh
-accountability-buddy-clean/
+accountability-buddy/
 ├── apps/                    # Application workspace
 │   ├── backend/             # Express.js API server
 │   │   ├── src/
-│   │   │   ├── api/         # API layer
+│   │   │   ├── api/         # API layer (controllers, models, routes, services)
 │   │   │   ├── config/      # Database and app configuration
-│   │   │   ├── constants/   # Application constants
-│   │   │   ├── db/          # Database configuration
-│   │   │   ├── jobs/        # Background jobs
-│   │   │   ├── locales/     # Internationalization
-│   │   │   ├── queues/      # Job queues
-│   │   │   ├── scripts/     # Utility scripts
+│   │   │   ├── queues/      # Job queues and workers
+│   │   │   ├── scripts/     # Utility scripts (seeding, cleanup)
 │   │   │   ├── sockets/     # Socket.IO configuration
 │   │   │   ├── test/        # Test files
 │   │   │   ├── types/       # TypeScript type definitions
 │   │   │   ├── utils/       # Utility functions
-│   │   │   ├── validators/  # Input validation schemas
 │   │   │   ├── app.ts       # Express app setup
 │   │   │   └── server.ts    # Server entry point
-│   │   ├── backup-models/   # Model backups
-│   │   ├── public/          # Static assets
-│   │   ├── uploads/         # File uploads
+│   │   ├── logs/            # Application logs
 │   │   ├── .env.example     # Environment variables template
 │   │   ├── nodemon.json     # Nodemon configuration
-│   │   ├── railway.toml     # Railway deployment config
+│   │   ├── mtgen.config.json # Mongoose TypeScript generation
 │   │   └── package.json
 │   │
 │   └── frontend/            # Next.js application
@@ -111,44 +128,43 @@ accountability-buddy-clean/
 │       │   ├── app/         # Next.js App Router pages
 │       │   ├── components/  # React components
 │       │   ├── api/         # API client functions
-│       │   ├── @types/      # TypeScript declarations
-│       │   ├── config/      # Configuration files
 │       │   ├── constants/   # Application constants
 │       │   ├── context/     # React contexts
 │       │   ├── data/        # Static data
 │       │   ├── hooks/       # Custom React hooks
-│       │   ├── providers/   # Context providers
-│       │   ├── services/    # External service integrations
-│       │   ├── settings/    # Application settings
-│       │   ├── styles/      # CSS and styling
+│       │   ├── lib/         # Library configurations
 │       │   ├── types/       # TypeScript type definitions
-│       │   ├── utils/       # Utility functions
-│       │   └── env.client.ts # Client environment config
+│       │   └── utils/       # Utility functions
 │       ├── public/          # Static assets
-│       ├── scripts/         # Build and utility scripts
 │       ├── cypress/         # E2E testing
 │       ├── __mocks__/       # Jest mocks
 │       ├── .env.example     # Environment variables template
 │       ├── next.config.js   # Next.js configuration
-│       ├── tailwind.config.js # Tailwind CSS configuration
+│       ├── components.json  # shadcn/ui configuration
 │       └── package.json
 │
+├── packages/                # Shared packages
+│   ├── eslint-config/       # Shared ESLint configuration
+│   ├── shared/              # Shared utilities and types
+│   │   └── src/             # Socket events, pricing, categories
+│   └── transactional/       # Email templates (React Email)
+│       ├── emails/          # Email template components
+│       └── types/           # Email-related types
+│
 ├── docs/                    # Project documentation
-│   ├── HANDOFF.md          # Developer handoff guide
-│   ├── ISSUES.md           # Known issues and status
+│   ├── DOCKER_SETUP.md     # Docker setup instructions
 │   └── SETUP.md            # Detailed setup instructions
 │
-├── shared/                  # Shared utilities and types
-│   ├── types/              # Shared TypeScript types
-│   └── tsconfig.json       # Shared TypeScript config
-│
 ├── .husky/                 # Git hooks
-├── .editorconfig           # Editor configuration
+├── .vscode/                # VS Code workspace settings
 ├── .gitignore             # Git ignore rules
 ├── .prettierrc            # Prettier configuration
+├── .nvmrc                 # Node version specification
+├── backend.Dockerfile     # Backend Docker configuration
+├── compose.yaml           # Docker Compose setup
 ├── package.json           # Root package.json (workspace)
 ├── turbo.json             # Turborepo configuration
-├── vercel.json            # Vercel deployment config
+├── railway.json           # Railway deployment config
 ├── README.md              # This file
 └── LICENSE                # Project license
 ```
@@ -159,24 +175,28 @@ accountability-buddy-clean/
 
 ### **Prerequisites**
 
-- **Node.js** 18+
+- **Node.js** 22+ (Current: v22.20.0)
 - **MongoDB** (local installation or cloud instance)
 - **Git**
+- **npm** 10+ (Current: v10.9.3)
 
 ### **Quick Start**
 
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/krystleb45/accountability-buddy-clean.git
-   cd accountability-buddy-clean
+   git clone https://github.com/krystleb45/accountability-buddy.git
+   cd accountability-buddy
    ```
 
 2. **Install dependencies**
 
    ```bash
+   # Install Turborepo globally (optional)
    npm install turbo --global
-   npm install # installs packages for both frontend and backend
+   
+   # Install all dependencies for the monorepo
+   npm install
    ```
 
 3. **Configure environment variables**
@@ -262,12 +282,12 @@ cd apps/frontend && npm run build && npm start
 
 ### **Available Scripts**
 
-- `turbo dev` - Start all development servers
-- `turbo build` - Build all apps for production
-- `turbo lint` - Run code linting across workspace
-- `turbo test` - Run tests across workspace
-- `npm run dev` - Individual app development (when in app directory)
-- `npm run build` - Individual app build (when in app directory)
+- `npm run dev` / `turbo dev` - Start all development servers
+- `npm run build` / `turbo build` - Build all apps for production
+- `npm run lint` / `turbo lint` - Run code linting across workspace
+- `npm run format` / `turbo format` - Format code with Prettier
+- `npm run generate-mongoose-types` - Generate TypeScript types from Mongoose models
+- `npm run prepare` - Set up Husky git hooks
 
 ---
 
@@ -288,104 +308,7 @@ cd apps/frontend && npm run build && npm start
 - **API Base URL**: <http://localhost:5050/api>
 - **Authentication**: Bearer token required for protected endpoints
 
-### **Key Endpoints**
-
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/groups` - Get user's groups
-- `POST /api/groups` - Create new group
-- `GET /api/military-support/resources` - Get support resources
-
 ---
-
-## 🚧 Current Status
-
-### **✅ Working Features**
-
-- User registration and authentication
-- Basic dashboard layout
-- Group creation functionality
-- Military support page structure
-- Payment integration setup
-
-### **🔄 In Progress**
-
-- Groups authentication flow (401 errors after creation)
-- Military support chat rooms
-- WebSocket real-time connections
-- Complete goals tracking system
-
-### **📋 Planned Features**
-
-- Advanced analytics dashboard
-- Mobile app development
-- Enhanced gamification
-- Social features and sharing
-
-For detailed status and known issues, see [docs/ISSUES.md](./docs/ISSUES.md).
-
----
-
-## 🐛 Known Issues
-
-- **Groups Authentication**: API calls return 401 after group creation
-- **Chat Rooms**: WebSocket connections not establishing properly
-- **Military Support**: Some endpoints returning 500 errors
-
-See [docs/ISSUES.md](./docs/ISSUES.md) for complete issue tracking and status.
-
----
-
-## 🤝 Contributing
-
-### **Development Guidelines**
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Follow TypeScript and ESLint rules
-4. Write clear commit messages
-5. Submit a pull request
-
-### **Code Style**
-
-- **TypeScript** for all new code
-- **Component naming**: PascalCase
-- **File naming**: kebab-case for pages, PascalCase for components
-- **ESLint + Prettier** for code formatting
-
----
-
-## 📞 Support
-
-### **Development Support**
-
-- **Issues**: Create a GitHub issue for bugs or feature requests
-- **Documentation**: Check [docs/](./docs/) folder for detailed guides
-- **Setup Help**: See [docs/SETUP.md](./docs/SETUP.md) for troubleshooting
-
-### **Contact**
-
-- **Email**: [your-email@example.com]
-- **Repository**: [GitHub Issues](https://github.com/krystleb45/accountability-buddy-clean/issues)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- Built with [Next.js](https://nextjs.org/) and [Express.js](https://expressjs.com/)
-- UI styled with [Tailwind CSS](https://tailwindcss.com/)
-- Real-time features powered by [Socket.IO](https://socket.io/)
-- Authentication via [NextAuth.js](https://next-auth.js.org/)
-- Database by [MongoDB](https://www.mongodb.com/)
-
----
-
-**Last Updated**: July 30, 2025
-**Version**: 1.0.0-dev
+**Last Updated**: November 22, 2025
+**Version**: 1.0.0
 **Status**: In Active Development

@@ -1,6 +1,6 @@
 # 🐳 Docker Compose Setup
 
-This Docker Compose setup provides all the necessary services for running the Accountability Buddy application in a development environment.
+This Docker Compose setup provides all the necessary services for running the Accountability Buddy application in a **development** environment.
 
 ## 📋 Services Included
 
@@ -75,23 +75,6 @@ All services use named Docker volumes for data persistence:
 - `mongodb_config` - MongoDB configuration
 - `redis_data` - Redis data files
 - `minio_data` - MinIO object storage
-
-## 🔧 Backend Configuration
-
-Copy the provided environment variables to your backend configuration:
-
-```bash
-# Copy Docker environment variables
-cp .env.docker apps/backend/.env.development
-```
-
-Or use the variables directly in your backend `.env.development`:
-
-```bash
-MONGO_URI=mongodb://admin:password@localhost:27017/accountability-buddy?authSource=admin
-REDIS_HOST=localhost
-REDIS_PORT=6379
-```
 
 ## 📊 Health Checks
 
