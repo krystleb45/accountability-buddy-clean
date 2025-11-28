@@ -1,6 +1,6 @@
 "use client"
 
-import { Activity, Badge, Home } from "lucide-react"
+import { Activity, Badge, Home, Users2Icon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -21,6 +21,11 @@ const items = [
     title: "Home",
     url: "/admin",
     icon: Home,
+  },
+  {
+    title: "Users",
+    url: "/admin/users",
+    icon: Users2Icon,
   },
   {
     title: "Activities",

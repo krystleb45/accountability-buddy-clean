@@ -22,7 +22,9 @@ async function main(): Promise<void> {
   }
 
   try {
-    await mongoose.connect(mongoUri)
+    await mongoose.connect(mongoUri, {
+      dbName: "accountability-buddy",
+    })
     const result = await User.deleteMany({})
     logger.info(`✅ Deleted ${result.deletedCount} users.`)
   } catch (err) {

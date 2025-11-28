@@ -69,4 +69,18 @@ logger.on("error", (err) => {
   logger.error("Logger error:", err)
 })
 
+// ✅ Add console transport for non-production environments
+if (env !== "production") {
+  logger.add(
+    new transports.Console({
+      format: format.combine(
+        format.colorize(),
+        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), // Standardized timestamp
+        format.errors({ stack: true }), // Capture stack trace
+        customLogFormat,
+      ),
+    }),
+  )
+}
+
 export { logger }

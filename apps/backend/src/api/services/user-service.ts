@@ -1,5 +1,7 @@
 import type { User as IUser } from "src/types/mongoose.gen"
 
+import type { CreateUserInput } from "../routes/user"
+
 import { CustomError } from "../middleware/errorHandler"
 import { User } from "../models/User"
 import { FileUploadService } from "./file-upload-service"
@@ -114,5 +116,71 @@ export class UserService {
       throw new CustomError("User not found", 404)
     }
     return user
+  }
+
+  static async getAllUsers(page: number, limit: number, search?: string) {
+    const skip = (page - 1) * limit
+
+    const query: any = {}
+    if (search) {
+      query.$or = [
+        { username: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ]
+    }
+
+    const users = await User.find(query)
+      .select("-password")
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+
+    const total = await User.countDocuments(query)
+
+    return {
+      users,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    }
+  }
+
+  static async deleteUser(userId: string) {
+    const user = await User.findByIdAndDelete(userId)
+
+    if (!user) {
+      throw new CustomError("User not found", 404)
+    }
+
+    return user
+  }
+
+  static async createUser(userData: CreateUserInput) {
+    const { username, email, password, role } = userData
+
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] })
+    if (existingUser) {
+      throw new CustomError(
+        "User with this email or username already exists",
+        400,
+      )
+    }
+
+    const user = await User.create({
+      username,
+      email,
+      password,
+      role: role || "user",
+      isVerified: role === "admin", // Admin created users are verified by default
+    })
+
+    // Remove password from response
+    const userResponse = user.toObject()
+    delete userResponse.password
+
+    return userResponse
   }
 }

@@ -264,7 +264,9 @@ async function seedUsers(): Promise<void> {
   }
 
   try {
-    await mongoose.connect(process.env.MONGO_URI)
+    await mongoose.connect(process.env.MONGO_URI, {
+      dbName: "accountability-buddy",
+    })
     logger.info("✅ Connected to MongoDB")
 
     // Clear existing test users

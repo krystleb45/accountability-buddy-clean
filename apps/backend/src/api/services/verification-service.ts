@@ -1,7 +1,5 @@
 import type mongoose from "mongoose"
 
-import { getVerifyEmailTemplate } from "@ab/transactional"
-
 import appConfig from "../../config/appConfig"
 import { logger } from "../../utils/winston-logger"
 import { VerificationToken } from "../models/VerificationToken"
@@ -33,6 +31,7 @@ export async function addSendVerificationEmailJob(
   const frontendUrl = appConfig.frontendUrl.replace(/\/$/, "")
   const verifyUrl = `${frontendUrl}/verify-email?token=${encodeURIComponent(tokenDoc.token)}`
 
+  const { getVerifyEmailTemplate } = await import("@ab/transactional")
   const { html, text } = await getVerifyEmailTemplate(
     verifyUrl,
     `${appConfig.frontendUrl}/logo.png`,
@@ -60,6 +59,7 @@ export async function addSendResetPasswordEmailJob(
   const frontendUrl = appConfig.frontendUrl.replace(/\/$/, "")
   const resetUrl = `${frontendUrl}/reset-password/${encodeURIComponent(resetTokenDoc.token)}`
 
+  const { getVerifyEmailTemplate } = await import("@ab/transactional")
   const { html, text } = await getVerifyEmailTemplate(
     resetUrl,
     `${appConfig.frontendUrl}/logo.png`,

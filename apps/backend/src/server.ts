@@ -6,7 +6,6 @@ import dotenvFlow from "dotenv-flow"
 import mongoose from "mongoose"
 import { createServer } from "node:http"
 
-import { loadSecretsFromAWS } from "./utils/loadSecrets"
 import { validateEnv } from "./utils/validate-env"
 import { logger } from "./utils/winston-logger"
 
@@ -43,12 +42,12 @@ declare global {
 async function startServer(): Promise<void> {
   try {
     // 1) Only load AWS secrets in production, skip for staging
-    if (process.env.NODE_ENV === "production" && process.env.AWS_REGION) {
-      await loadSecretsFromAWS()
-      logger.info("✅ AWS secrets loaded")
-    } else {
-      logger.info("ℹ️ Skipping AWS secrets for staging environment")
-    }
+    // if (process.env.NODE_ENV === "production" && process.env.AWS_REGION) {
+    //   await loadSecretsFromAWS()
+    //   logger.info("✅ AWS secrets loaded")
+    // } else {
+    //   logger.info("ℹ️ Skipping AWS secrets for staging environment")
+    // }
 
     // 2) Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URI!, {

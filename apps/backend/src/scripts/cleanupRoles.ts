@@ -21,7 +21,9 @@ async function main(): Promise<void> {
   }
 
   try {
-    await mongoose.connect(mongoUri)
+    await mongoose.connect(mongoUri, {
+      dbName: "accountability-buddy",
+    })
     logger.info("✅ Connected to MongoDB")
 
     const result = await Role.deleteMany({})

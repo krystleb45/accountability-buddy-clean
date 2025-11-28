@@ -1,8 +1,6 @@
 import dotenvFlow from "dotenv-flow"
 import mongoose from "mongoose"
-
-import { User } from "../api/models/User"
-import { hashPassword } from "../utils/hashHelper"
+import { UserService } from "src/api/services/user-service"
 
 dotenvFlow.config()
 
@@ -11,16 +9,12 @@ async function createAdminUser(
   email: string,
   password: string,
 ) {
-  const hashedPassword = await hashPassword(password)
-  const user = new User({
+  return await UserService.createUser({
     username,
     email,
-    password: hashedPassword,
+    password,
     role: "admin",
-    isVerified: true,
   })
-  await user.save()
-  return user
 }
 
 const username = process.argv[2]
@@ -41,7 +35,9 @@ if (!mongoUri) {
 async function main() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(mongoUri)
+    await mongoose.connect(mongoUri, {
+      dbName: "accountability-buddy",
+    })
     console.log("Connected to MongoDB")
 
     createAdminUser(username, email, password)
