@@ -90,15 +90,6 @@ GroupSchema.methods = {
   },
 }
 
-// --- Static Methods ---
-GroupSchema.statics = {
-  findPublicGroups(this) {
-    return this.find({ visibility: "public", isActive: true })
-      .sort({ lastActivity: -1 }) // Changed to sort by lastActivity
-      .exec()
-  },
-}
-
 GroupSchema.plugin(mongooseLeanVirtuals)
 
 // --- Model Export ---
