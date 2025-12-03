@@ -3,19 +3,19 @@ import type { NextFunction, Response } from "express"
 import { categories } from "@ab/shared/categories"
 import z from "zod"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 import type {
   GetGroupsQueryParams,
   GroupMessagesQueryParams,
   SendGroupMessageBody,
   UpdateGroupBody,
-} from "../routes/groups"
+} from "../routes/groups.js"
 
-import { CustomError } from "../middleware/errorHandler"
-import { FileUploadService } from "../services/file-upload-service"
-import GroupService from "../services/group-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import { CustomError } from "../middleware/errorHandler.js"
+import { FileUploadService } from "../services/file-upload-service.js"
+import GroupService from "../services/group-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 const getGroupAvatarKey = (groupId: string) => `${groupId}-avatar`
 

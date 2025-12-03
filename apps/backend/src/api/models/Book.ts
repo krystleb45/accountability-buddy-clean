@@ -1,10 +1,10 @@
+import mongoose, { Schema } from "mongoose"
+
 import type {
   BookDocument,
   BookModel,
   BookSchema as IBookSchema,
-} from "src/types/mongoose.gen"
-
-import mongoose, { Schema } from "mongoose"
+} from "../../types/mongoose.gen.js"
 
 const BookCommentSchema = new Schema(
   {

@@ -1,4 +1,4 @@
-import { logger } from "../../utils/winston-logger"
+import { logger } from "../../utils/winston-logger.js"
 
 interface Metadata {
   [key: string]: unknown

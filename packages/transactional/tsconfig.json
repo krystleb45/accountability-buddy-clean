@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2020",
     "jsx": "react-jsx",
-    "moduleDetection": "force",
-    "module": "preserve",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "typeRoots": ["./types", "./node_modules/@types"],
     "types": [],
     "allowImportingTsExtensions": false,
@@ -12,6 +12,7 @@
     "noUncheckedIndexedAccess": true,
     "declaration": true,
     "declarationMap": true,
+    "outDir": "./dist",
     "sourceMap": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,

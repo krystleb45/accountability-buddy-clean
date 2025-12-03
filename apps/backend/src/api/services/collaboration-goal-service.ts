@@ -1,6 +1,6 @@
 import { Types } from "mongoose"
 
-import { CollaborationGoal } from "../models/CollaborationGoal"
+import { CollaborationGoal } from "../models/CollaborationGoal.js"
 
 class CollaborationGoalService {
   /**

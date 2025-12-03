@@ -1,10 +1,10 @@
+import mongoose, { Schema } from "mongoose"
+
 import type {
   ChatDocument,
   ChatModel,
   ChatSchema as IChatSchema,
-} from "src/types/mongoose.gen"
-
-import mongoose, { Schema } from "mongoose"
+} from "../../types/mongoose.gen.js"
 
 // --- Schema Definition ---
 const ChatSchema: IChatSchema = new Schema(

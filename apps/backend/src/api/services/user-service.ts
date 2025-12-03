@@ -1,10 +1,9 @@
-import type { User as IUser } from "src/types/mongoose.gen"
+import type { User as IUser } from "../../types/mongoose.gen.js"
+import type { CreateUserInput } from "../routes/user.js"
 
-import type { CreateUserInput } from "../routes/user"
-
-import { CustomError } from "../middleware/errorHandler"
-import { User } from "../models/User"
-import { FileUploadService } from "./file-upload-service"
+import { CustomError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
+import { FileUploadService } from "./file-upload-service.js"
 
 export class UserService {
   static async getMemberByUsername(username: string, currentUserId: string) {

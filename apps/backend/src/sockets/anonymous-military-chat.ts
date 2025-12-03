@@ -14,8 +14,8 @@ import {
 import {
   AnonymousMilitaryMessage,
   AnonymousSession,
-} from "../api/models/AnonymousMilitaryChat"
-import { logger } from "../utils/winston-logger"
+} from "../api/models/AnonymousMilitaryChat.js"
+import { logger } from "../utils/winston-logger.js"
 
 interface AnonymousUser {
   sessionId: string

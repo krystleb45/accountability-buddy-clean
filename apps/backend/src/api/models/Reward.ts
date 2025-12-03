@@ -2,7 +2,7 @@ import type {
   RewardSchema as IRewardSchema,
   RewardDocument,
   RewardModel,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 import mongoose, { Schema } from "mongoose"
 

@@ -1,7 +1,7 @@
 // src/api/routes/healthRoutes.ts
 import { Router } from "express"
 
-import * as healthController from "../controllers/HealthCheckController"
+import * as healthController from "../controllers/HealthCheckController.js"
 
 const router = Router()
 

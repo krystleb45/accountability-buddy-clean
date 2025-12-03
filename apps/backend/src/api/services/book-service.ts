@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-import { Book } from "../models/Book"
+import { Book } from "../models/Book.js"
 
 export async function addBookService(
   userId: string,

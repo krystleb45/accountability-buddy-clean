@@ -5,10 +5,10 @@ import {
   updateProfile,
   uploadCoverImage,
   uploadProfileImage,
-} from "../controllers/profile-controller"
-import { protect } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
-import { FileUploadService } from "../services/file-upload-service"
+} from "../controllers/profile-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
+import { FileUploadService } from "../services/file-upload-service.js"
 
 const router = Router()
 

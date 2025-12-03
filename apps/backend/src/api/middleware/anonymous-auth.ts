@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express"
 
-import { CustomError } from "./errorHandler"
+import { CustomError } from "./errorHandler.js"
 
 interface AnonymousUser {
   sessionId: string

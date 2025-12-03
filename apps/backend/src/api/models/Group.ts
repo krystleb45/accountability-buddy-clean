@@ -6,7 +6,7 @@ import type {
   GroupDocument,
   GroupModel,
   GroupSchema as IGroupSchema,
-} from "../../types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 // --- Main Schema ---
 const GroupSchema: IGroupSchema = new Schema(

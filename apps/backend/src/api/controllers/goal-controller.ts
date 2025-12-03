@@ -1,14 +1,15 @@
 import type { NextFunction, Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
-import type { Goal } from "src/types/mongoose.gen"
 
 import mongoose from "mongoose"
 
-import { createError } from "../middleware/errorHandler"
-import { User } from "../models/User"
-import { GoalService } from "../services/goal-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { Goal } from "../../types/mongoose.gen.js"
+
+import { createError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
+import { GoalService } from "../services/goal-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const createGoal = catchAsync(
   async (

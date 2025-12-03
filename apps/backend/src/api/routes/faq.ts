@@ -1,9 +1,9 @@
 // src/api/routes/faq.ts
 import { Router } from "express"
 
-import * as faqController from "../controllers/faqController"
-import { protect } from "../middleware/auth-middleware"
-import catchAsync from "../utils/catchAsync"
+import * as faqController from "../controllers/faqController.js"
+import { protect } from "../middleware/auth-middleware.js"
+import catchAsync from "../utils/catchAsync.js"
 
 const router = Router()
 

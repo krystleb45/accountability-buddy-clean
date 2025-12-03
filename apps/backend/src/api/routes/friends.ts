@@ -2,14 +2,14 @@ import { Router } from "express"
 import { isMongoId } from "validator"
 import z from "zod"
 
-import * as friendController from "../controllers/friend-controller"
-import { protect } from "../middleware/auth-middleware"
-import { isVerified } from "../middleware/is-verified-middleware"
+import * as friendController from "../controllers/friend-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
+import { isVerified } from "../middleware/is-verified-middleware.js"
 import {
   validateFeatureAccess,
   validateSubscription,
-} from "../middleware/subscription-validation"
-import validate from "../middleware/validation-middleware"
+} from "../middleware/subscription-validation.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

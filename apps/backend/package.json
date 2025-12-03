@@ -1,5 +1,6 @@
 {
   "name": "@ab/backend",
+  "type": "module",
   "version": "1.0.0",
   "description": "Backend for the Accountability Buddy platform",
   "license": "ISC",

@@ -1,11 +1,11 @@
 import type { Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
-import type { RecentMessageQuery } from "../routes/messages"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { RecentMessageQuery } from "../routes/messages.js"
 
-import { MessageService } from "../services/message-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import { MessageService } from "../services/message-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 /**
  * GET /api/messages/recent

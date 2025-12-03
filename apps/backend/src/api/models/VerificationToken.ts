@@ -2,7 +2,7 @@ import type {
   VerificationTokenSchema as IVerificationTokenSchema,
   VerificationTokenDocument,
   VerificationTokenModel,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 import mongoose, { Schema } from "mongoose"
 import crypto from "node:crypto"

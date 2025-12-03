@@ -1,9 +1,10 @@
 import type { NextFunction, Request, Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
-import GamificationService from "../services/gamification-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+
+import GamificationService from "../services/gamification-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export default {
   /**

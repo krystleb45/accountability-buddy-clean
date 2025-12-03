@@ -4,8 +4,8 @@ import type { StringValue } from "ms"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
-import { logger } from "../../utils/winston-logger"
-import Role from "../models/Role"
+import { logger } from "../../utils/winston-logger.js"
+import Role from "../models/Role.js"
 
 interface TokenPayload {
   userId: string

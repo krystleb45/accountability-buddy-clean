@@ -1,10 +1,9 @@
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { ReverseGeocodingInput } from "../routes/geocoding.js"
 
-import type { ReverseGeocodingInput } from "../routes/geocoding"
-
-import { GeocodingService } from "../services/geocoding-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import { GeocodingService } from "../services/geocoding-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export class GeocodingController {
   static reverseGeocode = catchAsync(

@@ -1,11 +1,11 @@
+import { endOfToday, startOfToday, sub } from "date-fns"
+import mongoose, { Schema } from "mongoose"
+
 import type {
   AnonymousMoodCheckInDocument,
   AnonymousMoodCheckInModel,
   AnonymousMoodCheckInSchema as IAnonymousMoodCheckInSchema,
-} from "src/types/mongoose.gen"
-
-import { endOfToday, startOfToday, sub } from "date-fns"
-import mongoose, { Schema } from "mongoose"
+} from "../../types/mongoose.gen.js"
 
 // Interface for aggregated mood data
 export interface IAggregatedMoodData {

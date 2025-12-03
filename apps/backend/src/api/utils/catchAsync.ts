@@ -1,6 +1,6 @@
 import type { NextFunction, RequestHandler, Response } from "express"
 
-import { logger } from "../../utils/winston-logger"
+import { logger } from "../../utils/winston-logger.js"
 
 /**
  * Wraps async route handlers so errors bubble to Express.

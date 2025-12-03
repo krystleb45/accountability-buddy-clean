@@ -1,9 +1,9 @@
 import { Router } from "express"
 import z from "zod"
 
-import { GeocodingController } from "../controllers/geocoding-controller"
-import { protect } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
+import { GeocodingController } from "../controllers/geocoding-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

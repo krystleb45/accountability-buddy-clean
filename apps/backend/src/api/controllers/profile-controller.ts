@@ -1,14 +1,14 @@
 // src/controllers/ProfileController.ts
 import type { NextFunction, Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
-import type { UpdateProfileData } from "../routes/profile"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { UpdateProfileData } from "../routes/profile.js"
 
-import { createError } from "../middleware/errorHandler"
-import { FileUploadService } from "../services/file-upload-service"
-import { ProfileService } from "../services/profile-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import { createError } from "../middleware/errorHandler.js"
+import { FileUploadService } from "../services/file-upload-service.js"
+import { ProfileService } from "../services/profile-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 /**
  * PUT /api/profile

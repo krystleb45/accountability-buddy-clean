@@ -1,12 +1,12 @@
+import mongoose, { Schema } from "mongoose"
+
 import type {
   BadgeDocument,
   BadgeModel,
   BadgeSchema as IBadgeSchema,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
-import mongoose, { Schema } from "mongoose"
-
-import { BadgeType } from "./BadgeType"
+import { BadgeType } from "./BadgeType.js"
 
 // --- Schema Definition ---
 const BadgeSchema: IBadgeSchema = new Schema(

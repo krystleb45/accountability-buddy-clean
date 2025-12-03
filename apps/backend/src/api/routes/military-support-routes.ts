@@ -1,6 +1,6 @@
 import { Router } from "express"
 
-import * as militarySupportController from "../controllers/military-support-controller"
+import * as militarySupportController from "../controllers/military-support-controller.js"
 
 const router = Router()
 

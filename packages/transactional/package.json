@@ -6,12 +6,13 @@
   "author": "",
   "license": "ISC",
   "exports": {
-    ".": "./index.tsx"
+    ".": "./dist/index.js"
   },
   "scripts": {
     "dev": "email dev -p 3001",
     "lint": "eslint --fix",
-    "format": "prettier --write"
+    "format": "prettier --write",
+    "build": "tsc --build"
   },
   "dependencies": {
     "@react-email/components": "1.0.1",

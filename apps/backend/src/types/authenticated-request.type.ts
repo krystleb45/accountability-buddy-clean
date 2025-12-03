@@ -1,6 +1,6 @@
 import type { Request } from "express"
 
-import type { User } from "./mongoose.gen"
+import type { User } from "./mongoose.gen.js"
 
 // Generic interface that allows typing params
 export interface AuthenticatedRequest<

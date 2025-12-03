@@ -1,14 +1,14 @@
 import type { RequestHandler } from "express"
-import type { UserObject } from "src/types/mongoose.gen"
 
 import jwt from "jsonwebtoken"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { UserObject } from "../../types/mongoose.gen.js"
 
-import { logger } from "../../utils/winston-logger"
-import { User } from "../models/User"
-import catchAsync from "../utils/catchAsync"
-import { createError } from "./errorHandler"
+import { logger } from "../../utils/winston-logger.js"
+import { User } from "../models/User.js"
+import catchAsync from "../utils/catchAsync.js"
+import { createError } from "./errorHandler.js"
 
 interface JwtPayload {
   userId?: string

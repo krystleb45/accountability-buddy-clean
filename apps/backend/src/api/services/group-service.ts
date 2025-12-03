@@ -11,17 +11,17 @@ import type {
   Group as IGroup,
   User as IUser,
   UserDocument,
-} from "../../types/mongoose.gen"
-import type { UpdateGroupBody } from "../routes/groups"
+} from "../../types/mongoose.gen.js"
+import type { UpdateGroupBody } from "../routes/groups.js"
 
-import { logger } from "../../utils/winston-logger"
-import { CustomError } from "../middleware/errorHandler"
-import { Group } from "../models/Group"
-import { GroupInvitation } from "../models/GroupInvitation"
-import Notification from "../models/Notification"
-import { User } from "../models/User"
-import { ChatService } from "./chat-service"
-import { FileUploadService } from "./file-upload-service"
+import { logger } from "../../utils/winston-logger.js"
+import { CustomError } from "../middleware/errorHandler.js"
+import { Group } from "../models/Group.js"
+import { GroupInvitation } from "../models/GroupInvitation.js"
+import Notification from "../models/Notification.js"
+import { User } from "../models/User.js"
+import { ChatService } from "./chat-service.js"
+import { FileUploadService } from "./file-upload-service.js"
 
 class GroupService {
   /**

@@ -1,8 +1,8 @@
-import type { SettingsUpdateInput } from "../routes/settings"
+import type { SettingsUpdateInput } from "../routes/settings.js"
 
-import { comparePassword } from "../../utils/hashHelper"
-import { createError } from "../middleware/errorHandler"
-import { User } from "../models/User"
+import { comparePassword } from "../../utils/hashHelper.js"
+import { createError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
 
 class SettingsService {
   /**

@@ -1,10 +1,10 @@
+import mongoose, { Schema } from "mongoose"
+
 import type {
   AccountabilityPartnershipDocument,
   AccountabilityPartnershipModel,
   AccountabilityPartnershipSchema as IAccountabilityPartnershipSchema,
-} from "src/types/mongoose.gen"
-
-import mongoose, { Schema } from "mongoose"
+} from "../../types/mongoose.gen.js"
 
 const AccountabilityPartnershipSchema: IAccountabilityPartnershipSchema =
   new Schema(

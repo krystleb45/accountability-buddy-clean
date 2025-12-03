@@ -1,5 +1,5 @@
-import { createError } from "../middleware/errorHandler"
-import { ExternalSupportResource } from "../models/MilitaryResource"
+import { createError } from "../middleware/errorHandler.js"
+import { ExternalSupportResource } from "../models/MilitaryResource.js"
 
 const DISCLAIMER_TEXT = `
   Disclaimer: The information provided in this platform is for support purposes only

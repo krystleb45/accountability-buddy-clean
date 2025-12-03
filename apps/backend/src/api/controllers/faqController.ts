@@ -1,9 +1,9 @@
 // src/controllers/faqController.ts
 import type { NextFunction, Request, Response } from "express"
 
-import { createError } from "../middleware/errorHandler"
-import { Faq } from "../models/Faq"
-import sendResponse from "../utils/sendResponse"
+import { createError } from "../middleware/errorHandler.js"
+import { Faq } from "../models/Faq.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export async function getAllFaqs(
   _req: Request,

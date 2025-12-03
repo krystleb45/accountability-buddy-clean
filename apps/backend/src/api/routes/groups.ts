@@ -3,11 +3,11 @@ import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import z from "zod"
 
-import * as groupController from "../controllers/group-controller"
-import { protect } from "../middleware/auth-middleware"
-import { validateSubscription } from "../middleware/subscription-validation"
-import validate from "../middleware/validation-middleware"
-import { FileUploadService } from "../services/file-upload-service"
+import * as groupController from "../controllers/group-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
+import { validateSubscription } from "../middleware/subscription-validation.js"
+import validate from "../middleware/validation-middleware.js"
+import { FileUploadService } from "../services/file-upload-service.js"
 
 const router = Router()
 const groupLimiter = rateLimit({

@@ -2,9 +2,9 @@ import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import z from "zod"
 
-import gamificationController from "../controllers/gamification-controller"
-import { protect } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
+import gamificationController from "../controllers/gamification-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

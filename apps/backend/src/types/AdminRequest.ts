@@ -1,5 +1,5 @@
-import type { AuthenticatedRequest } from "./authenticated-request.type"
-import type { User } from "./mongoose.gen"
+import type { AuthenticatedRequest } from "./authenticated-request.type.js"
+import type { User } from "./mongoose.gen.js"
 
 export type AdminRequest<
   P = Record<string, string>,

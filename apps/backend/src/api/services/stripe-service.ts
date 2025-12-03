@@ -1,9 +1,9 @@
-import type { User as IUser } from "src/types/mongoose.gen"
-
 import Stripe from "stripe"
 
-import { logger } from "../../utils/winston-logger"
-import { User } from "../models/User"
+import type { User as IUser } from "../../types/mongoose.gen.js"
+
+import { logger } from "../../utils/winston-logger.js"
+import { User } from "../models/User.js"
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 

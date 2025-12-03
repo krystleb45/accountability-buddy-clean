@@ -1,8 +1,8 @@
 import type { Queue } from "bullmq"
 
-import { emailQueue } from "../../queues/email-queue"
-import { logger } from "../../utils/winston-logger"
-import { sendHtmlEmail } from "./email-service"
+import { emailQueue } from "../../queues/email-queue.js"
+import { logger } from "../../utils/winston-logger.js"
+import { sendHtmlEmail } from "./email-service.js"
 
 class JobQueueService {
   private _emailQueue: Queue

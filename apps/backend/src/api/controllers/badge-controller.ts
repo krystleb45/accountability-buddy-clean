@@ -1,16 +1,16 @@
 import type { Request, Response } from "express"
-import type { AdminRequest } from "src/types/AdminRequest"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
 import sanitize from "mongo-sanitize"
 import { Types } from "mongoose"
 
-import type { BadgeCreateInput } from "../routes/badge"
+import type { AdminRequest } from "../../types/AdminRequest.js"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { BadgeCreateInput } from "../routes/badge.js"
 
-import BadgeService from "../services/badge-service"
-import { FileUploadService } from "../services/file-upload-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import BadgeService from "../services/badge-service.js"
+import { FileUploadService } from "../services/file-upload-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export class BadgeController {
   private constructor() {

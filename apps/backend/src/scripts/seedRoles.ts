@@ -3,9 +3,9 @@
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 
-import Role from "../api/models/Role"
-import { loadEnvironment } from "../utils/loadEnv"
-import { logger } from "../utils/winston-logger"
+import Role from "../api/models/Role.js"
+import { loadEnvironment } from "../utils/loadEnv.js"
+import { logger } from "../utils/winston-logger.js"
 
 loadEnvironment()
 

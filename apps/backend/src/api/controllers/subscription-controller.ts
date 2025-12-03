@@ -3,16 +3,16 @@ import type Stripe from "stripe"
 
 import status from "http-status"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 import type {
   ChangePlanBody,
   CreateCheckoutSessionBody,
-} from "../routes/subscription"
+} from "../routes/subscription.js"
 
-import { logger } from "../../utils/winston-logger"
-import { createError } from "../middleware/errorHandler"
-import { User } from "../models/User"
-import { GoalService } from "../services/goal-service"
+import { logger } from "../../utils/winston-logger.js"
+import { createError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
+import { GoalService } from "../services/goal-service.js"
 import {
   handleCheckoutCompleted,
   handleInvoicePaymentFailed,
@@ -20,9 +20,9 @@ import {
   handleSubscriptionDeleted,
   handleSubscriptionUpdated,
   stripe,
-} from "../services/stripe-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+} from "../services/stripe-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 /**
  * POST /api/subscription/create-session

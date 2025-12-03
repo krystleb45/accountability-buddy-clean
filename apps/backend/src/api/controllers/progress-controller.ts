@@ -1,11 +1,11 @@
 import type { Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 
-import GamificationService from "../services/gamification-service"
-import ProgressService from "../services/ProgressService"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import GamificationService from "../services/gamification-service.js"
+import ProgressService from "../services/ProgressService.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const getProgressDashboard = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {

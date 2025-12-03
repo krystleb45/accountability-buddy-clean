@@ -1,8 +1,8 @@
 // src/api/controllers/HealthCheckController.ts - Compatible with your existing structure
 import type { Request, Response } from "express"
 
-import HealthCheckService from "../services/HealthCheckService"
-import sendResponse from "../utils/sendResponse"
+import HealthCheckService from "../services/HealthCheckService.js"
+import sendResponse from "../utils/sendResponse.js"
 
 /**
  * @desc Health check endpoint with Redis status

@@ -1,6 +1,6 @@
-import MilitarySupportService from "../services/military-support-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import MilitarySupportService from "../services/military-support-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const getResources = catchAsync(async (_req, res) => {
   const resources = await MilitarySupportService.listResources()

@@ -1,10 +1,10 @@
+import mongoose, { Schema } from "mongoose"
+
 import type {
   ActivityDocument,
   ActivityModel,
   ActivitySchema as IActivitySchema,
-} from "src/types/mongoose.gen"
-
-import mongoose, { Schema } from "mongoose"
+} from "../../types/mongoose.gen.js"
 
 export const ACTIVITY_TYPES = [
   "goal",

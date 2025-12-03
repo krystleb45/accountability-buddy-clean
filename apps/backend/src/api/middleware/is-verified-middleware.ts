@@ -1,7 +1,8 @@
 import type { NextFunction, Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
-import { createError } from "./errorHandler"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+
+import { createError } from "./errorHandler.js"
 
 export function isVerified(
   req: AuthenticatedRequest,

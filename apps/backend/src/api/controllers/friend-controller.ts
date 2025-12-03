@@ -1,12 +1,12 @@
 import type { Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
-import type { GetMessagesQuery } from "../routes/friends"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { GetMessagesQuery } from "../routes/friends.js"
 
-import { ChatService } from "../services/chat-service"
-import * as FriendService from "../services/friend-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import { ChatService } from "../services/chat-service.js"
+import * as FriendService from "../services/friend-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const sendFriendRequest = catchAsync(
   async (

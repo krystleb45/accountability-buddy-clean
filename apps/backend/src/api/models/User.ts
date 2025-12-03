@@ -3,25 +3,25 @@ import type {
   UserSchema as IUserSchema,
   UserDocument,
   UserModel,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 import bcrypt from "bcryptjs"
 import { differenceInDays, isBefore } from "date-fns"
 import mongoose, { Schema } from "mongoose"
 
-import { hashPassword } from "../../utils/hashHelper"
-import { logger } from "../../utils/winston-logger"
-import { FileUploadService } from "../services/file-upload-service"
-import { GeocodingService } from "../services/geocoding-service"
-import { Activity } from "./Activity"
-import { Badge } from "./Badge"
-import { CollaborationGoal } from "./CollaborationGoal"
-import { FriendRequest } from "./FriendRequest"
-import { Goal } from "./Goal"
-import { Group } from "./Group"
-import { Level } from "./Level"
-import { Milestone } from "./Milestone"
-import { Reminder } from "./Reminder"
+import { hashPassword } from "../../utils/hashHelper.js"
+import { logger } from "../../utils/winston-logger.js"
+import { FileUploadService } from "../services/file-upload-service.js"
+import { GeocodingService } from "../services/geocoding-service.js"
+import { Activity } from "./Activity.js"
+import { Badge } from "./Badge.js"
+import { CollaborationGoal } from "./CollaborationGoal.js"
+import { FriendRequest } from "./FriendRequest.js"
+import { Goal } from "./Goal.js"
+import { Group } from "./Group.js"
+import { Level } from "./Level.js"
+import { Milestone } from "./Milestone.js"
+import { Reminder } from "./Reminder.js"
 
 const UserSchema: IUserSchema = new Schema(
   {

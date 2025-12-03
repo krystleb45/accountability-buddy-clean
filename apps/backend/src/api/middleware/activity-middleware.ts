@@ -1,10 +1,10 @@
 import type { RequestHandler } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
-import type { Activity } from "../../types/mongoose.gen"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { Activity } from "../../types/mongoose.gen.js"
 
-import { logger } from "../../utils/winston-logger"
-import ActivityService from "../services/activity-service"
+import { logger } from "../../utils/winston-logger.js"
+import ActivityService from "../services/activity-service.js"
 
 export function logActivity(
   data: Pick<Activity, "type" | "description" | "metadata">,

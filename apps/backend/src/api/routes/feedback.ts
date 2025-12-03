@@ -2,9 +2,9 @@ import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import { check } from "express-validator"
 
-import feedbackController from "../controllers/FeedbackController"
-import { protect } from "../middleware/auth-middleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
+import feedbackController from "../controllers/FeedbackController.js"
+import { protect } from "../middleware/auth-middleware.js"
+import handleValidationErrors from "../middleware/handleValidationErrors.js"
 
 const router = Router()
 

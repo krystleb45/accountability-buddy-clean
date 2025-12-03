@@ -3,8 +3,8 @@ import type { ZodObject } from "zod"
 
 import { ZodError } from "zod"
 
-import { logger } from "../../utils/winston-logger"
-import { createError } from "./errorHandler"
+import { logger } from "../../utils/winston-logger.js"
+import { createError } from "./errorHandler.js"
 
 interface Schema {
   querySchema?: ZodObject

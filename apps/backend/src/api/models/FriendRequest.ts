@@ -3,7 +3,7 @@ import type {
   FriendRequestDocument,
   FriendRequestModel,
   FriendRequestSchema as IFriendRequestSchema,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 import { FRIENDSHIP_STATUS } from "@ab/shared/friends"
 import mongoose, { Schema } from "mongoose"

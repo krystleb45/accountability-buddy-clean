@@ -1,10 +1,10 @@
 import mongoose from "mongoose"
 
-import type { Streak as IStreak } from "../../types/mongoose.gen"
+import type { Streak as IStreak } from "../../types/mongoose.gen.js"
 
-import { logger } from "../../utils/winston-logger"
-import { Streak } from "../models/Streak"
-import GamificationService from "./gamification-service"
+import { logger } from "../../utils/winston-logger.js"
+import { Streak } from "../models/Streak.js"
+import GamificationService from "./gamification-service.js"
 
 export async function getUserStreak(userId: string) {
   if (!mongoose.isValidObjectId(userId)) {
