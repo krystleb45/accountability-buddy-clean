@@ -16,6 +16,7 @@ const requiredEnvVars: string[] = [
   "AWS_SECRET_ACCESS_KEY",
   "S3_BUCKET",
   "ENCRYPTION_KEY",
+  "GOOGLE_GEOLOCATION_API_KEY",
 ]
 
 const optionalButRecommended: string[] = []

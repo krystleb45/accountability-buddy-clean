@@ -65,8 +65,7 @@ async function startServer(): Promise<void> {
     }
 
     // 2b) Check on job queue (Redis)
-    const jobQueue = (await import("./api/services/job-queue-service.js"))
-      .default
+    const { jobQueue } = await import("./api/services/job-queue-service.js")
     const jobQueueHealthy = jobQueue.getStatus().status === "running"
     if (jobQueueHealthy) {
       logger.info("✅ Job queue is healthy")
@@ -88,10 +87,8 @@ async function startServer(): Promise<void> {
       logger.error("❌ S3 connection is unhealthy")
     }
 
-    const app = await import("./app.js").then((mod) => mod.default)
-    const socketServer = await import("./sockets/index.js").then(
-      (mod) => mod.default,
-    )
+    const { app } = await import("./app.js")
+    const { socketServer } = await import("./sockets/index.js")
 
     // 3) Create HTTP server and setup Socket.IO with all features
     const httpServer = createServer(app)

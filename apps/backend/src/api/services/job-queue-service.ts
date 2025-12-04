@@ -17,8 +17,14 @@ class JobQueueService {
     this._emailQueue = emailQueue
 
     // Graceful shutdown
-    process.on("SIGINT", () => void this.shutdown())
-    process.on("SIGTERM", () => void this.shutdown())
+    process.on("SIGINT", async () => {
+      await this.shutdown()
+      process.exit(0)
+    })
+    process.on("SIGTERM", async () => {
+      await this.shutdown()
+      process.exit(0)
+    })
   }
 
   public async addSendEmailJob({
@@ -72,4 +78,7 @@ class JobQueueService {
   }
 }
 
-export default new JobQueueService()
+const jobQueueService = new JobQueueService()
+
+export const jobQueue = jobQueueService
+export default jobQueueService

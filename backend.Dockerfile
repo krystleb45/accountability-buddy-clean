@@ -11,20 +11,23 @@ FROM base AS installer
 WORKDIR /app
 
 COPY --from=builder /app/out/json/ .
-RUN npm i
+RUN npm ci
 COPY --from=builder /app/out/full/ .
 RUN npx turbo run build
 
-FROM base AS dependencies
+FROM base AS deps
 
 WORKDIR /app
 
-COPY --from=builder /app/out/json .
+ENV NODE_ENV=production
+
+COPY --from=builder /app/out/json/ .
 RUN npm ci
 
 FROM base AS prod
 WORKDIR /app
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=installer /app/apps/backend/dist .
+COPY --exclude=node_modules --from=installer /app/ .
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/backend/node_modules ./apps/backend/node_modules
 EXPOSE 5050
-CMD ["node", "server.js"]
+CMD ["node", "./apps/backend/dist/server.js"]

@@ -78,7 +78,7 @@ export async function handleSubscriptionDeleted(
       return
     }
 
-    if (subscription.cancellation_details.reason === "payment_failed") {
+    if (subscription.cancellation_details?.reason === "payment_failed") {
       user.subscription_status = "expired"
       logger.warn(
         `⚠️ Subscription canceled due to payment failure for user ${user.email}`,
@@ -110,11 +110,11 @@ export async function handleSubscriptionUpdated(
     }
 
     // Get the price ID from the subscription to determine tier
-    const subscriptionItem = subscription.items.data[0]
+    const subscriptionItem = subscription.items.data[0]!
     const price = subscriptionItem.price
     const lookupKey = price.lookup_key
 
-    const { tier, billingCycle } = mapLookupKeyToPlan(lookupKey)
+    const { tier, billingCycle } = mapLookupKeyToPlan(lookupKey!)
 
     user.subscriptionTier = tier as IUser["subscriptionTier"]
     user.billing_cycle = billingCycle as IUser["billing_cycle"]
@@ -150,7 +150,7 @@ export async function handleCheckoutCompleted(
       return
     }
 
-    const customerId = session.customer.toString()
+    const customerId = session.customer!.toString()
     const customerEmail = session.customer_email
     const user = await User.findOne({
       $or: [{ stripeCustomerId: customerId }, { email: customerEmail }],
@@ -165,9 +165,9 @@ export async function handleCheckoutCompleted(
     const subscriptionId = session.subscription as string
     const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
-    const subscriptionItem = subscription.items.data[0]
+    const subscriptionItem = subscription.items.data[0]!
     const price = subscriptionItem.price
-    const lookupKey = price.lookup_key
+    const lookupKey = price.lookup_key!
 
     const { tier, billingCycle } = mapLookupKeyToPlan(lookupKey)
 

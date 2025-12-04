@@ -2,7 +2,7 @@ import mailchimp from "@mailchimp/mailchimp_transactional"
 
 import { logger } from "../../utils/winston-logger.js"
 
-const mailchimpClient = mailchimp(process.env.MAILCHIMP_TRANSACTIONAL_API_KEY)
+const mailchimpClient = mailchimp(process.env.MAILCHIMP_TRANSACTIONAL_API_KEY!)
 
 export async function emailServiceHealthCheck(): Promise<boolean> {
   const res = await mailchimpClient.users.ping()
@@ -10,7 +10,7 @@ export async function emailServiceHealthCheck(): Promise<boolean> {
   if (res instanceof Error) {
     logger.error(
       "❌ Email service is unhealthy:",
-      res.response.data || res.message,
+      res.response?.data || res.message,
     )
     throw new TypeError("❌ Email service is unhealthy")
   }
@@ -49,7 +49,7 @@ export async function sendHtmlEmail(
   })
 
   if (res instanceof Error) {
-    logger.error("❌ Failed to send email:", res.response.data || res.message)
+    logger.error("❌ Failed to send email:", res.response?.data || res.message)
     throw new TypeError("❌ Failed to send email")
   }
 }

@@ -1,30 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "jsx": "react-jsx",
-    "lib": ["ES2020"],
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "target": "es2022",
+    "lib": ["es2022"],
+    "moduleDetection": "force",
+    "module": "NodeNext",
     "paths": {
       ".": ["./"]
     },
     "resolveJsonModule": true,
-    "noEmitOnError": false,
+    "allowJs": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
     "outDir": "dist",
-    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
     "esModuleInterop": true,
-    "isolatedModules": false,
-    "skipDefaultLibCheck": true,
+    "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true,
-    "compilerOptions": {
-      "module": "CommonJS",
-      "moduleResolution": "node"
-    }
-  }
+  "include": ["./src/**/*.ts", "build.mjs"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

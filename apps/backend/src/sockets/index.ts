@@ -91,4 +91,5 @@ function socketServer(server: HttpServer) {
   return { io }
 }
 
+export { socketServer }
 export default socketServer

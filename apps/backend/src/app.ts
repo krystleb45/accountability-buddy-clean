@@ -4,11 +4,11 @@ import cors from "cors"
 import express from "express"
 import mongoSanitize from "express-mongo-sanitize"
 import rateLimit from "express-rate-limit"
+import { xss } from "express-xss-sanitizer"
 import helmet from "helmet"
 import hpp from "hpp"
 import morgan from "morgan"
 import path from "node:path"
-import xssClean from "xss-clean"
 
 import { logger } from "./utils/winston-logger.js"
 
@@ -70,7 +70,7 @@ app.use(
   }),
 )
 app.use(mongoSanitize())
-app.use(xssClean())
+app.use(xss())
 app.use(hpp())
 app.set("trust proxy", 1) // if behind a proxy (e.g., Heroku, AWS ELB)
 app.use(
@@ -161,4 +161,5 @@ setupSwagger(app)
 app.use(notFoundMiddleware)
 app.use(errorHandler)
 
+export { app }
 export default app

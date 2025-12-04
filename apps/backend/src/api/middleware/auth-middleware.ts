@@ -91,7 +91,7 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
   // Attach user to request object
   ;(req as AuthenticatedRequest).user = {
     ...user,
-    subscription_status: mapSubscriptionStatus(user.subscription_status),
+    subscription_status: mapSubscriptionStatus(user.subscription_status!),
     id: user._id.toString(),
   }
 
@@ -107,7 +107,7 @@ export function restrictTo(
   return (req, _res, next) => {
     const authReq = req as AuthenticatedRequest
 
-    if (!roles.includes(authReq.user.role)) {
+    if (!roles.includes(authReq.user.role!)) {
       logger.warn(
         `❌ Access denied for ${authReq.user.email}. Has role: ${authReq.user.role}, requires one of: ${roles.join(", ")}`,
       )

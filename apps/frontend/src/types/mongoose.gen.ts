@@ -5,6 +5,9 @@
 
 // NOTE: ANY CHANGES MADE WILL BE OVERWRITTEN ON SUBSEQUENT EXECUTIONS OF MONGOOSE-TSGEN.
 
+import type { FriendRequestStatus } from "@ab/shared/friends"
+import type { Category as ResourceCategory } from "@ab/shared/categories"
+
 /**
  * Lean version of AccountabilityPartnershipDocument
  *
@@ -267,8 +270,8 @@ export type CollaborationGoal = {
   _id: string
   createdAt?: string
   updatedAt?: string
-  participantCount: any
-  milestoneCount: any
+  participantCount: number
+  milestoneCount: number
 }
 
 /**
@@ -418,7 +421,7 @@ export type Level = {
   _id: string
   createdAt?: string
   updatedAt?: string
-  totalRewards: any
+  totalRewards: number
 }
 
 /**
