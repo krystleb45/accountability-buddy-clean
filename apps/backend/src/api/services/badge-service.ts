@@ -1,15 +1,14 @@
-import type { Badge as IBadge } from "src/types/mongoose.gen"
-
 import { Types } from "mongoose"
 
-import type { BadgeCreateInput } from "../routes/badge"
+import type { Badge as IBadge } from "../../types/mongoose.gen.js"
+import type { BadgeCreateInput } from "../routes/badge.js"
 
-import { logger } from "../../utils/winston-logger"
-import { Badge } from "../models/Badge"
-import { BadgeType } from "../models/BadgeType"
-import { User } from "../models/User"
-import { FileUploadService } from "./file-upload-service"
-import GamificationService from "./gamification-service"
+import { logger } from "../../utils/winston-logger.js"
+import { Badge } from "../models/Badge.js"
+import { BadgeType } from "../models/BadgeType.js"
+import { User } from "../models/User.js"
+import { FileUploadService } from "./file-upload-service.js"
+import GamificationService from "./gamification-service.js"
 
 export default class BadgeService {
   private constructor() {

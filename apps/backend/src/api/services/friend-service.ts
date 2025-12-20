@@ -1,17 +1,18 @@
 import type { Server } from "socket.io"
-import type { User as IUser, UserDocument } from "src/types/mongoose.gen"
 
 import { NEW_DM_MESSAGE } from "@ab/shared/socket-events"
 import mongoose, { Types } from "mongoose"
 
-import { logger } from "../../utils/winston-logger"
-import { CustomError } from "../middleware/errorHandler"
-import { FriendRequest } from "../models/FriendRequest"
-import Notification from "../models/Notification"
-import { User } from "../models/User"
-import { ChatService } from "./chat-service"
-import { FileUploadService } from "./file-upload-service"
-import { UserService } from "./user-service"
+import type { User as IUser, UserDocument } from "../../types/mongoose.gen.js"
+
+import { logger } from "../../utils/winston-logger.js"
+import { CustomError } from "../middleware/errorHandler.js"
+import { FriendRequest } from "../models/FriendRequest.js"
+import Notification from "../models/Notification.js"
+import { User } from "../models/User.js"
+import { ChatService } from "./chat-service.js"
+import { FileUploadService } from "./file-upload-service.js"
+import { UserService } from "./user-service.js"
 
 export async function sendRequest(senderId: string, recipientId: string) {
   if (!mongoose.isValidObjectId(recipientId))

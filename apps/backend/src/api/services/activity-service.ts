@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-import { Activity } from "../models/Activity"
+import { Activity } from "../models/Activity.js"
 
 export default class ActivityService {
   /** Log a new activity */

@@ -1906,51 +1906,7 @@ export type GroupMethods = {
   ) => Promise<GroupDocument>
 }
 
-export type GroupStatics = {
-  findPublicGroups: (
-    this: GroupModel
-  ) => Promise<
-    (mongoose.Document<
-      unknown,
-      import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupQueries,
-      GroupDocument
-    > &
-      mongoose.Document<
-        mongoose.Types.ObjectId,
-        import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupQueries,
-        any
-      > &
-      import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").GroupMethods & {
-        name: string
-        description?: string
-        category:
-          | "fitness"
-          | "study"
-          | "career"
-          | "lifestyle"
-          | "creative"
-          | "tech"
-        members: mongoose.Types.Array<
-          | mongoose.Types.ObjectId
-          | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
-        >
-        createdBy:
-          | mongoose.Types.ObjectId
-          | import("/home/anaam/Programming/toptal/accountability-buddy/apps/backend/src/types/mongoose.gen").UserDocument
-        visibility?: "public" | "private"
-        isActive?: boolean
-        lastActivity?: Date
-        avatar?: string
-        tags: mongoose.Types.Array<string>
-        isPinned?: boolean
-        _id: mongoose.Types.ObjectId
-        createdAt?: Date
-        updatedAt?: Date
-        memberCount: number
-        isPublic: boolean
-      } & Required<{ _id: mongoose.Types.ObjectId }>)[]
-  >
-}
+export type GroupStatics = {}
 
 /**
  * Mongoose Model type

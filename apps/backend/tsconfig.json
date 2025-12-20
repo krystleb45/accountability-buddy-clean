@@ -1,31 +1,41 @@
 {
   "compilerOptions": {
+<<<<<<< HEAD
     "target": "ES2020",
     "jsx": "react-jsx",
     "lib": ["ES2020"],
     "baseUrl": ".",
     "module": "CommonJS",
     "moduleResolution": "node",
+=======
+    "target": "es2022",
+    "lib": ["es2022"],
+    "moduleDetection": "force",
+    "module": "NodeNext",
+    "paths": {
+      ".": ["./"]
+    },
+>>>>>>> ed9dd768368a68a6c0daf73e06be048fda7bbadd
     "resolveJsonModule": true,
-    "noEmitOnError": false,
+    "allowJs": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
     "outDir": "dist",
-    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
     "esModuleInterop": true,
+<<<<<<< HEAD
     "isolatedModules": false,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "strict": true,
     "typeRoots": ["node_modules/@types"],
     "types": ["node"]
+=======
+    "isolatedModules": true,
+    "skipLibCheck": true
+>>>>>>> ed9dd768368a68a6c0daf73e06be048fda7bbadd
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
-  "ts-node": {
-    "transpileOnly": true,
-    "files": true,
-    "compilerOptions": {
-      "module": "CommonJS",
-      "moduleResolution": "node"
-    }
-  }
+  "include": ["./src/**/*.ts", "build.mjs"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

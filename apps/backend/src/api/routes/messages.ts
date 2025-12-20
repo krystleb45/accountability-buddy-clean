@@ -1,10 +1,10 @@
 import { Router } from "express"
 import z from "zod"
 
-import * as MessageController from "../controllers/MessageController"
-import { protect } from "../middleware/auth-middleware"
-import { validateSubscription } from "../middleware/subscription-validation"
-import validate from "../middleware/validation-middleware"
+import * as MessageController from "../controllers/MessageController.js"
+import { protect } from "../middleware/auth-middleware.js"
+import { validateSubscription } from "../middleware/subscription-validation.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

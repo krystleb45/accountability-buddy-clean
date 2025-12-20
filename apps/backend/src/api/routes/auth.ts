@@ -3,11 +3,11 @@ import { Router } from "express"
 import rateLimit, { ipKeyGenerator } from "express-rate-limit"
 import z from "zod"
 
-import authController from "../controllers/auth-controller"
-import { logActivity } from "../middleware/activity-middleware"
-import { protect } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
-import catchAsync from "../utils/catchAsync"
+import authController from "../controllers/auth-controller.js"
+import { logActivity } from "../middleware/activity-middleware.js"
+import { protect } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
+import catchAsync from "../utils/catchAsync.js"
 
 const router = Router()
 

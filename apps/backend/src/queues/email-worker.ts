@@ -1,7 +1,7 @@
 import { Worker } from "bullmq"
 
-import { sendHtmlEmail } from "../api/services/email-service"
-import { logger } from "../utils/winston-logger"
+import { sendHtmlEmail } from "../api/services/email-service.js"
+import { logger } from "../utils/winston-logger.js"
 
 export const emailWorker = (() => {
   const host = process.env.REDIS_HOST!

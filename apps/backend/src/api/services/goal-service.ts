@@ -1,16 +1,16 @@
-import type { Goal as IGoal, UserDocument } from "src/types/mongoose.gen"
-
 import { format, startOfDay } from "date-fns"
 import status from "http-status"
 import mongoose from "mongoose"
 import { uniqueWith } from "remeda"
 
-import { logger } from "../../utils/winston-logger"
-import { CustomError } from "../middleware/errorHandler"
-import { Goal } from "../models/Goal"
-import { User } from "../models/User"
-import GamificationService from "./gamification-service"
-import { UserService } from "./user-service"
+import type { Goal as IGoal, UserDocument } from "../../types/mongoose.gen.js"
+
+import { logger } from "../../utils/winston-logger.js"
+import { CustomError } from "../middleware/errorHandler.js"
+import { Goal } from "../models/Goal.js"
+import { User } from "../models/User.js"
+import GamificationService from "./gamification-service.js"
+import { UserService } from "./user-service.js"
 
 export class GoalService {
   /**

@@ -1,10 +1,10 @@
 import type { Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 
-import { UserService } from "../services/user-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import { UserService } from "../services/user-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const getMemberInfo = catchAsync(
   async (req: AuthenticatedRequest<{ username: string }>, res: Response) => {

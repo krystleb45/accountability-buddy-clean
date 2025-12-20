@@ -1,9 +1,9 @@
 import type mongoose from "mongoose"
 
-import appConfig from "../../config/appConfig"
-import { logger } from "../../utils/winston-logger"
-import { VerificationToken } from "../models/VerificationToken"
-import jobQueue from "./job-queue-service"
+import appConfig from "../../config/appConfig.js"
+import { logger } from "../../utils/winston-logger.js"
+import { VerificationToken } from "../models/VerificationToken.js"
+import jobQueue from "./job-queue-service.js"
 
 export async function addSendVerificationEmailJob(
   userId: mongoose.Types.ObjectId,

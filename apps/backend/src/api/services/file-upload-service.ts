@@ -10,8 +10,8 @@ import {
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import multer from "multer"
 
-import appConfig from "../../config/appConfig"
-import { logger } from "../../utils/winston-logger"
+import appConfig from "../../config/appConfig.js"
+import { logger } from "../../utils/winston-logger.js"
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION || "us-east-1",

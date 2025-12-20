@@ -1,6 +1,6 @@
 import { Queue } from "bullmq"
 
-import { logger } from "../utils/winston-logger"
+import { logger } from "../utils/winston-logger.js"
 
 export const emailQueue = (() => {
   const host = process.env.REDIS_HOST!

@@ -2,7 +2,7 @@ import type {
   MessageSchema as IMessageSchema,
   MessageDocument,
   MessageModel,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 import { messageStatuses } from "@ab/shared/message"
 import mongoose, { Schema } from "mongoose"

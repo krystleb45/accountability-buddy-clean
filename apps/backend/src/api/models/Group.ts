@@ -6,7 +6,7 @@ import type {
   GroupDocument,
   GroupModel,
   GroupSchema as IGroupSchema,
-} from "../../types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 // --- Main Schema ---
 const GroupSchema: IGroupSchema = new Schema(
@@ -87,15 +87,6 @@ GroupSchema.methods = {
     this.lastActivity = new Date()
     await this.save()
     return this
-  },
-}
-
-// --- Static Methods ---
-GroupSchema.statics = {
-  findPublicGroups(this) {
-    return this.find({ visibility: "public", isActive: true })
-      .sort({ lastActivity: -1 }) // Changed to sort by lastActivity
-      .exec()
   },
 }
 

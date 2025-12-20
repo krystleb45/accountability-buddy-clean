@@ -4,15 +4,15 @@ import z from "zod"
 import {
   getMessages,
   getRooms,
-} from "../controllers/anonymous-military-chat-controller"
+} from "../controllers/anonymous-military-chat-controller.js"
 import {
   getCommunityMoodData,
   getMoodTrends,
   hasSubmittedToday,
   submitMoodCheckIn,
-} from "../controllers/anonymous-mood-controller"
-import { anonymousAuth } from "../middleware/anonymous-auth"
-import validate from "../middleware/validation-middleware"
+} from "../controllers/anonymous-mood-controller.js"
+import { anonymousAuth } from "../middleware/anonymous-auth.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

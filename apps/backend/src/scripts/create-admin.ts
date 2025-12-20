@@ -1,6 +1,7 @@
 import dotenvFlow from "dotenv-flow"
 import mongoose from "mongoose"
-import { UserService } from "src/api/services/user-service"
+
+import { UserService } from "../api/services/user-service.js"
 
 dotenvFlow.config()
 

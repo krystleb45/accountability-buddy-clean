@@ -1,9 +1,10 @@
 import type { Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
-import { GoalService } from "../services/goal-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+
+import { GoalService } from "../services/goal-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 const getAdvancedAnalytics = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {

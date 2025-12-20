@@ -14,36 +14,20 @@
     "ALLOWED_ORIGINS",
     "STRIPE_SECRET_KEY",
     "STRIPE_WEBHOOK_SECRET",
-    "RATE_LIMIT_WINDOW_MS",
-    "RATE_LIMIT_MAX_REQUESTS",
     "SESSION_SECRET",
     "SALT_ROUNDS",
     "FRONTEND_URL",
-    "DEFAULT_TRIAL_DAYS",
-    "BASIC_MONTHLY_PRICE",
-    "BASIC_YEARLY_PRICE",
-    "PRO_MONTHLY_PRICE",
-    "PRO_YEARLY_PRICE",
-    "ELITE_MONTHLY_PRICE",
-    "ELITE_YEARLY_PRICE",
     "DISABLE_EMAIL_QUEUE",
-    "DISABLE_REDIS"
+    "DISABLE_REDIS",
+    "GOOGLE_GEOLOCATION_API_KEY"
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "check-types": {
-      "dependsOn": [
-        "^check-types"
-      ]
+      "dependsOn": ["^check-types"]
     },
     "dev": {
       "persistent": true,

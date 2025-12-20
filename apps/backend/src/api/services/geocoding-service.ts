@@ -18,7 +18,7 @@ export class GeocodingService {
       throw new Error("Failed to fetch address from geocoding API")
     }
 
-    const data = await res.json()
+    const data = (await res.json()) as { results: Record<string, any>[] }
 
     const firstResult = data.results[0]
     if (!firstResult) {
@@ -60,7 +60,7 @@ export class GeocodingService {
       throw new Error("Failed to fetch coordinates from geocoding API")
     }
 
-    const data = await res.json()
+    const data = (await res.json()) as { results: Record<string, any>[] }
 
     const firstResult = data.results[0]
     if (!firstResult) {
@@ -93,7 +93,7 @@ export class GeocodingService {
       throw new Error("Failed to fetch timezone from geocoding API")
     }
 
-    const data = await res.json()
+    const data = (await res.json()) as { status: string; timeZoneId: string }
 
     if (data.status !== "OK") {
       throw new Error("No timezone found for the provided coordinates")

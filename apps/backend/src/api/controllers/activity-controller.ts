@@ -1,11 +1,11 @@
 import type { Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
-import type { CreateActivityData } from "../routes/activity"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { CreateActivityData } from "../routes/activity.js"
 
-import ActivityService from "../services/activity-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import ActivityService from "../services/activity-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 interface QueryParams {
   type?: string

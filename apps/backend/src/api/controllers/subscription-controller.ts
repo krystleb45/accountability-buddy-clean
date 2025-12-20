@@ -3,16 +3,16 @@ import type Stripe from "stripe"
 
 import status from "http-status"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 import type {
   ChangePlanBody,
   CreateCheckoutSessionBody,
-} from "../routes/subscription"
+} from "../routes/subscription.js"
 
-import { logger } from "../../utils/winston-logger"
-import { createError } from "../middleware/errorHandler"
-import { User } from "../models/User"
-import { GoalService } from "../services/goal-service"
+import { logger } from "../../utils/winston-logger.js"
+import { createError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
+import { GoalService } from "../services/goal-service.js"
 import {
   handleCheckoutCompleted,
   handleInvoicePaymentFailed,
@@ -20,9 +20,9 @@ import {
   handleSubscriptionDeleted,
   handleSubscriptionUpdated,
   stripe,
-} from "../services/stripe-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+} from "../services/stripe-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 /**
  * POST /api/subscription/create-session
@@ -36,6 +36,11 @@ export const createCheckoutSession: RequestHandler = catchAsync(
   ) => {
     const userId = req.user.id
     const user = await User.findById(userId)
+
+    if (!user) {
+      return next(createError("User not found", 404))
+    }
+
     const { planId, billingCycle = "monthly", successUrl, cancelUrl } = req.body
 
     if (!planId) {
@@ -56,7 +61,7 @@ export const createCheckoutSession: RequestHandler = catchAsync(
       billing_address_collection: "auto",
       line_items: [
         {
-          price: prices.data[0].id,
+          price: prices.data[0]!.id,
           quantity: 1,
         },
       ],
@@ -96,7 +101,7 @@ export const createBillingPortalSession: RequestHandler = catchAsync(
 
     const user = await User.findById(userId)
 
-    if (!user.stripeCustomerId) {
+    if (!user?.stripeCustomerId) {
       return next(createError("No Stripe customer ID found", 400))
     }
 
@@ -163,17 +168,21 @@ export const changeSubscriptionPlan: RequestHandler = catchAsync(
 
     const user = await User.findById(userId)
 
+    if (!user?.stripeSubscriptionId) {
+      return next(createError("User not found", 404))
+    }
+
     const currentSubscription = await stripe.subscriptions.retrieve(
       user.stripeSubscriptionId,
     )
 
-    const currentSubscriptionItemId = currentSubscription.items.data[0].id
+    const currentSubscriptionItemId = currentSubscription.items.data[0]!.id
     const prices = await stripe.prices.list({
       lookup_keys: [`${newPlanId}_${billingCycle}`],
       expand: ["data.product"],
       limit: 1,
     })
-    const newPriceId = prices.data[0].id
+    const newPriceId = prices.data[0]!.id
 
     if (!currentSubscriptionItemId) {
       return next(createError("No active subscription to change", 400))
@@ -216,6 +225,10 @@ export const cancelUserSubscription: RequestHandler = catchAsync(
 
     const user = await User.findById(userId)
 
+    if (!user) {
+      return next(createError("User not found", 404))
+    }
+
     const subscriptionId = user.stripeSubscriptionId
     if (!subscriptionId) {
       return next(createError("No active subscription to cancel", 400))
@@ -252,16 +265,19 @@ export const handleStripeWebhook = catchAsync(
 
     // Retrieve the event by verifying the signature using the raw body and secret.
     let event: Stripe.Event | undefined
-    const signature = req.headers["stripe-signature"]
+    const signature = req.headers["stripe-signature"]!
 
     try {
       event = stripe.webhooks.constructEvent(
-        req.rawBody,
+        req.rawBody!,
         signature,
         webhookSecret,
       )
     } catch (err) {
-      logger.error("❌ Webhook signature verification failed.", err.message)
+      logger.error(
+        "❌ Webhook signature verification failed.",
+        (err as Error).message,
+      )
       next(
         createError(
           "Webhook signature verification failed",

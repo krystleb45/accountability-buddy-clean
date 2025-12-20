@@ -2,8 +2,8 @@ import type { Server, Socket } from "socket.io"
 
 import { JOIN_DM_ROOM, LEAVE_DM_ROOM } from "@ab/shared/socket-events"
 
-import { User } from "../api/models/User"
-import { logger } from "../utils/winston-logger"
+import { User } from "../api/models/User.js"
+import { logger } from "../utils/winston-logger.js"
 
 function dmSocket(io: Server, socket: Socket): void {
   socket.on(JOIN_DM_ROOM, async (data: { roomId: string }) => {

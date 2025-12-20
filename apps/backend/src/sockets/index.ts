@@ -4,12 +4,12 @@ import type { Socket } from "socket.io"
 import { USER_OFFLINE, USER_ONLINE } from "@ab/shared/socket-events"
 import { Server } from "socket.io"
 
-import { User } from "../api/models/User"
-import AuthService from "../api/services/AuthService"
-import { logger } from "../utils/winston-logger"
-import { setupAnonymousMilitaryChat } from "./anonymous-military-chat"
-import dmSocket from "./dm"
-import groupSocket from "./groups"
+import { User } from "../api/models/User.js"
+import AuthService from "../api/services/AuthService.js"
+import { logger } from "../utils/winston-logger.js"
+import { setupAnonymousMilitaryChat } from "./anonymous-military-chat.js"
+import dmSocket from "./dm.js"
+import groupSocket from "./groups.js"
 
 function socketServer(server: HttpServer) {
   const io = new Server(server, {
@@ -91,4 +91,5 @@ function socketServer(server: HttpServer) {
   return { io }
 }
 
+export { socketServer }
 export default socketServer

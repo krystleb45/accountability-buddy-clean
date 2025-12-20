@@ -1,4 +1,4 @@
-import { logger } from "../../utils/winston-logger"
+import { logger } from "../../utils/winston-logger.js"
 
 interface Metadata {
   [key: string]: unknown
@@ -33,7 +33,9 @@ async function sendToRemoteService(
   _level: string,
   _payload: any,
 ): Promise<void> {
-  if (!enableRemote) return
+  if (!enableRemote) {
+    return
+  }
 
   try {
     // Replace with actual implementation:
@@ -107,7 +109,9 @@ const LoggingService = {
    * 🐞 Debug logs – only in development
    */
   logDebug: async (message: string, metadata: Metadata = {}): Promise<void> => {
-    if (!allowDebug) return
+    if (!allowDebug) {
+      return
+    }
 
     const payload = {
       message,

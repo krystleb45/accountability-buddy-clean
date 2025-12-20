@@ -1,7 +1,7 @@
 // src/api/middleware/errorHandler.ts
 import type { NextFunction, Request, Response } from "express"
 
-import { logger } from "../../utils/winston-logger"
+import { logger } from "../../utils/winston-logger.js"
 
 export class CustomError extends Error {
   public statusCode: number

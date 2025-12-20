@@ -1,8 +1,8 @@
 import type { Request, Response } from "express"
 
-import AnonymousMilitaryChatService from "../services/anonymous-military-chat-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import AnonymousMilitaryChatService from "../services/anonymous-military-chat-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const getRooms = catchAsync(async (_req: Request, res: Response) => {
   const rooms = await AnonymousMilitaryChatService.getRooms()

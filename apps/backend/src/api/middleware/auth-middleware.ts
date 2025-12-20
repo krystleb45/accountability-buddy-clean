@@ -1,14 +1,14 @@
 import type { RequestHandler } from "express"
-import type { UserObject } from "src/types/mongoose.gen"
 
 import jwt from "jsonwebtoken"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { UserObject } from "../../types/mongoose.gen.js"
 
-import { logger } from "../../utils/winston-logger"
-import { User } from "../models/User"
-import catchAsync from "../utils/catchAsync"
-import { createError } from "./errorHandler"
+import { logger } from "../../utils/winston-logger.js"
+import { User } from "../models/User.js"
+import catchAsync from "../utils/catchAsync.js"
+import { createError } from "./errorHandler.js"
 
 interface JwtPayload {
   userId?: string
@@ -91,7 +91,7 @@ export const protect: RequestHandler = catchAsync(async (req, _res, next) => {
   // Attach user to request object
   ;(req as AuthenticatedRequest).user = {
     ...user,
-    subscription_status: mapSubscriptionStatus(user.subscription_status),
+    subscription_status: mapSubscriptionStatus(user.subscription_status!),
     id: user._id.toString(),
   }
 
@@ -107,7 +107,7 @@ export function restrictTo(
   return (req, _res, next) => {
     const authReq = req as AuthenticatedRequest
 
-    if (!roles.includes(authReq.user.role)) {
+    if (!roles.includes(authReq.user.role!)) {
       logger.warn(
         `❌ Access denied for ${authReq.user.email}. Has role: ${authReq.user.role}, requires one of: ${roles.join(", ")}`,
       )

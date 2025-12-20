@@ -4,45 +4,45 @@ import cors from "cors"
 import express from "express"
 import mongoSanitize from "express-mongo-sanitize"
 import rateLimit from "express-rate-limit"
+import { xss } from "express-xss-sanitizer"
 import helmet from "helmet"
 import hpp from "hpp"
 import morgan from "morgan"
 import path from "node:path"
-import xssClean from "xss-clean"
 
-import { logger } from "./utils/winston-logger"
+import { logger } from "./utils/winston-logger.js"
 
 // ─── Public route imports ─────────────────────────────────────
-import anonymousMilitaryChatRoutes from "./api/routes/anonymous-military-chat-routes"
-import authRoutes from "./api/routes/auth"
-import faqRoutes from "./api/routes/faq"
-import healthRoutes from "./api/routes/healthRoutes"
+import anonymousMilitaryChatRoutes from "./api/routes/anonymous-military-chat-routes.js"
+import authRoutes from "./api/routes/auth.js"
+import faqRoutes from "./api/routes/faq.js"
+import healthRoutes from "./api/routes/healthRoutes.js"
 
 // ─── Protected route imports ──────────────────────────────────
 import status from "http-status"
 
-import { createError, errorHandler } from "./api/middleware/errorHandler"
-import notFoundMiddleware from "./api/middleware/notFoundMiddleware"
-import activityRoutes from "./api/routes/activity"
-import analyticsRoutes from "./api/routes/analytics"
-import badgeRoutes from "./api/routes/badge"
-import booksRoutes from "./api/routes/books"
-import dashboardRoutes from "./api/routes/dashboard"
-import feedbackRoutes from "./api/routes/feedback"
-import friendsRoutes from "./api/routes/friends"
-import gamificationRoutes from "./api/routes/gamification"
-import geocodingRoutes from "./api/routes/geocoding"
-import goalRoutes from "./api/routes/goal"
-import groupRoutes from "./api/routes/groups"
-import messageRoutes from "./api/routes/messages"
-import militarySupportRoutes from "./api/routes/military-support-routes"
-import profileRoutes from "./api/routes/profile"
-import progressRoutes from "./api/routes/progress"
-import settingsRoutes from "./api/routes/settings"
-import streakRoutes from "./api/routes/streaks"
-import subscriptionRoutes from "./api/routes/subscription"
-import userRoutes from "./api/routes/user"
-import setupSwagger from "./config/swaggerConfig"
+import { createError, errorHandler } from "./api/middleware/errorHandler.js"
+import notFoundMiddleware from "./api/middleware/notFoundMiddleware.js"
+import activityRoutes from "./api/routes/activity.js"
+import analyticsRoutes from "./api/routes/analytics.js"
+import badgeRoutes from "./api/routes/badge.js"
+import booksRoutes from "./api/routes/books.js"
+import dashboardRoutes from "./api/routes/dashboard.js"
+import feedbackRoutes from "./api/routes/feedback.js"
+import friendsRoutes from "./api/routes/friends.js"
+import gamificationRoutes from "./api/routes/gamification.js"
+import geocodingRoutes from "./api/routes/geocoding.js"
+import goalRoutes from "./api/routes/goal.js"
+import groupRoutes from "./api/routes/groups.js"
+import messageRoutes from "./api/routes/messages.js"
+import militarySupportRoutes from "./api/routes/military-support-routes.js"
+import profileRoutes from "./api/routes/profile.js"
+import progressRoutes from "./api/routes/progress.js"
+import settingsRoutes from "./api/routes/settings.js"
+import streakRoutes from "./api/routes/streaks.js"
+import subscriptionRoutes from "./api/routes/subscription.js"
+import userRoutes from "./api/routes/user.js"
+import setupSwagger from "./config/swaggerConfig.js"
 
 const app = express()
 
@@ -70,7 +70,7 @@ app.use(
   }),
 )
 app.use(mongoSanitize())
-app.use(xssClean())
+app.use(xss())
 app.use(hpp())
 app.set("trust proxy", 1) // if behind a proxy (e.g., Heroku, AWS ELB)
 app.use(
@@ -161,4 +161,5 @@ setupSwagger(app)
 app.use(notFoundMiddleware)
 app.use(errorHandler)
 
+export { app }
 export default app

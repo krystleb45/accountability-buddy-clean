@@ -4,10 +4,10 @@ import type {
   GroupInvitationDocument,
   GroupInvitationModel,
   GroupInvitationSchema as IGroupInvitationSchema,
-} from "../../types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
-import { Group } from "./Group"
-import { User } from "./User"
+import { Group } from "./Group.js"
+import { User } from "./User.js"
 
 // --- Schema Definition ---
 const GroupInvitationSchema: IGroupInvitationSchema = new Schema(

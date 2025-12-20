@@ -1,7 +1,7 @@
 import { render, toPlainText } from "@react-email/components"
 
-import { ResetPassword } from "./emails/reset-password"
-import VerifyEmail from "./emails/verify-email"
+import { ResetPassword } from "./emails/reset-password.js"
+import VerifyEmail from "./emails/verify-email.js"
 
 export async function getVerifyEmailTemplate(link: string, logoUrl?: string) {
   const props = logoUrl ? { link, logoUrl } : { link }

@@ -2,11 +2,11 @@ import type { Response } from "express"
 
 import mongoose from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 
-import * as StreakService from "../services/streak-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import * as StreakService from "../services/streak-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 /**
  * @desc    Get user's streak details

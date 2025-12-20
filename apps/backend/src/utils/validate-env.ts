@@ -1,4 +1,4 @@
-import { logger } from "./winston-logger"
+import { logger } from "./winston-logger.js"
 
 const requiredEnvVars: string[] = [
   "MONGO_URI",
@@ -16,6 +16,7 @@ const requiredEnvVars: string[] = [
   "AWS_SECRET_ACCESS_KEY",
   "S3_BUCKET",
   "ENCRYPTION_KEY",
+  "GOOGLE_GEOLOCATION_API_KEY",
 ]
 
 const optionalButRecommended: string[] = []

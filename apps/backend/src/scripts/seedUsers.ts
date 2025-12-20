@@ -3,9 +3,9 @@ import bcrypt from "bcryptjs"
 import dotenv from "dotenv"
 import mongoose from "mongoose"
 
-import { User } from "../api/models/User"
-import { loadEnvironment } from "../utils/loadEnv"
-import { logger } from "../utils/winston-logger"
+import { User } from "../api/models/User.js"
+import { loadEnvironment } from "../utils/loadEnv.js"
+import { logger } from "../utils/winston-logger.js"
 
 loadEnvironment()
 

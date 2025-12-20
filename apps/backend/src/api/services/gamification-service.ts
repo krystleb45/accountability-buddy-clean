@@ -1,14 +1,15 @@
 import type { BADGE_CONDITIONS } from "@ab/shared/badge-conditions"
-import type { LevelDocument, PopulatedDocument } from "src/types/mongoose.gen"
 
 import mongoose from "mongoose"
 
-import { BadgeType } from "../models/BadgeType"
-import { Goal } from "../models/Goal"
-import { Level } from "../models/Level"
-import BadgeService from "./badge-service"
-import { FileUploadService } from "./file-upload-service"
-import { StreakService } from "./streak-service"
+import type { LevelDocument, PopulatedDocument } from "../../types/mongoose.gen.js"
+
+import { BadgeType } from "../models/BadgeType.js"
+import { Goal } from "../models/Goal.js"
+import { Level } from "../models/Level.js"
+import BadgeService from "./badge-service.js"
+import { FileUploadService } from "./file-upload-service.js"
+import { StreakService } from "./streak-service.js"
 /**
  * Business‐logic for gamification: leaderboard, per‐user progress, points, etc.
  */

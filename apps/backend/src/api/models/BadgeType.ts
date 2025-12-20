@@ -1,13 +1,13 @@
+import { BADGE_CONDITIONS } from "@ab/shared/badge-conditions"
+import mongoose, { Schema } from "mongoose"
+
 import type {
   BadgeTypeDocument,
   BadgeTypeModel,
   BadgeTypeSchema as IBadgeTypeSchema,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
-import { BADGE_CONDITIONS } from "@ab/shared/badge-conditions"
-import mongoose, { Schema } from "mongoose"
-
-import { FileUploadService } from "../services/file-upload-service"
+import { FileUploadService } from "../services/file-upload-service.js"
 
 const BadgeTypeSchema: IBadgeTypeSchema = new Schema(
   {

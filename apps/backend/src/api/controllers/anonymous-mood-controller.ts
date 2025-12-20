@@ -5,11 +5,11 @@ import { formatISO, sub } from "date-fns"
 import type {
   MoodCheckInBody,
   MoodTrendQuery,
-} from "../routes/anonymous-military-chat-routes"
+} from "../routes/anonymous-military-chat-routes.js"
 
-import AnonymousMoodService from "../services/anonymous-mood-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import AnonymousMoodService from "../services/anonymous-mood-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 type AnonymousRequest<P = any, B = any, Q = any> = Request<P, any, B, Q> & {
   anonymousUser?: {

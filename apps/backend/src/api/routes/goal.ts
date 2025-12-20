@@ -1,15 +1,15 @@
 import { Router } from "express"
 import z from "zod"
 
-import * as goalController from "../controllers/goal-controller"
-import { logActivity } from "../middleware/activity-middleware"
-import { protect } from "../middleware/auth-middleware"
-import { isVerified } from "../middleware/is-verified-middleware"
+import * as goalController from "../controllers/goal-controller.js"
+import { logActivity } from "../middleware/activity-middleware.js"
+import { protect } from "../middleware/auth-middleware.js"
+import { isVerified } from "../middleware/is-verified-middleware.js"
 import {
   trialPrompt,
   validateSubscription,
-} from "../middleware/subscription-validation"
-import validate from "../middleware/validation-middleware"
+} from "../middleware/subscription-validation.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

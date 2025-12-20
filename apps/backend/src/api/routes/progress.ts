@@ -1,7 +1,7 @@
 import { Router } from "express"
 
-import { getProgressDashboard } from "../controllers/progress-controller"
-import { protect } from "../middleware/auth-middleware"
+import { getProgressDashboard } from "../controllers/progress-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
 
 const router = Router()
 

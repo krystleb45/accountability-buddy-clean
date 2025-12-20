@@ -6,10 +6,10 @@ import {
   createActivity,
   getAllActivities,
   getUserActivities,
-} from "../controllers/activity-controller"
-import { protect, restrictTo } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
-import { ACTIVITY_TYPES } from "../models/Activity"
+} from "../controllers/activity-controller.js"
+import { protect, restrictTo } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
+import { ACTIVITY_TYPES } from "../models/Activity.js"
 
 const router = Router()
 

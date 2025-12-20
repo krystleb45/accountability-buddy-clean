@@ -1,3 +1,6 @@
+import { subMinutes } from "date-fns"
+import mongoose, { Schema } from "mongoose"
+
 import type {
   AnonymousMilitaryMessageDocument,
   AnonymousMilitaryMessageModel,
@@ -5,10 +8,7 @@ import type {
   AnonymousSessionModel,
   AnonymousMilitaryMessageSchema as IAnonymousMilitaryMessageSchema,
   AnonymousSessionSchema as IAnonymousSessionSchema,
-} from "src/types/mongoose.gen"
-
-import { subMinutes } from "date-fns"
-import mongoose, { Schema } from "mongoose"
+} from "../../types/mongoose.gen.js"
 
 // Anonymous Message Schema (24-hour auto-deletion for privacy)
 const AnonymousMilitaryMessageSchema: IAnonymousMilitaryMessageSchema =

@@ -6,8 +6,8 @@ import dotenvFlow from "dotenv-flow"
 import mongoose from "mongoose"
 import { createServer } from "node:http"
 
-import { validateEnv } from "./utils/validate-env"
-import { logger } from "./utils/winston-logger"
+import { validateEnv } from "./utils/validate-env.js"
+import { logger } from "./utils/winston-logger.js"
 
 // ─── Crash Guards ───────────────────────────────────────────────
 process.on("uncaughtException", (err) => {
@@ -56,7 +56,7 @@ async function startServer(): Promise<void> {
     logger.info("✅ MongoDB connected")
 
     // 2a) Check up on email service
-    const emailService = await import("./api/services/email-service")
+    const emailService = await import("./api/services/email-service.js")
     const emailServiceHealthy = await emailService.emailServiceHealthCheck()
     if (emailServiceHealthy) {
       logger.info("📧 Email service is healthy")
@@ -65,7 +65,7 @@ async function startServer(): Promise<void> {
     }
 
     // 2b) Check on job queue (Redis)
-    const jobQueue = (await import("./api/services/job-queue-service")).default
+    const { jobQueue } = await import("./api/services/job-queue-service.js")
     const jobQueueHealthy = jobQueue.getStatus().status === "running"
     if (jobQueueHealthy) {
       logger.info("✅ Job queue is healthy")
@@ -74,11 +74,11 @@ async function startServer(): Promise<void> {
     }
 
     // 2c) Start email worker
-    await import("./queues/email-worker")
+    await import("./queues/email-worker.js")
 
     // 2d) Check the health of S3 connection
     const fileUploadService = await import(
-      "./api/services/file-upload-service"
+      "./api/services/file-upload-service.js"
     ).then((mod) => mod.FileUploadService)
     const s3Healthy = await fileUploadService.healthCheck()
     if (s3Healthy) {
@@ -87,8 +87,8 @@ async function startServer(): Promise<void> {
       logger.error("❌ S3 connection is unhealthy")
     }
 
-    const app = await import("./app").then((mod) => mod.default)
-    const socketServer = await import("./sockets").then((mod) => mod.default)
+    const { app } = await import("./app.js")
+    const { socketServer } = await import("./sockets/index.js")
 
     // 3) Create HTTP server and setup Socket.IO with all features
     const httpServer = createServer(app)
@@ -104,7 +104,7 @@ async function startServer(): Promise<void> {
     })
   } catch (err) {
     logger.error("❌ Fatal startup error:", err)
-    await (await import("./queues/email-worker")).emailWorker.close()
+    await (await import("./queues/email-worker.js")).emailWorker.close()
     process.exit(1)
   }
 }

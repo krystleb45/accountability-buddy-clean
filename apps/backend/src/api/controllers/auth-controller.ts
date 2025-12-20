@@ -1,25 +1,25 @@
 import type { RequestHandler } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
-import type { UserObject } from "src/types/mongoose.gen"
 
 import { addDays } from "date-fns"
 
-import type { RegisterBody } from "../routes/auth"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { UserObject } from "../../types/mongoose.gen.js"
+import type { RegisterBody } from "../routes/auth.js"
 
-import { logger } from "../../utils/winston-logger"
-import { createError } from "../middleware/errorHandler"
-import { User } from "../models/User"
-import { VerificationToken } from "../models/VerificationToken"
-import AuthService from "../services/AuthService"
-import { FileUploadService } from "../services/file-upload-service"
-import { StreakService } from "../services/streak-service"
-import { createStripeCustomer } from "../services/stripe-service"
+import { logger } from "../../utils/winston-logger.js"
+import { createError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
+import { VerificationToken } from "../models/VerificationToken.js"
+import AuthService from "../services/AuthService.js"
+import { FileUploadService } from "../services/file-upload-service.js"
+import { StreakService } from "../services/streak-service.js"
+import { createStripeCustomer } from "../services/stripe-service.js"
 import {
   addSendResetPasswordEmailJob,
   addSendVerificationEmailJob,
-} from "../services/verification-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+} from "../services/verification-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 //
 // ─── POST /api/auth/register ─────────────────────────────────────────────────

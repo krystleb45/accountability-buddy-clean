@@ -3,12 +3,12 @@ import type { NextFunction, Response } from "express"
 import { isAfter } from "date-fns"
 import status from "http-status"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 
-import { logger } from "../../utils/winston-logger"
-import { User } from "../models/User"
-import sendResponse from "../utils/sendResponse"
-import { createError } from "./errorHandler"
+import { logger } from "../../utils/winston-logger.js"
+import { User } from "../models/User.js"
+import sendResponse from "../utils/sendResponse.js"
+import { createError } from "./errorHandler.js"
 
 /**
  * Middleware to validate subscription status

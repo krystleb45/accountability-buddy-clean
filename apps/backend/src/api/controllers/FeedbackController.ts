@@ -1,12 +1,12 @@
 import type { NextFunction, Response } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
-import type { FeedbackType } from "../models/Feedback"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+import type { FeedbackType } from "../models/Feedback.js"
 
-import { createError } from "../middleware/errorHandler"
-import FeedbackService from "../services/FeedbackService"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import { createError } from "../middleware/errorHandler.js"
+import FeedbackService from "../services/FeedbackService.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 // Define the valid feedback types (adjust these to match your actual FeedbackType values)
 const VALID_FEEDBACK_TYPES = [

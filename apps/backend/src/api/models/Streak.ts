@@ -5,7 +5,7 @@ import type {
   StreakSchema as IStreakSchema,
   StreakDocument,
   StreakModel,
-} from "../../types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 // --- Schema Definition ---
 const StreakSchema: IStreakSchema = new Schema(

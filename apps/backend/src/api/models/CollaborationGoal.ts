@@ -1,13 +1,13 @@
+import mongoose, { Schema } from "mongoose"
+
 import type {
   CollaborationGoalDocument,
   CollaborationGoalModel,
   CollaborationGoalSchema as ICollaborationGoalSchema,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
-import mongoose, { Schema } from "mongoose"
-
-import { commonSchemaWithCollaborationGoal } from "./Goal"
-import { Milestone } from "./Milestone"
+import { commonSchemaWithCollaborationGoal } from "./Goal.js"
+import { Milestone } from "./Milestone.js"
 
 const CollaborationGoalSchema: ICollaborationGoalSchema = new Schema(
   {

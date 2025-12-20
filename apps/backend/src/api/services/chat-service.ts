@@ -1,9 +1,9 @@
 import mongoose from "mongoose"
 
-import { CustomError } from "../middleware/errorHandler"
-import { Chat } from "../models/Chat"
-import { Group } from "../models/Group"
-import { MessageService } from "./message-service"
+import { CustomError } from "../middleware/errorHandler.js"
+import { Chat } from "../models/Chat.js"
+import { Group } from "../models/Group.js"
+import { MessageService } from "./message-service.js"
 
 export class ChatService {
   static async getGroupChat(groupId: string) {

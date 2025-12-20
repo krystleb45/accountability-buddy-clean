@@ -5,13 +5,13 @@ import { Types } from "mongoose"
 import type {
   Message as IMessage,
   UserDocument,
-} from "../../types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
-import { decryptMessage, encryptMessage } from "../../utils/crypto-helper"
-import { createError, CustomError } from "../middleware/errorHandler"
-import { Message } from "../models/Message"
-import { User } from "../models/User"
-import { FileUploadService } from "./file-upload-service"
+import { decryptMessage, encryptMessage } from "../../utils/crypto-helper.js"
+import { createError, CustomError } from "../middleware/errorHandler.js"
+import { Message } from "../models/Message.js"
+import { User } from "../models/User.js"
+import { FileUploadService } from "./file-upload-service.js"
 
 interface MessagePage {
   messages: IMessage[]

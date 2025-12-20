@@ -1,11 +1,11 @@
 import { ROOM_DETAILS, VALID_ROOMS } from "@ab/shared/military-chat-rooms"
 import { sub } from "date-fns"
 
-import { createError } from "../middleware/errorHandler"
+import { createError } from "../middleware/errorHandler.js"
 import {
   AnonymousMilitaryMessage,
   AnonymousSession,
-} from "../models/AnonymousMilitaryChat"
+} from "../models/AnonymousMilitaryChat.js"
 
 // Types for return values
 interface ChatRoom {

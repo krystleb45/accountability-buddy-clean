@@ -1,8 +1,8 @@
-import type { UpdateProfileData } from "../routes/profile"
+import type { UpdateProfileData } from "../routes/profile.js"
 
-import { createError } from "../middleware/errorHandler"
-import { User } from "../models/User"
-import { GeocodingService } from "./geocoding-service"
+import { createError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
+import { GeocodingService } from "./geocoding-service.js"
 
 export class ProfileService {
   /**

@@ -1,14 +1,14 @@
 import type { Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 import type {
   PasswordUpdateInput,
   SettingsUpdateInput,
-} from "../routes/settings"
+} from "../routes/settings.js"
 
-import SettingsService from "../services/SettingsService"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import SettingsService from "../services/SettingsService.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const getUserSettings = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {

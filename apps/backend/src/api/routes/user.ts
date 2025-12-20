@@ -1,9 +1,9 @@
 import { Router } from "express"
 import z from "zod"
 
-import * as userCtrl from "../controllers/userController"
-import { protect, restrictTo } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
+import * as userCtrl from "../controllers/userController.js"
+import { protect, restrictTo } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

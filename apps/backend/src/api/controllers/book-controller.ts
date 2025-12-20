@@ -2,11 +2,11 @@ import type { Response } from "express"
 
 import mongoose from "mongoose"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 
-import * as bookService from "../services/book-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import * as bookService from "../services/book-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 // helper to validate Mongo IDs
 const isValidId = (id: string): boolean => mongoose.Types.ObjectId.isValid(id)

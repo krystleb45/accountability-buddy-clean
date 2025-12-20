@@ -11,7 +11,7 @@ import {
   Text,
 } from "@react-email/components"
 
-import { colors } from "../colors"
+import { colors } from "../colors.js"
 
 const main = {
   backgroundColor: colors.background,

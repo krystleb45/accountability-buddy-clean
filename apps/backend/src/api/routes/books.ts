@@ -4,10 +4,10 @@ import type { NextFunction, Request, Response } from "express"
 import { Router } from "express"
 import { check, param } from "express-validator"
 
-import * as bookController from "../controllers/book-controller"
-import { protect } from "../middleware/auth-middleware"
-import handleValidationErrors from "../middleware/handleValidationErrors"
-import catchAsync from "../utils/catchAsync"
+import * as bookController from "../controllers/book-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
+import handleValidationErrors from "../middleware/handleValidationErrors.js"
+import catchAsync from "../utils/catchAsync.js"
 
 const router = Router()
 

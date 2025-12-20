@@ -5,9 +5,9 @@ import rateLimit from "express-rate-limit"
 import sanitize from "mongo-sanitize"
 import z from "zod"
 
-import * as settingsController from "../controllers/SettingsController"
-import { protect } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
+import * as settingsController from "../controllers/SettingsController.js"
+import { protect } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
 
 const router = Router()
 

@@ -1,14 +1,15 @@
 import type { Response } from "express"
-import type { AuthenticatedRequest } from "src/types/authenticated-request.type"
 
 import status from "http-status"
 
-import { createError } from "../middleware/errorHandler"
-import { User } from "../models/User"
-import CollaborationService from "../services/collaboration-goal-service"
-import { GoalService } from "../services/goal-service"
-import catchAsync from "../utils/catchAsync"
-import sendResponse from "../utils/sendResponse"
+import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
+
+import { createError } from "../middleware/errorHandler.js"
+import { User } from "../models/User.js"
+import CollaborationService from "../services/collaboration-goal-service.js"
+import { GoalService } from "../services/goal-service.js"
+import catchAsync from "../utils/catchAsync.js"
+import sendResponse from "../utils/sendResponse.js"
 
 export const getDashboardStats = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {

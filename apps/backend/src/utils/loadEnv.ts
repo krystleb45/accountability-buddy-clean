@@ -2,7 +2,7 @@
 import dotenvFlow from "dotenv-flow"
 import path from "node:path"
 
-import { logger } from "./winston-logger"
+import { logger } from "./winston-logger.js"
 
 export function loadEnvironment(): void {
   const NODE_ENV = process.env.NODE_ENV || "development"

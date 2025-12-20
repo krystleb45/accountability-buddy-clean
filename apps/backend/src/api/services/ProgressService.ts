@@ -1,10 +1,10 @@
-import type { Goal as IGoal } from "src/types/mongoose.gen"
-
 import { Types } from "mongoose"
 
-import { createError } from "../middleware/errorHandler"
-import { AccountabilityPartnership } from "../models/AccountabilityPartnership"
-import { Goal } from "../models/Goal"
+import type { Goal as IGoal } from "../../types/mongoose.gen.js"
+
+import { createError } from "../middleware/errorHandler.js"
+import { AccountabilityPartnership } from "../models/AccountabilityPartnership.js"
+import { Goal } from "../models/Goal.js"
 
 class ProgressService {
   /**

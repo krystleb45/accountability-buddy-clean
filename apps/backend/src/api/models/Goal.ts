@@ -2,13 +2,13 @@ import type {
   GoalDocument,
   GoalModel,
   GoalSchema as IGoalSchema,
-} from "src/types/mongoose.gen"
+} from "../../types/mongoose.gen.js"
 
 import sanitize from "mongo-sanitize"
 import mongoose, { Schema } from "mongoose"
 
-import { Milestone } from "./Milestone"
-import { Reminder } from "./Reminder"
+import { Milestone } from "./Milestone.js"
+import { Reminder } from "./Reminder.js"
 
 export const commonSchemaWithCollaborationGoal = new Schema({
   title: { type: String, required: true, trim: true, maxlength: 255 },

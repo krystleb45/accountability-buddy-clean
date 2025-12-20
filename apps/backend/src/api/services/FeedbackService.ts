@@ -5,11 +5,11 @@ import type {
   FeedbackStatus,
   FeedbackType,
   IFeedback,
-} from "../models/Feedback"
+} from "../models/Feedback.js"
 
-import { createError } from "../middleware/errorHandler"
-import { Feedback } from "../models/Feedback"
-import LoggingService from "./LoggingService"
+import { createError } from "../middleware/errorHandler.js"
+import { Feedback } from "../models/Feedback.js"
+import LoggingService from "./LoggingService.js"
 
 export default class FeedbackService {
   /**

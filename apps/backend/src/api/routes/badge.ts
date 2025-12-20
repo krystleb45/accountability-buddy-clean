@@ -3,10 +3,10 @@ import { Router } from "express"
 import rateLimit from "express-rate-limit"
 import z from "zod"
 
-import { BadgeController } from "../controllers/badge-controller"
-import { protect, restrictTo } from "../middleware/auth-middleware"
-import validate from "../middleware/validation-middleware"
-import { FileUploadService } from "../services/file-upload-service"
+import { BadgeController } from "../controllers/badge-controller.js"
+import { protect, restrictTo } from "../middleware/auth-middleware.js"
+import validate from "../middleware/validation-middleware.js"
+import { FileUploadService } from "../services/file-upload-service.js"
 
 const router = Router()
 

@@ -1,7 +1,7 @@
 import { Router } from "express"
 
-import { getUserStreak } from "../controllers/StreakController"
-import { protect } from "../middleware/auth-middleware"
+import { getUserStreak } from "../controllers/StreakController.js"
+import { protect } from "../middleware/auth-middleware.js"
 
 const router = Router()
 

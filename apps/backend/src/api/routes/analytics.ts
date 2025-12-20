@@ -1,11 +1,11 @@
 import { Router } from "express"
 
-import { goalAnalyticsController } from "../controllers/goal-analytics-controller"
-import { protect } from "../middleware/auth-middleware"
+import { goalAnalyticsController } from "../controllers/goal-analytics-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
 import {
   validateFeatureAccess,
   validateSubscription,
-} from "../middleware/subscription-validation"
+} from "../middleware/subscription-validation.js"
 
 const router = Router()
 

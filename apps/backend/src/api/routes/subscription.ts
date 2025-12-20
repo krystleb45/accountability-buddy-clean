@@ -4,9 +4,9 @@ import express from "express"
 import rateLimit from "express-rate-limit"
 import z from "zod"
 
-import * as subscriptionController from "../controllers/subscription-controller"
-import { protect } from "../middleware/auth-middleware"
-import { validate } from "../middleware/validation-middleware"
+import * as subscriptionController from "../controllers/subscription-controller.js"
+import { protect } from "../middleware/auth-middleware.js"
+import { validate } from "../middleware/validation-middleware.js"
 
 const router: Router = express.Router()
 
