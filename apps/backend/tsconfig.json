@@ -1,41 +1,23 @@
 {
   "compilerOptions": {
-<<<<<<< HEAD
     "target": "ES2020",
     "jsx": "react-jsx",
     "lib": ["ES2020"],
     "baseUrl": ".",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-=======
-    "target": "es2022",
-    "lib": ["es2022"],
-    "moduleDetection": "force",
-    "module": "NodeNext",
-    "paths": {
-      ".": ["./"]
-    },
->>>>>>> ed9dd768368a68a6c0daf73e06be048fda7bbadd
+    "module": "commonjs",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "allowJs": true,
-    "strict": true,
-    "noImplicitOverride": true,
-    "noUncheckedIndexedAccess": true,
+    "noEmitOnError": false,
     "outDir": "dist",
-    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-<<<<<<< HEAD
     "isolatedModules": false,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "strict": true,
     "typeRoots": ["node_modules/@types"],
     "types": ["node"]
-=======
-    "isolatedModules": true,
-    "skipLibCheck": true
->>>>>>> ed9dd768368a68a6c0daf73e06be048fda7bbadd
   },
-  "include": ["./src/**/*.ts", "build.mjs"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }
