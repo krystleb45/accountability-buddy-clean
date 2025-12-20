@@ -4,8 +4,8 @@
     "jsx": "react-jsx",
     "lib": ["ES2020"],
     "baseUrl": ".",
-    "module": "preserve",
-    "moduleResolution": "bundler",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmitOnError": false,
     "outDir": "dist",
@@ -13,7 +13,10 @@
     "esModuleInterop": true,
     "isolatedModules": false,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
