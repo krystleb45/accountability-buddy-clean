@@ -7,13 +7,16 @@
     "build": "turbo run build",
     "lint": "turbo run lint --",
     "format": "turbo run format --",
-    "prepare": "if [ \"$NODE_ENV\" != \"production\" ]; then husky install; fi",
+    "prepare": "echo Skipping husky",
     "generate-mongoose-types": "turbo run generate-types & turbo run generate-types-for-frontend"
   },
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
+  "overrides": {
+  "next": "^15.5.9"
+},
   "devDependencies": {
     "husky": "^8.0.3",
     "lint-staged": "^13.0.6",
