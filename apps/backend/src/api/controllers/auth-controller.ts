@@ -27,7 +27,7 @@ import sendResponse from "../utils/sendResponse.js"
 const register: RequestHandler = catchAsync(async (req, res, next) => {
   console.log("🔥 REGISTER ENDPOINT HIT")
   console.log("Request body:", JSON.stringify(req.body))
-  
+
   const { email, password, username, name, selectedPlan, billingCycle } =
     req.body as RegisterBody
 
@@ -45,9 +45,17 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
   console.log("✅ Step 1 complete: No existing user")
 
   console.log("💳 Step 2: Creating Stripe customer...")
-  const stripeCustomerId = await createStripeCustomer(normalizedEmail)
-  console.log("✅ Step 2 complete: Stripe customer created:", stripeCustomerId)
-
+  let stripeCustomerId: string
+  try {
+    stripeCustomerId = await createStripeCustomer(normalizedEmail)
+    console.log(
+      "✅ Step 2 complete: Stripe customer created:",
+      stripeCustomerId,
+    )
+  } catch (stripeError) {
+    console.log("❌ STRIPE ERROR:", stripeError)
+    throw stripeError
+  }
   console.log("👤 Step 3: Creating user document...")
   const user = new User({
     name,
