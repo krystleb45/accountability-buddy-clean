@@ -6,6 +6,7 @@
 // NOTE: ANY CHANGES MADE WILL BE OVERWRITTEN ON SUBSEQUENT EXECUTIONS OF MONGOOSE-TSGEN.
 
 import type { FriendRequestStatus } from "@ab/shared/friends"
+export type { FriendRequestStatus }
 import type { Category as ResourceCategory } from "@ab/shared/categories"
 
 /**
