@@ -66,7 +66,8 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
     `✅ User registered successfully: ${normalizedEmail} with plan: ${selectedPlan}`,
   )
 
-  await addSendVerificationEmailJob(user._id, user.email)
+ // await addSendVerificationEmailJob(user._id, user.email)
+logger.info(`⏭️ Skipping verification email for ${user.email}`)
 
   req.user = user
 
