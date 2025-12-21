@@ -28,17 +28,12 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
   console.log("🔥 REGISTER ENDPOINT HIT")
   console.log("Request body:", JSON.stringify(req.body))
   
-  logger.info(`📝 Registration request received`)
-  
   const { email, password, username, name, selectedPlan, billingCycle } =
     req.body as RegisterBody
 
-  logger.info(`📝 Registration attempt for: ${email}`)
-
   const normalizedEmail = email.toLowerCase().trim()
 
-  // Check for existing user
-  logger.info(`🔍 Checking for existing user...`)
+  console.log("🔍 Step 1: Checking for existing user...")
   const existing = await User.findOne({
     $or: [{ email: normalizedEmail }, { username }],
   })
@@ -47,14 +42,13 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
       createError("A user with that email or username already exists", 400),
     )
   }
-  logger.info(`✅ No existing user found`)
+  console.log("✅ Step 1 complete: No existing user")
 
-  logger.info(`💳 Creating Stripe customer...`)
+  console.log("💳 Step 2: Creating Stripe customer...")
   const stripeCustomerId = await createStripeCustomer(normalizedEmail)
-  logger.info(`✅ Stripe customer created: ${stripeCustomerId}`)
+  console.log("✅ Step 2 complete: Stripe customer created:", stripeCustomerId)
 
-  // Hash password - let the User model handle this in pre-save middleware
-  logger.info(`👤 Creating user document...`)
+  console.log("👤 Step 3: Creating user document...")
   const user = new User({
     name,
     email: normalizedEmail,
@@ -71,23 +65,22 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
       : {}),
     stripeCustomerId,
   })
+  console.log("✅ Step 3 complete: User document created")
 
-  logger.info(`💾 Saving user to database...`)
+  console.log("💾 Step 4: Saving user to database...")
   await user.save()
-  logger.info(`✅ User saved successfully`)
+  console.log("✅ Step 4 complete: User saved")
 
-  logger.info(
-    `✅ User registered successfully: ${normalizedEmail} with plan: ${selectedPlan}`,
-  )
-
-  logger.info(`⏭️ Skipping verification email for ${user.email}`)
+  console.log("⏭️ Skipping verification email for", user.email)
 
   req.user = user
 
+  console.log("📤 Step 5: Sending response...")
   sendResponse(res, 201, true, "User registered successfully")
 
   next()
 })
+
 //
 // ─── POST /api/auth/login ────────────────────────────────────────────────────
 //
