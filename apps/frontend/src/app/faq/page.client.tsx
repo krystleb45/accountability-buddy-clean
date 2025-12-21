@@ -2,7 +2,7 @@
 
 import type { ChangeEvent } from "react"
 
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion } from "framer-motion"
 import React, { useEffect, useState } from "react"
 
 import type { FAQItem } from "@/types/faq"

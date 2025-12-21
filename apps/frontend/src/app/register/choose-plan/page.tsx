@@ -4,7 +4,7 @@ import type { PlanId } from "@ab/shared/pricing"
 
 import { useMutation } from "@tanstack/react-query"
 import { Loader } from "lucide-react"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"

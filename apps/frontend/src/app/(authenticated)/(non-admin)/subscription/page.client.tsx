@@ -23,7 +23,7 @@ import {
   X,
   Zap,
 } from "lucide-react"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"

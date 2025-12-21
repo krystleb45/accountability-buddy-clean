@@ -1,6 +1,6 @@
 import { PRICING } from "@ab/shared/pricing"
 import { Check, SquareCheckBig } from "lucide-react"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"

@@ -20,7 +20,7 @@ import {
   WifiOff,
   XCircleIcon,
 } from "lucide-react"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"

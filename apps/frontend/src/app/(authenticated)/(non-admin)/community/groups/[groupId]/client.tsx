@@ -22,7 +22,7 @@ import {
   Users2,
   XCircle,
 } from "lucide-react"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"

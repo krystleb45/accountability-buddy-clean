@@ -10,7 +10,7 @@ import {
   MessageSquare,
   UserCheck2Icon,
 } from "lucide-react"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"

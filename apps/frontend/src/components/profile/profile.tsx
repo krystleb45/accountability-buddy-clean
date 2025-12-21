@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CameraOff, Clock, MapPin, Pencil, X } from "lucide-react"
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import Image from "next/image"
 import { useState } from "react"
 import { toast } from "sonner"

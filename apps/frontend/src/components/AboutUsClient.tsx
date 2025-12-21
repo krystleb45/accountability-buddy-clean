@@ -1,7 +1,7 @@
 // src/components/AboutUsClient.tsx
 "use client"
 
-import { motion } from "motion/react"
+import { motion } from "framer-motion"
 import React from "react"
 
 export default function AboutUsClient() {
