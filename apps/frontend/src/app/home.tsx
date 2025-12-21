@@ -1,4 +1,4 @@
-import * as motion from "framer-motion"
+import { motion } from "framer-motion"
 import Link from "next/link"
 
 import { HeroCta } from "@/components/home/hero-cta"
