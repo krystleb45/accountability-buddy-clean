@@ -26,6 +26,7 @@ export const emailWorker = (() => {
         host,
         port,
         password: process.env.REDIS_PASSWORD || undefined,
+        family: 6, // ADD THIS LINE - Railway internal uses IPv6
         tls: process.env.REDIS_USE_TLS === "true" ? {} : undefined,
         maxRetriesPerRequest: null,
       },
