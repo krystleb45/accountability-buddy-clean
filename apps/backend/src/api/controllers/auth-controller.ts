@@ -25,7 +25,9 @@ import sendResponse from "../utils/sendResponse.js"
 // ─── POST /api/auth/register ─────────────────────────────────────────────────
 //
 const register: RequestHandler = catchAsync(async (req, res, next) => {
-  // Force rebuild - Dec 21
+  console.log("🔥 REGISTER ENDPOINT HIT")
+  console.log("Request body:", JSON.stringify(req.body))
+  
   logger.info(`📝 Registration request received`)
   
   const { email, password, username, name, selectedPlan, billingCycle } =
