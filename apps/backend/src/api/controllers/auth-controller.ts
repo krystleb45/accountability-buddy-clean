@@ -25,12 +25,18 @@ import sendResponse from "../utils/sendResponse.js"
 // ─── POST /api/auth/register ─────────────────────────────────────────────────
 //
 const register: RequestHandler = catchAsync(async (req, res, next) => {
+  // Force rebuild - Dec 21
+  logger.info(`📝 Registration request received`)
+  
   const { email, password, username, name, selectedPlan, billingCycle } =
     req.body as RegisterBody
+
+  logger.info(`📝 Registration attempt for: ${email}`)
 
   const normalizedEmail = email.toLowerCase().trim()
 
   // Check for existing user
+  logger.info(`🔍 Checking for existing user...`)
   const existing = await User.findOne({
     $or: [{ email: normalizedEmail }, { username }],
   })
@@ -39,15 +45,19 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
       createError("A user with that email or username already exists", 400),
     )
   }
+  logger.info(`✅ No existing user found`)
 
+  logger.info(`💳 Creating Stripe customer...`)
   const stripeCustomerId = await createStripeCustomer(normalizedEmail)
+  logger.info(`✅ Stripe customer created: ${stripeCustomerId}`)
 
   // Hash password - let the User model handle this in pre-save middleware
+  logger.info(`👤 Creating user document...`)
   const user = new User({
     name,
     email: normalizedEmail,
     username,
-    password, // Will be hashed by pre-save middleware
+    password,
     subscriptionTier: selectedPlan,
     subscription_status: selectedPlan === "free-trial" ? "trial" : "past_due",
     billing_cycle: billingCycle,
@@ -60,23 +70,22 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
     stripeCustomerId,
   })
 
+  logger.info(`💾 Saving user to database...`)
   await user.save()
+  logger.info(`✅ User saved successfully`)
 
   logger.info(
     `✅ User registered successfully: ${normalizedEmail} with plan: ${selectedPlan}`,
   )
 
- // await addSendVerificationEmailJob(user._id, user.email)
-logger.info(`⏭️ Skipping verification email for ${user.email}`)
+  logger.info(`⏭️ Skipping verification email for ${user.email}`)
 
   req.user = user
 
-  // Return success response with token and user data
   sendResponse(res, 201, true, "User registered successfully")
 
   next()
 })
-
 //
 // ─── POST /api/auth/login ────────────────────────────────────────────────────
 //
