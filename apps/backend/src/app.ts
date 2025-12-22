@@ -44,6 +44,7 @@ import subscriptionRoutes from "./api/routes/subscription.js"
 import userRoutes from "./api/routes/user.js"
 import setupSwagger from "./config/swaggerConfig.js"
 import blogRoutes from "./api/routes/blog.js"
+import contactSupportRoutes from "./api/routes/contact-support.js"
 
 const app = express()
 
@@ -121,6 +122,7 @@ app.get("/api/test", (_req, res) => {
 app.use("/api/health", healthRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/faqs", faqRoutes)
+app.use("/api/contact-support", contactSupportRoutes)
 
 // 🆕 NEW: Anonymous military chat (PUBLIC - no auth required for crisis support)
 app.use("/api/anonymous-military-chat", anonymousMilitaryChatRoutes)
