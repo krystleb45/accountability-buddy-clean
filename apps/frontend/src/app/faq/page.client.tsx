@@ -97,7 +97,7 @@ export default function FaqClient() {
                   <AnimatePresence initial={false}>
                     {activeIndex === index && (
                       <motion.p
-                        className="mt-3 text-gray-700"
+                        className="mt-3 text-gray-300"
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
