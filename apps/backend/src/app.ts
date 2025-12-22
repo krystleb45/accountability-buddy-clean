@@ -43,6 +43,7 @@ import streakRoutes from "./api/routes/streaks.js"
 import subscriptionRoutes from "./api/routes/subscription.js"
 import userRoutes from "./api/routes/user.js"
 import setupSwagger from "./config/swaggerConfig.js"
+import blogRoutes from "./api/routes/blog.js"
 
 const app = express()
 
@@ -130,6 +131,7 @@ app.use("/api/activities", activityRoutes)
 app.use("/api/analytics", analyticsRoutes)
 app.use("/api/badges", badgeRoutes)
 app.use("/api/books", booksRoutes)
+app.use("/api/blog", blogRoutes)
 app.use("/api/dashboard", dashboardRoutes)
 app.use("/api/feedback", feedbackRoutes)
 app.use("/api/friends", friendsRoutes)
