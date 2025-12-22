@@ -118,11 +118,17 @@ export const login: RequestHandler = catchAsync(async (req, res, next) => {
 
   // 3) Issue tokens
   console.log("🎫 Generating token...")
-  const accessToken = await AuthService.generateToken({
+let accessToken: string
+try {
+  accessToken = await AuthService.generateToken({
     _id: user._id.toString(),
     role: user.role,
   })
   console.log("✅ Token generated")
+} catch (tokenError) {
+  console.log("❌ TOKEN ERROR:", tokenError)
+  throw tokenError
+}
 
   const userData: UserObject = user.toObject()
 
