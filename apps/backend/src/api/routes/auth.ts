@@ -174,7 +174,6 @@ router.post(
 // --- GET /api/auth/verify-email -------------------------------------------
 router.get(
   "/verify-email",
-  protect,
   validate({
     querySchema: z.object({
       token: z.string().nonempty("Token is required"),
