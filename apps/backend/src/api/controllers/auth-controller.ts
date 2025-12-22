@@ -94,34 +94,47 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
 // ─── POST /api/auth/login ────────────────────────────────────────────────────
 //
 export const login: RequestHandler = catchAsync(async (req, res, next) => {
+  console.log("🔐 LOGIN ATTEMPT")
   const { email, password } = req.body as { email: string; password: string }
+  console.log("🔐 Email:", email)
 
   // 1) Lookup user
+  console.log("🔍 Looking up user...")
   const user = await User.findOne({ email }).select("+password")
   if (!user) {
+    console.log("❌ User not found")
     return next(createError("Invalid credentials", 401))
   }
+  console.log("✅ User found:", user.email)
 
   // 2) Compare passwords
+  console.log("🔑 Comparing passwords...")
   const isMatch = await AuthService.comparePassword(password, user.password!)
   if (!isMatch) {
+    console.log("❌ Password mismatch")
     return next(createError("Invalid credentials", 401))
   }
+  console.log("✅ Password correct")
 
   // 3) Issue tokens
+  console.log("🎫 Generating token...")
   const accessToken = await AuthService.generateToken({
     _id: user._id.toString(),
     role: user.role,
   })
+  console.log("✅ Token generated")
 
   const userData: UserObject = user.toObject()
 
   req.user = user
 
   // Update streak
+  console.log("📊 Updating streak...")
   await StreakService.logDailyCheckIn(user._id.toString())
+  console.log("✅ Streak updated")
 
   // 4) Send response with subscription data
+  console.log("📤 Sending response...")
   sendResponse(res, 200, true, "Login successful", {
     user: { ...userData, accessToken },
   })
