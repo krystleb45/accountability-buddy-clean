@@ -79,7 +79,8 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
   await user.save()
   console.log("✅ Step 4 complete: User saved")
 
-  console.log("⏭️ Skipping verification email for", user.email)
+  await addSendVerificationEmailJob(user._id, user.email)
+  console.log("📧 Verification email queued for", user.email)
 
   req.user = user
 
