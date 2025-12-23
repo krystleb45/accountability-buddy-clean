@@ -150,33 +150,46 @@ UserSchema.pre(
 )
 
 async function cleanUp(userId: string) {
-  await Level.deleteOne({ user: userId })
-  await Goal.deleteMany({ user: userId })
-  await Milestone.deleteMany({ user: userId })
-  await Reminder.deleteMany({ user: userId })
-  await Activity.deleteMany({ user: userId })
-  await FriendRequest.deleteMany({
-    $or: [{ sender: userId }, { recipient: userId }],
-  })
-  await mongoose.model("GroupInvitation").deleteMany({
-    $or: [{ sender: userId }, { recipient: userId }],
-  })
-  await CollaborationGoal.find({ participants: userId }).then(
-    (collaborationGoals) => {
-      collaborationGoals.forEach((goal) => {
-        goal.participants.remove(userId)
-        goal.save()
-      })
-    },
-  )
-  await FileUploadService.deleteAllUserFiles(userId)
-  await Badge.deleteMany({ user: userId })
-  // remove user from other users' friends
-  await mongoose
-    .model("User")
-    .updateMany({ friends: userId }, { $pull: { friends: userId } })
-  // remove user from groups
-  await Group.updateMany({ members: userId }, { $pull: { members: userId } })
+  try {
+    await Level.deleteOne({ user: userId })
+    await Goal.deleteMany({ user: userId })
+    await Milestone.deleteMany({ user: userId })
+    await Reminder.deleteMany({ user: userId })
+    await Activity.deleteMany({ user: userId })
+    await FriendRequest.deleteMany({
+      $or: [{ sender: userId }, { recipient: userId }],
+    })
+    await mongoose.model("GroupInvitation").deleteMany({
+      $or: [{ sender: userId }, { recipient: userId }],
+    })
+    await CollaborationGoal.find({ participants: userId }).then(
+      (collaborationGoals) => {
+        collaborationGoals.forEach((goal) => {
+          goal.participants.remove(userId)
+          goal.save()
+        })
+      },
+    )
+    
+    // This might be failing - wrap in its own try-catch
+    try {
+      await FileUploadService.deleteAllUserFiles(userId)
+    } catch (fileError) {
+      console.error("Failed to delete user files:", fileError)
+      // Continue with deletion even if file cleanup fails
+    }
+    
+    await Badge.deleteMany({ user: userId })
+    // remove user from other users' friends
+    await mongoose
+      .model("User")
+      .updateMany({ friends: userId }, { $pull: { friends: userId } })
+    // remove user from groups
+    await Group.updateMany({ members: userId }, { $pull: { members: userId } })
+  } catch (error) {
+    console.error("Error during user cleanup:", error)
+    // Don't throw - allow deletion to proceed
+  }
 }
 
 UserSchema.pre("findOneAndDelete", async function (this, next) {
