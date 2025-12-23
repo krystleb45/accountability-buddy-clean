@@ -21,4 +21,19 @@ router.get(
   })
 )
 
+// DELETE /api/admin/feedback/:id - Delete feedback
+router.delete(
+  "/:id",
+  catchAsync(async (req, res) => {
+    const { id } = req.params
+    const feedback = await Feedback.findByIdAndDelete(id)
+    
+    if (!feedback) {
+      return sendResponse(res, 404, false, "Feedback not found")
+    }
+    
+    sendResponse(res, 200, true, "Feedback deleted successfully")
+  })
+)
+
 export default router
