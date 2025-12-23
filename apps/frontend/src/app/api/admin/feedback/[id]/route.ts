@@ -5,10 +5,11 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
+    const { id } = await context.params
 
     if (!session?.user?.accessToken) {
       return NextResponse.json(
@@ -19,7 +20,7 @@ export async function DELETE(
 
     const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL
 
-    const response = await fetch(`${backendUrl}/api/admin/feedback/${params.id}`, {
+    const response = await fetch(`${backendUrl}/api/admin/feedback/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${session.user.accessToken}`,
