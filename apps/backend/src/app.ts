@@ -17,6 +17,8 @@ import anonymousMilitaryChatRoutes from "./api/routes/anonymous-military-chat-ro
 import authRoutes from "./api/routes/auth.js"
 import faqRoutes from "./api/routes/faq.js"
 import healthRoutes from "./api/routes/healthRoutes.js"
+import contactSupportRoutes from "./api/routes/contact-support.js"
+import adminFeedbackRoutes from "./api/routes/admin-feedback.js"
 
 // ─── Protected route imports ──────────────────────────────────
 import status from "http-status"
@@ -44,7 +46,7 @@ import subscriptionRoutes from "./api/routes/subscription.js"
 import userRoutes from "./api/routes/user.js"
 import setupSwagger from "./config/swaggerConfig.js"
 import blogRoutes from "./api/routes/blog.js"
-import contactSupportRoutes from "./api/routes/contact-support.js"
+
 
 const app = express()
 
@@ -123,6 +125,7 @@ app.use("/api/health", healthRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/faqs", faqRoutes)
 app.use("/api/contact-support", contactSupportRoutes)
+app.use("/api/admin/feedback", adminFeedbackRoutes)
 
 // 🆕 NEW: Anonymous military chat (PUBLIC - no auth required for crisis support)
 app.use("/api/anonymous-military-chat", anonymousMilitaryChatRoutes)

@@ -1,6 +1,6 @@
 "use client"
 
-import { Activity, Badge, Home, Users2Icon } from "lucide-react"
+import { Activity, Badge, Home, MessageSquare, Users2Icon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -37,6 +37,11 @@ const items = [
     url: "/admin/badges",
     icon: Badge,
     checkIsActive: (path: string) => path.startsWith("/admin/badges"),
+  },
+  {
+    title: "Feedback",
+    url: "/admin/feedback",
+    icon: MessageSquare,
   },
 ]
 
