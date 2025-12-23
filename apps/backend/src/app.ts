@@ -46,6 +46,7 @@ import subscriptionRoutes from "./api/routes/subscription.js"
 import userRoutes from "./api/routes/user.js"
 import setupSwagger from "./config/swaggerConfig.js"
 import blogRoutes from "./api/routes/blog.js"
+import adminStatsRoutes from "./api/routes/admin-stats.js"
 
 
 const app = express()
@@ -151,6 +152,7 @@ app.use("/api/settings", settingsRoutes)
 app.use("/api/streaks", streakRoutes)
 app.use("/api/subscription", subscriptionRoutes)
 app.use("/api/users", userRoutes)
+app.use("/api/admin/stats", adminStatsRoutes)
 
 // ─── Meta-test catch-all for *.test ───────────────────────────
 app.use((req, res, next) => {
