@@ -1,4 +1,5 @@
 import type { NextFunction, Response } from "express"
+import { sendHtmlEmail } from "../services/email-service.js"
 
 import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
 import type { FeedbackType } from "../models/Feedback.js"
@@ -57,16 +58,38 @@ export const submitFeedback = catchAsync(
 
     // Now type is properly typed as FeedbackType
     const feedback = await FeedbackService.submitFeedback(
-      userId,
-      message.trim(),
-      type,
-    )
-
-    sendResponse(res, 201, true, "Feedback submitted successfully", {
-      feedback,
-    })
-  },
+  userId,
+  message.trim(),
+  type,
 )
+
+// Send email notification to admin
+try {
+  const supportEmail = process.env.SUPPORT_EMAIL || "info@accountabilitybuddys.com"
+  const html = `
+    <h2>New Feedback Received</h2>
+    <p><strong>Type:</strong> ${type}</p>
+    <p><strong>User ID:</strong> ${userId}</p>
+    <p><strong>Message:</strong></p>
+    <p>${message.replace(/\n/g, "<br>")}</p>
+  `
+  const text = `New Feedback\nType: ${type}\nUser ID: ${userId}\nMessage: ${message}`
+
+  await sendHtmlEmail(
+    supportEmail,
+    `New Feedback: ${type}`,
+    html,
+    text
+  )
+  console.log("📧 Feedback notification email sent")
+} catch (emailError) {
+  console.error("Failed to send feedback notification email:", emailError)
+  // Don't fail the request if email fails
+}
+
+sendResponse(res, 201, true, "Feedback submitted successfully", {
+  feedback,
+})
 
 /**
  * @desc    Get feedback submitted by the authenticated user
