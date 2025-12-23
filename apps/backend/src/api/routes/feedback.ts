@@ -27,14 +27,15 @@ router.post(
   protect,
   feedbackLimiter,
   [
-    check("message", "Feedback message is required")
-      .notEmpty()
-      .isLength({ max: 1000 }),
     check("type", "Invalid feedback type").isIn([
-      "bug",
-      "feature-request",
-      "other",
-    ]),
+  "bug",
+  "feature",
+  "improvement",
+  "general",
+  "complaint",
+  "praise",
+  "other",
+]),
   ],
   handleValidationErrors,
   feedbackController.submitFeedback,

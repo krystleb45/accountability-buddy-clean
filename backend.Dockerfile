@@ -14,7 +14,7 @@ WORKDIR /app
 COPY --from=builder /app/out/json/ .
 RUN npm ci
 COPY --from=builder /app/out/full/ .
-RUN npx turbo run build --force
+RUN npx turbo run build
 
 FROM base AS deps
 

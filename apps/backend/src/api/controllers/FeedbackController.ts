@@ -16,6 +16,7 @@ const VALID_FEEDBACK_TYPES = [
   "general",
   "complaint",
   "praise",
+  "other",
 ] as const
 
 // Type guard to check if string is valid FeedbackType
