@@ -59,6 +59,14 @@ const nextConfig = {
         hostname: "accountability-buddy.s3.amazonaws.com",
       },
       {
+        protocol: "https",
+        hostname: "*.storage.railway.app",
+      },
+      {
+        protocol: "https",
+        hostname: "storage.railway.app",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
       },
