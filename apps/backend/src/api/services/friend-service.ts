@@ -22,6 +22,25 @@ export async function sendRequest(senderId: string, recipientId: string) {
     throw new CustomError("Cannot friend yourself", 400)
   }
 
+  // Check if either user has blocked the other
+  const sender = await User.findById(senderId).select("blockedUsers")
+  const recipient = await User.findById(recipientId).select("blockedUsers")
+  
+  if (!recipient) {
+    throw new CustomError("User not found", 404)
+  }
+
+  const isBlockedBySender = sender?.blockedUsers?.some(
+    (id) => id.toString() === recipientId
+  )
+  const isBlockedByRecipient = recipient?.blockedUsers?.some(
+    (id) => id.toString() === senderId
+  )
+
+  if (isBlockedBySender || isBlockedByRecipient) {
+    throw new CustomError("Cannot send friend request to this user", 403)
+  }
+
   const exists = await FriendRequest.findOne({
     $or: [
       { sender: senderId, recipient: recipientId },
@@ -171,7 +190,7 @@ export async function aiRecommendations(userId: string): Promise<
   try {
     // Step 1: Get current user data
     const currentUser = await User.findById(userId)
-      .select("username email profileImage friends goals interests location")
+      .select("username email profileImage friends goals interests location blockedUsers")  // ADD blockedUsers
       .lean()
 
     if (!currentUser) {
@@ -183,6 +202,11 @@ export async function aiRecommendations(userId: string): Promise<
       (friend) => friend._id?.toString() || friend.toString(),
     )
 
+    // Get blocked user IDs
+    const blockedUserIds = (currentUser.blockedUsers || []).map(
+      (id) => id._id?.toString() || id.toString()
+    )
+
     // Step 2: Get all pending/sent friend requests to exclude them
     const pendingRequests = await FriendRequest.find({
       $or: [{ sender: userId }, { recipient: userId }],
@@ -191,12 +215,20 @@ export async function aiRecommendations(userId: string): Promise<
       .select("sender recipient")
       .lean()
 
+    // Also get users who have blocked the current user
+    const usersWhoBlockedMe = await User.find({
+      blockedUsers: userId,
+    }).select("_id").lean()
+
     const excludedUserIds = new Set([
       userId, // Exclude self
       ...currentFriendIds, // Exclude current friends
+      ...blockedUserIds, // Exclude blocked users
+      ...usersWhoBlockedMe.map((u) => u._id.toString()), // Exclude users who blocked me
       ...pendingRequests.map((req) => req.sender._id.toString()),
       ...pendingRequests.map((req) => req.recipient._id.toString()),
     ])
+
 
     // Step 3: Build recommendation pipeline
     const pipeline = [
@@ -722,9 +754,22 @@ export async function sendMessage(
   io: Server,
 ) {
   // Check if they are friends
-  const user = await User.findById(userId).select("friends")
+  const user = await User.findById(userId).select("friends blockedUsers")
   if (!user) {
     throw new CustomError("User not found", 404)
+  }
+
+  // Check if either user has blocked the other
+  const friend = await User.findById(friendId).select("blockedUsers")
+  const isBlockedByUser = user.blockedUsers?.some(
+    (id) => id.toString() === friendId
+  )
+  const isBlockedByFriend = friend?.blockedUsers?.some(
+    (id) => id.toString() === userId
+  )
+
+  if (isBlockedByUser || isBlockedByFriend) {
+    throw new CustomError("Cannot send message to this user", 403)
   }
 
   const isFriend = user.friends.some((friend) => friend.toString() === friendId)

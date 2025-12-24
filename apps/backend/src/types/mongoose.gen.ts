@@ -3218,6 +3218,7 @@ export type User = {
   following: (User["_id"] | User)[]
   rewards: (Reward["_id"] | Reward)[]
   badges: (Badge["_id"] | Badge)[]
+  blockedUsers: (User["_id"] | User)[]  
   location: {
     country?: string
     state?: string
@@ -3371,6 +3372,7 @@ export type UserDocument = mongoose.Document<
     following: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     rewards: mongoose.Types.Array<RewardDocument["_id"] | RewardDocument>
     badges: mongoose.Types.Array<BadgeDocument["_id"] | BadgeDocument>
+    blockedUsers: mongoose.Types.Array<UserDocument["_id"] | UserDocument>
     location: {
       country?: string
       state?: string

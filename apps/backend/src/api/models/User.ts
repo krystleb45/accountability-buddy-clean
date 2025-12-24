@@ -46,6 +46,7 @@ const UserSchema: IUserSchema = new Schema(
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
     rewards: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reward" }],
     badges: [{ type: mongoose.Schema.Types.ObjectId, ref: "Badge" }],
 
