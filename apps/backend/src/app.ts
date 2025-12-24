@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node"
 import bodyParser from "body-parser"
 import compression from "compression"
 import cors from "cors"
@@ -122,6 +123,11 @@ app.get("/api/test", (_req, res) => {
   })
 })
 
+// ─── Sentry test route ────────────────────────────────────────
+app.get("/api/debug-sentry", (_req, _res) => {
+  throw new Error("My first Sentry error!")
+})
+
 // ─── PUBLIC routes (NO AUTHENTICATION REQUIRED) ───────────────
 app.use("/api/health", healthRoutes)
 app.use("/api/auth", authRoutes)
@@ -170,6 +176,10 @@ setupSwagger(app)
 
 // ─── 404 & error handlers ─────────────────────────────────────
 app.use(notFoundMiddleware)
+
+// Sentry error handler (must be before other error handlers)
+Sentry.setupExpressErrorHandler(app)
+
 app.use(errorHandler)
 
 export { app }

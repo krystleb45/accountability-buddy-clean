@@ -1,4 +1,7 @@
 // src/server.ts - Backend Server Entry Point
+// ─── Sentry (must be first) ─────────────────────────────────────
+import "./instrument.js"
+
 // ─── Imports ────────────────────────────────────────────────────
 import type { Server } from "socket.io"
 
