@@ -12,6 +12,7 @@ import { PasswordChangeForm } from "@/components/settings/password-change-form"
 import { ProfileVisibilityForm } from "@/components/settings/profile-visibility-form"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/auth/auth-context"
+import { BlockedUsersCard } from "@/components/settings/blocked-users-card"
 
 export default function SettingsClient() {
   const { loading } = useAuth()
@@ -71,6 +72,8 @@ export default function SettingsClient() {
       <ProfileVisibilityForm
         currentPrefs={settings.privacy?.profileVisibility}
       />
+      
+      <BlockedUsersCard />
 
       <PasswordChangeForm />
 
