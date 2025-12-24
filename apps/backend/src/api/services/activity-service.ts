@@ -133,27 +133,28 @@ export default class ActivityService {
     return true
   }
 
-  /** Fetch all activities (admin only) */
-  static async getAllActivities(opts: {
-    type?: string
-    page: number
-    limit: number
-  }) {
-    const query = {
-      ...(opts.type ? { type: opts.type } : {}),
-    }
-
-    const skip = (opts.page - 1) * opts.limit
-
-    const [activities, total] = await Promise.all([
-      Activity.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(opts.limit)
-        .lean(),
-      Activity.countDocuments(query),
-    ])
-
-    return { activities, total }
+ /** Fetch all activities (admin only) */
+static async getAllActivities(opts: {
+  type?: string
+  page: number
+  limit: number
+}) {
+  const query = {
+    ...(opts.type ? { type: opts.type } : {}),
   }
+
+  const skip = (opts.page - 1) * opts.limit
+
+  const [activities, total] = await Promise.all([
+    Activity.find(query)
+      .populate("user", "username email name")  // Add this line
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(opts.limit)
+      .lean(),
+    Activity.countDocuments(query),
+  ])
+
+  return { activities, total }
+}
 }

@@ -21,6 +21,22 @@ export const activitiesColumns = [
         return "N/A"
       }
 
+      // If user is populated (object with username)
+      if (typeof user === "object" && user !== null) {
+        const userData = user as { username?: string; email?: string; _id?: string }
+        return (
+          <div className="flex flex-col">
+            <span className="font-medium text-white">
+              {userData.username || "Unknown"}
+            </span>
+            <span className="text-xs text-gray-400">
+              {userData.email || ""}
+            </span>
+          </div>
+        )
+      }
+
+      // Fallback to ID badge if not populated
       return <IdBadge id={user.toString()} />
     },
   }),
