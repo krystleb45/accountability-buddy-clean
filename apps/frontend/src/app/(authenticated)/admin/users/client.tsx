@@ -389,42 +389,52 @@ export function AdminUsersClient() {
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  <Loader2 className="mx-auto size-6 animate-spin" />
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No users found.
-                </TableCell>
-              </TableRow>
+  {isLoading ? (
+    <TableRow>
+      <TableCell
+        colSpan={columns.length}
+        className="h-24 text-center"
+      >
+        <Loader2 className="mx-auto size-6 animate-spin" />
+      </TableCell>
+    </TableRow>
+  ) : table.getRowModel().rows?.length ? (
+    table.getRowModel().rows.map((row) => (
+      <TableRow
+        key={row.id}
+        data-state={row.getIsSelected() && "selected"}
+        className="cursor-pointer hover:bg-gray-800"
+        onClick={() => router.push(`/admin/users/${row.original._id}`)}
+      >
+        {row.getVisibleCells().map((cell) => (
+          <TableCell 
+            key={cell.id}
+            onClick={(e) => {
+              // Don't navigate if clicking the actions column
+              if (cell.column.id === "actions") {
+                e.stopPropagation()
+              }
+            }}
+          >
+            {flexRender(
+              cell.column.columnDef.cell,
+              cell.getContext(),
             )}
-          </TableBody>
+          </TableCell>
+        ))}
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell
+        colSpan={columns.length}
+        className="h-24 text-center"
+      >
+        No users found.
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
         </Table>
       </div>
 
