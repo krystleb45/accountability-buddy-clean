@@ -72,7 +72,7 @@ export default function SettingsClient() {
       <ProfileVisibilityForm
         currentPrefs={settings.privacy?.profileVisibility}
       />
-      
+
       <BlockedUsersCard />
 
       <PasswordChangeForm />
