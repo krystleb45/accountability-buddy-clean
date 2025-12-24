@@ -90,3 +90,6 @@ pnpm-lock.yaml
 # ========================
 .turbo/
 .swc/
+
+# Sentry Config File
+.env.sentry-build-plugin
