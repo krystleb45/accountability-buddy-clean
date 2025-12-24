@@ -3,12 +3,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import {
   AwardIcon,
+  Ban,
   CameraOff,
   Clock,
   Goal,
   Loader,
   MapPin,
   MessageSquare,
+  ShieldOff,
   UserPlus2,
   XCircle,
 } from "lucide-react"
@@ -20,6 +22,7 @@ import { useMemo } from "react"
 import { toast } from "sonner"
 
 import { fetchBadgesByUsername } from "@/api/badge/badge-api"
+import { blockUser, checkIfBlocked, unblockUser } from "@/api/block/block-api"
 import { sendFriendRequest } from "@/api/friends/friend-api"
 import { getMemberGoals } from "@/api/goal/goal-api"
 import { getMemberByUsername } from "@/api/users/user-api"
@@ -66,7 +69,7 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
     queryFn: async () => {
       return getMemberByUsername(username)
     },
-    enabled: status === "authenticated" && !!username, // Only run the query if username is provided
+    enabled: status === "authenticated" && !!username,
   })
 
   const { mutate: sendRequest, isPending: isSendingRequest } = useMutation({
@@ -112,6 +115,40 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
       return fetchBadgesByUsername(username)
     },
     enabled: !!member && member.privacy === "public",
+  })
+
+  // Block status query
+  const {
+    data: isBlocked,
+    isLoading: isCheckingBlocked,
+    refetch: refetchBlockStatus,
+  } = useQuery({
+    queryKey: ["isBlocked", member?._id],
+    queryFn: async () => {
+      if (!member?._id) return false
+      return checkIfBlocked(member._id)
+    },
+    enabled: !!member?._id,
+  })
+
+  // Block/unblock mutation
+  const { mutate: toggleBlock, isPending: isTogglingBlock } = useMutation({
+    mutationFn: async () => {
+      if (isBlocked) {
+        await unblockUser(member!._id)
+      } else {
+        await blockUser(member!._id)
+      }
+    },
+    onSuccess: () => {
+      refetchBlockStatus()
+      toast.success(isBlocked ? "User unblocked" : "User blocked")
+    },
+    onError: (error) => {
+      toast.error(isBlocked ? "Failed to unblock user" : "Failed to block user", {
+        description: (error as Error).message,
+      })
+    },
   })
 
   if (status === "loading" || isLoading) {
@@ -195,7 +232,7 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
             </div>
           </div>
 
-          <CardAction>
+          <CardAction className="flex gap-2">
             {isFriend ? (
               <Button asChild variant="outline">
                 <Link href={`/messages?friend=${member.username}`}>
@@ -205,7 +242,7 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
               </Button>
             ) : (
               <Button
-                disabled={isSendingRequest}
+                disabled={isSendingRequest || isBlocked}
                 onClick={() => sendRequest(member._id)}
               >
                 <UserPlus2 />{" "}
@@ -218,6 +255,36 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
                 )}
               </Button>
             )}
+
+            {/* Block/Unblock Button */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={isBlocked ? "outline" : "ghost"}
+                    size="icon"
+                    onClick={() => toggleBlock()}
+                    disabled={isTogglingBlock || isCheckingBlocked}
+                    className={
+                      isBlocked
+                        ? "border-destructive text-destructive hover:bg-destructive/10"
+                        : "text-muted-foreground hover:text-destructive"
+                    }
+                  >
+                    {isTogglingBlock ? (
+                      <Loader className="h-4 w-4 animate-spin" />
+                    ) : isBlocked ? (
+                      <ShieldOff className="h-4 w-4" />
+                    ) : (
+                      <Ban className="h-4 w-4" />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {isBlocked ? "Unblock User" : "Block User"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </CardAction>
         </CardHeader>
 
