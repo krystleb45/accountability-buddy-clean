@@ -13,7 +13,13 @@ import { STORAGE_KEYS } from "@/constants/storageKeys"
 import { http } from "@/utils"
 
 import { Button } from "../ui/button"
-import { Dialog, DialogContent } from "../ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
 
@@ -139,7 +145,13 @@ export function NewsletterPopup({
   return (
     <Dialog open={isVisible} onOpenChange={handleOpenChange}>
       <DialogContent>
-        <div className="text-center">
+  <DialogHeader className="sr-only">
+    <DialogTitle>Newsletter Signup</DialogTitle>
+    <DialogDescription>
+      Subscribe to get updates on accountability features and military support resources.
+    </DialogDescription>
+  </DialogHeader>
+  <div className="text-center">
           {/* Success State */}
           {status === "success" || status === "already_subscribed" ? (
             <motion.div
