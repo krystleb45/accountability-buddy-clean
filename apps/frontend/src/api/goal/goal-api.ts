@@ -102,7 +102,7 @@ export async function updateGoalProgress(goalId: string, progress: number) {
 export async function getMemberGoals(username: string) {
   try {
     const resp = await http.get<Envelope<{ goals: Goal[] }>>(
-      `/goals/member/${encodeURIComponent(username)}`,
+      `/goals/member/${username}`,
     )
     return resp.data.data.goals
   } catch (err) {
