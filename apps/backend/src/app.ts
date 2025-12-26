@@ -20,6 +20,7 @@ import faqRoutes from "./api/routes/faq.js"
 import healthRoutes from "./api/routes/healthRoutes.js"
 import contactSupportRoutes from "./api/routes/contact-support.js"
 import adminFeedbackRoutes from "./api/routes/admin-feedback.js"
+import newsletterRoutes from "./api/routes/newsletter.js"
 
 // ─── Protected route imports ──────────────────────────────────
 import status from "http-status"
@@ -135,6 +136,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/faqs", faqRoutes)
 app.use("/api/contact-support", contactSupportRoutes)
 app.use("/api/admin/feedback", adminFeedbackRoutes)
+app.use("/api/newsletter", newsletterRoutes)
 
 // 🆕 NEW: Anonymous military chat (PUBLIC - no auth required for crisis support)
 app.use("/api/anonymous-military-chat", anonymousMilitaryChatRoutes)
