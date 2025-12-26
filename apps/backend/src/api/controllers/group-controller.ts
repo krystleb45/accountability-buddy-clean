@@ -43,8 +43,18 @@ const createGroupSchema = z.object({
   name: z.string().min(3).max(50),
   description: z.string().min(10).max(200),
   category: z.enum(categories.map((cat) => cat.id)),
-  isPublic: z.boolean(),
-  tags: z.array(z.string().max(20)).max(5),
+  isPublic: z.preprocess(
+    (val) => val === "true" || val === true,
+    z.boolean()
+  ),
+  tags: z.preprocess(
+    (val) => {
+      if (Array.isArray(val)) return val
+      if (typeof val === "string") return val.split(",").map((t) => t.trim()).filter(Boolean)
+      return []
+    },
+    z.array(z.string().max(20)).max(5)
+  ),
 })
 
 type CreateGroupFormData = z.infer<typeof createGroupSchema>
