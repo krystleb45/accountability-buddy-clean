@@ -166,6 +166,24 @@ export const leaveGroup = catchAsync(
 )
 
 /**
+ * DELETE /api/groups/:groupId - Delete group (creator only)
+ */
+export const deleteGroup = catchAsync(
+  async (
+    req: AuthenticatedRequest<{ groupId: string }>,
+    res: Response,
+    _next: NextFunction,
+  ) => {
+    const { groupId } = req.params
+    const userId = req.user.id
+
+    await GroupService.deleteGroup(groupId, userId)
+
+    sendResponse(res, 200, true, "Group deleted successfully")
+  },
+)
+
+/**
  * PUT /api/groups/:groupId - Update group (admin only)
  * Middleware: checkGroupExists, checkGroupAdmin
  */

@@ -160,6 +160,18 @@ export async function leaveGroup(groupId: string) {
 }
 
 /**
+ * Delete a group (creator only)
+ * DELETE /api/groups/:groupId
+ */
+export async function deleteGroup(groupId: string) {
+  try {
+    await http.delete(`/groups/${encodeURIComponent(groupId)}`)
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error as Error))
+  }
+}
+
+/**
  * Update group details (admin only)
  * PUT /api/groups/:groupId
  */

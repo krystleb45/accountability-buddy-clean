@@ -239,24 +239,46 @@ class GroupService {
     await group.save()
   }
 
-  /**
-   * Delete a group (only creator or system admin)
-   */
-  async deleteGroup(groupId: string, requesterId: string) {
-    const group = await Group.findById(groupId)
-    if (!group) {
-      throw new CustomError("Group not found", 404)
-    }
-
-    if (group.createdBy.toString() !== requesterId) {
-      throw new CustomError("Not authorized", 403)
-    }
-
-    const chatId = (await ChatService.getGroupChat(groupId))._id.toString()
-
-    // Delete group chat
-    await ChatService.deleteChat(chatId)
+ /**
+ * Delete a group (only creator)
+ */
+async deleteGroup(groupId: string, requesterId: string) {
+  const group = await Group.findById(groupId)
+  if (!group) {
+    throw new CustomError("Group not found", 404)
   }
+
+  if (!group.createdBy._id.equals(requesterId)) {
+    throw new CustomError("Only the group creator can delete the group", 403)
+  }
+
+  // Delete group chat
+  try {
+    const chat = await ChatService.getGroupChat(groupId)
+    if (chat) {
+      await ChatService.deleteChat(chat._id.toString())
+    }
+  } catch (error) {
+    logger.warn(`No chat found for group ${groupId} during deletion`)
+  }
+
+  // Delete group invitations
+  await GroupInvitation.deleteMany({ groupId: group._id })
+
+  // Delete group avatar from S3 if exists
+  if (group.avatar) {
+    try {
+      await FileUploadService.deleteFromS3(group.avatar)
+    } catch (error) {
+      logger.warn(`Failed to delete avatar for group ${groupId}`)
+    }
+  }
+
+  // Delete the group
+  await Group.findByIdAndDelete(groupId)
+
+  logger.info(`Group ${groupId} deleted by ${requesterId}`)
+}
 
   /**
    * List groups the user has joined

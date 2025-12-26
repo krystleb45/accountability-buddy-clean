@@ -8,6 +8,7 @@ import {
   LogInIcon,
   MailPlusIcon,
   MessageSquare,
+  Trash2,
   UserCheck2Icon,
 } from "lucide-react"
 import { motion } from "framer-motion"
@@ -19,10 +20,12 @@ import { toast } from "sonner"
 import type { GroupWithCreated } from "@/api/groups/group-api"
 
 import {
+  deleteGroup,
   joinGroup,
   leaveGroup,
   requestGroupInvite,
 } from "@/api/groups/group-api"
+import { useAuth } from "@/context/auth/auth-context"
 
 import { UserAvatar } from "../profile/user-avatar"
 import { Badge } from "../ui/badge"
@@ -60,6 +63,9 @@ export function GroupCard({
 }: GroupCardProps) {
   const queryClient = useQueryClient()
   const router = useRouter()
+  const { user } = useAuth()
+
+  const isCreator = user?._id === group.createdBy._id
 
   const { mutate: joinGroupMutate, isPending: isJoining } = useMutation({
     mutationFn: async () => joinGroup(group._id),
@@ -100,6 +106,21 @@ export function GroupCard({
     },
     onError: (error) => {
       toast.error("Failed to leave group", {
+        description: error.message,
+      })
+    },
+  })
+
+  const { mutate: deleteGroupMutate, isPending: isDeleting } = useMutation({
+    mutationFn: async () => deleteGroup(group._id),
+    onSuccess: () => {
+      toast.success(`Deleted ${group.name} successfully`)
+      queryClient.invalidateQueries({ queryKey: ["my-groups"] })
+      queryClient.invalidateQueries({ queryKey: ["groups"] })
+      router.push(`/community/groups`)
+    },
+    onError: (error) => {
+      toast.error("Failed to delete group", {
         description: error.message,
       })
     },
@@ -220,15 +241,35 @@ export function GroupCard({
                 Open Chat
               </Link>
             </Button>
-            <Button
-              variant="secondary"
-              onClick={() => leaveGroupMutate()}
-              disabled={isLeaving}
-              className="flex-1"
-            >
-              <DoorOpenIcon />
-              {isLeaving ? "Leaving..." : "Leave"}
-            </Button>
+            {isCreator ? (
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (
+                    confirm(
+                      "Are you sure you want to delete this group? This cannot be undone.",
+                    )
+                  ) {
+                    deleteGroupMutate()
+                  }
+                }}
+                disabled={isDeleting}
+                className="flex-1"
+              >
+                <Trash2 />
+                {isDeleting ? "Deleting..." : "Delete Group"}
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => leaveGroupMutate()}
+                disabled={isLeaving}
+                className="flex-1"
+              >
+                <DoorOpenIcon />
+                {isLeaving ? "Leaving..." : "Leave"}
+              </Button>
+            )}
           </>
         ) : (
           <Button

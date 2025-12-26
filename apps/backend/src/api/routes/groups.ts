@@ -93,6 +93,16 @@ router.get(
 )
 
 /**
+ * DELETE /api/groups/:groupId - Delete group (creator only)
+ */
+router.delete(
+  "/:groupId",
+  protect,
+  groupLimiter,
+  groupController.deleteGroup,
+)
+
+/**
  * GET /api/groups/:groupId/members - Get group members
  */
 router.get("/:groupId/members", protect, groupController.getGroupMembers)
