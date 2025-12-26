@@ -51,7 +51,7 @@ export const createGoal = catchAsync(
     }
     const createdGoal = await GoalService.createGoal(userId, {
       title: data.title,
-      description: data.description || "", // Handle undefined description
+      description: data.description || "",
       category: data.category,
       dueDate: data.dueDate,
       tags: data.tags || [],
@@ -59,7 +59,12 @@ export const createGoal = catchAsync(
       visibility: data.visibility || "private",
     })
 
-    // console.log(`✅ Goal created successfully. New count: ${updatedActiveGoalCount}`);
+    // Attach activity data for middleware
+    req.activityData = {
+      goalTitle: createdGoal.title,
+      goalId: createdGoal._id.toString(),
+    }
+
     sendResponse(res, 201, true, "Goal created successfully", {
       goal: createdGoal,
     })
@@ -148,7 +153,20 @@ export const updateGoalProgress = catchAsync(
     const { progress } = req.body
     const userId = req.user.id
 
+    // Get goal first to have title for activity
+    const goal = await GoalService.getUserGoalById(userId, goalId)
+    if (!goal) {
+      return next(createError("Goal not found", 404))
+    }
+
     await GoalService.trackProgress(goalId, userId, progress)
+
+    // Attach activity data for middleware
+    req.activityData = {
+      goalTitle: goal.title,
+      goalId: goalId,
+      progress: progress,
+    }
 
     sendResponse(res, 200, true, "Goal progress updated")
 

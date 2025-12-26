@@ -41,7 +41,7 @@ router.post(
   authController.register,
   logActivity({
     type: "signup",
-    description: "Account created",
+    description: "🎉 Joined AccountabilityBuddy!",
   }),
 )
 

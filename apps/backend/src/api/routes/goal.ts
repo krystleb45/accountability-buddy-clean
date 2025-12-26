@@ -55,10 +55,11 @@ router.post(
   validateSubscription,
   validate({ bodySchema: goalCreateSchema }),
   goalController.createGoal,
-  logActivity({
+  logActivity((req) => ({
     type: "goal",
-    description: "Created a new goal",
-  }),
+    description: `Started new goal: "${req.activityData?.goalTitle || 'Untitled'}"`,
+    metadata: { goalId: req.activityData?.goalId },
+  })),
 )
 
 /**
@@ -105,9 +106,23 @@ router.patch(
     }),
   }),
   goalController.updateGoalProgress,
-  logActivity({
-    type: "goal",
-    description: "Updated goal progress",
+  logActivity((req) => {
+    const progress = req.activityData?.progress ?? 0
+    const title = req.activityData?.goalTitle || "goal"
+    
+    if (progress === 100) {
+      return {
+        type: "achievement",
+        description: `🎉 Completed goal: "${title}"`,
+        metadata: { goalId: req.activityData?.goalId, progress },
+      }
+    }
+    
+    return {
+      type: "goal",
+      description: `Made ${progress}% progress on "${title}"`,
+      metadata: { goalId: req.activityData?.goalId, progress },
+    }
   }),
 )
 

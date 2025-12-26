@@ -223,36 +223,38 @@ export function Dashboard({
       label: "Recent Activities",
       icon: Scroll,
       content:
-        recentActivities.length > 0 ? (
-          <ul className="flex list-disc flex-col gap-4 pl-6">
-            {recentActivities.map((a) => (
-              <li key={a._id}>
-                <div className="flex items-baseline gap-2">
-                  <Badge
-                    variant="secondary"
-                    className="text-xs font-medium tracking-widest uppercase"
-                  >
-                    {a.type}
-                  </Badge>
-                  <span>{a.description}</span>
-                </div>
-                <div className="mt-1">
-                  {a.createdAt && (
-                    <p className="text-sm text-muted-foreground">
-                      {formatDistanceToNow(a.createdAt, {
-                        addSuffix: true,
-                      })}
-                    </p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-center text-muted-foreground">
-            No recent activities found
-          </p>
-        ),
+  recentActivities.filter((a) => a.type !== "login").length > 0 ? (
+    <ul className="flex list-disc flex-col gap-4 pl-6">
+      {recentActivities
+        .filter((a) => a.type !== "login")
+        .map((a) => (
+          <li key={a._id}>
+            <div className="flex items-baseline gap-2">
+              <Badge
+                variant="secondary"
+                className="text-xs font-medium tracking-widest uppercase"
+              >
+                {a.type}
+              </Badge>
+              <span>{a.description}</span>
+            </div>
+            <div className="mt-1">
+              {a.createdAt && (
+                <p className="text-sm text-muted-foreground">
+                  {formatDistanceToNow(a.createdAt, {
+                    addSuffix: true,
+                  })}
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+    </ul>
+  ) : (
+    <p className="text-center text-muted-foreground">
+      No recent activities found
+    </p>
+  ),
     },
     {
       label: "Leaderboard",

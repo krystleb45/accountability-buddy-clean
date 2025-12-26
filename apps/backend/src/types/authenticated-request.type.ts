@@ -18,3 +18,15 @@ export interface AuthenticatedRequest<
   }
   params: P // Properly typed params
 }
+declare global {
+  namespace Express {
+    interface Request {
+      activityData?: {
+        goalTitle?: string
+        goalId?: string
+        progress?: number
+        [key: string]: any
+      }
+    }
+  }
+}
