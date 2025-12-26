@@ -1,40 +1,32 @@
-import type { RequestHandler } from "express"
+import type { Request } from "express"
 
-import type { AuthenticatedRequest } from "../../types/authenticated-request.type.js"
-import type { Activity } from "../../types/mongoose.gen.js"
+import type { User } from "./mongoose.gen.js"
 
-import { logger } from "../../utils/winston-logger.js"
-import ActivityService from "../services/activity-service.js"
-
-type ActivityData = Pick<Activity, "type" | "description" | "metadata">
-type ActivityDataFn = (req: AuthenticatedRequest) => ActivityData | null
-
-export function logActivity(
-  dataOrFn: ActivityData | ActivityDataFn,
-): RequestHandler {
-  return async (req: AuthenticatedRequest, res, next) => {
-    try {
-      if (res.statusCode >= 400) {
-        return next()
+// Generic interface that allows typing params
+export interface AuthenticatedRequest<
+  P = any,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = any,
+> extends Omit<Request<P, ResBody, ReqBody, ReqQuery>, "user"> {
+  user: Omit<User, "subscription_status" | "password"> & {
+    subscription_status?: Exclude<
+      User["subscription_status"],
+      "canceled" | "past_due"
+    >
+    id: string
+  }
+  params: P // Properly typed params
+}
+declare global {
+  namespace Express {
+    interface Request {
+      activityData?: {
+        goalTitle?: string
+        goalId?: string
+        progress?: number
+        [key: string]: any
       }
-
-      // Support both static data and dynamic function
-      const data = typeof dataOrFn === "function" ? dataOrFn(req) : dataOrFn
-
-      // If function returns null, skip logging
-      if (!data) {
-        return next()
-      }
-
-      await ActivityService.logActivity(
-        req.user._id.toString(),
-        data.type,
-        data.description,
-        data.metadata || {},
-      )
-    } catch (error) {
-      logger.error("Failed to log activity", error)
     }
-    next()
   }
 }

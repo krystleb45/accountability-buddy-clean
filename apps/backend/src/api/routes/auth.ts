@@ -56,10 +56,7 @@ router.post(
     }),
   }),
   authController.login,
-  logActivity({
-    type: "login",
-    description: "Logged in",
-  }),
+
 )
 
 // ─── GET /api/auth/me ────────────────────────────────────────────────────-
