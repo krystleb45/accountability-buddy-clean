@@ -145,9 +145,12 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
       toast.success(isBlocked ? "User unblocked" : "User blocked")
     },
     onError: (error) => {
-      toast.error(isBlocked ? "Failed to unblock user" : "Failed to block user", {
-        description: (error as Error).message,
-      })
+      toast.error(
+        isBlocked ? "Failed to unblock user" : "Failed to block user",
+        {
+          description: (error as Error).message,
+        },
+      )
     },
   })
 
@@ -257,31 +260,38 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
             )}
 
             {/* Block/Unblock Button */}
+            {/* Block/Unblock Button */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant={isBlocked ? "outline" : "ghost"}
-                    size="icon"
+                    variant={isBlocked ? "destructive" : "outline"}
+                    size="sm"
                     onClick={() => toggleBlock()}
                     disabled={isTogglingBlock || isCheckingBlocked}
                     className={
                       isBlocked
-                        ? "border-destructive text-destructive hover:bg-destructive/10"
-                        : "text-muted-foreground hover:text-destructive"
+                        ? ""
+                        : "border-destructive/50 text-destructive hover:bg-destructive hover:text-destructive-foreground"
                     }
                   >
                     {isTogglingBlock ? (
                       <Loader className="h-4 w-4 animate-spin" />
                     ) : isBlocked ? (
-                      <ShieldOff className="h-4 w-4" />
+                      <>
+                        <ShieldOff className="h-4 w-4" />
+                        Unblock
+                      </>
                     ) : (
-                      <Ban className="h-4 w-4" />
+                      <>
+                        <Ban className="h-4 w-4" />
+                        Block
+                      </>
                     )}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {isBlocked ? "Unblock User" : "Block User"}
+                  {isBlocked ? "Unblock this user" : "Block this user"}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
