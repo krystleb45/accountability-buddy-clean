@@ -12,10 +12,11 @@ type ActivityDataFn = (req: AuthenticatedRequest) => ActivityData | null
 export function logActivity(
   dataOrFn: ActivityData | ActivityDataFn,
 ): RequestHandler {
-  return async (req: AuthenticatedRequest, res, _next) => {
+  return async (req: AuthenticatedRequest, _res, _next) => {
     try {
-      if (res.statusCode >= 400) {
-        return // Don't log activity for failed requests
+      // Check if user exists on request
+      if (!req.user?._id) {
+        return
       }
 
       // Support both static data and dynamic function
@@ -35,6 +36,6 @@ export function logActivity(
     } catch (error) {
       logger.error("Failed to log activity", error)
     }
-    // Don't call next() - response already sent, this is fire-and-forget
+    // Fire-and-forget - don't call next(), response already sent
   }
 }

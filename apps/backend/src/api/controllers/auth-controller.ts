@@ -145,7 +145,7 @@ try {
     user: { ...userData, accessToken },
   })
 
-  next()
+
 })
 
 //
