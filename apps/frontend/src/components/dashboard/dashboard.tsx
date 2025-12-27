@@ -41,6 +41,7 @@ import {
   CardTitle,
 } from "../ui/card"
 import DashboardStatCard from "./DashboardStatCard"
+import { NewsletterCard } from "./newsletter-card"
 
 type ICard = {
   label: string
@@ -378,6 +379,9 @@ export function Dashboard({
             </div>
           )
         })}
+
+        {/* Newsletter signup */}
+        <NewsletterCard />
       </div>
     </div>
   )
