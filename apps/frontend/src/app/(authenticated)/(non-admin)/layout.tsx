@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { NewsletterPopup } from "@/components/newsletter/newsletter-popup"
 
 async function NonAdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions)
@@ -14,7 +15,12 @@ async function NonAdminLayout({ children }: { children: React.ReactNode }) {
     redirect("/admin")
   }
 
-  return children
+  return (
+    <>
+      {children}
+      <NewsletterPopup />
+    </>
+  )
 }
 
 export default NonAdminLayout

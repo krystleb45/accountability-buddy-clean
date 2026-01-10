@@ -16,11 +16,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 const MotionCard = motion.create(Card)
 
 export function NewsletterCard() {
-  const { user } = useAuth()
   const [isDismissed, setIsDismissed] = useState(() => {
-    if (typeof window === "undefined") return false
-    return localStorage.getItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBED) === "true"
-  })
+  if (typeof window === "undefined") return false
+  return (
+    localStorage.getItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBED) === "true" ||
+    localStorage.getItem(STORAGE_KEYS.NEWSLETTER_DISMISSED) === "true"
+  )
+})
 
   const { mutate: subscribe, isPending, isSuccess } = useMutation({
     mutationFn: async () => {
@@ -41,9 +43,9 @@ export function NewsletterCard() {
   })
 
   const handleDismiss = () => {
-    setIsDismissed(true)
-    localStorage.setItem(STORAGE_KEYS.NEWSLETTER_SUBSCRIBED, "true")
-  }
+  setIsDismissed(true)
+  localStorage.setItem(STORAGE_KEYS.NEWSLETTER_DISMISSED, "true")
+}
 
   if (isDismissed || isSuccess) {
     return null
