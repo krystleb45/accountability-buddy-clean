@@ -13,7 +13,7 @@ import {
 import Link from "next/link"
 import { toast } from "sonner"
 
-import { deleteBook, fetchAllBooks } from "@/api/book/book-api"
+import { deleteBook, fetchBooks as fetchAllBooks } from "@/api/book/bookApi"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
