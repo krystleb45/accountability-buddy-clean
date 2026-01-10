@@ -13,6 +13,7 @@ import { ProfileVisibilityForm } from "@/components/settings/profile-visibility-
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/context/auth/auth-context"
 import { BlockedUsersCard } from "@/components/settings/blocked-users-card"
+import { NewsletterSettingsCard } from "@/components/settings/newsletter-settings-card"
 
 export default function SettingsClient() {
   const { loading } = useAuth()
@@ -74,6 +75,8 @@ export default function SettingsClient() {
       />
 
       <BlockedUsersCard />
+      
+      <NewsletterSettingsCard />
 
       <PasswordChangeForm />
 
