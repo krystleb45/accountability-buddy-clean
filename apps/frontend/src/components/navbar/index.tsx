@@ -19,7 +19,7 @@ import { NavbarDropdown } from "./navbar-dropdown"
 
 const publicLinks = [
   { href: "/about-us", label: "About Us" },
-  { href: "/faqs", label: "FAQ" },
+  { href: "/faq", label: "FAQ" },
   { href: "/contact-support", label: "Contact Us" },
   { href: "/military-support", label: "Military Support" },
 ]
