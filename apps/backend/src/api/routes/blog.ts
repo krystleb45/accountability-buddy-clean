@@ -10,41 +10,7 @@ import { FileUploadService } from "../services/file-upload-service.js"
 
 const router = Router()
 
-// ─── PUBLIC ROUTES ────────────────────────────────────────────
-
-/**
- * GET /api/blog
- * Get all published blog posts (public)
- */
-router.get("/", async (req, res) => {
-  const posts = await Blog.find({ status: "published" })
-    .populate("author", "username profileImage")
-    .sort({ publishedAt: -1 })
-    .exec()
-
-  sendResponse(res, 200, true, "Blog posts fetched", { posts })
-})
-
-/**
- * GET /api/blog/:slug
- * Get a single blog post by slug (public)
- */
-router.get("/:slug", async (req, res) => {
-  const post = await Blog.findOne({ 
-    slug: req.params.slug,
-    status: "published" 
-  })
-    .populate("author", "username profileImage")
-    .exec()
-
-  if (!post) {
-    return sendResponse(res, 404, false, "Blog post not found", null)
-  }
-
-  sendResponse(res, 200, true, "Blog post fetched", { post })
-})
-
-// ─── ADMIN ROUTES ─────────────────────────────────────────────
+// ─── ADMIN ROUTES (must be before /:slug) ─────────────────────
 
 const blogSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -188,5 +154,39 @@ router.post(
     })
   }
 )
+
+// ─── PUBLIC ROUTES ────────────────────────────────────────────
+
+/**
+ * GET /api/blog
+ * Get all published blog posts (public)
+ */
+router.get("/", async (req, res) => {
+  const posts = await Blog.find({ status: "published" })
+    .populate("author", "username profileImage")
+    .sort({ publishedAt: -1 })
+    .exec()
+
+  sendResponse(res, 200, true, "Blog posts fetched", { posts })
+})
+
+/**
+ * GET /api/blog/:slug
+ * Get a single blog post by slug (public)
+ */
+router.get("/:slug", async (req, res) => {
+  const post = await Blog.findOne({ 
+    slug: req.params.slug,
+    status: "published" 
+  })
+    .populate("author", "username profileImage")
+    .exec()
+
+  if (!post) {
+    return sendResponse(res, 404, false, "Blog post not found", null)
+  }
+
+  sendResponse(res, 200, true, "Blog post fetched", { post })
+})
 
 export default router
