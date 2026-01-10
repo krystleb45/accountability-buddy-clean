@@ -1,16 +1,33 @@
 "use client"
 
+import { Menu, X } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
 
 import { Button } from "../ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet"
 import { Skeleton } from "../ui/skeleton"
 import { NavbarDropdown } from "./navbar-dropdown"
+
+const publicLinks = [
+  { href: "/about-us", label: "About Us" },
+  { href: "/faqs", label: "FAQ" },
+  { href: "/contact-support", label: "Contact Us" },
+  { href: "/military-support", label: "Military Support" },
+]
 
 export function Navbar() {
   const { data: session, status: authStatus } = useSession()
   const isAdmin = session?.user?.role === "admin"
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
     <nav
@@ -45,8 +62,8 @@ export function Navbar() {
         </Link>
       </div>
 
-      {/* Welcome message - positioned absolutely in center */}
-      {session?.user && (
+      {/* Center section - Desktop */}
+      {session?.user ? (
         <span
           className={`
             hidden text-center text-lg
@@ -55,10 +72,22 @@ export function Navbar() {
         >
           Welcome, {session.user.name || session.user.email?.split("@")[0]}!
         </span>
+      ) : (
+        <div className="hidden items-center justify-center gap-6 md:flex">
+          {publicLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
       )}
 
       {/* User / Auth section */}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-2">
         {authStatus === "loading" ? (
           <Skeleton
             className="h-8 w-20 rounded-lg"
@@ -67,9 +96,62 @@ export function Navbar() {
         ) : session?.user ? (
           <NavbarDropdown isAdmin={isAdmin} />
         ) : (
-          <Button asChild>
-            <Link href="/login">Login</Link>
-          </Button>
+          <>
+            {/* Mobile Menu Button */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-72">
+                <SheetHeader>
+                  <SheetTitle className="flex items-center gap-2">
+                    <Image
+                      src="/logo.png"
+                      alt="Logo"
+                      width={32}
+                      height={32}
+                    />
+                    Accountability Buddy
+                  </SheetTitle>
+                </SheetHeader>
+                <nav className="mt-8 flex flex-col gap-4">
+                  {publicLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="rounded-lg px-4 py-3 text-base font-medium transition-colors hover:bg-muted"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                  <hr className="my-2" />
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="rounded-lg bg-primary px-4 py-3 text-center font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="rounded-lg border px-4 py-3 text-center font-medium transition-colors hover:bg-muted"
+                  >
+                    Sign Up
+                  </Link>
+                </nav>
+              </SheetContent>
+            </Sheet>
+
+            {/* Desktop Login Button */}
+            <Button asChild className="hidden md:inline-flex">
+              <Link href="/login">Login</Link>
+            </Button>
+          </>
         )}
       </div>
     </nav>
