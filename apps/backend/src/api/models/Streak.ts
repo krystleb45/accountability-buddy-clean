@@ -47,17 +47,18 @@ StreakSchema.methods = {
     const now = new Date()
     const last = this.lastCheckIn
     if (
-      last &&
-      // Allow up to 1.5 days for a streak continuation
-      !isWithinInterval(now, {
-        start: last,
-        end: addDays(last, 1.5),
-      })
-    ) {
-      this.streakCount += 1
-    } else {
-      this.streakCount = 1
-    }
+  last &&
+  isWithinInterval(now, {
+    start: last,
+    end: addDays(last, 1.5),
+  })
+) {
+  // Within 1.5 days - continue the streak
+  this.streakCount += 1
+} else {
+  // First check-in or streak broken - start fresh
+  this.streakCount = 1
+}
 
     this.lastCheckIn = now
     this.checkInDates.push(now)
