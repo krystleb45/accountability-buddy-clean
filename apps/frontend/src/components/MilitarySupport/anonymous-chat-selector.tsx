@@ -129,12 +129,12 @@ export function AnonymousChatSelector() {
               {/* Online Count - Compact */}
               <div
                 className={`
-                  mt-6 flex items-center justify-center text-sm
-                  text-muted-foreground
-                `}
+    mt-6 flex items-center justify-center text-sm
+    text-muted-foreground
+  `}
               >
                 <Users className="mr-1 size-4" />
-                <span>{room.memberCount} online</span>
+                <span>{room.memberCount}</span>
               </div>
             </CardContent>
 
