@@ -7,6 +7,7 @@ import {
   Info,
   LogOut,
   Mail,
+  Medal,
   MessageCircleMore,
   Settings,
   ShieldUser,
@@ -111,6 +112,12 @@ export function NavbarDropdown({ isAdmin }: NavbarDropdownProps) {
         label: "Feedback",
         path: "/feedback",
         icon: MessageCircleMore,
+      },
+      {
+        id: "military-support",
+        label: "Military Support",
+        path: "/military-support",
+        icon: Medal,
       },
       {
         id: "privacy-policy",
