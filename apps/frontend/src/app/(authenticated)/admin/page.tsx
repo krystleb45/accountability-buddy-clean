@@ -1,4 +1,6 @@
+import { BookOpen, FileText, MessageSquare, Shield, Users } from "lucide-react"
 import { getServerSession } from "next-auth"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
@@ -68,6 +70,48 @@ export default async function AdminDashboardPage() {
   return (
     <div className="p-6">
       <h1 className="mb-8 text-2xl font-bold text-white">Admin Dashboard</h1>
+
+      {/* Quick Links */}
+      <div className="mb-8">
+        <h2 className="mb-4 text-lg font-semibold text-white">Quick Actions</h2>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <Link
+            href="/admin/users"
+            className="flex flex-col items-center gap-2 rounded-lg bg-gray-800 p-4 transition-colors hover:bg-gray-700"
+          >
+            <Users className="h-8 w-8 text-blue-400" />
+            <span className="text-white">Users</span>
+          </Link>
+          <Link
+            href="/admin/feedback"
+            className="flex flex-col items-center gap-2 rounded-lg bg-gray-800 p-4 transition-colors hover:bg-gray-700"
+          >
+            <MessageSquare className="h-8 w-8 text-green-400" />
+            <span className="text-white">Feedback</span>
+          </Link>
+          <Link
+            href="/admin/blog"
+            className="flex flex-col items-center gap-2 rounded-lg bg-gray-800 p-4 transition-colors hover:bg-gray-700"
+          >
+            <FileText className="h-8 w-8 text-purple-400" />
+            <span className="text-white">Blog</span>
+          </Link>
+          <Link
+            href="/admin/books"
+            className="flex flex-col items-center gap-2 rounded-lg bg-gray-800 p-4 transition-colors hover:bg-gray-700"
+          >
+            <BookOpen className="h-8 w-8 text-yellow-400" />
+            <span className="text-white">Books</span>
+          </Link>
+          <Link
+            href="/admin/badges"
+            className="flex flex-col items-center gap-2 rounded-lg bg-gray-800 p-4 transition-colors hover:bg-gray-700"
+          >
+            <Shield className="h-8 w-8 text-orange-400" />
+            <span className="text-white">Badges</span>
+          </Link>
+        </div>
+      </div>
 
       {/* Stats Cards */}
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

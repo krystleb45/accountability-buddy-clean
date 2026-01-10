@@ -8,6 +8,7 @@ import * as bookController from "../controllers/book-controller.js"
 import { protect } from "../middleware/auth-middleware.js"
 import handleValidationErrors from "../middleware/handleValidationErrors.js"
 import catchAsync from "../utils/catchAsync.js"
+import { requireAdmin } from "../middleware/require-admin.js"
 
 const router = Router()
 
@@ -18,6 +19,7 @@ const router = Router()
 router.post(
   "/",
   protect,
+  requireAdmin,
   [
     check("title", "Title is required").notEmpty(),
     check("author", "Author is required").notEmpty(),
@@ -67,6 +69,7 @@ router.get(
 router.put(
   "/:id",
   protect,
+  requireAdmin,
   [
     param("id", "Invalid book ID").isMongoId(),
     check("title")
@@ -105,6 +108,7 @@ router.put(
 router.delete(
   "/:id",
   protect,
+  requireAdmin,
   param("id", "Invalid book ID").isMongoId(),
   handleValidationErrors,
   catchAsync(
