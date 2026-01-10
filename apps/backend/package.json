@@ -20,7 +20,8 @@
     "check-types": "tsc --noEmit",
     "generate-types": "mtgen -o ./src/types",
     "generate-types-for-frontend": "mtgen -o ../frontend/src/types --no-mongoose --dates-as-strings",
-    "knip": "knip"
+    "knip": "knip",
+    "seed:badges": "npx tsx src/scripts/seed-badges.ts"
   },
   "dependencies": {
     "@ab/shared": "*",
