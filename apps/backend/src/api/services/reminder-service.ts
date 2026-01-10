@@ -14,7 +14,7 @@ export class ReminderService {
    */
   static async createReminder(
     userId: string,
-    data: Pick
+    data: Pick<
       IReminder,
       "message" | "goal" | "remindAt" | "recurrence" | "reminderType" | "endRepeat"
     >
