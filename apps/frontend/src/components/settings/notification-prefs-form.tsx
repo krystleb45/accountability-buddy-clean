@@ -18,17 +18,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "../ui/card"
 import { Checkbox } from "../ui/checkbox"
-import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormDescription } from "../ui/form"
 
 interface NotificationPrefsFormProps {
   currentPrefs: User["settings"]["notifications"]
 }
 
 const notificationPrefsSchema = z.object({
-  email: z.boolean().default(false),
+  email: z.boolean().default(true),
   sms: z.boolean().default(false),
+  weeklyDigest: z.boolean().default(true),
 })
 
 type NotificationPrefsFormData = z.infer<typeof notificationPrefsSchema>
@@ -40,7 +42,11 @@ export function NotificationPrefsForm({
     resolver: zodResolver(
       notificationPrefsSchema,
     ) as Resolver<NotificationPrefsFormData>,
-    defaultValues: currentPrefs ?? { email: true, sms: false },
+    defaultValues: {
+      email: currentPrefs?.email ?? true,
+      sms: currentPrefs?.sms ?? false,
+      weeklyDigest: currentPrefs?.weeklyDigest ?? true,
+    },
   })
 
   const queryClient = useQueryClient()
@@ -68,6 +74,9 @@ export function NotificationPrefsForm({
         <Card>
           <CardHeader>
             <CardTitle>Notification Preferences</CardTitle>
+            <CardDescription>
+              Choose how you want to receive updates and reminders.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <FormField
@@ -112,6 +121,34 @@ export function NotificationPrefsForm({
                     <FormLabel className="text-sm font-normal">
                       SMS Notifications
                     </FormLabel>
+                  </FormItem>
+                )
+              }}
+            />
+            <FormField
+              control={form.control}
+              name="weeklyDigest"
+              render={({ field }) => {
+                return (
+                  <FormItem className="flex flex-row items-start gap-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(checked) => {
+                          return checked
+                            ? field.onChange(true)
+                            : field.onChange(false)
+                        }}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="text-sm font-normal">
+                        Weekly Progress Digest
+                      </FormLabel>
+                      <FormDescription>
+                        Receive a weekly summary of your goals, streaks, and achievements every Monday.
+                      </FormDescription>
+                    </div>
                   </FormItem>
                 )
               }}

@@ -105,6 +105,7 @@ const UserSchema: IUserSchema = new Schema(
       notifications: {
         email: { type: Boolean, default: true },
         sms: { type: Boolean, default: false },
+        weeklyDigest: { type: Boolean, default: true },
       },
       privacy: {
         profileVisibility: {
