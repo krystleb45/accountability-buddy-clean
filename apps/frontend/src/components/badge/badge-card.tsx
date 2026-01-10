@@ -21,6 +21,7 @@ export function BadgeCard({ badge }: BadgeCardProps) {
             alt={badge.badgeType.name}
             width={48}
             height={48}
+            unoptimized
             className={cn(
               "size-12 shrink-0 rounded-full border-2 object-cover",
               {
