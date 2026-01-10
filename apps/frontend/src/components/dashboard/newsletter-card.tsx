@@ -16,6 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 const MotionCard = motion.create(Card)
 
 export function NewsletterCard() {
+  const { user } = useAuth()
   const [isDismissed, setIsDismissed] = useState(() => {
   if (typeof window === "undefined") return false
   return (
