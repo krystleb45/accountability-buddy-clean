@@ -91,6 +91,7 @@ export function UserAvatar({
       <Image
         src={src || "/default-avatar.svg"}
         alt={alt || "User Avatar"}
+        unoptimized
         className={cn(
           `rounded-full border-2 border-background object-cover`,
           {
