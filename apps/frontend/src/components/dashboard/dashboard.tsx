@@ -224,10 +224,10 @@ export function Dashboard({
       label: "Recent Activities",
       icon: Scroll,
       content:
-  recentActivities.filter((a) => a.type !== "login").length > 0 ? (
+  recentActivities.filter((a) => a.type !== "login" && a.type !== "logout").length > 0 ? (
     <ul className="flex list-disc flex-col gap-4 pl-6">
       {recentActivities
-        .filter((a) => a.type !== "login")
+        .filter((a) => a.type !== "login" && a.type !== "logout")
         .map((a) => (
           <li key={a._id}>
             <div className="flex items-baseline gap-2">
