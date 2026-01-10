@@ -89,6 +89,9 @@ async function startServer(): Promise<void> {
     } else {
       logger.error("❌ S3 connection is unhealthy")
     }
+    // 2e) Initialize reminder cron job
+    const { initReminderCron } = await import("./cron/reminder-cron.js")
+    initReminderCron()
 
     const { app } = await import("./app.js")
     const { socketServer } = await import("./sockets/index.js")

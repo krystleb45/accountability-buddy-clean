@@ -51,6 +51,7 @@ import blogRoutes from "./api/routes/blog.js"
 import adminStatsRoutes from "./api/routes/admin-stats.js"
 import adminUsersRoutes from "./api/routes/admin-users.js"
 import blockRoutes from "./api/routes/block.js"
+import reminderRoutes from "./api/routes/reminders.js"
 
 
 const app = express()
@@ -165,6 +166,8 @@ app.use("/api/users", userRoutes)
 app.use("/api/admin/stats", adminStatsRoutes)
 app.use("/api/admin/users", adminUsersRoutes)
 app.use("/api/block", blockRoutes)
+app.use("/api/reminders", reminderRoutes)
+
 
 // ─── Meta-test catch-all for *.test ───────────────────────────
 app.use((req, res, next) => {

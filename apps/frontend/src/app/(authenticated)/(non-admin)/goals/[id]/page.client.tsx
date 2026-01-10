@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button"
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
 import { useSubscription } from "@/hooks/useSubscription"
 import { cn } from "@/lib/utils"
+import { RemindersList } from "@/components/reminders"
 
 interface GoalClientProps {
   id: string
@@ -239,6 +240,11 @@ function GoalClient({ id }: GoalClientProps) {
           </p>
           <GoalProgress progress={data.progress} className="mt-2" />
         </div>
+      </section>
+
+      {/* Reminders Section */}
+      <section>
+        <RemindersList goalId={id} goalTitle={data.title} />
       </section>
     </main>
   )
