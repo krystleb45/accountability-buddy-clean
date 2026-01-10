@@ -146,13 +146,27 @@ export class GoalService {
       throw new CustomError("Not authorized to update this goal", 403)
     }
 
-    goal.progress = Math.min(100, Math.max(0, progress))
-    if (goal.progress >= 100) {
+    const oldProgress = goal.progress
+    const newProgress = Math.min(100, Math.max(0, progress))
+    goal.progress = newProgress
+
+    // Award XP for reaching milestones (25%, 50%, 75%)
+    const milestones = [25, 50, 75]
+    for (const milestone of milestones) {
+      if (oldProgress < milestone && newProgress >= milestone) {
+        await GamificationService.addPoints(userId, 5)
+        logger.info(
+          `User ${userId} reached ${milestone}% milestone on goal ${goalId}`,
+        )
+      }
+    }
+
+    if (newProgress >= 100) {
       goal.status = "completed"
       goal.completedAt = new Date()
       await GamificationService.addPoints(userId, goal.points)
       logger.info(`User ${userId} completed goal ${goalId}`)
-    } else if (goal.progress > 0) {
+    } else if (newProgress > 0) {
       goal.status = "in-progress"
     }
     await goal.save()
