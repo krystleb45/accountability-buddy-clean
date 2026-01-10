@@ -69,7 +69,7 @@ export const createGoal = catchAsync(
       goal: createdGoal,
     })
 
-    
+    next()
   },
 )
 
@@ -170,7 +170,7 @@ export const updateGoalProgress = catchAsync(
 
     sendResponse(res, 200, true, "Goal progress updated")
 
-    
+    next()
   },
 )
 
