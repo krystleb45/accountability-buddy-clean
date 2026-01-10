@@ -1,10 +1,4 @@
-// src/app/faq/page.tsx
 import type { Metadata } from "next"
-
-import { getServerSession } from "next-auth/next"
-import { redirect } from "next/navigation"
-
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 import FaqClient from "./page.client"
 
@@ -25,13 +19,6 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function FaqPage() {
-  // 1) Require a logged-in user
-  const session = await getServerSession(authOptions)
-  if (!session?.user) {
-    redirect("/login")
-  }
-
-  // 2) Render the client component
+export default function FaqPage() {
   return <FaqClient />
 }
