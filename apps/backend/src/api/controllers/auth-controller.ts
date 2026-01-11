@@ -68,7 +68,7 @@ const register: RequestHandler = catchAsync(async (req, res, next) => {
     ...(selectedPlan === "free-trial"
       ? {
           trial_start_date: new Date(),
-          trial_end_date: addDays(new Date(), 14),
+          trial_end_date: addDays(new Date(), 7),
         }
       : {}),
     stripeCustomerId,

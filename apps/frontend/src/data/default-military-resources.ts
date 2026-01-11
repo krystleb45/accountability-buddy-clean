@@ -18,7 +18,7 @@ export const DEFAULT_MILITARY_RESOURCES: SupportResource[] = [
     title: "Military Family Life Counselors",
     description:
       "Free, confidential counseling services for military families dealing with deployment, relationships, and stress.",
-    url: "https://www.militaryfamilylife.org/",
+    url: "https://www.militaryonesource.mil/military-life-cycle/deployment/family-resources/military-family-life-counseling/",
     category: "Mental Health",
     isActive: true,
     createdAt: new Date().toISOString(),
@@ -62,11 +62,11 @@ export const DEFAULT_MILITARY_RESOURCES: SupportResource[] = [
     updatedAt: new Date().toISOString(),
   },
   {
-    _id: "ebenefits",
-    title: "eBenefits Portal",
+    _id: "va-portal",
+    title: "VA.gov Portal",
     description:
       "Access your military personnel records, upload claim documents, and track the status of your VA benefits.",
-    url: "https://www.ebenefits.va.gov/",
+    url: "https://www.va.gov/",
     category: "Benefits",
     isActive: true,
     createdAt: new Date().toISOString(),

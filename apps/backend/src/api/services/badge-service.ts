@@ -163,9 +163,9 @@ export default class BadgeService {
       logger.debug(
         `Updating badge progress for ${badgeType} for user ${userId} to ${progress}`,
       )
+      await badge.save()
     }
 
-    await badge.save()
     return badge
   }
 

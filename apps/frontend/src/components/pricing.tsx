@@ -165,7 +165,7 @@ export function Pricing({
                       </span>
                       <TabsContent value="yearly">
                         <p className="mt-1 text-sm text-primary">
-                          Save ${plan.price.monthly * 12 - plan.price.yearly}
+                          Save ${(plan.price.monthly * 12 - plan.price.yearly).toFixed(2)}
                         </p>
                       </TabsContent>
                     </div>
