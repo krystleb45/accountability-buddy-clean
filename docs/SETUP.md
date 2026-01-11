@@ -255,10 +255,9 @@ S3_BUCKET=your-bucket-name
 # ========================
 # 📊 Subscription Plans
 # ========================
-DEFAULT_TRIAL_DAYS=14
-BASIC_MONTHLY_PRICE=5.00
-PRO_MONTHLY_PRICE=15.00
-ELITE_MONTHLY_PRICE=30.00
+DEFAULT_TRIAL_DAYS=7
+PRO_MONTHLY_PRICE=14.99
+PRO_YEARLY_PRICE=149.00
 ```
 
 ### Generating Secure Secrets
