@@ -35,7 +35,7 @@ const generalLimiter = rateLimit({
  */
 
 const bodySchema = z.object({
-  planId: z.enum(["free-trial", "basic", "pro", "elite"]),
+  planId: z.enum(["free-trial", "pro"]),
   billingCycle: z.enum(["monthly", "yearly"]).optional(),
   successUrl: z.url().optional(),
   cancelUrl: z.url().optional(),
@@ -79,7 +79,7 @@ router.get("/limits", protect, subscriptionController.getUserLimits)
  * Change subscription plan
  */
 const changePlanBodySchema = z.object({
-  newPlanId: z.enum(["basic", "pro", "elite"]),
+  newPlanId: z.enum(["pro"]),
   billingCycle: z.enum(["monthly", "yearly"]),
 })
 export type ChangePlanBody = z.infer<typeof changePlanBodySchema>
