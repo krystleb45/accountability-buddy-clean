@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query"
 import {
+  ArrowLeft,
   AwardIcon,
   Ban,
   CameraOff,
@@ -18,6 +19,7 @@ import { motion } from "framer-motion"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useMemo } from "react"
 import { toast } from "sonner"
 
@@ -59,6 +61,7 @@ const MotionCard = motion.create(Card)
 export function MemberPageClient({ username }: MemberPageClientProps) {
   const { status } = useSession()
   const { user } = useAuth()
+  const router = useRouter()
 
   const {
     data: member,
@@ -154,6 +157,16 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
     },
   })
 
+  const handleGoBack = () => {
+    // Check if there's history to go back to
+    if (window.history.length > 1) {
+      router.back()
+    } else {
+      // Fallback to friends page
+      router.push("/friends")
+    }
+  }
+
   if (status === "loading" || isLoading) {
     return (
       <div className="grid min-h-screen place-items-center">
@@ -183,6 +196,16 @@ export function MemberPageClient({ username }: MemberPageClientProps) {
       className="flex flex-col gap-6 pb-8"
       transition={{ staggerChildren: 0.1 }}
     >
+      {/* Back Navigation */}
+      <Button
+        variant="link"
+        className="w-fit gap-1 p-0 text-primary"
+        onClick={handleGoBack}
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Back
+      </Button>
+
       <MotionCard
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
