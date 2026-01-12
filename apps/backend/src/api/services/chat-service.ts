@@ -201,4 +201,18 @@ export class ChatService {
   //   }
   //   return Message.find({ chatId: chat._id }).sort({ timestamp: 1 }).exec()
   // }
+
+  /**
+   * Mark messages as read for a user in a chat.
+   */
+  static async markMessagesAsRead(chatId: string, userId: string): Promise<void> {
+    if (!mongoose.Types.ObjectId.isValid(chatId)) {
+      throw new CustomError("Invalid chat ID", 400)
+    }
+
+    const chat = await Chat.findById(chatId)
+    if (chat) {
+      await chat.markRead(new mongoose.Types.ObjectId(userId))
+    }
+  }
 }

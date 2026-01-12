@@ -100,12 +100,7 @@ export const sendMessageToFriend = catchAsync(
 
 export const getMessagesWithFriend = catchAsync(
   async (
-    req: AuthenticatedRequest<
-      { friendId: string },
-      unknown,
-      unknown,
-      GetMessagesQuery
-    >,
+    req: AuthenticatedRequest<{ friendId: string }, unknown, unknown, GetMessagesQuery>,
     res: Response,
   ) => {
     const userId = req.user.id
@@ -117,6 +112,9 @@ export const getMessagesWithFriend = catchAsync(
       page,
       limit,
     })
+
+    // Mark messages as read for the current user
+    await ChatService.markMessagesAsRead(chat._id.toString(), userId)
 
     sendResponse(res, 200, true, "Messages retrieved", { messages, chat })
   },
