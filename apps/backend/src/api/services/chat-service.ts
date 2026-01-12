@@ -202,7 +202,7 @@ export class ChatService {
   //   return Message.find({ chatId: chat._id }).sort({ timestamp: 1 }).exec()
   // }
 
-  /**
+ /**
    * Mark messages as read for a user in a chat.
    */
   static async markMessagesAsRead(chatId: string, userId: string): Promise<void> {
@@ -212,7 +212,11 @@ export class ChatService {
 
     const chat = await Chat.findById(chatId)
     if (chat) {
+      // Update the Chat model's unread count
       await chat.markRead(new mongoose.Types.ObjectId(userId))
+      
+      // Also update Message status to "seen" for messages in this chat not sent by this user
+      await MessageService.markThreadAsRead(chatId, userId)
     }
   }
 }
