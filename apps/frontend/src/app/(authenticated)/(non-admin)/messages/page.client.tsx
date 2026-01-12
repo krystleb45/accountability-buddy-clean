@@ -248,7 +248,7 @@ export default function AdvancedMessagesClient() {
   }
 
   const filteredFriends = (friends || []).filter((f) =>
-    f?.name?.toLowerCase().includes(friendSearch.toLowerCase()),
+    (f?.name || f?.username || "").toLowerCase().includes(friendSearch.toLowerCase()),
   )
 
   if (!hasDMMessaging) {
@@ -346,7 +346,7 @@ export default function AdvancedMessagesClient() {
                       <UserAvatar
                         userId={friend._id}
                         src={friend.profileImage}
-                        alt={friend.name}
+                        alt={friend.name || friend.username}
                         status={
                           friend.activeStatus === "online"
                             ? "online"
@@ -355,7 +355,7 @@ export default function AdvancedMessagesClient() {
                       />
                     </ItemMedia>
                     <ItemContent>
-                      <ItemTitle>{friend.name}</ItemTitle>
+                      <ItemTitle>{friend.name || friend.username}</ItemTitle>
                       <ItemDescription>@{friend.username}</ItemDescription>
                     </ItemContent>
                     <ItemActions>
@@ -441,7 +441,7 @@ export default function AdvancedMessagesClient() {
                     status={friend.activeStatus}
                   />
                   <div className="space-y-1">
-                    <CardTitle>{friend.name}</CardTitle>
+                    <CardTitle>{friend.name || friend.username}</CardTitle>
                     <CardDescription className="hover:underline">
                       <Link href={`/member/${friend.username}`}>
                         @{friend.username}
