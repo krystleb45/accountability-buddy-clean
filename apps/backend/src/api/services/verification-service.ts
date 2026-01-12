@@ -59,8 +59,8 @@ export async function addSendResetPasswordEmailJob(
   const frontendUrl = appConfig.frontendUrl.replace(/\/$/, "")
   const resetUrl = `${frontendUrl}/reset-password/${encodeURIComponent(resetTokenDoc.token)}`
 
-  const { getVerifyEmailTemplate } = await import("@ab/transactional")
-  const { html, text } = await getVerifyEmailTemplate(
+  const { getResetPasswordTemplate } = await import("@ab/transactional")
+  const { html, text } = await getResetPasswordTemplate(
     resetUrl,
     `${appConfig.frontendUrl}/logo.png`,
   )
