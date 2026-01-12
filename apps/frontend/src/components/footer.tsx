@@ -8,11 +8,12 @@ const sponsors: { name: string; logo: string; url: string }[] = [
 ]
 
 const footerLinks = [
-  { label: "About", href: "/about" },
+  { label: "About", href: "/about-us" },
   { label: "Blog", href: "/blog" },
-  { label: "FAQs", href: "/faqs" },
-  { label: "Contact", href: "/contact" },
-  { label: "Privacy Policy", href: "/privacy" },
+  { label: "FAQs", href: "/faq" },
+  { label: "Contact", href: "/contact-support" },
+  { label: "Military Support", href: "/military-support" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms of Service", href: "/terms" },
 ]
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { Menu, X } from "lucide-react"
+import { Menu } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
@@ -17,7 +17,7 @@ import {
 import { Skeleton } from "../ui/skeleton"
 import { NavbarDropdown } from "./navbar-dropdown"
 
-const publicLinks = [
+const mobileMenuLinks = [
   { href: "/about-us", label: "About Us" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact-support", label: "Contact Us" },
@@ -35,7 +35,6 @@ export function Navbar() {
         sticky top-0 z-50 flex items-center justify-between border-b
         bg-gradient-to-br from-secondary/50 to-background/50 px-8 py-4 shadow
         backdrop-blur-2xl
-        *:flex-1
       `}
       data-testid="navbar"
     >
@@ -62,28 +61,16 @@ export function Navbar() {
         </Link>
       </div>
 
-      {/* Center section - Desktop */}
-      {session?.user ? (
+      {/* Center section - Only show welcome message when logged in */}
+      {session?.user && (
         <span
           className={`
-            hidden text-center text-lg
+            hidden flex-1 text-center text-lg
             md:block
           `}
         >
           Welcome, {session.user.name || session.user.email?.split("@")[0]}!
         </span>
-      ) : (
-        <div className="hidden items-center justify-center gap-6 md:flex">
-          {publicLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
       )}
 
       {/* User / Auth section */}
@@ -113,7 +100,7 @@ export function Navbar() {
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="mt-8 flex flex-col gap-4">
-                  {publicLinks.map((link) => (
+                  {mobileMenuLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -142,10 +129,15 @@ export function Navbar() {
               </SheetContent>
             </Sheet>
 
-            {/* Desktop Login Button */}
-            <Button asChild className="hidden md:inline-flex">
-              <Link href="/login">Login</Link>
-            </Button>
+            {/* Desktop Login/Register Buttons */}
+            <div className="hidden items-center gap-2 md:flex">
+              <Button asChild variant="outline">
+                <Link href="/register">Sign Up</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/login">Login</Link>
+              </Button>
+            </div>
           </>
         )}
       </div>
