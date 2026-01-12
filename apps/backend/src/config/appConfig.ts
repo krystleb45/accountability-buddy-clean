@@ -45,7 +45,9 @@ interface AppConfig {
       minLength: number
       requireNumbers: boolean
       requireSpecialChars: boolean
+      requireUppercase: boolean
     }
+    passwordResetTokenExpiresIn: number // in milliseconds
   }
   logging: {
     level: string
@@ -60,6 +62,8 @@ interface AppConfig {
     enableMocks: boolean
   }
 }
+
+const isProduction = process.env.NODE_ENV === "production"
 
 const appConfig: AppConfig = {
   // General Application Information
@@ -117,22 +121,29 @@ const appConfig: AppConfig = {
     enableGamification: process.env.ENABLE_GAMIFICATION === "true",
   },
 
-  // Security Settings
+  // Security Settings (IMPROVED: Stronger defaults)
   security: {
     corsAllowedOrigins: process.env.ALLOWED_ORIGINS
       ? process.env.ALLOWED_ORIGINS.split(",")
       : ["http://localhost:3000"], // Default CORS origins
     passwordPolicy: {
       minLength: Number.parseInt(process.env.PASSWORD_MIN_LENGTH || "8", 10),
-      requireNumbers: process.env.PASSWORD_REQUIRE_NUMBERS === "true",
+      // CHANGED: Now default to true for stronger security
+      requireNumbers: process.env.PASSWORD_REQUIRE_NUMBERS !== "false", // Default: true
       requireSpecialChars:
-        process.env.PASSWORD_REQUIRE_SPECIAL_CHARS === "true",
+        process.env.PASSWORD_REQUIRE_SPECIAL_CHARS !== "false", // Default: true
+      requireUppercase: process.env.PASSWORD_REQUIRE_UPPERCASE !== "false", // Default: true (NEW)
     },
+    // Password reset token expires in 1 hour (in milliseconds)
+    passwordResetTokenExpiresIn: Number.parseInt(
+      process.env.PASSWORD_RESET_TOKEN_EXPIRES_IN || "3600000",
+      10,
+    ),
   },
 
-  // Logging
+  // Logging (IMPROVED: Production-appropriate default)
   logging: {
-    level: process.env.LOG_LEVEL || "info",
+    level: process.env.LOG_LEVEL || (isProduction ? "warn" : "info"),
     logDir: process.env.LOG_DIR || "logs",
   },
 

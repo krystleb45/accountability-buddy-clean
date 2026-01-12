@@ -53,8 +53,8 @@ import adminUsersRoutes from "./api/routes/admin-users.js"
 import blockRoutes from "./api/routes/block.js"
 import reminderRoutes from "./api/routes/reminders.js"
 
-
 const app = express()
+const isProduction = process.env.NODE_ENV === "production"
 
 // ─── Serve uploads folder ─────────────────────────────────────
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")))
@@ -70,38 +70,121 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(compression())
 app.use(helmet())
-// In your backend/src/app.ts, replace the CORS section with this:
+
+// ─── CORS Configuration (FIXED: No wildcard fallback) ─────────
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",").map((o) =>
+  o.trim(),
+)
+
+if (isProduction && (!allowedOrigins || allowedOrigins.length === 0)) {
+  logger.error(
+    "❌ ALLOWED_ORIGINS must be set in production! Defaulting to strict mode.",
+  )
+}
 
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, Postman, server-to-server)
+      if (!origin) {
+        return callback(null, true)
+      }
+
+      // In development, allow localhost origins
+      if (!isProduction) {
+        if (
+          origin.includes("localhost") ||
+          origin.includes("127.0.0.1") ||
+          (allowedOrigins && allowedOrigins.includes(origin))
+        ) {
+          return callback(null, true)
+        }
+      }
+
+      // In production, strictly check allowed origins
+      if (allowedOrigins && allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+
+      logger.warn(`❌ CORS blocked origin: ${origin}`)
+      return callback(new Error("Not allowed by CORS"))
+    },
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
   }),
 )
+
 app.use(mongoSanitize())
 app.use(xss())
 app.use(hpp())
 app.set("trust proxy", 1) // if behind a proxy (e.g., Heroku, AWS ELB)
+
+// ─── Rate Limiting ────────────────────────────────────────────
+
+// General API rate limit (500 requests per 15 minutes)
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60_000,
+  max: 500,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res, next, options) => {
+    logger.warn(`Rate limit exceeded for IP: ${req.ip}`)
+    next(
+      createError(
+        options.message || "Too many requests, please try again later.",
+        status.TOO_MANY_REQUESTS,
+      ),
+    )
+  },
+})
+
+// Strict rate limit for auth routes (10 requests per 15 minutes)
+// Protects against brute force attacks on login/register/password-reset
+const authLimiter = rateLimit({
+  windowMs: 15 * 60_000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true, // Only count failed attempts
+  handler: (req, res, next, options) => {
+    logger.warn(`Auth rate limit exceeded for IP: ${req.ip}`)
+    next(
+      createError(
+        "Too many authentication attempts, please try again in 15 minutes.",
+        status.TOO_MANY_REQUESTS,
+      ),
+    )
+  },
+})
+
+// Very strict limit for password reset (5 requests per hour)
+const passwordResetLimiter = rateLimit({
+  windowMs: 60 * 60_000, // 1 hour
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res, next, options) => {
+    logger.warn(`Password reset rate limit exceeded for IP: ${req.ip}`)
+    next(
+      createError(
+        "Too many password reset attempts, please try again in an hour.",
+        status.TOO_MANY_REQUESTS,
+      ),
+    )
+  },
+})
+
+// Apply general limiter to all routes
+app.use(generalLimiter)
+
+// ─── Logging (FIXED: Production-appropriate) ──────────────────
 app.use(
-  rateLimit({
-    windowMs: 15 * 60_000,
-    max: 500,
-    handler: (req, res, next, options) => {
-      next(
-        createError(
-          options.message || "Rate limit exceeded",
-          status.TOO_MANY_REQUESTS,
-        ),
-      )
-    },
-  }),
-)
-app.use(
-  morgan("dev", {
+  morgan(isProduction ? "combined" : "dev", {
     stream: {
       write: (msg) => logger.info(msg.trim()),
     },
+    // In production, skip logging successful requests to reduce noise
+    skip: (req, res) => isProduction && res.statusCode < 400,
   }),
 )
 
@@ -133,7 +216,12 @@ app.get("/api/debug-sentry", (_req, _res) => {
 
 // ─── PUBLIC routes (NO AUTHENTICATION REQUIRED) ───────────────
 app.use("/api/health", healthRoutes)
-app.use("/api/auth", authRoutes)
+
+// Apply stricter rate limiting to auth routes
+app.use("/api/auth/forgot-password", passwordResetLimiter)
+app.use("/api/auth/reset-password", passwordResetLimiter)
+app.use("/api/auth", authLimiter, authRoutes)
+
 app.use("/api/faqs", faqRoutes)
 app.use("/api/contact-support", contactSupportRoutes)
 app.use("/api/admin/feedback", adminFeedbackRoutes)
@@ -167,7 +255,6 @@ app.use("/api/admin/stats", adminStatsRoutes)
 app.use("/api/admin/users", adminUsersRoutes)
 app.use("/api/block", blockRoutes)
 app.use("/api/reminders", reminderRoutes)
-
 
 // ─── Meta-test catch-all for *.test ───────────────────────────
 app.use((req, res, next) => {

@@ -54,7 +54,16 @@ export async function addSendResetPasswordEmailJob(
   // Generate password reset token
   // Invalidate any and all existing reset tokens FIRST
   await VerificationToken.deleteMany({ user: userId })
-  const resetTokenDoc = await VerificationToken.generate(userId, 15 * 60)
+
+  // Use config value (default 1 hour = 3600000ms), convert to seconds
+  const resetTokenExpirySeconds = Math.floor(
+    appConfig.security.passwordResetTokenExpiresIn / 1000,
+  )
+
+  const resetTokenDoc = await VerificationToken.generate(
+    userId,
+    resetTokenExpirySeconds, // Changed from hardcoded 15 * 60 (15 min) to configurable (default 1 hour)
+  )
 
   const frontendUrl = appConfig.frontendUrl.replace(/\/$/, "")
   const resetUrl = `${frontendUrl}/reset-password/${encodeURIComponent(resetTokenDoc.token)}`

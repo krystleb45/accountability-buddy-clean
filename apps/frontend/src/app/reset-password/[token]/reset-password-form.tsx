@@ -20,14 +20,21 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { PasswordRequirements } from "@/components/requirements"
 import { http } from "@/utils"
 
 const resetPasswordFormSchema = z
   .object({
-    password: z.string().min(8, "Password must be at least 8 characters long"),
-    confirmPassword: z
+    password: z
       .string()
-      .min(8, "Confirm Password must be at least 8 characters long"),
+      .min(8, "Password must be at least 8 characters")
+      .regex(/\d/, "Password must contain at least one number")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(
+        /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+        "Password must contain at least one special character",
+      ),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
@@ -51,6 +58,8 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
       confirmPassword: "",
     },
   })
+
+  const password = form.watch("password")
 
   const { mutate: resetPassword, isPending } = useMutation({
     mutationFn: async (data: ResetPasswordFormValues) => {
@@ -122,6 +131,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                         </Button>
                       </div>
                     </FormControl>
+                    <PasswordRequirements password={password} />
                     <FormMessage />
                   </FormItem>
                 )}
@@ -145,7 +155,9 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
                           variant="ghost"
                           size="icon"
                           className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
                         >
                           {showConfirmPassword ? (
                             <EyeOff className="h-4 w-4 text-muted-foreground" />

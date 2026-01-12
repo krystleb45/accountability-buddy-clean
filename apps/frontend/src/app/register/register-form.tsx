@@ -26,6 +26,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { PasswordRequirements } from "@/components/requirements"
 
 import { useRegisterContext } from "./register-context"
 
@@ -36,8 +37,16 @@ const createAccountSchema = z
     email: z
       .email("Please enter a valid email")
       .nonempty("Please enter your email"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(8).max(100),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/\d/, "Password must contain at least one number")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(
+        /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/,
+        "Password must contain at least one special character",
+      ),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
@@ -64,6 +73,8 @@ export function RegisterForm() {
       confirmPassword: "",
     },
   })
+
+  const password = form.watch("password")
 
   const handleSubmit = (data: CreateAccountSchema): void => {
     setCreateAccountState(data)
@@ -167,6 +178,7 @@ export function RegisterForm() {
                       </Button>
                     </div>
                   </FormControl>
+                  <PasswordRequirements password={password} />
                   <FormMessage />
                 </FormItem>
               )}
@@ -189,7 +201,9 @@ export function RegisterForm() {
                         variant="ghost"
                         size="icon"
                         className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-4 w-4 text-muted-foreground" />
