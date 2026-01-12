@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { addYears, endOfYear, format } from "date-fns"
 import { TagInput } from "emblor"
-import { CalendarIcon, Loader, Plus, XCircle } from "lucide-react"
+import { Bell, CalendarIcon, Loader, Plus, XCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -59,6 +59,7 @@ const goalCreateSchema = z.object({
   tags: z.array(z.string()).optional(),
   priority: z.enum(["low", "medium", "high"]).default("medium"),
   visibility: z.enum(["public", "private"]).default("private"),
+  enableReminders: z.boolean().default(true),
 })
 
 export type GoalCreateInput = z.infer<typeof goalCreateSchema>
@@ -83,6 +84,7 @@ export function GoalForm({ goal }: GoalFormProps) {
       tags: goal?.tags || [],
       priority: goal?.priority || "medium",
       visibility: goal?.visibility || "private",
+      enableReminders: true,
     },
   })
 
@@ -404,14 +406,50 @@ export function GoalForm({ goal }: GoalFormProps) {
             </FormItem>
           )}
         />
+
+        {/* Reminder Toggle - Only show in create mode */}
+        {mode === "create" && (
+          <FormField
+            control={form.control}
+            name="enableReminders"
+            render={({ field }) => (
+              <FormItem
+                className={`
+                  flex flex-row items-center justify-between rounded-lg border p-3
+                  shadow-sm
+                `}
+              >
+                <div className="flex items-start gap-3">
+                  <Bell className="mt-0.5 h-5 w-5 text-primary" />
+                  <div className="space-y-0.5">
+                    <FormLabel>Deadline Reminders</FormLabel>
+                    <FormDescription>
+                      Get email reminders 7 days, 3 days, and 1 day before the
+                      due date.
+                    </FormDescription>
+                  </div>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
+
         <Button type="submit" className="w-full" disabled={isCreatingGoal}>
           {isCreatingGoal ? (
             <>
               <Loader className="animate-spin" />
-              Creating...
+              {mode === "create" ? "Creating..." : "Updating..."}
             </>
-          ) : (
+          ) : mode === "create" ? (
             "Create Goal"
+          ) : (
+            "Update Goal"
           )}
         </Button>
       </form>

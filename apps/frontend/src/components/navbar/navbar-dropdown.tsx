@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 
 import {
+  Bell,
   ChevronDown,
   CircleQuestionMark,
   CreditCard,
@@ -72,6 +73,12 @@ export function NavbarDropdown({ isAdmin }: NavbarDropdownProps) {
         label: "Settings",
         path: "/settings",
         icon: Settings,
+      },
+      {
+        id: "reminders",
+        label: "Reminders",
+        path: "/reminders",
+        icon: Bell,
       },
       {
         id: "subscription",

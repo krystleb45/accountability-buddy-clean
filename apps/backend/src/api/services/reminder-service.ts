@@ -128,7 +128,7 @@ export class ReminderService {
       isSent: false,
       remindAt: { $lte: now },
     })
-      .populate("user", "email username")
+      .populate("user", "email username settings")
       .populate("goal", "title dueDate progress")
       .exec()
   }
@@ -143,15 +143,25 @@ export class ReminderService {
 
     for (const reminder of dueReminders) {
       try {
-        if (reminder.reminderType === "email" && reminder.email) {
-          await sendReminderEmail(
-            reminder.email,
-            reminder.message,
-            (reminder.goal as any)?.title
-          )
+        const user = reminder.user as any
+
+        // Check if user has email notifications enabled
+        if (reminder.reminderType === "email") {
+          const emailEnabled = user?.settings?.notifications?.email !== false
+          
+          if (emailEnabled && reminder.email) {
+            await sendReminderEmail(
+              reminder.email,
+              reminder.message,
+              (reminder.goal as any)?.title
+            )
+            logger.info(`✅ Email reminder ${reminder._id} sent to ${reminder.email}`)
+          } else {
+            logger.info(`⏭️ Skipping email reminder ${reminder._id} - notifications disabled`)
+          }
         }
 
-        // Mark as sent
+        // Mark as sent regardless (to prevent retrying)
         await reminder.markAsSent()
 
         // Handle recurrence
@@ -159,7 +169,7 @@ export class ReminderService {
           await this.scheduleNextRecurrence(reminder)
         }
 
-        logger.info(`✅ Reminder ${reminder._id} sent successfully`)
+        logger.info(`✅ Reminder ${reminder._id} processed successfully`)
       } catch (error) {
         logger.error(`❌ Failed to send reminder ${reminder._id}:`, error)
       }
@@ -211,6 +221,7 @@ export class ReminderService {
 
   /**
    * Create automatic reminders for a goal based on due date
+   * Respects user notification preferences
    */
   static async createGoalReminders(userId: string, goalId: string) {
     const goal = await Goal.findOne({ _id: goalId, user: userId })
@@ -219,6 +230,13 @@ export class ReminderService {
     const user = await User.findById(userId)
     if (!user) return []
 
+    // Check if user has email notifications enabled
+    const emailEnabled = user.settings?.notifications?.email !== false
+    if (!emailEnabled) {
+      logger.info(`⏭️ Skipping auto-reminders for user ${userId} - email notifications disabled`)
+      return []
+    }
+
     const reminders = []
     const dueDate = new Date(goal.dueDate)
     const now = new Date()
@@ -226,6 +244,7 @@ export class ReminderService {
     // 1 day before
     const oneDayBefore = new Date(dueDate)
     oneDayBefore.setDate(oneDayBefore.getDate() - 1)
+    oneDayBefore.setHours(9, 0, 0, 0) // Send at 9 AM
     if (oneDayBefore > now) {
       reminders.push(
         await Reminder.create({
@@ -242,6 +261,7 @@ export class ReminderService {
     // 3 days before
     const threeDaysBefore = new Date(dueDate)
     threeDaysBefore.setDate(threeDaysBefore.getDate() - 3)
+    threeDaysBefore.setHours(9, 0, 0, 0) // Send at 9 AM
     if (threeDaysBefore > now) {
       reminders.push(
         await Reminder.create({
@@ -255,7 +275,33 @@ export class ReminderService {
       )
     }
 
+    // 7 days before (for goals with longer timelines)
+    const sevenDaysBefore = new Date(dueDate)
+    sevenDaysBefore.setDate(sevenDaysBefore.getDate() - 7)
+    sevenDaysBefore.setHours(9, 0, 0, 0)
+    if (sevenDaysBefore > now) {
+      reminders.push(
+        await Reminder.create({
+          user: userId,
+          goal: goalId,
+          message: `📋 "${goal.title}" is due in 1 week`,
+          remindAt: sevenDaysBefore,
+          reminderType: "email",
+          email: user.email,
+        })
+      )
+    }
+
     logger.info(`⏰ Created ${reminders.length} auto-reminders for goal ${goalId}`)
     return reminders
+  }
+
+  /**
+   * Delete all reminders for a goal
+   */
+  static async deleteGoalReminders(goalId: string) {
+    const result = await Reminder.deleteMany({ goal: goalId })
+    logger.info(`⏰ Deleted ${result.deletedCount} reminders for goal ${goalId}`)
+    return result.deletedCount
   }
 }

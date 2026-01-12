@@ -10,6 +10,7 @@ import { CustomError } from "../middleware/errorHandler.js"
 import { Goal } from "../models/Goal.js"
 import { User } from "../models/User.js"
 import GamificationService from "./gamification-service.js"
+import { ReminderService } from "./reminder-service.js"
 import { UserService } from "./user-service.js"
 
 export class GoalService {
@@ -166,6 +167,9 @@ export class GoalService {
       goal.completedAt = new Date()
       await GamificationService.addPoints(userId, goal.points)
       logger.info(`User ${userId} completed goal ${goalId}`)
+      
+      // Delete pending reminders for completed goal
+      await ReminderService.deleteGoalReminders(goalId)
     } else if (newProgress > 0) {
       goal.status = "in-progress"
     }
@@ -195,6 +199,10 @@ export class GoalService {
     goal.status = "completed"
     goal.completedAt = new Date()
     await goal.save()
+    
+    // Delete pending reminders for completed goal
+    await ReminderService.deleteGoalReminders(goalId)
+    
     await GamificationService.checkAndAwardBadges(userId, "goal_completed")
     logger.info(`User ${userId} completed goal ${goalId}`)
     return goal
@@ -227,7 +235,7 @@ export class GoalService {
 
   /**
    * Create a new goal.
-   * Note: Subscription validation should be done in middleware/controller before calling this
+   * @param enableReminders - If true, auto-create deadline reminders (default: true)
    */
   static async createGoal(
     userId: string,
@@ -241,6 +249,7 @@ export class GoalService {
       | "priority"
       | "visibility"
     >,
+    enableReminders = true,
   ) {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new CustomError("Invalid user ID", 400)
@@ -266,6 +275,17 @@ export class GoalService {
 
     await goal.save()
     logger.info(`Goal created for user ${userId}: ${goal._id}`)
+
+    // Auto-create reminders if enabled and goal has a due date
+    if (enableReminders && goal.dueDate) {
+      try {
+        await ReminderService.createGoalReminders(userId, goal._id.toString())
+      } catch (error) {
+        // Don't fail goal creation if reminders fail
+        logger.error(`Failed to create auto-reminders for goal ${goal._id}:`, error)
+      }
+    }
+
     return goal
   }
 
@@ -284,6 +304,15 @@ export class GoalService {
       throw new CustomError("Invalid goal or user ID", 400)
     }
 
+    const existingGoal = await Goal.findOne({ _id: goalId, user: userId })
+    if (!existingGoal) {
+      return null
+    }
+
+    // Check if due date is being updated
+    const dueDateChanged = updates.dueDate && 
+      updates.dueDate.toString() !== existingGoal.dueDate?.toString()
+
     const goal = await Goal.findOneAndUpdate(
       { _id: goalId, user: userId },
       { $set: updates },
@@ -292,6 +321,17 @@ export class GoalService {
 
     if (!goal) {
       return null
+    }
+
+    // If due date changed, recreate reminders
+    if (dueDateChanged && goal.dueDate) {
+      try {
+        await ReminderService.deleteGoalReminders(goalId)
+        await ReminderService.createGoalReminders(userId, goalId)
+        logger.info(`Reminders updated for goal ${goalId} due to date change`)
+      } catch (error) {
+        logger.error(`Failed to update reminders for goal ${goalId}:`, error)
+      }
     }
 
     return goal
@@ -307,6 +347,9 @@ export class GoalService {
     ) {
       throw new CustomError("Invalid goal or user ID", 400)
     }
+
+    // Delete associated reminders first
+    await ReminderService.deleteGoalReminders(goalId)
 
     const result = await Goal.deleteOne({ _id: goalId, user: userId }).exec()
 

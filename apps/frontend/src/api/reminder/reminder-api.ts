@@ -1,32 +1,18 @@
-import type { Envelope } from "@/types"
-import type { Goal, Reminder } from "@/types/mongoose.gen"
+import { http } from "@/utils"
 
-import { http } from "@/lib/http"
-import { getApiErrorMessage } from "@/utils"
-
-export type ReminderWithGoal = Reminder & {
-  goal?: Pick<Goal, "_id" | "title" | "dueDate" | "progress">
-}
-
-export async function fetchUserReminders(includeInactive = false) {
-  try {
-    const resp = await http.get<Envelope<{ reminders: ReminderWithGoal[] }>>(
-      `/reminders${includeInactive ? "?includeInactive=true" : ""}`
-    )
-    return resp.data.data.reminders
-  } catch (err) {
-    throw new Error(getApiErrorMessage(err as Error))
-  }
-}
-
-export async function fetchReminderById(reminderId: string) {
-  try {
-    const resp = await http.get<Envelope<{ reminder: ReminderWithGoal }>>(
-      `/reminders/${reminderId}`
-    )
-    return resp.data.data.reminder
-  } catch (err) {
-    throw new Error(getApiErrorMessage(err as Error))
+export interface Reminder {
+  _id: string
+  message: string
+  remindAt: string
+  reminderType: "email" | "sms" | "app"
+  recurrence: "none" | "daily" | "weekly" | "monthly"
+  isActive: boolean
+  isSent: boolean
+  goal?: {
+    _id: string
+    title: string
+    dueDate?: string
+    progress: number
   }
 }
 
@@ -39,18 +25,6 @@ export interface CreateReminderInput {
   endRepeat?: string
 }
 
-export async function createReminder(data: CreateReminderInput) {
-  try {
-    const resp = await http.post<Envelope<{ reminder: Reminder }>>(
-      "/reminders",
-      data
-    )
-    return resp.data.data.reminder
-  } catch (err) {
-    throw new Error(getApiErrorMessage(err as Error))
-  }
-}
-
 export interface UpdateReminderInput {
   message?: string
   remindAt?: string
@@ -60,22 +34,51 @@ export interface UpdateReminderInput {
   endRepeat?: string
 }
 
-export async function updateReminder(reminderId: string, data: UpdateReminderInput) {
-  try {
-    const resp = await http.patch<Envelope<{ reminder: Reminder }>>(
-      `/reminders/${reminderId}`,
-      data
-    )
-    return resp.data.data.reminder
-  } catch (err) {
-    throw new Error(getApiErrorMessage(err as Error))
-  }
+/**
+ * Fetch all reminders for the current user
+ */
+export async function fetchUserReminders(): Promise<Reminder[]> {
+  const response = await http.get<{ data: Reminder[] }>("/reminders")
+  return response.data.data
 }
 
-export async function deleteReminder(reminderId: string) {
-  try {
-    await http.delete(`/reminders/${reminderId}`)
-  } catch (err) {
-    throw new Error(getApiErrorMessage(err as Error))
-  }
+/**
+ * Fetch a single reminder by ID
+ */
+export async function fetchReminderById(reminderId: string): Promise<Reminder> {
+  const response = await http.get<{ data: Reminder }>(
+    `/reminders/${reminderId}`
+  )
+  return response.data.data
+}
+
+/**
+ * Create a new reminder
+ */
+export async function createReminder(
+  data: CreateReminderInput
+): Promise<Reminder> {
+  const response = await http.post<{ data: Reminder }>("/reminders", data)
+  return response.data.data
+}
+
+/**
+ * Update a reminder
+ */
+export async function updateReminder(
+  reminderId: string,
+  data: UpdateReminderInput
+): Promise<Reminder> {
+  const response = await http.patch<{ data: Reminder }>(
+    `/reminders/${reminderId}`,
+    data
+  )
+  return response.data.data
+}
+
+/**
+ * Delete a reminder
+ */
+export async function deleteReminder(reminderId: string): Promise<void> {
+  await http.delete(`/reminders/${reminderId}`)
 }
