@@ -77,7 +77,7 @@ export function EditInterestsForm({
               <FormControl>
                 <TagInput
                   {...field}
-                  placeholder="Enter an interest"
+                  placeholder="Type an interest and press Enter"
                   tags={tags}
                   className="sm:min-w-[450px]"
                   setTags={(newTags) => {

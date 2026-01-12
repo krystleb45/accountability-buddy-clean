@@ -8,7 +8,6 @@ import { useState } from "react"
 import { toast } from "sonner"
 
 import { updateProfile } from "@/api/profile/profile-api"
-import { useGetCurrentTimeWithTimezone } from "@/hooks/use-get-current-time-with-timezone"
 import { useProfile } from "@/hooks/use-profile"
 import { useSubscription } from "@/hooks/useSubscription"
 
@@ -40,7 +39,6 @@ export function Profile() {
   const [editingLocation, setEditingLocation] = useState(false)
 
   const { profile } = useProfile()
-  const currentTime = useGetCurrentTimeWithTimezone(profile?.timezone || "UTC")
 
   const queryClient = useQueryClient()
   const { mutate: updateInterests, isPending: isUpdatingInterests } =
@@ -278,7 +276,6 @@ export function Profile() {
                   `}
                 >
                   <Clock className="h-4 w-5" />{" "}
-                  <p className="font-mono">{currentTime}</p>
                 </div>
               )}
             </div>

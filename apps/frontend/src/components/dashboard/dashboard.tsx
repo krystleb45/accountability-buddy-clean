@@ -95,7 +95,7 @@ export function Dashboard({
   const goalsCard: ICard = {
     label: "Goals",
     icon: Goal,
-    subtitle: "Track your progress and explore suggested goals.",
+    subtitle: "Track your progress, explore suggested goals, or create new ones.",
     link: "/goals",
     content: (
       <>

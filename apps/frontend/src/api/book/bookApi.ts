@@ -114,3 +114,47 @@ export async function unlikeBook(id: string): Promise<void> {
     throw new Error(getApiErrorMessage(err as Error))
   }
 }
+/**
+ * Book comment model
+ */
+export interface BookComment {
+  _id: string
+  user: {
+    _id: string
+    username: string
+    profileImage?: string
+  }
+  text: string
+  createdAt: string
+}
+
+/**
+ * Extended Book with populated comments
+ */
+export interface BookWithComments extends Book {
+  comments?: BookComment[]
+}
+
+/**
+ * Add a comment to a book
+ */
+export async function addBookComment(bookId: string, text: string): Promise<BookWithComments> {
+  try {
+    const res = await http.post<Envelope<{ book: BookWithComments }>>(`/books/${bookId}/comment`, { text })
+    return res.data.data.book
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
+/**
+ * Remove a comment from a book
+ */
+export async function removeBookComment(bookId: string, commentId: string): Promise<void> {
+  try {
+    await http.delete(`/books/${bookId}/comment/${commentId}`)
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+

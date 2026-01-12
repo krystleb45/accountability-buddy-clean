@@ -42,7 +42,7 @@ export function Navbar() {
       {/* Brand always shown first */}
       <div className="shrink-0">
         <Link
-          href={authStatus === "authenticated" ? "/dashboard" : "/"}
+          href="/"
           className={`
             flex items-center gap-2 transition-all
             hover:brightness-110
@@ -108,12 +108,7 @@ export function Navbar() {
               <SheetContent side="right" className="w-72">
                 <SheetHeader>
                   <SheetTitle className="flex items-center gap-2">
-                    <Image
-                      src="/logo.png"
-                      alt="Logo"
-                      width={32}
-                      height={32}
-                    />
+                    <Image src="/logo.png" alt="Logo" width={32} height={32} />
                     Accountability Buddy
                   </SheetTitle>
                 </SheetHeader>
