@@ -1,5 +1,11 @@
+"use client"
+
+import { ArrowLeft } from "lucide-react"
+import { useSession } from "next-auth/react"
+import Link from "next/link"
 import React from "react"
 
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardDescription,
@@ -11,9 +17,21 @@ import { AnonymousMilitaryChatSocketProvider } from "@/context/anonymous-militar
 const MilitarySupportLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { status } = useSession()
+  const isAuthenticated = status === "authenticated"
+
   return (
     <AnonymousMilitaryChatSocketProvider>
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-10 p-6">
+        {/* Back to Dashboard for logged-in users */}
+        {isAuthenticated && (
+          <Button variant="link" size="sm" asChild className="self-start !px-0">
+            <Link href="/dashboard">
+              <ArrowLeft /> Back to Dashboard
+            </Link>
+          </Button>
+        )}
+
         {/* Military Support Header */}
         <header className="flex flex-col gap-6">
           <h1 className="flex items-center gap-2 self-center text-3xl font-bold">
