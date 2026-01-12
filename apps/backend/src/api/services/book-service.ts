@@ -22,6 +22,10 @@ export async function addBookService(
   return book
 }
 
+export async function getAllBooksService() {
+  return Book.find().sort({ createdAt: -1 })
+}
+
 export async function getBookByIdService(id: string) {
   const book = await Book.findById(id).populate({
     path: "comments.user",
