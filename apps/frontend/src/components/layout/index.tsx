@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 
+import { Footer } from "@/components/footer"
 import { Navbar } from "@/components/navbar"
 
 import { NewsletterPopup } from "./newsletter-popup"
@@ -19,15 +20,7 @@ export function LayoutComponent({
       <main>{children}</main>
 
       {/* Global footer */}
-      <footer
-        className={`
-          w-full border-t bg-popover py-6 text-center text-base
-          text-muted-foreground
-          md:text-lg
-        `}
-      >
-        <p>&copy; {new Date().getFullYear()} Accountability Buddy.</p>
-      </footer>
+      <Footer />
 
       <NewsletterPopup showAfterSeconds={45} />
     </>
