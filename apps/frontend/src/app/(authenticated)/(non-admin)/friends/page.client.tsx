@@ -122,7 +122,7 @@ export function FriendsClient() {
   }
 
   const filteredFriends = (friends || []).filter((f) =>
-    f?.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+    (f?.name || f?.username || "").toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
   if (status === "loading" || isLoading) {
@@ -331,7 +331,7 @@ export function FriendsClient() {
                       }
                     />
                     <div className="flex-1">
-                      <CardTitle>{friend.name}</CardTitle>
+                      <CardTitle>{friend.name || friend.username}</CardTitle>
                       <CardDescription>@{friend.username}</CardDescription>
                     </div>
                   </div>

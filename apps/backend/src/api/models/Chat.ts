@@ -52,14 +52,14 @@ ChatSchema.methods = {
     this.lastMessage = messageId
     this.participants.forEach((participant) => {
       // increment unread for others
-      if (!participant._id.equals(userId)) {
+      if (!participant.equals(userId)) {
         const um = this.unreadMessages.find((u) =>
-          u.userId._id.equals(participant._id),
+          u.userId.equals(participant),
         )
         if (um) {
           um.count += 1
         } else {
-          this.unreadMessages.push({ userId: participant._id, count: 1 })
+          this.unreadMessages.push({ userId: participant, count: 1 })
         }
       }
     })
@@ -67,7 +67,7 @@ ChatSchema.methods = {
     return this
   },
   async markRead(this, userId: mongoose.Types.ObjectId) {
-    const um = this.unreadMessages.find((u) => u.userId._id.equals(userId))
+    const um = this.unreadMessages.find((u) => u.userId.equals(userId))
     if (um) {
       um.count = 0
     }
