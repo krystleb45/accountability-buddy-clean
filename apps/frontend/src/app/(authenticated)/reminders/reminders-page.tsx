@@ -53,10 +53,10 @@ export default function RemindersPage() {
   const queryClient = useQueryClient()
 
   const {
-    data: reminders,
+    data: remindersData,
     isLoading,
     error,
-  } = useQuery<Reminder[]>({
+  } = useQuery({
     queryKey: ["reminders"],
     queryFn: fetchUserReminders,
   })
@@ -94,8 +94,13 @@ export default function RemindersPage() {
     )
   }
 
-  const pendingReminders = reminders?.filter((r) => !r.isSent) || []
-  const sentReminders = reminders?.filter((r) => r.isSent) || []
+  // Defensive: ensure reminders is always an array
+  const reminders: Reminder[] = Array.isArray(remindersData) 
+    ? remindersData 
+    : (remindersData as any)?.reminders || (remindersData as any)?.data || []
+
+  const pendingReminders = reminders.filter((r) => !r.isSent)
+  const sentReminders = reminders.filter((r) => r.isSent)
 
   return (
     <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8">

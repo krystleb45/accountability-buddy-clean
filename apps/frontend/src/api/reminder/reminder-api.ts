@@ -38,28 +38,26 @@ export interface UpdateReminderInput {
  * Fetch all reminders for the current user
  */
 export async function fetchUserReminders(): Promise<Reminder[]> {
-  const response = await http.get<{ data: Reminder[] }>("/reminders")
-  return response.data.data
+  const response = await http.get("/reminders")
+  
+  // API returns { data: { reminders: [...] } }
+  return response.data?.data?.reminders || []
 }
 
 /**
  * Fetch a single reminder by ID
  */
 export async function fetchReminderById(reminderId: string): Promise<Reminder> {
-  const response = await http.get<{ data: Reminder }>(
-    `/reminders/${reminderId}`
-  )
-  return response.data.data
+  const response = await http.get(`/reminders/${reminderId}`)
+  return response.data?.data?.reminder
 }
 
 /**
  * Create a new reminder
  */
-export async function createReminder(
-  data: CreateReminderInput
-): Promise<Reminder> {
-  const response = await http.post<{ data: Reminder }>("/reminders", data)
-  return response.data.data
+export async function createReminder(data: CreateReminderInput): Promise<Reminder> {
+  const response = await http.post("/reminders", data)
+  return response.data?.data?.reminder
 }
 
 /**
@@ -69,11 +67,8 @@ export async function updateReminder(
   reminderId: string,
   data: UpdateReminderInput
 ): Promise<Reminder> {
-  const response = await http.patch<{ data: Reminder }>(
-    `/reminders/${reminderId}`,
-    data
-  )
-  return response.data.data
+  const response = await http.patch(`/reminders/${reminderId}`, data)
+  return response.data?.data?.reminder
 }
 
 /**
