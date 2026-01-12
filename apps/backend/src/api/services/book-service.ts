@@ -22,15 +22,16 @@ export async function addBookService(
   return book
 }
 
-export async function getAllBooksService() {
-  return Book.find().sort({ createdAt: -1 })
+export async function getBookByIdService(id: string) {
+  const book = await Book.findById(id).populate("comments.user", "username profileImage")
+  if (!book) {
+    throw new Error("Book not found")
+  }
+  return book
 }
 
 export async function getBookByIdService(id: string) {
-  const book = await Book.findById(id).populate({
-    path: "comments.user",
-    select: "username profileImage",
-  })
+  const book = await Book.findById(id)
   if (!book) {
     throw new Error("Book not found")
   }
