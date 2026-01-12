@@ -15,7 +15,7 @@ interface TokenPayload {
 const {
   ACCESS_TOKEN_SECRET,
   SALT_ROUNDS = "12",
-  ACCESS_TOKEN_EXPIRES_IN = "1h",
+  ACCESS_TOKEN_EXPIRES_IN = "7d", // Changed from "1h" to "7d" for better UX
 } = process.env
 
 if (!ACCESS_TOKEN_SECRET) {
