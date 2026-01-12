@@ -110,3 +110,72 @@ export async function uploadPostCover(id: string, file: File): Promise<string> {
     throw new Error(getApiErrorMessage(err as Error))
   }
 }
+
+/**
+ * Blog comment model
+ */
+export interface BlogComment {
+  _id: string
+  user: {
+    _id: string
+    username: string
+    profileImage?: string
+  }
+  text: string
+  createdAt: string
+}
+
+/**
+ * Extended BlogPost with likes and comments
+ */
+export interface BlogPostWithComments extends BlogPost {
+  likes?: string[]
+  likeCount?: number
+  comments?: BlogComment[]
+  commentCount?: number
+}
+
+/**
+ * Like a blog post
+ */
+export async function likeBlogPost(id: string): Promise<void> {
+  try {
+    await http.post(`/blog/like/${id}`)
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
+/**
+ * Unlike a blog post
+ */
+export async function unlikeBlogPost(id: string): Promise<void> {
+  try {
+    await http.post(`/blog/unlike/${id}`)
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
+/**
+ * Add a comment to a blog post
+ */
+export async function addBlogComment(id: string, text: string): Promise<BlogPostWithComments> {
+  try {
+    const res = await http.post<Envelope<{ post: BlogPostWithComments }>>(`/blog/comment/${id}`, { text })
+    return res.data.data.post
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}
+
+/**
+ * Remove a comment from a blog post
+ */
+export async function removeBlogComment(postId: string, commentId: string): Promise<void> {
+  try {
+    await http.delete(`/blog/comment/${postId}/${commentId}`)
+  } catch (err) {
+    throw new Error(getApiErrorMessage(err as Error))
+  }
+}

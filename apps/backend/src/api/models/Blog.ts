@@ -2,6 +2,13 @@ import mongoose, { Schema } from "mongoose"
 
 import type { Document, Model } from "mongoose"
 
+export interface IBlogComment {
+  _id: mongoose.Types.ObjectId
+  user: mongoose.Types.ObjectId
+  text: string
+  createdAt: Date
+}
+
 export interface IBlog extends Document {
   title: string
   slug: string
@@ -11,10 +18,23 @@ export interface IBlog extends Document {
   author: mongoose.Types.ObjectId
   status: "draft" | "published"
   tags: string[]
+  likes: mongoose.Types.ObjectId[]
+  comments: IBlogComment[]
   publishedAt?: Date
   createdAt: Date
   updatedAt: Date
+  likeCount: number
+  commentCount: number
 }
+
+const BlogCommentSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    text: { type: String, required: true, trim: true, maxlength: 500 },
+    createdAt: { type: Date, default: Date.now },
+  },
+  { _id: true, timestamps: false }
+)
 
 const BlogSchema = new Schema<IBlog>(
   {
@@ -30,6 +50,8 @@ const BlogSchema = new Schema<IBlog>(
       default: "draft",
     },
     tags: [{ type: String, trim: true }],
+    likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    comments: { type: [BlogCommentSchema], default: [] },
     publishedAt: { type: Date },
   },
   {
@@ -38,6 +60,15 @@ const BlogSchema = new Schema<IBlog>(
     toObject: { virtuals: true },
   }
 )
+
+// Virtuals
+BlogSchema.virtual("likeCount").get(function () {
+  return this.likes?.length || 0
+})
+
+BlogSchema.virtual("commentCount").get(function () {
+  return this.comments?.length || 0
+})
 
 // Auto-generate slug from title
 BlogSchema.pre("save", function (next) {

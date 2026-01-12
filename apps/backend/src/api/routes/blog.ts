@@ -155,6 +155,109 @@ router.post(
   }
 )
 
+// ─── LIKE & COMMENT ROUTES (must be before /:slug) ────────────
+
+/**
+ * POST /api/blog/like/:id
+ * Like a blog post
+ */
+router.post("/like/:id", protect, async (req, res) => {
+  const post = await Blog.findById(req.params.id)
+
+  if (!post) {
+    return sendResponse(res, 404, false, "Blog post not found", null)
+  }
+
+  const userId = req.user._id
+  if (!post.likes.some((id) => id.equals(userId))) {
+    post.likes.push(userId)
+    await post.save()
+  }
+
+  sendResponse(res, 200, true, "Blog post liked", { post })
+})
+
+/**
+ * POST /api/blog/unlike/:id
+ * Unlike a blog post
+ */
+router.post("/unlike/:id", protect, async (req, res) => {
+  const post = await Blog.findById(req.params.id)
+
+  if (!post) {
+    return sendResponse(res, 404, false, "Blog post not found", null)
+  }
+
+  const userId = req.user._id
+  post.likes = post.likes.filter((id) => !id.equals(userId))
+  await post.save()
+
+  sendResponse(res, 200, true, "Blog post unliked", { post })
+})
+
+/**
+ * POST /api/blog/comment/:id
+ * Add a comment to a blog post
+ */
+router.post("/comment/:id", protect, async (req, res) => {
+  const { text } = req.body
+
+  if (!text?.trim()) {
+    return sendResponse(res, 400, false, "Comment text is required", null)
+  }
+
+  const post = await Blog.findById(req.params.id)
+
+  if (!post) {
+    return sendResponse(res, 404, false, "Blog post not found", null)
+  }
+
+  post.comments.push({
+    user: req.user._id,
+    text: text.trim(),
+    createdAt: new Date(),
+  })
+  await post.save()
+
+  // Re-fetch with populated comments
+  const updatedPost = await Blog.findById(req.params.id)
+    .populate("comments.user", "username profileImage")
+    .exec()
+
+  sendResponse(res, 201, true, "Comment added", { post: updatedPost })
+})
+
+/**
+ * DELETE /api/blog/comment/:id/:commentId
+ * Delete a comment from a blog post
+ */
+router.delete("/comment/:id/:commentId", protect, async (req, res) => {
+  const post = await Blog.findById(req.params.id)
+
+  if (!post) {
+    return sendResponse(res, 404, false, "Blog post not found", null)
+  }
+
+  const commentIndex = post.comments.findIndex(
+    (c) => c._id.toString() === req.params.commentId
+  )
+
+  if (commentIndex === -1) {
+    return sendResponse(res, 404, false, "Comment not found", null)
+  }
+
+  // Only allow comment owner or admin to delete
+  const comment = post.comments[commentIndex]
+  if (!comment.user.equals(req.user._id) && req.user.role !== "admin") {
+    return sendResponse(res, 403, false, "Not authorized to delete this comment", null)
+  }
+
+  post.comments.splice(commentIndex, 1)
+  await post.save()
+
+  sendResponse(res, 200, true, "Comment deleted", { post })
+})
+
 // ─── PUBLIC ROUTES ────────────────────────────────────────────
 
 /**
@@ -180,6 +283,7 @@ router.get("/:slug", async (req, res) => {
     status: "published" 
   })
     .populate("author", "username profileImage")
+    .populate("comments.user", "username profileImage")
     .exec()
 
   if (!post) {
