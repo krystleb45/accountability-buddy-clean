@@ -322,10 +322,11 @@ export function Dashboard({
   ]
 
   // Combine all cards in the desired order
+  // Social cards (Group Goals, Community) come first - right after Goals!
   const allCards: ICard[] = [
+    ...socialCards,
     ...statsCards,
     ...gamificationCards,
-    ...socialCards,
     ...resourceCards,
   ]
 
