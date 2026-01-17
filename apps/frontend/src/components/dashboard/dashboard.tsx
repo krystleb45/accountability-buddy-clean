@@ -305,7 +305,7 @@ export function Dashboard({
     },
   ]
 
-  // Resources cards - stay at bottom
+  // Resources cards - in their own section at bottom
   const resourceCards: ICard[] = [
     {
       label: "Blog",
@@ -321,13 +321,12 @@ export function Dashboard({
     },
   ]
 
-  // Combine all cards in the desired order
+  // Combine main cards (excluding resources which get their own section)
   // Social cards (Group Goals, Community) come first - right after Goals!
   const allCards: ICard[] = [
     ...socialCards,
     ...statsCards,
     ...gamificationCards,
-    ...resourceCards,
   ]
 
   return (
@@ -393,7 +392,7 @@ export function Dashboard({
                 </CardDescription>
               </CardHeader>
               {c.content && (
-                <CardContent className="mt-auto">{c.content}</CardContent>
+                <CardContent>{c.content}</CardContent>
               )}
             </MotionCard>
           )
@@ -420,6 +419,35 @@ export function Dashboard({
 
         {/* Newsletter signup */}
         <NewsletterCard />
+      </div>
+
+      {/* Resources Section - Blog & Books side by side */}
+      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+        {resourceCards.map((c) => (
+          <Link
+            href={c.link!}
+            aria-label={`View ${c.label.toLowerCase()}`}
+            key={c.label}
+            className="block"
+          >
+            <MotionCard whileHover={{ scale: 1.02 }} className="h-full">
+              <CardHeader className="text-center">
+                <CardTitle
+                  className={`
+                    flex items-center justify-center gap-4 text-2xl
+                    font-semibold
+                    sm:text-3xl
+                  `}
+                >
+                  <c.icon size={36} className="text-primary" /> {c.label}
+                </CardTitle>
+                <CardDescription className="text-lg">
+                  {c.subtitle}
+                </CardDescription>
+              </CardHeader>
+            </MotionCard>
+          </Link>
+        ))}
       </div>
     </div>
   )
