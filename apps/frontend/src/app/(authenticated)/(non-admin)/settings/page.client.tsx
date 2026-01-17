@@ -19,7 +19,7 @@ export default function SettingsClient() {
   const { loading } = useAuth()
 
   const {
-    data: settings,
+    data: settingsData,
     isPending: isLoadingSettings,
     error,
   } = useQuery({
@@ -48,13 +48,15 @@ export default function SettingsClient() {
     )
   }
 
-  if (!settings) {
+  if (!settingsData) {
     return (
       <div className="grid min-h-screen place-items-center">
         <p className="text-muted-foreground">No settings found.</p>
       </div>
     )
   }
+
+  const { settings, phoneNumber } = settingsData
 
   return (
     <main className="flex flex-col gap-6">
@@ -68,7 +70,10 @@ export default function SettingsClient() {
         <SettingsIcon size={36} className="text-primary" /> Your Settings
       </h1>
 
-      <NotificationPrefsForm currentPrefs={settings.notifications} />
+      <NotificationPrefsForm 
+        currentPrefs={settings.notifications} 
+        phoneNumber={phoneNumber}
+      />
 
       <ProfileVisibilityForm
         currentPrefs={settings.privacy?.profileVisibility}

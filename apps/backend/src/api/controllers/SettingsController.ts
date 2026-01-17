@@ -12,23 +12,25 @@ import sendResponse from "../utils/sendResponse.js"
 
 export const getUserSettings = catchAsync(
   async (req: AuthenticatedRequest, res: Response) => {
-    const settings = await SettingsService.getSettings(req.user.id)
+    const { settings, phoneNumber } = await SettingsService.getSettings(req.user.id)
 
     sendResponse(res, 200, true, "User settings fetched successfully", {
       settings,
+      phoneNumber,
     })
   },
 )
 
 export const updateUserSettings = catchAsync(
   async (
-    req: AuthenticatedRequest<unknown, unknown, SettingsUpdateInput>,
+    req: AuthenticatedRequest<unknown, unknown, SettingsUpdateInput & { phoneNumber?: string }>,
     res: Response,
   ) => {
-    const settings = await SettingsService.updateSettings(req.user.id, req.body)
+    const { settings, phoneNumber } = await SettingsService.updateSettings(req.user.id, req.body)
 
     sendResponse(res, 200, true, "Account settings updated successfully", {
       settings,
+      phoneNumber,
     })
   },
 )

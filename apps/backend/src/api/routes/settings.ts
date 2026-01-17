@@ -33,10 +33,12 @@ const settingsUpdateSchema = z
     notifications: z.object({
       email: z.boolean(),
       sms: z.boolean(),
-    }),
+      weeklyDigest: z.boolean(),
+    }).partial(),
     privacy: z.object({
       profileVisibility: z.enum(["public", "friends", "private"]),
-    }),
+    }).partial(),
+    phoneNumber: z.string().optional(),
   })
   .partial()
 

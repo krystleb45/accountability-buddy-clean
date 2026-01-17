@@ -6,42 +6,74 @@ import { User } from "../models/User.js"
 
 class SettingsService {
   /**
-   * Fetch a user's settings.
+   * Fetch a user's settings (including phone number for SMS).
    */
   static async getSettings(userId: string) {
-    const user = await User.findById(userId).select("settings").lean()
+    const user = await User.findById(userId)
+      .select("settings phoneNumber")
+      .lean()
 
     if (!user) {
       throw createError("User not found", 404)
     }
 
-    return user.settings
+    return {
+      settings: user.settings,
+      phoneNumber: user.phoneNumber || "",
+    }
   }
 
   /**
-   * Update general account settings.
+   * Update general account settings (including phone number).
    */
-  static async updateSettings(userId: string, updates: SettingsUpdateInput) {
+  static async updateSettings(userId: string, updates: SettingsUpdateInput & { phoneNumber?: string }) {
+    const updateFields: Record<string, any> = {}
+
+    // Handle notifications settings
+    if (updates.notifications) {
+      updateFields["settings.notifications"] = updates.notifications
+    }
+
+    // Handle privacy settings
+    if (updates.privacy) {
+      updateFields["settings.privacy"] = updates.privacy
+    }
+
+    // Handle phone number update
+    if (updates.phoneNumber !== undefined) {
+      // Clean phone number - remove formatting, keep only digits
+      const cleanedPhone = updates.phoneNumber.replace(/\D/g, "")
+      
+      // Add +1 prefix for US numbers if not already present
+      if (cleanedPhone.length === 10) {
+        updateFields.phoneNumber = `+1${cleanedPhone}`
+      } else if (cleanedPhone.length === 11 && cleanedPhone.startsWith("1")) {
+        updateFields.phoneNumber = `+${cleanedPhone}`
+      } else if (cleanedPhone.length === 0) {
+        updateFields.phoneNumber = ""
+      } else {
+        updateFields.phoneNumber = cleanedPhone
+      }
+    }
+
     const user = await User.findByIdAndUpdate(
       userId,
-      {
-        ...(updates.notifications
-          ? { "settings.notifications": updates.notifications }
-          : {}),
-        ...(updates.privacy ? { "settings.privacy": updates.privacy } : {}),
-      },
+      { $set: updateFields },
       {
         new: true,
         runValidators: true,
         context: "query",
       },
-    ).select("settings")
+    ).select("settings phoneNumber")
 
     if (!user) {
       throw createError("User not found", 404)
     }
 
-    return user.settings
+    return {
+      settings: user.settings,
+      phoneNumber: user.phoneNumber || "",
+    }
   }
 
   /**

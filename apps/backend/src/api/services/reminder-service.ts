@@ -7,6 +7,7 @@ import { Goal } from "../models/Goal.js"
 import { Reminder } from "../models/Reminder.js"
 import { User } from "../models/User.js"
 import { sendReminderEmail } from "./email-service.js"
+import { sendReminderSMS, isSMSEnabled } from "./sms-service.js"
 
 export class ReminderService {
   /**
@@ -39,6 +40,7 @@ export class ReminderService {
     const reminder = new Reminder({
       user: userId,
       email: user.email,
+      phoneNumber: user.phoneNumber || undefined,
       ...data,
     })
 
@@ -128,7 +130,7 @@ export class ReminderService {
       isSent: false,
       remindAt: { $lte: now },
     })
-      .populate("user", "email username settings")
+      .populate("user", "email username phoneNumber settings")
       .populate("goal", "title dueDate progress")
       .exec()
   }
@@ -144,24 +146,35 @@ export class ReminderService {
     for (const reminder of dueReminders) {
       try {
         const user = reminder.user as any
+        const goalTitle = (reminder.goal as any)?.title || "Your Goal"
 
-        // Check if user has email notifications enabled
-        if (reminder.reminderType === "email") {
-          const emailEnabled = user?.settings?.notifications?.email !== false
-          
-          if (emailEnabled && reminder.email) {
-            await sendReminderEmail(
-              reminder.email,
-              reminder.message,
-              (reminder.goal as any)?.title
-            )
-            logger.info(`✅ Email reminder ${reminder._id} sent to ${reminder.email}`)
-          } else {
-            logger.info(`⏭️ Skipping email reminder ${reminder._id} - notifications disabled`)
+        // Send EMAIL if enabled
+        const emailEnabled = user?.settings?.notifications?.email !== false
+        if (emailEnabled && reminder.email) {
+          await sendReminderEmail(
+            reminder.email,
+            reminder.message,
+            goalTitle
+          )
+          logger.info(`✅ Email reminder sent to ${reminder.email}`)
+        }
+
+        // Send SMS if enabled and user has phone number
+        const smsEnabled = user?.settings?.notifications?.sms === true
+        const hasPhone = user?.phoneNumber && user.phoneNumber.length >= 10
+        
+        if (smsEnabled && hasPhone && isSMSEnabled()) {
+          const smsSent = await sendReminderSMS(
+            user.phoneNumber,
+            goalTitle,
+            reminder.message
+          )
+          if (smsSent) {
+            logger.info(`📱 SMS reminder sent to ${user.phoneNumber}`)
           }
         }
 
-        // Mark as sent regardless (to prevent retrying)
+        // Mark as sent
         await reminder.markAsSent()
 
         // Handle recurrence
@@ -230,10 +243,12 @@ export class ReminderService {
     const user = await User.findById(userId)
     if (!user) return []
 
-    // Check if user has email notifications enabled
+    // Check if user has any notifications enabled
     const emailEnabled = user.settings?.notifications?.email !== false
-    if (!emailEnabled) {
-      logger.info(`⏭️ Skipping auto-reminders for user ${userId} - email notifications disabled`)
+    const smsEnabled = user.settings?.notifications?.sms === true && user.phoneNumber
+    
+    if (!emailEnabled && !smsEnabled) {
+      logger.info(`⏭️ Skipping auto-reminders for user ${userId} - all notifications disabled`)
       return []
     }
 

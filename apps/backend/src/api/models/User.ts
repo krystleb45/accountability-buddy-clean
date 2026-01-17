@@ -28,6 +28,7 @@ const UserSchema: IUserSchema = new Schema(
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true, minlength: 8, select: false },
+    phoneNumber: { type: String, default: "" }, // For SMS notifications
     bio: { type: String, default: "" },
     profileImage: { type: String, default: "" },
     coverImage: { type: String, default: "" },
@@ -38,6 +39,7 @@ const UserSchema: IUserSchema = new Schema(
       default: "user",
     },
     isVerified: { type: Boolean, default: false },
+    isPhoneVerified: { type: Boolean, default: false }, // For phone verification
     permissions: { type: [String], default: [] },
     isLocked: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
@@ -134,6 +136,7 @@ UserSchema.index({ stripeSubscriptionId: 1 })
 UserSchema.index({ subscriptionTier: 1 })
 UserSchema.index({ subscription_status: 1 })
 UserSchema.index({ trial_end_date: 1 })
+UserSchema.index({ phoneNumber: 1 })
 
 // Password hashing
 UserSchema.pre(
@@ -290,6 +293,16 @@ UserSchema.methods = {
   setOffline() {
     this.activeStatus = "offline"
     return this.save()
+  },
+  /**
+   * Check if user can receive SMS notifications
+   */
+  canReceiveSMS() {
+    return (
+      this.settings?.notifications?.sms === true &&
+      this.phoneNumber &&
+      this.phoneNumber.length >= 10
+    )
   },
 }
 
