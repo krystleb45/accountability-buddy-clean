@@ -54,8 +54,33 @@ const reminderSchema = z.object({
   remindAt: z.date({ required_error: "Please select a date and time" }),
   remindTime: z.string().min(1, "Please select a time"),
   recurrence: z.enum(["none", "daily", "weekly", "monthly"]).default("none"),
+  endRepeatAt: z.date().optional(),
   reminderType: z.enum(["email", "sms", "app"]).default("email"),
-})
+}).refine(
+  (data) => {
+    // If recurrence is set (not "none"), endRepeatAt is required
+    if (data.recurrence !== "none" && !data.endRepeatAt) {
+      return false
+    }
+    return true
+  },
+  {
+    message: "End date is required for recurring reminders",
+    path: ["endRepeatAt"],
+  }
+).refine(
+  (data) => {
+    // End date must be after start date
+    if (data.endRepeatAt && data.remindAt && data.endRepeatAt <= data.remindAt) {
+      return false
+    }
+    return true
+  },
+  {
+    message: "End date must be after the start date",
+    path: ["endRepeatAt"],
+  }
+)
 
 type ReminderFormData = z.infer<typeof reminderSchema>
 
@@ -89,6 +114,7 @@ export function ReminderFormDialog({
         ? format(new Date(reminder.remindAt), "HH:mm") 
         : "09:00",
       recurrence: reminder?.recurrence || "none",
+      endRepeatAt: reminder?.endRepeatAt ? new Date(reminder.endRepeatAt) : undefined,
       reminderType: reminder?.reminderType || "email",
     },
   })
@@ -105,6 +131,7 @@ export function ReminderFormDialog({
           message: data.message,
           remindAt: remindAt.toISOString(),
           recurrence: data.recurrence,
+          endRepeatAt: data.endRepeatAt?.toISOString(),
           reminderType: data.reminderType,
         })
       } else {
@@ -113,6 +140,7 @@ export function ReminderFormDialog({
           goalId,
           remindAt: remindAt.toISOString(),
           recurrence: data.recurrence,
+          endRepeatAt: data.endRepeatAt?.toISOString(),
           reminderType: data.reminderType,
         })
       }
@@ -134,6 +162,7 @@ export function ReminderFormDialog({
   }
 
   const selectedReminderType = form.watch("reminderType")
+  const selectedRecurrence = form.watch("recurrence")
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -249,6 +278,55 @@ export function ReminderFormDialog({
                 </FormItem>
               )}
             />
+
+            {/* End date for recurring reminders */}
+            {selectedRecurrence !== "none" && (
+              <FormField
+                control={form.control}
+                name="endRepeatAt"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>End Repeat Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "MMM d, yyyy")
+                            ) : (
+                              <span>Pick an end date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => {
+                            const startDate = form.getValues("remindAt")
+                            return startDate ? date <= startDate : date < new Date()
+                          }}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>
+                      When should this reminder stop repeating?
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
