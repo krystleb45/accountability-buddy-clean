@@ -61,5 +61,5 @@ GoalInvitationSchema.index(
 export const GoalInvitation = mongoose.model<GoalInvitationDocument, GoalInvitationModel>(
   "GoalInvitation",
   GoalInvitationSchema,
-  "groupinvitations"  // Use existing collection name
+  "goalinvitations"
 )

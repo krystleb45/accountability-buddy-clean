@@ -148,30 +148,30 @@ export default function GroupGoalsClient() {
       </div>
 
       {/* Pending Invitations */}
-      {invitations && invitations.length > 0 && (
+      {invitations && Array.isArray(invitations) && invitations.filter(inv => inv?.goal?.title).length > 0 && (
         <Card className="border-primary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Mail className="h-5 w-5 text-primary" />
-              Pending Invitations ({invitations.length})
+              Pending Invitations ({invitations.filter(inv => inv?.goal?.title).length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {invitations.map((invitation) => (
+            {invitations.filter(inv => inv?.goal?.title).map((invitation) => (
               <div
                 key={invitation._id}
                 className="flex items-center justify-between rounded-lg border p-4"
               >
                 <div className="flex items-center gap-3">
                   <UserAvatar
-                    userId={invitation.sender._id}
-                    src={invitation.sender.profileImage}
-                    alt={invitation.sender.username}
+                    userId={invitation.sender?._id}
+                    src={invitation.sender?.profileImage}
+                    alt={invitation.sender?.username || "User"}
                   />
                   <div>
                     <p className="font-medium">{invitation.goal.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      Invited by {invitation.sender.name || invitation.sender.username}
+                      Invited by {invitation.sender?.name || invitation.sender?.username || "Unknown"}
                     </p>
                     {invitation.message && (
                       <p className="mt-1 text-sm italic text-muted-foreground">
