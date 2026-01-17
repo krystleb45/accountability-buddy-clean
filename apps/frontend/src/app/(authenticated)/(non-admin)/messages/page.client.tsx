@@ -136,6 +136,13 @@ export default function AdvancedMessagesClient() {
     enabled: status === "authenticated" && hasDMMessaging && !!friend,
   })
 
+  // Clear messages when switching to a different friend
+  // This fixes the bug where the same chat was shown for all friends
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+    setMessages([])
+  }, [friendUsername])
+
   useEffect(() => {
     if (queryMessagesAndChat) {
       // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect

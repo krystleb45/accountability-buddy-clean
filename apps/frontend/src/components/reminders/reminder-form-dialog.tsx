@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
-import { Bell, CalendarIcon, Loader2 } from "lucide-react"
+import { Bell, CalendarIcon, Loader2, MessageSquare } from "lucide-react"
+import { useSession } from "next-auth/react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -74,6 +75,10 @@ export function ReminderFormDialog({
   const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
   const isEditing = !!reminder
+  const { data: session } = useSession()
+  
+  // Check if user has a phone number for SMS
+  const userHasPhone = !!session?.user?.phoneNumber
 
   const form = useForm<ReminderFormData>({
     resolver: zodResolver(reminderSchema),
@@ -127,6 +132,8 @@ export function ReminderFormDialog({
   const onSubmit = (data: ReminderFormData) => {
     saveReminder(data)
   }
+
+  const selectedReminderType = form.watch("reminderType")
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -257,11 +264,28 @@ export function ReminderFormDialog({
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="sms" disabled={!userHasPhone}>
+                        <span className="flex items-center gap-2">
+                          SMS
+                          {!userHasPhone && (
+                            <span className="text-xs text-muted-foreground">
+                              (Add phone in settings)
+                            </span>
+                          )}
+                        </span>
+                      </SelectItem>
                       <SelectItem value="app">In-App</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    How would you like to be notified?
+                    {selectedReminderType === "sms" && userHasPhone ? (
+                      <span className="flex items-center gap-1">
+                        <MessageSquare className="h-3 w-3" />
+                        SMS will be sent to your registered phone number
+                      </span>
+                    ) : (
+                      "How would you like to be notified?"
+                    )}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
