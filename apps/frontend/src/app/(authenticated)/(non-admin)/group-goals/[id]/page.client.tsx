@@ -3,7 +3,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   ArrowLeft,
-  Calendar,
   Minus,
   Plus,
   Target,
@@ -240,12 +239,7 @@ export default function GroupGoalDetailClient({ goalId }: GroupGoalDetailClientP
             You created this goal
           </Badge>
         )}
-        {goal.dueDate && (
-          <Badge variant="outline" className="text-sm">
-            <Calendar className="mr-1 h-3 w-3" />
-            Due: {new Date(goal.dueDate).toLocaleDateString()}
-          </Badge>
-        )}
+        
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
