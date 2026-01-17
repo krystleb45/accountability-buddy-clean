@@ -264,28 +264,12 @@ export function Dashboard({
     },
   ]
 
-  // Gamification cards
+  // Gamification cards (Leaderboard only - Badges moved to footer)
   const gamificationCards: ICard[] = [
     {
       label: "Leaderboard",
       icon: Trophy,
       content: <LeaderboardPreview />,
-    },
-    {
-      label: "Recent Badges",
-      icon: Award,
-      subtitle: "Your earned badges",
-      containerClassName: "sm:col-span-2",
-      content:
-        userBadges.length > 0 ? (
-          <div className="flex flex-wrap justify-center gap-4">
-            {userBadges.slice(0, 3).map((b) => (
-              <BadgeCard key={b._id} badge={b} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground">No badges earned yet</p>
-        ),
     },
   ]
 
@@ -331,11 +315,28 @@ export function Dashboard({
 
   return (
     <div>
-      {/* Header */}
-      <header className="mb-6">
+      {/* Header with Welcome + Quick Links (Blog & Books) */}
+      <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold">
           Welcome back{userName ? `, ${userName}` : ""}!
         </h1>
+        <div className="flex gap-3">
+          {resourceCards.map((c) => (
+            <Link
+              href={c.link!}
+              key={c.label}
+              aria-label={`View ${c.label.toLowerCase()}`}
+            >
+              <MotionCard 
+                whileHover={{ scale: 1.05 }} 
+                className="flex items-center gap-2 px-4 py-2"
+              >
+                <c.icon size={20} className="text-primary" />
+                <span className="font-medium">{c.label}</span>
+              </MotionCard>
+            </Link>
+          ))}
+        </div>
       </header>
 
       {/* Notification Banner */}
@@ -421,33 +422,36 @@ export function Dashboard({
         <NewsletterCard />
       </div>
 
-      {/* Resources Section - Blog & Books side by side */}
-      <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {resourceCards.map((c) => (
-          <Link
-            href={c.link!}
-            aria-label={`View ${c.label.toLowerCase()}`}
-            key={c.label}
-            className="block"
-          >
-            <MotionCard whileHover={{ scale: 1.02 }} className="h-full">
-              <CardHeader className="text-center">
-                <CardTitle
-                  className={`
-                    flex items-center justify-center gap-4 text-2xl
-                    font-semibold
-                    sm:text-3xl
-                  `}
-                >
-                  <c.icon size={36} className="text-primary" /> {c.label}
-                </CardTitle>
-                <CardDescription className="text-lg">
-                  {c.subtitle}
-                </CardDescription>
-              </CardHeader>
-            </MotionCard>
-          </Link>
-        ))}
+      {/* Recent Badges - Full Width Footer */}
+      <div className="mt-6">
+        <MotionCard whileHover={{ scale: 1.01 }}>
+          <CardHeader className="text-center">
+            <CardTitle
+              className={`
+                flex items-center justify-center gap-4 text-2xl font-semibold
+                sm:text-3xl
+              `}
+            >
+              <Award size={36} className="text-primary" /> Recent Badges
+            </CardTitle>
+            <CardDescription className="text-lg">
+              Your earned badges
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {userBadges.length > 0 ? (
+              <div className="flex flex-wrap justify-center gap-6">
+                {userBadges.slice(0, 5).map((b) => (
+                  <BadgeCard key={b._id} badge={b} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground">
+                No badges earned yet. Complete goals to earn badges!
+              </p>
+            )}
+          </CardContent>
+        </MotionCard>
       </div>
     </div>
   )
