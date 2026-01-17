@@ -440,18 +440,29 @@ export function GoalForm({ goal }: GoalFormProps) {
           />
         )}
 
-        <Button type="submit" className="w-full" disabled={isCreatingGoal}>
-          {isCreatingGoal ? (
-            <>
-              <Loader className="animate-spin" />
-              {mode === "create" ? "Creating..." : "Updating..."}
-            </>
-          ) : mode === "create" ? (
-            "Create Goal"
-          ) : (
-            "Update Goal"
-          )}
-        </Button>
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={() => router.push("/goals")}
+            disabled={isCreatingGoal}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" className="flex-1" disabled={isCreatingGoal}>
+            {isCreatingGoal ? (
+              <>
+                <Loader className="animate-spin" />
+                {mode === "create" ? "Creating..." : "Updating..."}
+              </>
+            ) : mode === "create" ? (
+              "Create Goal"
+            ) : (
+              "Update Goal"
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   )
