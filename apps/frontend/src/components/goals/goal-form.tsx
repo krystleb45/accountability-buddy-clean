@@ -424,8 +424,8 @@ export function GoalForm({ goal }: GoalFormProps) {
                   <div className="space-y-0.5">
                     <FormLabel>Deadline Reminders</FormLabel>
                     <FormDescription>
-                      Get email reminders 7 days, 3 days, and 1 day before the
-                      due date.
+                      Get reminders 7 days, 3 days, and 1 day before the due
+                      date (via email and/or SMS based on your Settings).
                     </FormDescription>
                   </div>
                 </div>
