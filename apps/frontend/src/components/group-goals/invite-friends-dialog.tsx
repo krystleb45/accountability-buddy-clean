@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { ScrollArea } from "@/components/ui/scroll-area"
+
 
 interface InviteFriendsDialogProps {
   children: React.ReactNode
@@ -110,7 +110,7 @@ export function InviteFriendsDialog({
           </div>
 
           {/* Friends List */}
-          <ScrollArea className="h-[200px] rounded-md border p-2">
+          <div className="h-[200px] overflow-y-auto rounded-md border p-2">
             {friendsLoading ? (
               <div className="flex h-full items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -162,7 +162,7 @@ export function InviteFriendsDialog({
                 })}
               </div>
             )}
-          </ScrollArea>
+          </div>
 
           {/* Selected Count */}
           {selectedFriends.length > 0 && (
