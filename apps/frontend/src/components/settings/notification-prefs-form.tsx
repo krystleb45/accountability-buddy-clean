@@ -3,6 +3,7 @@ import type { Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader, Phone } from "lucide-react"
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import z from "zod"
@@ -63,6 +64,16 @@ export function NotificationPrefsForm({
     },
   })
 
+  // Reset form when props change (e.g., after save and refetch)
+  useEffect(() => {
+    form.reset({
+      email: currentPrefs?.email ?? true,
+      sms: currentPrefs?.sms ?? false,
+      weeklyDigest: currentPrefs?.weeklyDigest ?? true,
+      phoneNumber: phoneNumber ?? "",
+    })
+  }, [currentPrefs, phoneNumber, form])
+
   const queryClient = useQueryClient()
 
   const smsEnabled = form.watch("sms")
@@ -101,6 +112,14 @@ export function NotificationPrefsForm({
     } else {
       return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
     }
+  }
+
+  // Format stored phone number for display (convert +15551234567 to (555) 123-4567)
+  const formatStoredPhoneNumber = (value: string) => {
+    if (!value) return ""
+    // Remove +1 prefix and any non-digits
+    const digits = value.replace(/^\+1/, "").replace(/\D/g, "")
+    return formatPhoneNumber(digits)
   }
 
   return (
@@ -177,7 +196,7 @@ export function NotificationPrefsForm({
                           <Input
                             placeholder="(555) 555-5555"
                             className="pl-10"
-                            value={field.value}
+                            value={formatStoredPhoneNumber(field.value || "")}
                             onChange={(e) => {
                               const formatted = formatPhoneNumber(e.target.value)
                               field.onChange(formatted)

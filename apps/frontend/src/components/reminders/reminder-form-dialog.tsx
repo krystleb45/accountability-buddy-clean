@@ -1,10 +1,9 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { Bell, CalendarIcon, Loader2, MessageSquare } from "lucide-react"
-import { useSession } from "next-auth/react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -13,6 +12,7 @@ import { z } from "zod"
 import type { ReminderWithGoal } from "@/api/reminder/reminder-api"
 
 import { createReminder, updateReminder } from "@/api/reminder/reminder-api"
+import { fetchSettings } from "@/api/settings/settings-api"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
@@ -100,10 +100,15 @@ export function ReminderFormDialog({
   const [open, setOpen] = useState(false)
   const queryClient = useQueryClient()
   const isEditing = !!reminder
-  const { data: session } = useSession()
   
-  // Check if user has a phone number for SMS
-  const userHasPhone = !!session?.user?.phoneNumber
+  // Fetch settings to check if user has a phone number
+  const { data: settingsData } = useQuery({
+    queryKey: ["settings"],
+    queryFn: fetchSettings,
+    enabled: open, // Only fetch when dialog is open
+  })
+  
+  const userHasPhone = !!settingsData?.phoneNumber
 
   const form = useForm<ReminderFormData>({
     resolver: zodResolver(reminderSchema),
@@ -347,7 +352,7 @@ export function ReminderFormDialog({
                           SMS
                           {!userHasPhone && (
                             <span className="text-xs text-muted-foreground">
-                              (Add phone in settings)
+                              (No phone number)
                             </span>
                           )}
                         </span>
@@ -360,6 +365,13 @@ export function ReminderFormDialog({
                       <span className="flex items-center gap-1">
                         <MessageSquare className="h-3 w-3" />
                         SMS will be sent to your registered phone number
+                      </span>
+                    ) : !userHasPhone ? (
+                      <span>
+                        Want SMS notifications?{" "}
+                        <a href="/settings" className="text-primary underline">
+                          Add your phone number in settings
+                        </a>
                       </span>
                     ) : (
                       "How would you like to be notified?"
