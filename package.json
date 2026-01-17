@@ -21,7 +21,8 @@
     "husky": "^8.0.3",
     "lint-staged": "^13.0.6",
     "prettier": "3.6.2",
-    "turbo": "^2.6.2"
+    "turbo": "^2.6.2",
+    "twilio": "^5.4.0"
   },
   "lint-staged": {
     "!{.husky/**,**/.env*,**/*.gen.ts,**/.gitignore,*.Dockerfile}": [
