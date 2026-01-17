@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { MessageCircle, UserPlus, ChevronRight } from "lucide-react"
+import { MessageCircle, UserPlus, Users, ChevronRight } from "lucide-react"
 import Link from "next/link"
 
 import { http } from "@/lib/http"
@@ -10,11 +10,13 @@ import { Card, CardContent } from "@/components/ui/card"
 interface NotificationCounts {
   unreadMessages: number
   pendingFriendRequests: number
+  pendingGoalInvitations: number
 }
 
 async function fetchNotificationCounts(): Promise<NotificationCounts> {
   let unreadMessages = 0
   let pendingFriendRequests = 0
+  let pendingGoalInvitations = 0
 
   try {
     // Fetch unread messages count - endpoint exists
@@ -33,9 +35,19 @@ async function fetchNotificationCounts(): Promise<NotificationCounts> {
     // Silently fail
   }
 
+  try {
+    // Fetch pending goal invitations
+    const goalInvitesRes = await http.get("/collaboration-goals/invitations")
+    const invitations = goalInvitesRes.data?.data?.invitations || []
+    pendingGoalInvitations = Array.isArray(invitations) ? invitations.length : 0
+  } catch {
+    // Silently fail
+  }
+
   return {
     unreadMessages,
     pendingFriendRequests,
+    pendingGoalInvitations,
   }
 }
 
@@ -49,7 +61,8 @@ export function DashboardNotifications() {
 
   const unreadMessages = data?.unreadMessages || 0
   const pendingFriendRequests = data?.pendingFriendRequests || 0
-  const totalNotifications = unreadMessages + pendingFriendRequests
+  const pendingGoalInvitations = data?.pendingGoalInvitations || 0
+  const totalNotifications = unreadMessages + pendingFriendRequests + pendingGoalInvitations
 
   // Don't show anything if no notifications or still loading
   if (isLoading || totalNotifications === 0) {
@@ -86,6 +99,20 @@ export function DashboardNotifications() {
               <span>
                 {pendingFriendRequests} friend request
                 {pendingFriendRequests !== 1 ? "s" : ""}
+              </span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            </Link>
+          )}
+
+          {pendingGoalInvitations > 0 && (
+            <Link
+              href="/group-goals"
+              className="flex items-center gap-2 rounded-full bg-background px-3 py-1.5 text-sm transition-colors hover:bg-accent"
+            >
+              <Users className="h-4 w-4 text-purple-500" />
+              <span>
+                {pendingGoalInvitations} group goal invite
+                {pendingGoalInvitations !== 1 ? "s" : ""}
               </span>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             </Link>

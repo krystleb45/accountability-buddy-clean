@@ -315,24 +315,25 @@ export function Dashboard({
 
   return (
     <div>
-      {/* Header with Welcome + Quick Links (Blog & Books) */}
+      {/* Header with Welcome + Quick Links (Blog & Books) spread out */}
       <header className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-3xl font-bold">
           Welcome back{userName ? `, ${userName}` : ""}!
         </h1>
-        <div className="flex gap-3">
+        <div className="flex gap-4 sm:gap-8">
           {resourceCards.map((c) => (
             <Link
               href={c.link!}
               key={c.label}
               aria-label={`View ${c.label.toLowerCase()}`}
+              className="flex-1"
             >
               <MotionCard 
                 whileHover={{ scale: 1.05 }} 
-                className="flex items-center gap-2 px-4 py-2"
+                className="flex items-center justify-center gap-2 px-6 py-3 sm:px-10"
               >
-                <c.icon size={20} className="text-primary" />
-                <span className="font-medium">{c.label}</span>
+                <c.icon size={24} className="text-primary" />
+                <span className="font-medium text-lg">{c.label}</span>
               </MotionCard>
             </Link>
           ))}
