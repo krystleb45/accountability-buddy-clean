@@ -130,8 +130,9 @@ export function Dashboard({
       </>
     ),
   }
-  // // the other fixed cards
-  const otherCards: ICard[] = [
+
+  // Stats and progress cards
+  const statsCards: ICard[] = [
     {
       label: "Your Progress",
       icon: ChartNoAxesColumnIncreasing,
@@ -261,6 +262,10 @@ export function Dashboard({
           </p>
         ),
     },
+  ]
+
+  // Gamification cards
+  const gamificationCards: ICard[] = [
     {
       label: "Leaderboard",
       icon: Trophy,
@@ -282,6 +287,10 @@ export function Dashboard({
           <p className="text-muted-foreground">No badges earned yet</p>
         ),
     },
+  ]
+
+  // Social/collaboration cards - moved up!
+  const socialCards: ICard[] = [
     {
       label: "Group Goals",
       icon: Users,
@@ -294,12 +303,10 @@ export function Dashboard({
       subtitle: "Connect with friends, join groups, and collaborate.",
       link: "/community",
     },
-    {
-      label: "Community",
-      icon: Handshake,
-      subtitle: "Connect with friends, join groups, and collaborate.",
-      link: "/community",
-    },
+  ]
+
+  // Resources cards - stay at bottom
+  const resourceCards: ICard[] = [
     {
       label: "Blog",
       icon: FileText,
@@ -312,6 +319,14 @@ export function Dashboard({
       subtitle: "Explore recommended reads.",
       link: "/books",
     },
+  ]
+
+  // Combine all cards in the desired order
+  const allCards: ICard[] = [
+    ...statsCards,
+    ...gamificationCards,
+    ...socialCards,
+    ...resourceCards,
   ]
 
   return (
@@ -328,7 +343,6 @@ export function Dashboard({
         <DashboardNotifications />
       </div>
 
-      {/* Goals Full-Width Card */}
       {/* Goals Full-Width Card */}
       <div className="mb-8">
         <Link href={goalsCard.link} aria-label="View goals and streak">
@@ -360,7 +374,7 @@ export function Dashboard({
           lg:grid-cols-3
         `}
       >
-        {otherCards.map((c) => {
+        {allCards.map((c) => {
           const cardContent = (
             <MotionCard whileHover={{ scale: 1.02 }} className="h-full">
               <CardHeader className="text-center">
