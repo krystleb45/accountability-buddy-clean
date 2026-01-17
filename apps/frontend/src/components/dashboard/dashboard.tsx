@@ -283,6 +283,18 @@ export function Dashboard({
         ),
     },
     {
+      label: "Group Goals",
+      icon: Users,
+      subtitle: "Work on goals together with friends.",
+      link: "/group-goals",
+    },
+    {
+      label: "Community",
+      icon: Handshake,
+      subtitle: "Connect with friends, join groups, and collaborate.",
+      link: "/community",
+    },
+    {
       label: "Community",
       icon: Handshake,
       subtitle: "Connect with friends, join groups, and collaborate.",

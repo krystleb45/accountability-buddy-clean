@@ -53,6 +53,7 @@ import adminStatsRoutes from "./api/routes/admin-stats.js"
 import adminUsersRoutes from "./api/routes/admin-users.js"
 import blockRoutes from "./api/routes/block.js"
 import reminderRoutes from "./api/routes/reminders.js"
+import collaborationGoalsRouter from "./api/routes/collaboration-goals.js"
 
 const app = express()
 const isProduction = process.env.NODE_ENV === "production"
@@ -257,6 +258,7 @@ app.use("/api/admin/stats", adminStatsRoutes)
 app.use("/api/admin/users", adminUsersRoutes)
 app.use("/api/block", blockRoutes)
 app.use("/api/reminders", reminderRoutes)
+app.use("/api/collaboration-goals", collaborationGoalsRouter)
 
 // ─── Meta-test catch-all for *.test ───────────────────────────
 app.use((req, res, next) => {
