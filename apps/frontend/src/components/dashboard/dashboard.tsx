@@ -42,6 +42,7 @@ import {
 } from "../ui/card"
 import DashboardStatCard from "./DashboardStatCard"
 import { NewsletterCard } from "./newsletter-card"
+import { DashboardNotifications } from "./dashboard-notifications"
 
 type ICard = {
   label: string
@@ -95,7 +96,8 @@ export function Dashboard({
   const goalsCard: ICard = {
     label: "Goals",
     icon: Goal,
-    subtitle: "Track your progress, explore suggested goals, or create new ones.",
+    subtitle:
+      "Track your progress, explore suggested goals, or create new ones.",
     link: "/goals",
     content: (
       <>
@@ -224,38 +226,40 @@ export function Dashboard({
       label: "Recent Activities",
       icon: Scroll,
       content:
-  recentActivities.filter((a) => a.type !== "login" && a.type !== "logout").length > 0 ? (
-    <ul className="flex list-disc flex-col gap-4 pl-6">
-      {recentActivities
-        .filter((a) => a.type !== "login" && a.type !== "logout")
-        .map((a) => (
-          <li key={a._id}>
-            <div className="flex items-baseline gap-2">
-              <Badge
-                variant="secondary"
-                className="text-xs font-medium tracking-widest uppercase"
-              >
-                {a.type}
-              </Badge>
-              <span>{a.description}</span>
-            </div>
-            <div className="mt-1">
-              {a.createdAt && (
-                <p className="text-sm text-muted-foreground">
-                  {formatDistanceToNow(a.createdAt, {
-                    addSuffix: true,
-                  })}
-                </p>
-              )}
-            </div>
-          </li>
-        ))}
-    </ul>
-  ) : (
-    <p className="text-center text-muted-foreground">
-      No recent activities found
-    </p>
-  ),
+        recentActivities.filter(
+          (a) => a.type !== "login" && a.type !== "logout",
+        ).length > 0 ? (
+          <ul className="flex list-disc flex-col gap-4 pl-6">
+            {recentActivities
+              .filter((a) => a.type !== "login" && a.type !== "logout")
+              .map((a) => (
+                <li key={a._id}>
+                  <div className="flex items-baseline gap-2">
+                    <Badge
+                      variant="secondary"
+                      className="text-xs font-medium tracking-widest uppercase"
+                    >
+                      {a.type}
+                    </Badge>
+                    <span>{a.description}</span>
+                  </div>
+                  <div className="mt-1">
+                    {a.createdAt && (
+                      <p className="text-sm text-muted-foreground">
+                        {formatDistanceToNow(a.createdAt, {
+                          addSuffix: true,
+                        })}
+                      </p>
+                    )}
+                  </div>
+                </li>
+              ))}
+          </ul>
+        ) : (
+          <p className="text-center text-muted-foreground">
+            No recent activities found
+          </p>
+        ),
     },
     {
       label: "Leaderboard",
@@ -301,11 +305,18 @@ export function Dashboard({
   return (
     <div>
       {/* Header */}
-      <header className="mb-10">
+      <header className="mb-6">
         <h1 className="text-3xl font-bold">
           Welcome back{userName ? `, ${userName}` : ""}!
         </h1>
       </header>
+
+      {/* Notification Banner */}
+      <div className="mb-6">
+        <DashboardNotifications />
+      </div>
+
+      {/* Goals Full-Width Card */}
       {/* Goals Full-Width Card */}
       <div className="mb-8">
         <Link href={goalsCard.link} aria-label="View goals and streak">
