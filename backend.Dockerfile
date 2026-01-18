@@ -25,3 +25,4 @@ EXPOSE 5050
 CMD ["node", "./apps/backend/dist/server.js"] 
 # force cache bust 
 # fix goalinvitations collection 
+# fix goalinvitations collection 
