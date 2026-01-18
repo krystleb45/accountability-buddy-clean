@@ -1,6 +1,7 @@
 "use client"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { formatDistanceToNow } from "date-fns"
 import {
   ArrowLeft,
   Minus,
@@ -11,18 +12,23 @@ import {
   UserPlus,
   Users,
   LogOut,
+  Activity,
+  TrendingUp,
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { toast } from "sonner"
+
+import type { Contribution } from "@/api/collaboration-goals/collaboration-goal-api"
 
 import {
   fetchCollaborationGoal,
   updateGoalProgress,
   deleteCollaborationGoal,
   leaveCollaborationGoal,
+  getContributionsByUser,
 } from "@/api/collaboration-goals/collaboration-goal-api"
 import { LoadingSpinner } from "@/components/loading-spinner"
 import { InviteFriendsDialog } from "@/components/group-goals/invite-friends-dialog"
@@ -65,8 +71,22 @@ export default function GroupGoalDetailClient({ goalId }: GroupGoalDetailClientP
     queryFn: () => fetchCollaborationGoal(goalId),
   })
 
+  // Calculate contributions by user
+  const contributionsByUser = useMemo(() => {
+    if (!goal) return new Map<string, number>()
+    return getContributionsByUser(goal)
+  }, [goal])
+
+  // Get sorted contributions for activity feed (most recent first)
+  const recentContributions = useMemo(() => {
+    if (!goal?.contributions) return []
+    return [...goal.contributions]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 20) // Show last 20 activities
+  }, [goal])
+
   const { mutate: updateProgress, isPending: isUpdating } = useMutation({
-    mutationFn: (newProgress: number) => updateGoalProgress(goalId, newProgress),
+    mutationFn: (increment: number) => updateGoalProgress(goalId, increment),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["collaboration-goal", goalId] })
       queryClient.invalidateQueries({ queryKey: ["collaboration-goals"] })
@@ -239,10 +259,9 @@ export default function GroupGoalDetailClient({ goalId }: GroupGoalDetailClientP
             You created this goal
           </Badge>
         )}
-        
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         {/* Progress Card */}
         <Card>
           <CardHeader>
@@ -286,16 +305,14 @@ export default function GroupGoalDetailClient({ goalId }: GroupGoalDetailClientP
                     </Button>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    className="flex-1"
-                    onClick={handleIncrement}
-                    disabled={isUpdating || goal.progress >= goal.target}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Progress
-                  </Button>
-                </div>
+                <Button
+                  className="w-full"
+                  onClick={handleIncrement}
+                  disabled={isUpdating || goal.progress >= goal.target}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Progress
+                </Button>
               </div>
             )}
 
@@ -308,44 +325,69 @@ export default function GroupGoalDetailClient({ goalId }: GroupGoalDetailClientP
           </CardContent>
         </Card>
 
-        {/* Participants Card */}
+        {/* Participants & Contributions Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5 text-primary" />
               Participants ({goal.participants.length})
             </CardTitle>
+            <CardDescription>
+              Individual contributions to this goal
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {goal.participants.map((participant) => (
-                <div
-                  key={participant._id}
-                  className="flex items-center justify-between rounded-lg border p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <UserAvatar
-                      userId={participant._id}
-                      src={participant.profileImage}
-                      alt={participant.username}
-                      className="h-10 w-10"
-                    />
-                    <div>
-                      <p className="font-medium">
-                        {participant.name || participant.username}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        @{participant.username}
-                      </p>
+              {goal.participants.map((participant) => {
+                const userContribution = contributionsByUser.get(participant._id) || 0
+                const contributionPercent = goal.target > 0 
+                  ? Math.round((userContribution / goal.target) * 100) 
+                  : 0
+
+                return (
+                  <div
+                    key={participant._id}
+                    className="rounded-lg border p-3"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <UserAvatar
+                          userId={participant._id}
+                          src={participant.profileImage}
+                          alt={participant.username}
+                          className="h-10 w-10"
+                        />
+                        <div>
+                          <p className="font-medium">
+                            {participant.name || participant.username}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            @{participant.username}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        {participant._id === goal.createdBy._id && (
+                          <Badge variant="secondary" className="mb-1 text-xs">
+                            Creator
+                          </Badge>
+                        )}
+                        <p className="text-sm font-semibold text-primary">
+                          +{userContribution} contributed
+                        </p>
+                      </div>
+                    </div>
+                    {/* Individual progress bar */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Contribution</span>
+                        <span>{contributionPercent}% of goal</span>
+                      </div>
+                      <Progress value={contributionPercent} className="h-2" />
                     </div>
                   </div>
-                  {participant._id === goal.createdBy._id && (
-                    <Badge variant="secondary" className="text-xs">
-                      Creator
-                    </Badge>
-                  )}
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {isCreator && (
@@ -359,6 +401,73 @@ export default function GroupGoalDetailClient({ goalId }: GroupGoalDetailClientP
           </CardContent>
         </Card>
       </div>
+
+      {/* Activity Feed */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Activity className="h-5 w-5 text-primary" />
+            Activity Feed
+          </CardTitle>
+          <CardDescription>
+            Recent contributions from all participants
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {recentContributions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
+              <TrendingUp className="mb-3 h-10 w-10 opacity-50" />
+              <p className="font-medium">No activity yet</p>
+              <p className="text-sm">Be the first to add progress to this goal!</p>
+            </div>
+          ) : (
+            <div className="h-[300px] overflow-y-auto pr-4">
+              <div className="space-y-4">
+                {recentContributions.map((contribution, index) => (
+                  <ActivityItem key={contribution._id || index} contribution={contribution} />
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </main>
+  )
+}
+
+interface ActivityItemProps {
+  contribution: Contribution
+}
+
+function ActivityItem({ contribution }: ActivityItemProps) {
+  const timeAgo = formatDistanceToNow(new Date(contribution.createdAt), { addSuffix: true })
+
+  return (
+    <div className="flex items-start gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
+      <UserAvatar
+        userId={contribution.user._id}
+        src={contribution.user.profileImage}
+        alt={contribution.user.username}
+        className="h-9 w-9"
+      />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-medium truncate">
+            {contribution.user.name || contribution.user.username}
+          </span>
+          <span className="text-muted-foreground">added</span>
+          <Badge variant="secondary" className="font-semibold">
+            +{contribution.amount}
+          </Badge>
+          <span className="text-muted-foreground">progress</span>
+        </div>
+        {contribution.note && (
+          <p className="mt-1 text-sm text-muted-foreground italic">
+            &quot;{contribution.note}&quot;
+          </p>
+        )}
+        <p className="mt-1 text-xs text-muted-foreground">{timeAgo}</p>
+      </div>
+    </div>
   )
 }

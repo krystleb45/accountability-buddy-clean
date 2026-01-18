@@ -43,6 +43,7 @@ class CollaborationGoalService {
     const goal = await CollaborationGoal.findById(goalId)
       .populate("createdBy", "username name profileImage")
       .populate("participants", "username name profileImage")
+      .populate("contributions.user", "username name profileImage")
       .exec()
 
     if (!goal) {
@@ -121,11 +122,13 @@ class CollaborationGoalService {
 
   /**
    * Update progress on a collaboration goal (any participant can update)
+   * Now tracks individual contributions
    */
   static async updateProgress(
     goalId: string,
     userId: string,
-    progressIncrement: number
+    progressIncrement: number,
+    note?: string
   ) {
     const goal = await CollaborationGoal.findById(goalId).exec()
     
@@ -140,11 +143,19 @@ class CollaborationGoalService {
       throw createError("Only participants can update progress", 403)
     }
 
+    // Add contribution record with user info
+    goal.contributions.push({
+      user: new Types.ObjectId(userId),
+      amount: progressIncrement,
+      note: note || undefined,
+    })
+
+    // Update total progress
     goal.progress = Math.min(goal.progress + progressIncrement, goal.target)
     goal.status = goal.progress >= goal.target ? "completed" : "in-progress"
     
     await goal.save()
-    return goal.populate(["createdBy", "participants"])
+    return goal.populate(["createdBy", "participants", "contributions.user"])
   }
 
   /**

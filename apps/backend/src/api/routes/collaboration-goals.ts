@@ -120,9 +120,11 @@ router.delete(
 /**
  * POST /api/collaboration-goals/:id/progress
  * Update progress on a goal (any participant)
+ * Now supports optional note for activity feed
  */
 const progressSchema = z.object({
   increment: z.number().min(1).max(1000000),
+  note: z.string().max(200).optional(),
 })
 
 router.post(
@@ -133,7 +135,8 @@ router.post(
     const goal = await CollaborationGoalService.updateProgress(
       req.params.id,
       req.user.id,
-      req.body.increment
+      req.body.increment,
+      req.body.note
     )
     sendResponse(res, 200, true, "Progress updated", { goal })
   })

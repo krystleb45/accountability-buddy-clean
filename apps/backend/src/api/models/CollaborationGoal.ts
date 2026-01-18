@@ -9,12 +9,26 @@ import type {
 import { commonSchemaWithCollaborationGoal } from "./Goal.js"
 import { Milestone } from "./Milestone.js"
 
+// NEW: Schema for tracking individual contributions
+const ContributionSchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    amount: { type: Number, required: true, min: 1 },
+    note: { type: String, maxlength: 200 },
+  },
+  {
+    timestamps: true, // Adds createdAt and updatedAt
+  }
+)
+
 const CollaborationGoalSchema: ICollaborationGoalSchema = new Schema(
   {
     ...commonSchemaWithCollaborationGoal.obj,
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     participants: { type: [Schema.Types.ObjectId], ref: "User", default: [] },
     target: { type: Number, required: true, min: 1 },
+    // NEW: Track individual contributions for activity feed
+    contributions: { type: [ContributionSchema], default: [] },
   },
   {
     timestamps: true,
@@ -25,7 +39,7 @@ const CollaborationGoalSchema: ICollaborationGoalSchema = new Schema(
 
 // --- Indexes ---
 CollaborationGoalSchema.index({ title: 1 })
-CollaborationGoalSchema.index({ createdBy: 1, status: 1 }) // compound index
+CollaborationGoalSchema.index({ createdBy: 1, status: 1 })
 CollaborationGoalSchema.index({ visibility: 1 })
 
 // --- Virtuals ---

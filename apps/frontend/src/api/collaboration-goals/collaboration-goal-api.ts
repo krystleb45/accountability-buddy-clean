@@ -4,6 +4,19 @@ import { http } from "@/lib/http"
 import { getApiErrorMessage } from "@/utils"
 
 // Types
+export interface Contribution {
+  _id: string
+  user: {
+    _id: string
+    username: string
+    name?: string
+    profileImage?: string
+  }
+  amount: number
+  note?: string
+  createdAt: string
+}
+
 export interface CollaborationGoal {
   _id: string
   title: string
@@ -25,13 +38,14 @@ export interface CollaborationGoal {
     name?: string
     profileImage?: string
   }>
+  contributions?: Contribution[]
   createdAt: string
   updatedAt: string
 }
 
 export interface GoalInvitation {
   _id: string
-  goal: {
+  groupId: {
     _id: string
     title: string
     description?: string
@@ -130,15 +144,16 @@ export async function deleteCollaborationGoal(id: string): Promise<void> {
   }
 }
 
-/** POST /collaboration-goals/:id/progress - Update progress */
+/** POST /collaboration-goals/:id/progress - Update progress with optional note */
 export async function updateGoalProgress(
   id: string,
-  increment: number
+  increment: number,
+  note?: string
 ): Promise<CollaborationGoal> {
   try {
     const resp = await http.post<Envelope<{ goal: CollaborationGoal }>>(
       `/collaboration-goals/${id}/progress`,
-      { increment }
+      { increment, note }
     )
     return resp.data.data.goal
   } catch (err) {
@@ -244,4 +259,18 @@ export async function removeParticipant(
   } catch (err) {
     throw new Error(getApiErrorMessage(err as Error))
   }
+}
+
+// Helper function to calculate contributions by user
+export function getContributionsByUser(goal: CollaborationGoal): Map<string, number> {
+  const byUser = new Map<string, number>()
+  
+  if (!goal.contributions) return byUser
+  
+  for (const contribution of goal.contributions) {
+    const oderId = contribution.user._id
+    byUser.set(oderId, (byUser.get(oderId) || 0) + contribution.amount)
+  }
+  
+  return byUser
 }
