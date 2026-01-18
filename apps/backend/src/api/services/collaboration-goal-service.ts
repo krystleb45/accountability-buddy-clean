@@ -262,16 +262,23 @@ class CollaborationGoalService {
    * Get pending invitations for a user
    */
   static async getPendingInvitations(userId: string) {
-    return GoalInvitation.find({
-      recipient: new Types.ObjectId(userId),
-      status: "pending",
-    })
-      .populate("groupId", "title description target progress status")
-      .populate("sender", "username name profileImage")
-      .sort({ createdAt: -1 })
-      .exec()
+    try {
+      console.log("getPendingInvitations called for user:", userId)
+      const invitations = await GoalInvitation.find({
+        recipient: new Types.ObjectId(userId),
+        status: "pending",
+      })
+        .populate("groupId", "title description target progress status")
+        .populate("sender", "username name profileImage")
+        .sort({ createdAt: -1 })
+        .exec()
+      console.log("Found invitations:", invitations.length)
+      return invitations
+    } catch (error) {
+      console.error("getPendingInvitations ERROR:", error)
+      throw error
+    }
   }
-
   /**
    * Get sent invitations for a goal (for the creator to see)
    */
