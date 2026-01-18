@@ -161,7 +161,7 @@ class CollaborationGoalService {
     }
 
     // Delete all related invitations
-    await GoalInvitation.deleteMany({ goal: goalId })
+    await GoalInvitation.deleteMany({ groupId: goalId })
     
     await CollaborationGoal.deleteOne({ _id: goalId }).exec()
   }
@@ -231,7 +231,7 @@ class CollaborationGoalService {
     // Filter out users already participating or with pending invitations
     const existingParticipants = goal.participants.map((p) => p.toString())
     const existingInvitations = await GoalInvitation.find({
-      goal: goalId,
+      groupId: goalId,
       status: "pending",
     }).select("recipient")
     const pendingRecipients = existingInvitations.map((i) => i.recipient.toString())
@@ -247,7 +247,7 @@ class CollaborationGoalService {
     // Create invitations
     const invitations = await GoalInvitation.insertMany(
       newRecipients.map((recipientId) => ({
-        goal: goalId,
+        groupId: goalId,
         sender: senderId,
         recipient: recipientId,
         message: message || `You've been invited to join a group goal: "${goal.title}"`,
@@ -266,7 +266,7 @@ class CollaborationGoalService {
       recipient: new Types.ObjectId(userId),
       status: "pending",
     })
-      .populate("goal", "title description target progress status")
+      .populate("groupId", "title description target progress status")
       .populate("sender", "username name profileImage")
       .sort({ createdAt: -1 })
       .exec()
@@ -286,7 +286,7 @@ class CollaborationGoalService {
       throw createError("Only the creator can view sent invitations", 403)
     }
 
-    return GoalInvitation.find({ goal: goalId })
+    return GoalInvitation.find({ groupId: goalId })
       .populate("recipient", "username name profileImage")
       .sort({ createdAt: -1 })
       .exec()
@@ -315,7 +315,7 @@ class CollaborationGoalService {
     await invitation.save()
 
     // Add user to goal participants
-    const goal = await CollaborationGoal.findById(invitation.goal).exec()
+    const goal = await CollaborationGoal.findById(invitation.groupId).exec()
     if (goal) {
       if (!goal.participants.some((p) => p.toString() === userId)) {
         goal.participants.push(new Types.ObjectId(userId))
@@ -323,7 +323,7 @@ class CollaborationGoalService {
       }
     }
 
-    return invitation.populate(["goal", "sender"])
+    return invitation.populate(["groupId", "sender"])
   }
 
   /**
@@ -355,14 +355,14 @@ class CollaborationGoalService {
    */
   static async cancelInvitation(invitationId: string, userId: string) {
     const invitation = await GoalInvitation.findById(invitationId)
-      .populate("goal")
+      .populate("groupId")
       .exec()
     
     if (!invitation) {
       throw createError("Invitation not found", 404)
     }
 
-    const goal = invitation.goal as any
+    const goal = invitation.groupId as any
     const isSender = invitation.sender.toString() === userId
     const isCreator = goal.createdBy.toString() === userId
 
