@@ -4,6 +4,7 @@ import { createError } from "../middleware/errorHandler.js"
 import { CollaborationGoal } from "../models/CollaborationGoal.js"
 import { GoalInvitation } from "../models/GoalInvitation.js"
 import { User } from "../models/User.js"
+import { logger } from "../../utils/winston-logger.js"
 
 class CollaborationGoalService {
   /**
@@ -234,7 +235,9 @@ class CollaborationGoalService {
       groupId: goalId,
       status: "pending",
     }).select("recipient")
-    const pendingRecipients = existingInvitations.map((i) => i.recipient.toString())
+    const pendingRecipients = existingInvitations
+      .filter((i) => i.recipient) // Filter out any with null recipients
+      .map((i) => i.recipient.toString())
 
     const newRecipients = validRecipients.filter(
       (id) => !existingParticipants.includes(id) && !pendingRecipients.includes(id)
@@ -264,6 +267,7 @@ class CollaborationGoalService {
   static async getPendingInvitations(userId: string) {
     try {
       console.log("getPendingInvitations called for user:", userId)
+      
       const invitations = await GoalInvitation.find({
         recipient: new Types.ObjectId(userId),
         status: "pending",
@@ -271,14 +275,56 @@ class CollaborationGoalService {
         .populate("groupId", "title description target progress status")
         .populate("sender", "username name profileImage")
         .sort({ createdAt: -1 })
+        .lean()
         .exec()
+      
       console.log("Found invitations:", invitations.length)
-      return invitations
+
+      // Filter out invitations with missing references (orphaned data)
+      const validInvitations = invitations.filter(
+        (invite) => invite.groupId && invite.sender
+      )
+
+      // Log if we filtered out any orphaned invitations
+      if (validInvitations.length < invitations.length) {
+        const orphanedCount = invitations.length - validInvitations.length
+        logger.warn(
+          `Filtered out ${orphanedCount} orphaned goal invitations for user ${userId}`
+        )
+        
+        // Optionally clean up orphaned invitations in the background
+        const orphanedIds = invitations
+          .filter((invite) => !invite.groupId || !invite.sender)
+          .map((invite) => invite._id)
+        
+        if (orphanedIds.length > 0) {
+          // Delete orphaned invitations asynchronously (don't await)
+          GoalInvitation.deleteMany({ _id: { $in: orphanedIds } })
+            .then(() => logger.info(`Cleaned up ${orphanedIds.length} orphaned goal invitations`))
+            .catch((err) => logger.error(`Failed to clean up orphaned goal invitations: ${err}`))
+        }
+      }
+
+      // Transform the response to match expected format
+      // Note: groupId field contains the goal data after populate
+      const formattedInvitations = validInvitations.map((invite) => ({
+        _id: invite._id,
+        goal: invite.groupId, // Rename groupId to goal for frontend
+        sender: invite.sender,
+        recipient: invite.recipient,
+        message: invite.message,
+        status: invite.status,
+        createdAt: invite.createdAt,
+        updatedAt: invite.updatedAt,
+      }))
+
+      return formattedInvitations
     } catch (error) {
       console.error("getPendingInvitations ERROR:", error)
       throw error
     }
   }
+
   /**
    * Get sent invitations for a goal (for the creator to see)
    */
@@ -293,10 +339,22 @@ class CollaborationGoalService {
       throw createError("Only the creator can view sent invitations", 403)
     }
 
-    return GoalInvitation.find({ groupId: goalId })
+    const invitations = await GoalInvitation.find({ groupId: goalId })
       .populate("recipient", "username name profileImage")
       .sort({ createdAt: -1 })
+      .lean()
       .exec()
+
+    // Filter out invitations with missing recipients
+    const validInvitations = invitations.filter((invite) => invite.recipient)
+
+    if (validInvitations.length < invitations.length) {
+      logger.warn(
+        `Filtered out ${invitations.length - validInvitations.length} orphaned sent invitations for goal ${goalId}`
+      )
+    }
+
+    return validInvitations
   }
 
   /**
@@ -307,6 +365,12 @@ class CollaborationGoalService {
     
     if (!invitation) {
       throw createError("Invitation not found", 404)
+    }
+
+    if (!invitation.recipient) {
+      // Clean up orphaned invitation
+      await GoalInvitation.findByIdAndDelete(invitationId)
+      throw createError("Invalid invitation - missing recipient data", 400)
     }
 
     if (invitation.recipient.toString() !== userId) {
@@ -328,6 +392,10 @@ class CollaborationGoalService {
         goal.participants.push(new Types.ObjectId(userId))
         await goal.save()
       }
+    } else {
+      // Goal was deleted, clean up the invitation
+      await GoalInvitation.findByIdAndDelete(invitationId)
+      throw createError("The goal no longer exists", 404)
     }
 
     return invitation.populate(["groupId", "sender"])
@@ -341,6 +409,12 @@ class CollaborationGoalService {
     
     if (!invitation) {
       throw createError("Invitation not found", 404)
+    }
+
+    if (!invitation.recipient) {
+      // Clean up orphaned invitation
+      await GoalInvitation.findByIdAndDelete(invitationId)
+      throw createError("Invalid invitation - missing recipient data", 400)
     }
 
     if (invitation.recipient.toString() !== userId) {
@@ -370,8 +444,15 @@ class CollaborationGoalService {
     }
 
     const goal = invitation.groupId as any
-    const isSender = invitation.sender.toString() === userId
-    const isCreator = goal.createdBy.toString() === userId
+    
+    // Handle case where goal was deleted
+    if (!goal) {
+      await GoalInvitation.deleteOne({ _id: invitationId })
+      return // Invitation deleted since goal doesn't exist
+    }
+
+    const isSender = invitation.sender?.toString() === userId
+    const isCreator = goal.createdBy?.toString() === userId
 
     if (!isSender && !isCreator) {
       throw createError("Not authorized to cancel this invitation", 403)

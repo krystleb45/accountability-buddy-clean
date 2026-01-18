@@ -53,7 +53,7 @@ class GroupService {
         group.avatar = await FileUploadService.generateSignedUrl(group.avatar)
       }
 
-      if ((group.createdBy as UserDocument).profileImage) {
+      if ((group.createdBy as UserDocument)?.profileImage) {
         ;(group.createdBy as UserDocument).profileImage =
           await FileUploadService.generateSignedUrl(
             (group.createdBy as UserDocument).profileImage,
@@ -139,7 +139,7 @@ class GroupService {
       )
     }
 
-    if ((groupData.createdBy as UserDocument).profileImage) {
+    if ((groupData.createdBy as UserDocument)?.profileImage) {
       ;(groupData.createdBy as UserDocument).profileImage =
         await FileUploadService.generateSignedUrl(
           (groupData.createdBy as UserDocument).profileImage,
@@ -239,46 +239,46 @@ class GroupService {
     await group.save()
   }
 
- /**
- * Delete a group (only creator)
- */
-async deleteGroup(groupId: string, requesterId: string) {
-  const group = await Group.findById(groupId)
-  if (!group) {
-    throw new CustomError("Group not found", 404)
-  }
-
-  if (!group.createdBy._id.equals(requesterId)) {
-    throw new CustomError("Only the group creator can delete the group", 403)
-  }
-
-  // Delete group chat
-  try {
-    const chat = await ChatService.getGroupChat(groupId)
-    if (chat) {
-      await ChatService.deleteChat(chat._id.toString())
+  /**
+   * Delete a group (only creator)
+   */
+  async deleteGroup(groupId: string, requesterId: string) {
+    const group = await Group.findById(groupId)
+    if (!group) {
+      throw new CustomError("Group not found", 404)
     }
-  } catch (error) {
-    logger.warn(`No chat found for group ${groupId} during deletion`)
-  }
 
-  // Delete group invitations
-  await GroupInvitation.deleteMany({ groupId: group._id })
+    if (!group.createdBy._id.equals(requesterId)) {
+      throw new CustomError("Only the group creator can delete the group", 403)
+    }
 
-  // Delete group avatar from S3 if exists
-  if (group.avatar) {
+    // Delete group chat
     try {
-      await FileUploadService.deleteFromS3(group.avatar)
+      const chat = await ChatService.getGroupChat(groupId)
+      if (chat) {
+        await ChatService.deleteChat(chat._id.toString())
+      }
     } catch (error) {
-      logger.warn(`Failed to delete avatar for group ${groupId}`)
+      logger.warn(`No chat found for group ${groupId} during deletion`)
     }
+
+    // Delete group invitations
+    await GroupInvitation.deleteMany({ groupId: group._id })
+
+    // Delete group avatar from S3 if exists
+    if (group.avatar) {
+      try {
+        await FileUploadService.deleteFromS3(group.avatar)
+      } catch (error) {
+        logger.warn(`Failed to delete avatar for group ${groupId}`)
+      }
+    }
+
+    // Delete the group
+    await Group.findByIdAndDelete(groupId)
+
+    logger.info(`Group ${groupId} deleted by ${requesterId}`)
   }
-
-  // Delete the group
-  await Group.findByIdAndDelete(groupId)
-
-  logger.info(`Group ${groupId} deleted by ${requesterId}`)
-}
 
   /**
    * List groups the user has joined
@@ -296,7 +296,7 @@ async deleteGroup(groupId: string, requesterId: string) {
         group.avatar = await FileUploadService.generateSignedUrl(group.avatar)
       }
 
-      if ((group.createdBy as UserDocument).profileImage) {
+      if ((group.createdBy as UserDocument)?.profileImage) {
         ;(group.createdBy as UserDocument).profileImage =
           await FileUploadService.generateSignedUrl(
             (group.createdBy as UserDocument).profileImage,
@@ -377,6 +377,9 @@ async deleteGroup(groupId: string, requesterId: string) {
     }
 
     const user = await User.findById(userId)
+    if (!user) {
+      throw new CustomError("User not found", 404)
+    }
 
     // Create invitation
     await GroupInvitation.create({
@@ -485,30 +488,46 @@ async deleteGroup(groupId: string, requesterId: string) {
       .sort({ createdAt: -1 })
       .lean()
 
-    for (const invite of invitations) {
-      if ((invite.sender as UserDocument).profileImage) {
-        ;(invite.sender as UserDocument).profileImage =
-          await FileUploadService.generateSignedUrl(
-            (invite.sender as UserDocument).profileImage,
-          )
-      }
+    // Filter out invitations with missing references (orphaned data)
+    const validInvitations = invitations.filter(
+      (invite) => invite.sender && invite.recipient && invite.groupId
+    )
 
-      if ((invite.recipient as UserDocument).profileImage) {
-        ;(invite.recipient as UserDocument).profileImage =
-          await FileUploadService.generateSignedUrl(
-            (invite.recipient as UserDocument).profileImage,
-          )
-      }
+    // Log if we filtered out any orphaned invitations
+    if (validInvitations.length < invitations.length) {
+      logger.warn(
+        `Filtered out ${invitations.length - validInvitations.length} orphaned group invitations for user ${userId}`
+      )
+    }
 
-      if ((invite.groupId as IGroup).avatar) {
-        ;(invite.groupId as IGroup).avatar =
-          await FileUploadService.generateSignedUrl(
-            (invite.groupId as IGroup).avatar,
-          )
+    for (const invite of validInvitations) {
+      try {
+        if ((invite.sender as UserDocument)?.profileImage) {
+          ;(invite.sender as UserDocument).profileImage =
+            await FileUploadService.generateSignedUrl(
+              (invite.sender as UserDocument).profileImage,
+            )
+        }
+
+        if ((invite.recipient as UserDocument)?.profileImage) {
+          ;(invite.recipient as UserDocument).profileImage =
+            await FileUploadService.generateSignedUrl(
+              (invite.recipient as UserDocument).profileImage,
+            )
+        }
+
+        if ((invite.groupId as IGroup)?.avatar) {
+          ;(invite.groupId as IGroup).avatar =
+            await FileUploadService.generateSignedUrl(
+              (invite.groupId as IGroup).avatar,
+            )
+        }
+      } catch (error) {
+        logger.error(`Error generating signed URL for invitation ${invite._id}: ${error}`)
       }
     }
 
-    return invitations
+    return validInvitations
   }
 
   /**
@@ -538,23 +557,39 @@ async deleteGroup(groupId: string, requesterId: string) {
       .sort({ createdAt: -1 })
       .lean()
 
-    for (const invite of invitations) {
-      if ((invite.sender as UserDocument).profileImage) {
-        ;(invite.sender as UserDocument).profileImage =
-          await FileUploadService.generateSignedUrl(
-            (invite.sender as UserDocument).profileImage,
-          )
-      }
+    // Filter out invitations with missing references (orphaned data)
+    const validInvitations = invitations.filter(
+      (invite) => invite.sender && invite.recipient
+    )
 
-      if ((invite.recipient as UserDocument).profileImage) {
-        ;(invite.recipient as UserDocument).profileImage =
-          await FileUploadService.generateSignedUrl(
-            (invite.recipient as UserDocument).profileImage,
-          )
+    // Log if we filtered out any orphaned invitations
+    if (validInvitations.length < invitations.length) {
+      logger.warn(
+        `Filtered out ${invitations.length - validInvitations.length} orphaned invitations for group ${groupId}`
+      )
+    }
+
+    for (const invite of validInvitations) {
+      try {
+        if ((invite.sender as UserDocument)?.profileImage) {
+          ;(invite.sender as UserDocument).profileImage =
+            await FileUploadService.generateSignedUrl(
+              (invite.sender as UserDocument).profileImage,
+            )
+        }
+
+        if ((invite.recipient as UserDocument)?.profileImage) {
+          ;(invite.recipient as UserDocument).profileImage =
+            await FileUploadService.generateSignedUrl(
+              (invite.recipient as UserDocument).profileImage,
+            )
+        }
+      } catch (error) {
+        logger.error(`Error generating signed URL for invitation ${invite._id}: ${error}`)
       }
     }
 
-    return invitations
+    return validInvitations
   }
 
   /**
@@ -564,12 +599,22 @@ async deleteGroup(groupId: string, requesterId: string) {
     const invitation = await GroupInvitation.findById(invitationId)
       .populate("recipient", "username")
       .populate("sender", "username")
+
     if (!invitation) {
       throw new CustomError("Invitation not found", 404)
     }
 
+    // Check if sender and recipient exist
+    if (!invitation.sender || !invitation.recipient) {
+      // Clean up orphaned invitation
+      await GroupInvitation.findByIdAndDelete(invitationId)
+      throw new CustomError("Invalid invitation - missing user data", 400)
+    }
+
     const group = await Group.findById(invitation.groupId)
     if (!group) {
+      // Clean up orphaned invitation
+      await GroupInvitation.findByIdAndDelete(invitationId)
       throw new CustomError("Group not found", 404)
     }
 
@@ -599,10 +644,10 @@ async deleteGroup(groupId: string, requesterId: string) {
 
     // Notify the sender about acceptance
     await Notification.create({
-      user: invitation.sender,
+      user: invitation.sender._id,
       message: isRequestedToJoin
         ? `Your invitation to join group "${group.name}" was accepted`
-        : `${invitation.recipient.username} accepted your request to join group "${group.name}"`,
+        : `${(invitation.recipient as UserDocument).username} accepted your request to join group "${group.name}"`,
       type: isRequestedToJoin
         ? "group_request_accepted"
         : "group_invite_accepted",
@@ -620,8 +665,16 @@ async deleteGroup(groupId: string, requesterId: string) {
       throw new CustomError("Invitation not found", 404)
     }
 
+    // Check if recipient exists
+    if (!invitation.recipient) {
+      await GroupInvitation.findByIdAndDelete(invitationId)
+      throw new CustomError("Invalid invitation - missing recipient data", 400)
+    }
+
     const group = await Group.findById(invitation.groupId)
     if (!group) {
+      // Clean up orphaned invitation
+      await GroupInvitation.findByIdAndDelete(invitationId)
       throw new CustomError("Group not found", 404)
     }
 
@@ -637,14 +690,16 @@ async deleteGroup(groupId: string, requesterId: string) {
     invitation.status = "rejected"
     await invitation.save()
 
-    // Notify the sender about rejection
-    await Notification.create({
-      user: invitation.sender,
-      message: `Your invitation to join group "${group.name}" was rejected`,
-      type: "group_request_rejected",
-      read: false,
-      link: `/community/groups`,
-    })
+    // Notify the sender about rejection (only if sender exists)
+    if (invitation.sender) {
+      await Notification.create({
+        user: invitation.sender,
+        message: `Your invitation to join group "${group.name}" was rejected`,
+        type: "group_request_rejected",
+        read: false,
+        link: `/community/groups`,
+      })
+    }
   }
 
   /**
@@ -674,8 +729,12 @@ async deleteGroup(groupId: string, requesterId: string) {
     // Build exclusion list
     const excludedUserIds = new Set([
       ...group.members.map((member) => member._id.toString()),
-      ...existingInvitations.map((inv) => inv.recipient.toString()),
-      ...existingInvitations.map((inv) => inv.sender.toString()),
+      ...existingInvitations
+        .filter((inv) => inv.recipient)
+        .map((inv) => inv.recipient.toString()),
+      ...existingInvitations
+        .filter((inv) => inv.sender)
+        .map((inv) => inv.sender.toString()),
     ])
 
     try {
@@ -729,9 +788,13 @@ async deleteGroup(groupId: string, requesterId: string) {
       // Generate signed URLs for profile images
       for (const user of topRecommendations) {
         if (user.profileImage) {
-          user.profileImage = await FileUploadService.generateSignedUrl(
-            user.profileImage,
-          )
+          try {
+            user.profileImage = await FileUploadService.generateSignedUrl(
+              user.profileImage,
+            )
+          } catch (error) {
+            logger.error(`Error generating signed URL for user ${user._id}: ${error}`)
+          }
         }
       }
 
@@ -749,9 +812,13 @@ async deleteGroup(groupId: string, requesterId: string) {
 
       for (const user of fallbackRecommendations) {
         if (user.profileImage) {
-          user.profileImage = await FileUploadService.generateSignedUrl(
-            user.profileImage,
-          )
+          try {
+            user.profileImage = await FileUploadService.generateSignedUrl(
+              user.profileImage,
+            )
+          } catch (error) {
+            logger.error(`Error generating signed URL for fallback user ${user._id}: ${error}`)
+          }
         }
       }
 
@@ -1081,9 +1148,18 @@ async deleteGroup(groupId: string, requesterId: string) {
     const membersData: IUser[] = []
 
     for (const member of group.members as UserDocument[]) {
+      // Skip null/invalid members
+      if (!member) {
+        continue
+      }
+
       let profileImage = member.profileImage
       if (profileImage) {
-        profileImage = await FileUploadService.generateSignedUrl(profileImage)
+        try {
+          profileImage = await FileUploadService.generateSignedUrl(profileImage)
+        } catch (error) {
+          logger.error(`Error generating signed URL for member ${member._id}: ${error}`)
+        }
       }
 
       const memberData = member.toObject()
