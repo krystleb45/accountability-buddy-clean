@@ -24,3 +24,4 @@ COPY --from=deps /app/apps/backend/node_modules ./apps/backend/node_modules
 EXPOSE 5050 
 CMD ["node", "./apps/backend/dist/server.js"] 
 # force cache bust 
+# fix goalinvitations collection 
