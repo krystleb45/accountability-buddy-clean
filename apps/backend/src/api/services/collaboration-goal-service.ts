@@ -305,20 +305,7 @@ class CollaborationGoalService {
         }
       }
 
-      // Transform the response to match expected format
-      // Note: groupId field contains the goal data after populate
-      const formattedInvitations = validInvitations.map((invite) => ({
-        _id: invite._id,
-        goal: invite.groupId, // Rename groupId to goal for frontend
-        sender: invite.sender,
-        recipient: invite.recipient,
-        message: invite.message,
-        status: invite.status,
-        createdAt: invite.createdAt,
-        updatedAt: invite.updatedAt,
-      }))
-
-      return formattedInvitations
+      return validInvitations
     } catch (error) {
       console.error("getPendingInvitations ERROR:", error)
       throw error
